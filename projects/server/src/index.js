@@ -2,8 +2,6 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
-const {sequelize} = require("./lib/sequelize")
-const {env} = require("./config")
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -24,7 +22,6 @@ app.use(express.json());
 // NOTE : Add your routes here
 
 app.get("/api", (req, res) => {
-  console.log('test')
   res.send(`Hello, this is my API`);
 });
 
