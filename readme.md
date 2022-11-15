@@ -1,6 +1,6 @@
 # Purwadhika Final Project Repository
 
-This is monorepo contain frontend project using ReactJS and backend project using ExpressJS testing.
+This is monorepo contain frontend project using ReactJS and backend project using ExpressJS.
 
 ## Available Scripts
 
@@ -43,5 +43,3 @@ Run command on server project.
 ### `npm run install:server`
 
 Install dependency in server project. Use `npm install:server:dev` for dev dependencies.
-
-tes imam
