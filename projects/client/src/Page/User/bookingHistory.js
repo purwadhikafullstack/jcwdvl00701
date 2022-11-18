@@ -242,6 +242,12 @@ function BookingHistory() {
         <Flex>
           <Box boxSize="50px">
             <Image src={"https://bit.ly/dan-abramov"} alt="profile picture" />
+  return (
+    <Box bg="tomato" w="100%" h="90px">
+      <Box bg="white" w="100%" p="20px">
+        <Flex>
+          <Box boxSize="50px">
+            <Image src={"https://bit.ly/dan-abramov"} alt="Dan Abramov" />
           </Box>
           <Box ms="10px">
             <Text fontWeight="semibold" fontSize="22px">
