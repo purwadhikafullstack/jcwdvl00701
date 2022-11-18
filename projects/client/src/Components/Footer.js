@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text ,Image, Flex, Box} from "@chakra-ui/react"
-import vectorFb from "../Assets/Image/vectorFb.png"
-import vectorIg from "../Assets/Image/vectorIg.png"
-import turuIcon from "../Assets/Image/turuIcon.png"
+import vectorFb from "../Assets/image/vectorFb.png"
+import vectorIg from "../Assets/image/vectorIg.png"
+import turuIcon from "../Assets/image/turuIcon.png"
 
 function Footer(props) {
     // props utk ukuran margin top footer agar dinamis
