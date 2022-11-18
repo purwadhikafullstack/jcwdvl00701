@@ -10,10 +10,10 @@ import { Flex,
     Button,
     Text
 } from '@chakra-ui/react'
-import turuIcon from "../../Assets/Image/turuIcon.png"
-import google from "../../Assets/Image/google.png"
-import facebook from "../../Assets/Image/facebook.png"
-import loginTenant from "../../Assets/Image/loginTenant.png"
+import turuIcon from "../../Assets/image/turuIcon.png"
+import google from "../../Assets/image/google.png"
+import facebook from "../../Assets/image/facebook.png"
+import loginTenant from "../../Assets/image/loginTenant.png"
 import Footer from '../../Components/Footer';
 import {Link} from "react-router-dom"
 
