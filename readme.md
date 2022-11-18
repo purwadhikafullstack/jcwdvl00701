@@ -44,4 +44,3 @@ Run command on server project.
 
 Install dependency in server project. Use `npm install:server:dev` for dev dependencies.
 
-tes tis
