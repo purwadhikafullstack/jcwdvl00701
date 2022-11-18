@@ -17,8 +17,9 @@ class App extends React.Component {
           <Route component={LoginTenant} path="/tenant/login" />
           <Route component={RegisterUser} path="/register" />
           <Route component={LoginUser} path="/login" />
-          <Route component={Test} path="/" />
+
           <Route component={BookingHistory} path="/booking-history" />
+          <Route component={Test} path="/" />
         </Switch>
       </BrowserRouter>
     );
