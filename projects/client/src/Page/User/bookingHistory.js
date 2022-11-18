@@ -230,6 +230,7 @@ function BookingHistory() {
     });
   }
 
+<<<<<<< HEAD
   return (
     <Box w="100%" h="90px">
       <Box
@@ -242,9 +243,17 @@ function BookingHistory() {
         <Flex>
           <Box boxSize="50px">
             <Image src={"https://bit.ly/dan-abramov"} alt="profile picture" />
+=======
+>>>>>>> 6bb7f9a (feat: Booking history)
   return (
-    <Box bg="tomato" w="100%" h="90px">
-      <Box bg="white" w="100%" p="20px">
+    <Box w="100%" h="90px">
+      <Box
+        bg="white"
+        w="100%"
+        p="20px"
+        borderBottom="1px"
+        borderColor="gray.200"
+      >
         <Flex>
           <Box boxSize="50px">
             <Image src={"https://bit.ly/dan-abramov"} alt="Dan Abramov" />
