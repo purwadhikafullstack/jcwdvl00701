@@ -7,6 +7,7 @@ import RegisterUser from "./Page/User/registerUser";
 import LoginTenant from "./Page/Tenant/loginTenant";
 import RegisterTenant from "./Page/Tenant/registerTenant";
 import BookingHistory from "./Page/User/bookingHistory";
+import Booking from "./Page/User/booking";
 
 class App extends React.Component {
   render() {
@@ -17,8 +18,8 @@ class App extends React.Component {
           <Route component={LoginTenant} path="/tenant/login" />
           <Route component={RegisterUser} path="/register" />
           <Route component={LoginUser} path="/login" />
-
           <Route component={BookingHistory} path="/booking-history" />
+          <Route component={Booking} path="/booking" />
           <Route component={Test} path="/" />
         </Switch>
       </BrowserRouter>
