@@ -56,7 +56,7 @@ function BookingHistory() {
           <Box border="1px" borderColor="gray.200">
             <Flex>
               <Box w="50%">
-                <Image objectFit="cover" src={val.pic} alt="Dan Abramov" />
+                <Image objectFit="cover" src={val.pic} alt="room picture" />
               </Box>
               <Box w="50%">
                 <Box px="10px">
@@ -110,7 +110,7 @@ function BookingHistory() {
           <Box border="1px" borderColor="gray.200">
             <Flex>
               <Box w="50%">
-                <Image objectFit="cover" src={val.pic} alt="Dan Abramov" />
+                <Image objectFit="cover" src={val.pic} alt="room picture" />
               </Box>
               <Box w="50%">
                 <Box px="10px">
