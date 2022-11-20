@@ -1,8 +1,7 @@
 import React from "react";
 import { Box, Button, Flex } from "@chakra-ui/react";
 
-class Test extends React.Component {
-  render() {
+function Test (props) {
     return (
       <Flex>
         <Box w="100%" p={4}>
@@ -11,7 +10,6 @@ class Test extends React.Component {
         </Box>
       </Flex>
     );
-  }
 }
 
 export default Test;
