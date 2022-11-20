@@ -1,15 +1,15 @@
 import { extendTheme } from "@chakra-ui/react";
 import { buttonStyles as Button } from "./Components/buttonStyles";
 
-  const breakpoints = {
-      ss: '20em',
-      sm: '30em',
-      sl: '36em',
-      md: '48em',
-      lg: '62em',
-      xl: '80em',
-      '2xl': '96em',
-  }
+const breakpoints = {
+  ss: "20em",
+  sm: "30em",
+  sl: "36em",
+  md: "48em",
+  lg: "62em",
+  xl: "80em",
+  "2xl": "96em",
+};
 
 export const myNewTheme = extendTheme({
   colors: {
@@ -19,5 +19,5 @@ export const myNewTheme = extendTheme({
   components: {
     Button,
   },
-  breakpoints : {...breakpoints}
+  breakpoints: { ...breakpoints },
 });

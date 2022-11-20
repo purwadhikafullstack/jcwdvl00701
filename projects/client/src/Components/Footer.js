@@ -8,7 +8,12 @@ function Footer(props) {
   // props utk ukuran margin top footer agar dinamis
   const { ss, sm, sl } = props;
   return (
-    <Box mt={{ ss: ss, sm: sm, sl: sl, md: "0" }} bg="white">
+    <Box
+      mt={{ ss: ss, sm: sm, sl: sl, md: "0" }}
+      bg="white"
+      borderTop="1px"
+      borderColor="gray.200"
+    >
       <Flex
         direction={["column", "column", "column", "row"]}
         justifyContent="space-around"
