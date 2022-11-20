@@ -43,3 +43,4 @@ Run command on server project.
 ### `npm run install:server`
 
 Install dependency in server project. Use `npm install:server:dev` for dev dependencies.
+
