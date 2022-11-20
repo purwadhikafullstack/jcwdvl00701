@@ -2,6 +2,7 @@ import { Box, Flex, Button, Text, Image } from "@chakra-ui/react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../../Components/Footer";
+import NavbarMobile from "../../Components/NavbarMobile";
 
 function Booking() {
   const bookingUser = [
@@ -19,8 +20,27 @@ function Booking() {
 
   const [booking, setBooking] = useState(bookingUser);
   return (
-    <Box>
-      <Flex px="20px" py="12px" justifyContent="space-between">
+    <Box mb="60px">
+      <Flex
+        px="20px"
+        py="12px"
+        justifyContent="space-between"
+        borderBottom="1px"
+        borderColor="gray.200"
+      >
+        <Button
+          borderRadius="0px"
+          bg="white"
+          border="1px"
+          borderColor="gray.200"
+          my="auto"
+          _hover={{
+            background: "black",
+            color: "white",
+          }}
+        >
+          <i class="fa-solid fa-caret-left"></i>
+        </Button>
         <Box>
           <Text fontWeight="semibold" fontSize="16px">
             Rp. 625.000,00
@@ -167,6 +187,7 @@ function Booking() {
       </Box>
 
       <Footer />
+      <NavbarMobile />
     </Box>
   );
 }

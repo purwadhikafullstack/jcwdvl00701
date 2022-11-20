@@ -1,8 +1,15 @@
-import { Box, Flex, Button, Text, Image } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Button,
+  Text,
+  OrderedList,
+  ListItem,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import Footer from "../../Components/Footer";
 import NavbarMobile from "../../Components/NavbarMobile";
-
+import { Link } from "react-router-dom";
 function Payment() {
   const bookingUser = [
     {
@@ -20,7 +27,7 @@ function Payment() {
   const [booking, setBooking] = useState(bookingUser);
   return (
     <Box mb="60px">
-      <Box bg="primary" w="100%" p="20px" color="white">
+      <Box bg="primary" w="100%" p="20px">
         <Flex bg="white" color="black" px="10px" pt="10px">
           <Box me="10px">
             <i className="fa-solid fa-bed"></i>
@@ -41,33 +48,46 @@ function Payment() {
         >
           12-16 Nov | 1 Guest
         </Text>
-        <Box bg="white" border="1px" borderColor="gray.200" p="10px">
-          <Text fontWeight="regular" fontSize="16px" color="black" px="10px">
-            Rp. 625.000,00
-          </Text>
-        </Box>
+        <Flex bg="white" border="1px" borderColor="gray.200">
+          <Link to="/booking">
+            <Button
+              borderRadius="0px"
+              borderRight="1px"
+              borderColor="gray.200"
+              bg="white"
+              h="100%"
+              _hover={{
+                background: "black",
+                color: "white",
+                borderColor: "black",
+              }}
+            >
+              <i class="fa-solid fa-caret-left"></i>
+            </Button>
+          </Link>
+          <Box p="10px">
+            <Text fontWeight="regular" fontSize="16px" color="black" px="5px">
+              Rp. 625.000,00
+            </Text>
+          </Box>
+        </Flex>
       </Box>
       <Box bg="white" p="20px">
-        <Text fontWeight="regular" fontSize="14px" color="black">
-          Cara Pembayaran
+        <Text fontWeight="regular" fontSize="16px" color="black">
+          payment steps
         </Text>
-        <Text fontWeight="regular" fontSize="14px" color="black">
-          1. transfer uang ke rekening 9338838293
-        </Text>
-        <Text fontWeight="regular" fontSize="14px" color="black">
-          2. simpan bukti pembayaran
-        </Text>
-        <Text fontWeight="regular" fontSize="14px" color="black">
-          3. Upload bukti pembayran
-        </Text>
+        <OrderedList fontSize="14px" ps="10px" color="rgba(17, 17, 17, 0.6)">
+          <ListItem>
+            transfer money according to the total price to BNI bank with account
+            number: 22222112121212
+          </ListItem>
+          <ListItem>save your proof of payment</ListItem>
+          <ListItem>Upload your proof of payment to this page</ListItem>
+        </OrderedList>
       </Box>
       <Button mx="20px" variant="secondary">
-        <Text
-          fontWeight="regular"
-          fontSize="14px"
-          color="rgba(175, 175, 175, 1)"
-        >
-          Upload bukti pembayran
+        <Text fontWeight="regular" fontSize="14px">
+          upload payment proof
         </Text>
       </Button>
       <Text fontWeight="Bold" fontSize="18px" p="20px" pb="5px">

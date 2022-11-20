@@ -7,9 +7,9 @@ function NavbarMobile() {
       bg="white"
       pos="fixed"
       bottom="0"
-      zIndex={2}
       w="100%"
-      boxShadow="navbarMobile"
+      borderTop="1px"
+      borderColor="gray.200"
     >
       <Flex justifyContent="space-around" py="5px">
         <Box fontSize="22px" textAlign="center" color="black">
