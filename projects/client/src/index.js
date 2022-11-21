@@ -11,11 +11,11 @@ import { myNewTheme } from "./Style/them";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    <ChakraProvider resetCSS theme={myNewTheme}>
-        <Provider store={store}>
-            <App />
-        </Provider>
-    </ChakraProvider>
+  <ChakraProvider resetCSS theme={myNewTheme}>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </ChakraProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
