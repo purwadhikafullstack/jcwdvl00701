@@ -16,23 +16,7 @@ import {
     CardFooter,
     ButtonGroup, Center, IconButton, chakra,
 } from "@chakra-ui/react";
-import {
-    faBoxArchive,
-    faCouch,
-    faSearch,
-    faSliders,
-    faUtensils,
-    faWifi,
-    faBed,
-    faFilter, faStar
-} from "@fortawesome/free-solid-svg-icons";
-import {faUserCircle} from "@fortawesome/free-regular-svg-icons";
 import DatePicker from "react-datepicker";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-
-
-const FaIcon = chakra(FontAwesomeIcon);
-
 
 function Topbar(props) {
     return (
@@ -70,34 +54,34 @@ function Content(props) {
                 <Text>{props.data.description}</Text>
                 <Flex align='center' my={8}>
                     <Stack>
-                        <IconButton icon={<FaIcon icon={faBed}/>} backgroundColor='gray.200'/>
+                        <IconButton icon={<i className="fa-solid fa-bed"/>} backgroundColor='gray.200'/>
                         <Center><Text>room 1</Text></Center>
                     </Stack>
                     <Stack mx={4}>
-                        <IconButton icon={<FaIcon icon={faBed}/>} backgroundColor='gray.200'/>
+                        <IconButton icon={<i className="fa-solid fa-bed"/>} backgroundColor='gray.200'/>
                         <Center><Text>room 1</Text></Center>
                     </Stack>
                     <Stack>
-                        <IconButton icon={<FaIcon icon={faBed}/>} backgroundColor='gray.200'/>
+                        <IconButton icon={<i className="fa-solid fa-bed"/>} backgroundColor='gray.200'/>
                         <Center><Text>room 1</Text></Center>
                     </Stack>
 
                 </Flex>
                 <Flex align='center'>
                     <Stack width='25%'>
-                        <FaIcon icon={faWifi}/>
+                        <Center><i className="fa-solid fa-wifi"/></Center>
                         <Center><Text>wifi</Text></Center>
                     </Stack>
                     <Stack width='25%'>
-                        <FaIcon icon={faBoxArchive}/>
+                        <Center><i className="fa-solid fa-box-archive"/></Center>
                         <Center><Text>locker</Text></Center>
                     </Stack>
                     <Stack width='25%'>
-                        <FaIcon icon={faUtensils}/>
+                        <Center><i className="fa-solid fa-utensils"/></Center>
                         <Center><Text>menu</Text></Center>
                     </Stack>
                     <Stack width='25%'>
-                        <FaIcon icon={faCouch}/>
+                        <Center><i className="fa-solid fa-couch"/></Center>
                         <Center><Text>sofa</Text></Center>
                     </Stack>
                 </Flex>
@@ -118,7 +102,7 @@ function Reviews(props) {
     return (
         <Box>
             <Box my={3}>
-                <Text fontWeight='bold' fontSize='xl' mb={1}><FaIcon icon={faStar}/> 5 Reviews</Text>
+                <Text fontWeight='bold' fontSize='xl' mb={1}><i className="fa-solid fa-star"/> 5 Reviews</Text>
             </Box>
 
             <Box border="3px solid lightgrey" p={5}>
@@ -187,7 +171,6 @@ function PropertyDetail(props) {
         <div>
             <Topbar/>
             <Container maxW='container.lg'>
-
                 <Content data={data}/>
                 <Box my={3}>
                     <Text fontWeight='bold' fontSize='xl' mb={1}>check availability</Text>
@@ -203,10 +186,7 @@ function PropertyDetail(props) {
                 </Box>
                 <Detail/>
                 <Reviews/>
-
             </Container>
-
-
         </div>
     );
 }

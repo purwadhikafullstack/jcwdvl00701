@@ -25,15 +25,8 @@ import {
     ModalCloseButton,
     useDisclosure, Input, HStack, useNumberInput
 } from "@chakra-ui/react";
-import {faWifi, faBoxArchive, faUtensils, faCouch, faSliders, faSearch, faFilter} from '@fortawesome/free-solid-svg-icons'
-import {faUserCircle} from '@fortawesome/free-regular-svg-icons'
-import {chakra} from '@chakra-ui/react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {current} from "@reduxjs/toolkit";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
-const FaIcon = chakra(FontAwesomeIcon);
 
 function useOnClickOutside(ref, handler) {
     useEffect(
@@ -110,7 +103,7 @@ function SearchBox(props) {
                         <Text fontSize="sm" fontWeight='bold'>Jakarta</Text>
                         <Text fontSize="xs">12-16 Nov | 1 Tamu</Text>
                     </Box>
-                    <IconButton aria-label='toggle filters' icon={<FaIcon icon={faFilter}/>} backgroundColor='gray.200' m={2}/>
+                    <IconButton aria-label='toggle filters' icon={<i className="fa-solid fa-filter"/>} backgroundColor='gray.200' m={2}/>
                 </Flex>
             </Box>
 
@@ -121,7 +114,7 @@ function SearchBox(props) {
                  display={isOpen ? 'block' : 'none'}>
                 <Flex justify="space-between" align="center">
                     <Image src='/Assets/logoTuru.png' alt='turu'/>
-                    <Button m={2} leftIcon={<FaIcon icon={faUserCircle}/>}>Login</Button>
+                    <Button m={2} leftIcon={<i className="fa-regular fa-circle-user"/>}>Login</Button>
                 </Flex>
 
                 <Flex direction='column'>
@@ -153,7 +146,7 @@ function SearchBox(props) {
                         </Flex>
                     </Box>
                     <Box w='100%' backgroundColor='white' my={2}>
-                        <Button variant="primary" w='100%' leftIcon={<FaIcon icon={faSearch}/>}>Search Now</Button>
+                        <Button variant="primary" w='100%' leftIcon={<i className="fa-solid fa-magnifying-glass"/>}>Search Now</Button>
                     </Box>
                 </Flex>
             </Box>
@@ -201,19 +194,19 @@ function PropertyCard(props) {
                     <Center w="100%">
                         <Flex justifyContent='space-between' align='center' maxW="85%" w="100%">
                             <Stack mx={2}>
-                                <FaIcon icon={faWifi}/>
+                                <Center><i className="fa-solid fa-wifi"/></Center>
                                 <Center><Text>wifi</Text></Center>
                             </Stack>
                             <Stack mx={2}>
-                                <FaIcon icon={faBoxArchive}/>
+                                <Center><i className="fa-solid fa-box-archive"/></Center>
                                 <Center><Text>locker</Text></Center>
                             </Stack>
                             <Stack mx={2}>
-                                <FaIcon icon={faUtensils}/>
+                                <Center><i className="fa-solid fa-utensils"/></Center>
                                 <Center><Text>menu</Text></Center>
                             </Stack>
                             <Stack mx={2}>
-                                <FaIcon icon={faCouch}/>
+                                <Center><i className="fa-solid fa-couch"/></Center>
                                 <Center><Text>sofa</Text></Center>
                             </Stack>
                         </Flex>
