@@ -1,5 +1,6 @@
 import { extendTheme } from "@chakra-ui/react";
 import { buttonStyles as Button } from "./Components/buttonStyles";
+
 import "@fontsource/work-sans";
 
 const breakpoints = {
@@ -20,6 +21,7 @@ export const myNewTheme = extendTheme({
   components: {
     Button,
   },
+
   breakpoints: { ...breakpoints },
   fonts: {
     heading: `Work Sans`,
