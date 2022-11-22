@@ -19,5 +19,8 @@
   },
   "workspaces": [
     "projects/*"
-  ]
+  ],
+  "dependencies": {
+    "@fontsource/work-sans": "^4.5.12"
+  }
 }
