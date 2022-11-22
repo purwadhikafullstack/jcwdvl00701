@@ -11,7 +11,7 @@ function NavbarMobile() {
       w="100%"
       borderTop="1px"
       borderColor="gray.200"
-      display={isLargerThan576 ? "none" : "inline"}
+      display={{ ss: "inline", sm: "inline", sl: "none" }}
     >
       <Flex justifyContent="space-around" py="5px">
         <Box fontSize="22px" textAlign="center" color="black">

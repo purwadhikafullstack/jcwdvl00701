@@ -5,13 +5,14 @@ import turuIcon from "../Assets/image/turuIcon.png";
 function NavbarDestop() {
   return (
     <Box
+      display={{ ss: "none", sm: "none", sl: "inline" }}
       bg="white"
       pos="fixed"
       top="0"
       borderBottom="1px"
       borderColor="gray.200"
       w="100%"
-      zIndex={2}
+      zIndex={10}
     >
       <Container maxW="1140px">
         <Flex w="100%" mx="auto" justifyContent="space-between">
@@ -26,7 +27,7 @@ function NavbarDestop() {
             <Link>
               <Text>Search</Text>
             </Link>
-            <Link>
+            <Link to="booking-history">
               <Text mx="50px">Room</Text>
             </Link>
             <Link>
