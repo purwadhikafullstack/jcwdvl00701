@@ -16,6 +16,7 @@ import ResetPassword from "./Page/resetPassword";
 import ChangePassword from "./Page/changePassword";
 import VerifyAccount from "./Page/verifyAccount";
 import VerifyForgot from "./Page/verifyForgot";
+import Home from "./Pages/Home";
 
 class App extends React.Component {
   render() {
@@ -36,7 +37,7 @@ class App extends React.Component {
           <Route component={BookingHistory} path="/booking-history"/>
           <Route component={Booking} path="/booking"/>
           <Route component={Payment} path="/payment"/>
-          <Route component={Test} path="/"/>
+          <Route component={Home} path="/"/>
         </Switch>
       </BrowserRouter>
     );
