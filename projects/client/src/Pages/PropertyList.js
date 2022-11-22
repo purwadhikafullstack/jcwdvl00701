@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {useHistory} from "react-router-dom";
 import {
     Box,
@@ -25,13 +25,45 @@ import {
     ModalCloseButton,
     useDisclosure, Input, HStack, useNumberInput
 } from "@chakra-ui/react";
-import {faWifi, faBoxArchive, faUtensils, faCouch, faSliders, faSearch} from '@fortawesome/free-solid-svg-icons'
+import {faWifi, faBoxArchive, faUtensils, faCouch, faSliders, faSearch, faFilter} from '@fortawesome/free-solid-svg-icons'
 import {faUserCircle} from '@fortawesome/free-regular-svg-icons'
 import {chakra} from '@chakra-ui/react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {current} from "@reduxjs/toolkit";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const FaIcon = chakra(FontAwesomeIcon);
+
+function useOnClickOutside(ref, handler) {
+    useEffect(
+        () => {
+            const listener = (event) => {
+                // Do nothing if clicking ref's element or descendent elements
+                if (!ref.current || ref.current.contains(event.target)) {
+                    return;
+                }
+
+                handler(event);
+            };
+
+            document.addEventListener("mousedown", listener);
+            document.addEventListener("touchstart", listener);
+
+            return () => {
+                document.removeEventListener("mousedown", listener);
+                document.removeEventListener("touchstart", listener);
+            };
+        },
+        // Add ref and handler to effect dependencies
+        // It's worth noting that because passed in handler is a new ...
+        // ... function on every render that will cause this effect ...
+        // ... callback/cleanup to run every render. It's not a big deal ...
+        // ... but to optimize you can wrap handler in useCallback before ...
+        // ... passing it into this hook.
+        [ref, handler]
+    );
+}
 
 function StepperInput(props) {
     const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } = useNumberInput({
@@ -58,15 +90,27 @@ function SearchBox(props) {
         setIsOpen(current => !current)
     }
 
+    const [isGuestInputOpen, setIsGuestInputOpen] = useState(false)
+
+    const toggleTsGuestInputOpen = () => {
+        setIsGuestInputOpen(current => !current)
+    }
+
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+
+    const ref = useRef();
+    useOnClickOutside(ref, () => setIsGuestInputOpen(false));
+
     return (
-        <Box>
+        <Box backgroundColor='white'>
             <Box w="100%" p={4} boxShadow='lg'>
                 <Flex justify="space-between" backgroundColor='gray.100' align="center">
                     <Box p={2} color="gray.600" w='100%' onClick={toggleIsOpen} cursor='pointer'>
                         <Text fontSize="sm" fontWeight='bold'>Jakarta</Text>
                         <Text fontSize="xs">12-16 Nov | 1 Tamu</Text>
                     </Box>
-                    <IconButton aria-label='toggle filters' icon={<FaIcon icon={faSliders}/>} backgroundColor='gray.200' m={2}/>
+                    <IconButton aria-label='toggle filters' icon={<FaIcon icon={faFilter}/>} backgroundColor='gray.200' m={2}/>
                 </Flex>
             </Box>
 
@@ -76,7 +120,7 @@ function SearchBox(props) {
             <Box w="100%" p={4} boxShadow='lg' backgroundColor='gray' position='absolute' top={0} zIndex={2}
                  display={isOpen ? 'block' : 'none'}>
                 <Flex justify="space-between" align="center">
-                    <Image src='/logoTuru.png' alt='turu'/>
+                    <Image src='/Assets/logoTuru.png' alt='turu'/>
                     <Button m={2} leftIcon={<FaIcon icon={faUserCircle}/>}>Login</Button>
                 </Flex>
 
@@ -84,42 +128,29 @@ function SearchBox(props) {
                     <Flex w='100%' backgroundColor='white' py={3} px={6} my={2}>
                         <Box w='50%'>
                             <Text color='gray.500'>Check In</Text>
-                            <Text fontWeight='bold'>04/01/2021</Text>
+                            <DatePicker selected={startDate} onChange={(date) => setStartDate(date)}/>
                         </Box>
                         <Box w='50%'>
                             <Text color='gray.500'>Check Out</Text>
-                            <Text fontWeight='bold'>04/01/2021</Text>
+                            <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} />
                         </Box>
                     </Flex>
 
-                    <Box w='100%' backgroundColor='white' py={3} px={6} my={2}>
-                        <Text color='gray.500'>Check In</Text>
-                    </Box>
-
-                    <Box w='100%' backgroundColor='white' py={3} px={6} my={2}>
+                    <Box w='100%' backgroundColor='white' py={3} px={6} my={2} display={!isGuestInputOpen ? 'block' : 'none'} onClick={toggleTsGuestInputOpen}>
                         <Text color='gray.500'>Guests</Text>
-                        <Text fontWeight='bold'>2 Adults, 0 Children</Text>
+                        <Text fontWeight='bold'>2 Visitors</Text>
                     </Box>
 
-                    <Box w='100%' backgroundColor='white' py={3} px={6} my={2}>
+                    <Box w='100%' backgroundColor='white' py={3} px={6} my={2} display={isGuestInputOpen ? 'block' : 'none'} ref={ref}>
                         <Text color='gray.500' mb={3}>Guests</Text>
 
                         <Flex justify='space-between' mb={2}>
                             <Box>
-                                <Text fontWeight='bold'>Adults</Text>
-                                <Text fontSize='sm'>Older than 13</Text>
+                                <Text fontWeight='bold'>Visitors</Text>
+                                <Text fontSize='sm'>number of visitor</Text>
                             </Box>
                             <StepperInput />
                         </Flex>
-
-                        <Flex justify='space-between'>
-                            <Box>
-                                <Text fontWeight='bold'>Children</Text>
-                                <Text fontSize='sm'>13 or younger</Text>
-                            </Box>
-                            <StepperInput />
-                        </Flex>
-
                     </Box>
                     <Box w='100%' backgroundColor='white' my={2}>
                         <Button variant="primary" w='100%' leftIcon={<FaIcon icon={faSearch}/>}>Search Now</Button>
@@ -134,7 +165,7 @@ function PropertyCard(props) {
     const history = useHistory()
 
     const handleCheckAvailability = () => {
-        history.push("/")
+        history.push("/detail/foo")
     }
 
     return (<Card
