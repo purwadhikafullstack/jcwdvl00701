@@ -2,6 +2,11 @@ import React, {useEffect, useRef, useState} from "react";
 import {Box, Button, Container, Flex, Heading, Image, Text} from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Slider from "react-slick";
+
+
 import StepperInput from "../Components/StepperInput";
 import Footer from "../Components/Footer"
 
@@ -115,10 +120,33 @@ function Thumbnail(props) {
 }
 
 function Home(props) {
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1
+  };
+
   return (<Box>
     <TopBar />
 
     <Container maxW='container.lg'>
+
+      <Box my={4} py={8}>
+        <Slider {...sliderSettings}>
+          <Box h={'15vh'} backgroundColor={'red'} overflow={'hidden'}>
+            <Image src={'/Assets/room1.png'} w={'100%'} objectFit='cover'></Image>
+          </Box>
+          <Box h={'15vh'} backgroundColor={'green'} overflow={'hidden'}>
+            <Image src={'/Assets/room2.png'} w={'100%'} objectFit='cover'></Image>
+          </Box>
+          <Box h={'15vh'} backgroundColor={'blue'}>
+            <Image src={'/Assets/room3.png'} w={'100%'} objectFit='cover'></Image>
+          </Box>
+        </Slider>
+      </Box>
+
       <Thumbnail />
       <Thumbnail />
       <Thumbnail />
