@@ -7,7 +7,7 @@ import PropertyDetail from "./Pages/PropertyDetail";
 import LoginUser from "./Page/User/loginUser";
 import RegisterUser from "./Page/User/registerUser";
 import LoginTenant from "./Page/Tenant/loginTenant";
-import RegisterTenant from "./Page/Tenant/registerTenant"
+import RegisterTenant from "./Page/Tenant/registerTenant";
 import BookingHistory from "./Page/User/bookingHistory";
 import Booking from "./Page/User/booking";
 import Payment from "./Page/User/payment";
