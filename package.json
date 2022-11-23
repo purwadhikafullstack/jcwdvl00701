@@ -19,7 +19,5 @@
   },
   "workspaces": [
     "projects/*"
-  ],
-  "dependencies": {
-  }
+  ]
 }
