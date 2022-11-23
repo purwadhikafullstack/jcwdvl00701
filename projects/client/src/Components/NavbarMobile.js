@@ -1,7 +1,8 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, useMediaQuery } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
 function NavbarMobile() {
+  const [isLargerThan576] = useMediaQuery("(min-width: 576px)");
   return (
     <Box
       bg="white"
@@ -10,6 +11,7 @@ function NavbarMobile() {
       w="100%"
       borderTop="1px"
       borderColor="gray.200"
+      display={{ ss: "inline", sm: "inline", sl: "none" }}
     >
       <Flex justifyContent="space-around" py="5px">
         <Box fontSize="22px" textAlign="center" color="black">

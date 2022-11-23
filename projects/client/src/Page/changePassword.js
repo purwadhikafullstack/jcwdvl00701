@@ -8,7 +8,8 @@ import { Flex,
     FormErrorMessage,
     Input,
     Button,
-    Text
+    Text,
+    Container
 } from '@chakra-ui/react'
 import turuIcon from "../Assets/image/turuIcon.png"
 import {Link} from "react-router-dom"
@@ -18,7 +19,7 @@ import Footer from '../Components/Footer';
 function ChangePassword(){
     return(
         <>
-        
+        <Container maxW="1140px">
             <Flex justifyContent="center" alignItems="center" h="700px">
                 <Box width="360px" height="297px">
                     <Flex flexDirection="column" justifyContent="center" alignItems="center" pt="19px" pb="10px">
@@ -54,7 +55,8 @@ function ChangePassword(){
                     </Flex>
                 </Box>
             </Flex>
-            <Footer/>
+        </Container>
+        <Footer/>
         </>
     )
 }
