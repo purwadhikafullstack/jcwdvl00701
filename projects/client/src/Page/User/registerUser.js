@@ -8,7 +8,8 @@ import { Flex,
     FormErrorMessage,
     Input,
     Button,
-    Text
+    Text,
+    FormHelperText
 } from '@chakra-ui/react'
 import turuIcon from "../../Assets/image/turuIcon.png"
 import google from "../../Assets/image/google.png"
@@ -16,8 +17,42 @@ import facebook from "../../Assets/image/facebook.png"
 import registerImage from "../../Assets/image/registerImage.png"
 import Footer from "../../Components/Footer"
 import {Link} from "react-router-dom"
+import {useFormik} from "formik"
+import * as Yup from "yup"
+import YupPassword from "yup-password"
+
+import { API_URL } from '../../Constant/api';
 
 function RegisterUser(){
+
+    // const isError = email === ""
+    const phoneRegExp = /(\+62 ((\d{3}([ -]\d{3,})([- ]\d{4,})?)|(\d+)))|(\(\d+\) \d+)|\d{3}( \d+)+|(\d+[ -]\d+)|\d+/gm
+    // configure yup
+    YupPassword(Yup)
+    //formik initialization
+    const formik = useFormik({
+        initialValues : {
+            name : "",
+            email : "",
+            phoneNumber : "",
+            password : "",
+            confirmPassword : ""
+        },
+        validationSchema : Yup.object().shape({
+            email: Yup.string().required("harap masukan email").email("format yang dimasukan bukan email"),
+            phoneNumber: Yup.string().required("masukan nomor anda").matches(phoneRegExp, 'Phone number is not valid'),
+            password : Yup.string().required("harap isi password").min(8).minUppercase(1).minNumbers(1),
+            confirmPassword :  Yup.string().required("harap masukan confirmation password").min(8).minUppercase(1).minNumbers(1)
+        }),
+        validateOnChange : false,
+        onSubmit: (values) => {
+            console.log(values);
+            const {name, email, phoneNumber, password, confirmPassword} = values
+            // axios.post(`${API_URL}/users`, {
+            //     values
+            // })
+        }
+    })
     return (
         <Flex flexDirection="column">
             {/* flex container utk dekstop */}
@@ -54,21 +89,60 @@ function RegisterUser(){
                             <Box width="320px" height="427px">
                                 <Flex flexDirection="column" alignItems="center">
                                     <FormControl id="name" pb="12px">
-                                        <Input type="name" placeholder="Name" borderRadius="0"/>
+                                        <Input 
+                                        type="text" 
+                                        placeholder="Name" 
+                                        borderRadius="0"
+                                        onChange={(e) => formik.setFieldValue("name", e.target.value)}
+                                        />
                                     </FormControl>
                                     <FormControl id="email" pb="12px">
-                                        <Input type="email" placeholder="Email" borderRadius="0"/>
+                                        <Input 
+                                        type="email" 
+                                        placeholder="Email" 
+                                        borderRadius="0"
+                                        onChange={(e) => formik.setFieldValue("email", e.target.value)}
+                                        />
+                                        {formik.errors.email ? 
+                                            <FormHelperText color="red" textAlign="center">
+                                                {formik.errors.email}
+                                            </FormHelperText >
+                                            :
+                                            null
+                                        }
                                     </FormControl>
                                     <FormControl id="phoneNumber" pb="12px">
-                                        <Input type="phoneNumber" placeholder="Phone number" borderRadius="0"/>
+                                        <Input 
+                                        type="text" 
+                                        placeholder="Phone number" 
+                                        borderRadius="0"
+                                        onChange={(e) => formik.setFieldValue("phoneNumber", e.target.value)}
+                                        />
+                                        {formik.errors.phoneNumber ? 
+                                            <FormHelperText color="red" textAlign="center">
+                                                {formik.errors.phoneNumber}
+                                            </FormHelperText >
+                                            :
+                                            null
+                                        }
                                     </FormControl>
                                     <FormControl id="password" pb="12px">
-                                        <Input type="password" placeholder="Password" borderRadius="0"/>
+                                        <Input 
+                                        type="password" 
+                                        placeholder="Password" 
+                                        borderRadius="0"
+                                        onChange={(e) => formik.setFieldValue("password", e.target.value)}
+                                        />
                                     </FormControl>
                                     <FormControl id="confirmPassword" pb="12px">
-                                        <Input type="confirmPassword" placeholder="Confirm Password" borderRadius="0"/>
+                                        <Input 
+                                        type="password" 
+                                        placeholder="Confirm Password" 
+                                        borderRadius="0"
+                                        onChange={(e) => formik.setFieldValue("confirmPassword", e.target.value)}
+                                        />
                                     </FormControl>
-                                    <Button variant="primary" mb="12px">
+                                    <Button variant="primary" mb="12px" onClick={formik.handleSubmit}>
                                         Sign up
                                     </Button>
                                 </Flex>
