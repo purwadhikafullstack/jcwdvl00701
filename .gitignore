@@ -1,2 +1,4 @@
 node_modules/
 .idea/
+
+projects/server/src/models.old/
