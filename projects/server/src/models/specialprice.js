@@ -3,38 +3,40 @@ const {
   Model, DataTypes
 } = require('sequelize');
 module.exports = (sequelize) => {
-  class Room extends Model {
+  class SpecialPrice extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of DataTypes lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      this.belongsTo(models.Property)
-      this.hasMany(models.Reservation)
-      this.hasMany(models.SpecialPrice)
-      this.hasMany(models.RoomUnavailability)
+      this.belongsTo(models.Room)
     }
   }
-  Room.init({
-    name : {
+  SpecialPrice.init({
+    type : {
       type : DataTypes.STRING,
       allowNull : false
     },
-    defaultPrice : {
+    discount : {
       type : DataTypes.INTEGER,
       allowNull : false
     },
-    description : {
-      type : DataTypes.TEXT,
+    startDate : {
+      type : DataTypes.DATE,
+      allowNull : false
     },
-    categoryId : {
+    endDate : {
+      type : DataTypes.DATE,
+      allowNull : false
+    },
+    roomId : {
       type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {
     sequelize,
-    modelName: 'Room',
+    modelName: 'SpecialPrice',
   });
-  return Room;
+  return SpecialPrice;
 };
