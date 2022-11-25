@@ -5,6 +5,12 @@ const { join } = require("path");
 const {sequelize} = require("./lib/sequelize")
 const {env} = require("./config")
 
+const corsOptions = {
+    origin: "*",
+    credentials : true,
+    optionSuccesStatus : 200
+}
+
 const PORT = process.env.PORT || 8000;
 const app = express();
 
