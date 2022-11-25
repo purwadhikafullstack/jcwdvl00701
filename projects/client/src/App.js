@@ -15,7 +15,6 @@ import ForgotPassword from "./Page/forgotPassword";
 import ResetPassword from "./Page/resetPassword";
 import ChangePassword from "./Page/changePassword";
 import VerifyAccount from "./Page/verifyAccount";
-import VerifyForgot from "./Page/verifyForgot";
 import Home from "./Pages/Home";
 
 class App extends React.Component {
@@ -25,7 +24,6 @@ class App extends React.Component {
         <Switch>
           <Route component={PropertyList} path="/list"/>
           <Route component={PropertyDetail} path="/detail/:id"/>
-          <Route component={VerifyForgot} path="/account/password/forgot/verify"/>
           <Route component={VerifyAccount} path="/account/verify"/>
           <Route component={ChangePassword} path="/account/password/change"/>
           <Route component={ResetPassword} path="/account/password/reset"/>

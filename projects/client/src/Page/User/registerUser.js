@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Flex,
     Spacer,
     Image,
@@ -9,6 +10,11 @@ import { Flex,
     Input,
     Button,
     Text,
+    Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
     FormHelperText
 } from '@chakra-ui/react'
 import turuIcon from "../../Assets/image/turuIcon.png"
@@ -16,17 +22,71 @@ import google from "../../Assets/image/google.png"
 import facebook from "../../Assets/image/facebook.png"
 import registerImage from "../../Assets/image/registerImage.png"
 import Footer from "../../Components/Footer"
-import {Link} from "react-router-dom"
+import {Link,useHistory} from "react-router-dom"
 import {useFormik} from "formik"
 import * as Yup from "yup"
 import YupPassword from "yup-password"
-
-import { API_URL } from '../../Constant/api';
+import "yup-phone"
+import { authFirebase } from '../../Config/firebase';
+import {createUserWithEmailAndPassword,
+        getAuth ,
+        sendEmailVerification,
+        GoogleAuthProvider,
+        signInWithPopup,
+        FacebookAuthProvider,
+        onAuthStateChanged
+    } 
+        from "firebase/auth"
+import { API_URL_BE ,API_URL} from '../../Constant/api';
+import axios from "axios"
+import auth_types from '../../Redux/Reducers/Types/userTypes';
+import {useDispatch} from "react-redux"
+import ModalAlert from '../../Components/ModalAlert';
 
 function RegisterUser(){
+    const dispatch = useDispatch()
+    let history = useHistory()
+    // authentication
+    const auth = getAuth()
+    // provider google
+    const providerGoogle = new GoogleAuthProvider()
+    //provider facebook
+    const providerFacebook = new FacebookAuthProvider()
+    
+    const handleWithGoogle = () => {
+        signInWithPopup(authFirebase , providerGoogle)
+        .then((res) => {
+            // info user
+            const user = res.user
+            const providerGoogle = res.providerId
+            console.log("info user:", user);
+            console.log(user.emailVerified);
+            console.log("info provider", providerGoogle);
+            console.log(auth.currentUser);
+            // will send to home, auto verified if use google
+            history.push("/")
+        })
+        .catch((err) => {
+            console.error(err.message)
+        })
+    }
 
-    // const isError = email === ""
-    const phoneRegExp = /(\+62 ((\d{3}([ -]\d{3,})([- ]\d{4,})?)|(\d+)))|(\(\d+\) \d+)|\d{3}( \d+)+|(\d+[ -]\d+)|\d+/gm
+    const handleWithFacebook = () => {
+        signInWithPopup(authFirebase, providerFacebook)
+        .then((res) => {
+            const user = res.user
+            const providerFacebook= res.providerId
+            console.log("info user:", user);
+            console.log(user.emailVerified);
+            console.log("info provider", providerFacebook);
+            console.log(auth.currentUser);
+            // will send to home, auto verified if use google
+            history.push("/")
+        })
+        .catch((err) => {
+            console.error(err.message)
+        })
+    }
     // configure yup
     YupPassword(Yup)
     //formik initialization
@@ -39,18 +99,82 @@ function RegisterUser(){
             confirmPassword : ""
         },
         validationSchema : Yup.object().shape({
-            email: Yup.string().required("harap masukan email").email("format yang dimasukan bukan email"),
-            phoneNumber: Yup.string().required("masukan nomor anda").matches(phoneRegExp, 'Phone number is not valid'),
-            password : Yup.string().required("harap isi password").min(8).minUppercase(1).minNumbers(1),
-            confirmPassword :  Yup.string().required("harap masukan confirmation password").min(8).minUppercase(1).minNumbers(1)
+            email: Yup.string().required("your email is invalid").email("format yang dimasukan bukan email"),
+            phoneNumber : Yup.string().phone("ID").required(),
+            password : Yup.string().required("please fill in the password").min(8).minUppercase(1).minNumbers(1),
+            confirmPassword :  Yup.string().required("please fill in the confirmation password").min(8).minUppercase(1).minNumbers(1)
         }),
         validateOnChange : false,
         onSubmit: (values) => {
             console.log(values);
             const {name, email, phoneNumber, password, confirmPassword} = values
-            // axios.post(`${API_URL}/users`, {
-            //     values
-            // })
+            // condition for password
+            if(password === confirmPassword){
+                // make user use firebase
+                createUserWithEmailAndPassword(authFirebase, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user
+                    const providerId = userCredential.providerId
+                    console.log("respon firebase user :", user);
+                    
+                    //akan dikirim email utk verifikasi
+                        sendEmailVerification(auth.currentUser)
+                        .then((res) => {
+                            
+                            alert("check your email for verification email")
+                            // history.push("account/verify")
+                        })
+                        .catch((err) => {
+                            console.error("error send email", err.message);
+                        })
+                        // endpoinnt utk register user ==> belum dibuat
+                        axios.post(`${process.env.API_URL_BE}/user/register` , {
+                            // id: res.user.uid, // akan dpt uid dari firebase
+                            name,
+                            email,
+                            phone_number :parseInt(phoneNumber),
+                            // role: "user",
+                            is_verified: "false" //dpt boolean sudah verified atau belum
+                            // providerId : res.additionalUserInfo.providerId // utk cek masuk lewat jalur mana
+                        })
+                        .then((res) => {
+                            alert(res.message)
+                            console.log("respon post",res.data);
+                            dispatch({
+                                type: auth_types.Register,
+                                payload : res.data
+                            })
+                        })
+                        .catch((err) => {
+                            console.error(err.message);
+                        })
+                    // akan dikirim ke home tapi berstatus berlum terverifikasi
+                    history.push("/")
+                })
+                .catch((err) => {
+                    alert(err.message)
+                })
+            } else {
+                <Alert
+                    status="Error"
+                    variant="subtle"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign="center"
+                    height="200px"
+                    >
+                    <AlertIcon boxSize="40px" mr={0} />
+                    <AlertTitle mt={4} mb={1} fontSize="lg">
+                        Can not Register account
+                    </AlertTitle>
+                    <AlertDescription maxWidth="sm">
+                        Your Password is not same, please check your confirmation password
+                    </AlertDescription>
+                </Alert>
+                // <ModalAlert props="true"/>
+                alert("password is not same, please check your password!")
+            }
         }
     })
     return (
@@ -133,6 +257,13 @@ function RegisterUser(){
                                         borderRadius="0"
                                         onChange={(e) => formik.setFieldValue("password", e.target.value)}
                                         />
+                                        {formik.errors.password ? 
+                                            <FormHelperText color="red" textAlign="center">
+                                                {formik.errors.password}
+                                            </FormHelperText >
+                                            :
+                                            null
+                                        }
                                     </FormControl>
                                     <FormControl id="confirmPassword" pb="12px">
                                         <Input 
@@ -141,6 +272,13 @@ function RegisterUser(){
                                         borderRadius="0"
                                         onChange={(e) => formik.setFieldValue("confirmPassword", e.target.value)}
                                         />
+                                        {formik.errors.confirmPassword ? 
+                                            <FormHelperText color="red" textAlign="center">
+                                                {formik.errors.confirmPassword}
+                                            </FormHelperText >
+                                            :
+                                            null
+                                        }
                                     </FormControl>
                                     <Button variant="primary" mb="12px" onClick={formik.handleSubmit}>
                                         Sign up
@@ -158,11 +296,11 @@ function RegisterUser(){
                                 </Flex>
                                 <hr />
                                 
-                                    <Button variant="secondary" mt="20px">
+                                    <Button variant="secondary" mt="20px" onClick={handleWithGoogle}>
                                         <Image src={google} mr="5px"></Image>
                                         <Text>Sign Up With Google</Text>                       
                                     </Button>
-                                    <Button variant="secondary" mt="20px">
+                                    <Button variant="secondary" mt="20px" onClick={handleWithFacebook}>
                                         <Image src={facebook}></Image>
                                         <Text>Sign Up With Facebook</Text>                       
                                     </Button>
