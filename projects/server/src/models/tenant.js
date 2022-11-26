@@ -1,32 +1,42 @@
-const {DataTypes} = require("sequelize")
-
-const Tenant = (sequelize) => {
-    return sequelize.define("Tenant", {
-        name : {
-            type : DataTypes.STRING,
-            allowNull : false
-        },
-        email :  {
-            type : DataTypes.STRING,
-            allowNull : false
-        },
-        password : {
-            type : DataTypes.STRING,
-            allowNull : false
-        },
-        phone_number : {
-            type : DataTypes.STRING,
-            allowNull :false
-        },
-        id_card_picture : {
-            type : DataTypes.STRING,
-            allowNull :false
-        },
-        bank_account_number : {
-            type : DataTypes.STRING,
-            allowNull : false
-        }
-    })
-}
-
-module.exports = Tenant
+'use strict';
+const {
+  Model, DataTypes
+} = require('sequelize');
+module.exports = (sequelize) => {
+  class Tenant extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      this.belongsTo(models.Bank)
+      this.hasMany(models.Property)
+    }
+  }
+  Tenant.init({
+    name : {
+      type : DataTypes.STRING,
+    },
+    email :  {
+      type : DataTypes.STRING,
+      unique : true
+    },
+    password : {
+      type : DataTypes.STRING,
+    },
+    phone_number : {
+      type : DataTypes.STRING,
+    },
+    id_card_picture : {
+      type : DataTypes.STRING,
+    },
+    bank_account_number : {
+      type : DataTypes.STRING,
+    }
+  }, {
+    sequelize,
+    modelName: 'Tenant',
+  });
+  return Tenant;
+};
