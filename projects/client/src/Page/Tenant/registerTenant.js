@@ -107,22 +107,22 @@ function RegisterTenant(){
                                             </InputRightElement>
                                         </InputGroup>
                                     </FormControl>
-                                                <FormControl id="confirmPassword" pb="12px">
-                                                    <InputGroup>
+                                    <FormControl id="confirmPassword" pb="12px">
+                                        <InputGroup>
                                             <Input 
                                             type={showConfirmPassword ? "text" :"password"} 
                                             placeholder="Confirm Password" 
                                             borderRadius="0"  
                                             bg="white"
                                             />
-                                                        <InputRightElement >
+                                            <InputRightElement >
                                                 <Button onClick={(e) => handleClick("showConfirmPassword")}>
                                                 { showConfirmPassword? 
                                                     <i className="fa-sharp fa-solid fa-eye"></i> 
                                                     :
                                                     <i className="fa-solid fa-eye-slash"></i>
                                                 }
-                                                            </Button>
+                                                </Button>
                                             </InputRightElement>
                                         </InputGroup>
                                             
