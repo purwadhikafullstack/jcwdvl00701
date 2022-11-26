@@ -9,6 +9,8 @@ import { Flex,
     Input,
     Button,
     Text,
+    InputGroup,
+    InputRightElement,
     Container
 } from '@chakra-ui/react'
 import turuIcon from "../../Assets/image/turuIcon.png"
@@ -19,6 +21,16 @@ import Footer from "../../Components/Footer"
 import {Link} from "react-router-dom"
 
 function RegisterTenant(){
+     // for show password
+    const [showPassword, setShowPassword] = React.useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = React.useState(false)
+    const handleClick = (cek) =>{
+        if (cek === "showPassword"){
+            setShowPassword(!showPassword)
+        } else if (cek === "showConfirmPassword"){
+            setShowConfirmPassword(!showConfirmPassword)
+        }
+    }
     return (
         <>
         
@@ -77,13 +89,44 @@ function RegisterTenant(){
                                                     <Input type="number" placeholder="Phone number" borderRadius="0"  bg="white"/>
                                                 </FormControl>
                                                 <FormControl id="password" pb="12px">
-                                                    <Input type="password" placeholder="Password" borderRadius="0"  bg="white"/>
-                                                        {/* <i class="fa-solid fa-eye"></i> */}
-                                                </FormControl>
+                                                    <InputGroup>
+                                            <Input 
+                                            type={showPassword ?"text" : "password"} 
+                                            placeholder="Password" 
+                                            borderRadius="0"  
+                                            bg="white"
+                                            />
+                                                        <InputRightElement>
+                                                <Button onClick={() => handleClick("showPassword")}>
+                                                { showPassword? 
+                                                    <i className="fa-sharp fa-solid fa-eye"></i> 
+                                                    :
+                                                    <i className="fa-solid fa-eye-slash"></i>
+                                                }
+                                                            </Button>
+                                            </InputRightElement>
+                                        </InputGroup>
+                                    </FormControl>
                                                 <FormControl id="confirmPassword" pb="12px">
-                                                    <Input type="password" placeholder="Confirm Password" borderRadius="0"  bg="white"/>
-                                                        {/* <i class="fa-solid fa-eye"></i> */}
-                                                </FormControl>
+                                                    <InputGroup>
+                                            <Input 
+                                            type={showConfirmPassword ? "text" :"password"} 
+                                            placeholder="Confirm Password" 
+                                            borderRadius="0"  
+                                            bg="white"
+                                            />
+                                                        <InputRightElement >
+                                                <Button onClick={(e) => handleClick("showConfirmPassword")}>
+                                                { showConfirmPassword? 
+                                                    <i className="fa-sharp fa-solid fa-eye"></i> 
+                                                    :
+                                                    <i className="fa-solid fa-eye-slash"></i>
+                                                }
+                                                            </Button>
+                                            </InputRightElement>
+                                        </InputGroup>
+                                            
+                                    </FormControl>
                                                 <FormControl id="idCard" pb="12px">
                                                     <Input type="Text" placeholder="Upload Id Card " borderRadius="0"  bg="white"/>
                                                 </FormControl>

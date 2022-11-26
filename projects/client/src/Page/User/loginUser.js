@@ -9,7 +9,9 @@ import { Flex,
     Input,
     Button,
     Text,
-    Container
+    Container,
+    InputGroup,
+    InputRightElement
 } from '@chakra-ui/react'
 import turuIcon from "../../Assets/image/turuIcon.png"
 import google from "../../Assets/image/google.png"
@@ -19,6 +21,11 @@ import Footer from '../../Components/Footer';
 import {Link} from "react-router-dom"
 
 function LoginUser () {
+    // for show password
+    const [showPassword, setShowPassword] = React.useState(false)
+    const handleClick = () => {
+        setShowPassword(!showPassword)
+    }
     return (
         <>
         <Container maxW="2x1">
@@ -37,22 +44,36 @@ function LoginUser () {
                             overflow="hidden"
                             />
                         </Flex>
-                    </Box>
-
-                    {/* Form */}
-                    <Box w="50em">
-                        <Flex justifyContent="center" alignItemns="center" my="3em">
-                            <Box width="360px" height="297px">
-                                <Flex flexDirection="column" justifyContent="center" alignItems="center" pt="19px" pb="10px">
-                                    <Image 
-                                    src={turuIcon} 
-                                    alt="turu-icon" 
-                                    width="59px"
-                                    height="58px"
-                                    />
-                                    <Heading as="h1" size="md" m="10px">
-                                        Welcome to Turu
-                                    </Heading>
+                        <Flex justifyContent="center" alignItems="center">
+                            <Box width="320px" height="427px">
+                                <Flex flexDirection="column" alignItems="center">
+                                    <FormControl id="email" pb="12px">
+                                        <Input type="email" placeholder="Email/Phone number" borderRadius="0"/>
+                                    </FormControl>
+                                    <FormControl id="password" pb="15px">
+                                        <InputGroup>
+                                        <Input 
+                                        type={showPassword ? "text" : "password"} 
+                                        placeholder="Password" 
+                                        borderRadius="0" 
+                                        />
+                                        <InputRightElement>
+                                            <Button onClick={handleClick}>
+                                                { showPassword? 
+                                                    <i className="fa-sharp fa-solid fa-eye"></i> 
+                                                    :
+                                                    <i className="fa-solid fa-eye-slash"></i>
+                                                }
+                                                </Button>
+                                        </InputRightElement>
+                                        
+                                        </InputGroup>
+                                    </FormControl> 
+                                    
+                                    
+                                    <Button variant="primary" mb="12px">
+                                        Login
+                                    </Button>
                                 </Flex>
                                 <Flex justifyContent="center" alignItems="center">
                                     <Box width="320px" height="427px">

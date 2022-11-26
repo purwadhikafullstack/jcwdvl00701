@@ -10,11 +10,13 @@ import { Flex,
     Input,
     Button,
     Text,
+    InputGroup,
+    InputRightElement,
     Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  CloseButton,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
+    CloseButton,
     FormHelperText
 } from '@chakra-ui/react'
 import turuIcon from "../../Assets/image/turuIcon.png"
@@ -37,13 +39,27 @@ import {createUserWithEmailAndPassword,
         onAuthStateChanged
     } 
         from "firebase/auth"
-import { API_URL_BE ,API_URL} from '../../Constant/api';
 import axios from "axios"
 import auth_types from '../../Redux/Reducers/Types/userTypes';
-import {useDispatch} from "react-redux"
-import ModalAlert from '../../Components/ModalAlert';
+import {useDispatch, useSelector} from "react-redux"
 
 function RegisterUser(){
+    // utk testing
+    const { data } =  axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/greetings`
+    );
+        console.log(data?.message || "error");
+    // for show password
+    const [showPassword, setShowPassword] = React.useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = React.useState(false)
+    const handleClick = (cek) =>{
+        if (cek === "showPassword"){
+            setShowPassword(!showPassword)
+        } else if (cek === "showConfirmPassword"){
+            setShowConfirmPassword(!showConfirmPassword)
+        }
+    }
+
     const dispatch = useDispatch()
     let history = useHistory()
     // authentication
@@ -127,15 +143,40 @@ function RegisterUser(){
                         .catch((err) => {
                             console.error("error send email", err.message);
                         })
+
+                        // fetch(`${process.env.REACT_APP_API_BASE_URL}/user/register`, {
+                        //     headers: {
+                        //         'Accept': 'application/json',
+                        //         'Content-Type': 'application/json',
+                        //         'Access-Control-Allow-Origin' : '*',
+                        //         'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+                        //     },
+                        //     method: 'POST',
+                        //     body: JSON.stringify({
+                        //         name,
+                        //         email,
+                        //         phone_number: phoneNumber,
+                        //         is_verified : "false"
+                        //     })
+                        // })
+                        // .then((res) => {
+                        //     console.log(res);
+                        //     dispatch({
+                        //         type: auth_types.Register,
+                        //         payload : res
+                        //     })
+                        // })
+                        // .catch((err) => {
+                        //     console.error(err)
+                        // })
+
                         // endpoinnt utk register user ==> belum dibuat
-                        axios.post(`${process.env.API_URL_BE}/user/register` , {
+                        axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
                             // id: res.user.uid, // akan dpt uid dari firebase
                             name,
                             email,
-                            phone_number :parseInt(phoneNumber),
-                            // role: "user",
+                            phone_number :phoneNumber,
                             is_verified: "false" //dpt boolean sudah verified atau belum
-                            // providerId : res.additionalUserInfo.providerId // utk cek masuk lewat jalur mana
                         })
                         .then((res) => {
                             alert(res.message)
@@ -178,49 +219,37 @@ function RegisterUser(){
         }
     })
     return (
-        <>
-        
-        <Container maxW="2x1">
-            <Flex flexDirection="column"/>
-                {/* flex container utk dekstop */}
+        <Flex flexDirection="column">
+            {/* flex container utk dekstop */}
+            <Flex>
+                {/* utk image dekstop */}
                 <Flex>
-                    {/* utk image dekstop */}
-                    <Box width="900px" display={{ ss:"none", sm:"none", md:"block"}}>
-                        <Flex>
-                            <Image 
-                            // display={{ ss:"none", sm:"none", sl:"none", md:"block", lg:"block"}} 
-                            src={registerImage} 
-                            width="900px" 
-                            height="1080px"
-                            objectFit="cover"
-                            overflow="hidden"
-                            />
-                        </Flex>
-                    </Box>
+                    <Image display={{ ss:"none", sm:"none", sl:"none", md:"block", lg:"block"}} src={registerImage} width="900px" height="1080px"/>
+                </Flex>
 
-                    {/* Form */}
-                    <Box w="50em"/>
-                        <Flex justifyContent="center" alignItemns="center" my="3em" >
-                            <Box width="360px" height="297px">
-                                <Flex flexDirection="column" justifyContent="center" alignItems="center" pt="19px" pb="10px"/>
-                                    <Image 
-                                    src={turuIcon} 
-                                    alt="turu-icon" 
-                                    width="59px"
-                                    height="58px"
-                                    />
-                                    <Heading as="h1" size="md" m="10px">
-                                        Join Turu
-                                    </Heading>
-                                    <Flex w="184px" h="37px" justifyContent="center">
-                                        <Text fontSize="12px" lineHeight="15.6px" fontWeight="300" textAlign="center" mr="5px">
-                                            Already have an acount?
-                                        </Text>
-                                        <Text fontSize="12px" lineHeight="15.6px" fontWeight="300" textAlign="center"  
-                                        _hover={{textDecoration : "underline", fontWeight: "bold"}} cursor="pointer">
-                                            <Link to="login">Login</Link>
-                                        </Text>
-                                    </Flex>
+                {/* Form */}
+                <Flex ml={{ss:"1em",sm:"6em",md:"7em", lg:"9em"}} my="3em" >
+                    <Box width="360px" height="297px">
+                        <Flex flexDirection="column" justifyContent="center" alignItems="center" pt="19px" pb="10px">
+                            <Image 
+                            src={turuIcon} 
+                            alt="turu-icon" 
+                            width="59px"
+                            height="58px"
+                            />
+                            <Heading as="h1" size="md" m="10px">
+                                Join Turu
+                            </Heading>
+                            <Flex w="184px" h="37px" justifyContent="center">
+                                <Text fontSize="12px" lineHeight="15.6px" fontWeight="300" textAlign="center" mr="5px">
+                                    Already have an acount?
+                                </Text>
+                                <Text fontSize="12px" lineHeight="15.6px" fontWeight="300" textAlign="center"  
+                                _hover={{textDecoration : "underline", fontWeight: "bold"}} cursor="pointer">
+                                    <Link to="login">Login</Link>
+                                </Text>
+                            </Flex>
+                        </Flex>
                         <Flex justifyContent="center" alignItems="center">
                             <Box width="320px" height="427px">
                                 <Flex flexDirection="column" alignItems="center">
@@ -263,12 +292,23 @@ function RegisterUser(){
                                         }
                                     </FormControl>
                                     <FormControl id="password" pb="12px">
-                                        <Input 
-                                        type="password" 
-                                        placeholder="Password" 
-                                        borderRadius="0"
-                                        onChange={(e) => formik.setFieldValue("password", e.target.value)}
-                                        />
+                                        <InputGroup>
+                                            <Input 
+                                            type={showPassword ?"text" : "password"} 
+                                            placeholder="Password" 
+                                            borderRadius="0"
+                                            onChange={(e) => formik.setFieldValue("password", e.target.value)}
+                                            />
+                                            <InputRightElement>
+                                                <Button onClick={() => handleClick("showPassword")}>
+                                                { showPassword? 
+                                                    <i className="fa-sharp fa-solid fa-eye"></i> 
+                                                    :
+                                                    <i className="fa-solid fa-eye-slash"></i>
+                                                }
+                                                </Button>
+                                            </InputRightElement>
+                                        </InputGroup>
                                         {formik.errors.password ? 
                                             <FormHelperText color="red" textAlign="center">
                                                 {formik.errors.password}
@@ -278,12 +318,23 @@ function RegisterUser(){
                                         }
                                     </FormControl>
                                     <FormControl id="confirmPassword" pb="12px">
-                                        <Input 
-                                        type="password" 
-                                        placeholder="Confirm Password" 
-                                        borderRadius="0"
-                                        onChange={(e) => formik.setFieldValue("confirmPassword", e.target.value)}
-                                        />
+                                        <InputGroup>
+                                            <Input 
+                                            type={showConfirmPassword ? "text" :"password"} 
+                                            placeholder="Confirm Password" 
+                                            borderRadius="0"
+                                            onChange={(e) => formik.setFieldValue("confirmPassword", e.target.value)}
+                                            />
+                                            <InputRightElement >
+                                                <Button onClick={(e) => handleClick("showConfirmPassword")}>
+                                                { showConfirmPassword? 
+                                                    <i className="fa-sharp fa-solid fa-eye"></i> 
+                                                    :
+                                                    <i className="fa-solid fa-eye-slash"></i>
+                                                }
+                                                </Button>
+                                            </InputRightElement>
+                                        </InputGroup>
                                         {formik.errors.confirmPassword ? 
                                             <FormHelperText color="red" textAlign="center">
                                                 {formik.errors.confirmPassword}
@@ -296,63 +347,38 @@ function RegisterUser(){
                                         Sign up
                                     </Button>
                                 </Flex>
-                                <Flex justifyContent="center" alignItems="center">
-                                    <Box width="320px" height="427px">
-                                        <Flex flexDirection="column" alignItems="center">
-                                            <FormControl id="name" pb="12px">
-                                                <Input type="name" placeholder="Name" borderRadius="0"/>
-                                            </FormControl>
-                                            <FormControl id="email" pb="12px">
-                                                <Input type="email" placeholder="Email" borderRadius="0"/>
-                                            </FormControl>
-                                            <FormControl id="phoneNumber" pb="12px">
-                                                <Input type="phoneNumber" placeholder="Phone number" borderRadius="0"/>
-                                            </FormControl>
-                                            <FormControl id="password" pb="12px">
-                                                <Input type="password" placeholder="Password" borderRadius="0"/>
-                                            </FormControl>
-                                            <FormControl id="confirmPassword" pb="12px">
-                                                <Input type="confirmPassword" placeholder="Confirm Password" borderRadius="0"/>
-                                            </FormControl>
-                                            <Button variant="primary" mb="12px">
-                                                Sign up
-                                            </Button>
-                                        </Flex>
-                                        <Flex justifyContent="flex-end" mr="10px" mb="16px">
-                                            <Text 
-                                            fontSize="12px" 
-                                            fontWeight="300" 
-                                            cursor="pointer" 
-                                            _hover={{textDecoration : "underline"}}
-                                            >
-                                                <Link to="/tenant/register">Sign Up as Tenant</Link>
-                                            </Text>
-                                        </Flex>
-                                        <hr />
-                                        
-                                            <Button variant="secondary" mt="20px">
-                                                <Image src={google} mr="5px"></Image>
-                                                <Text>Sign Up With Google</Text>                       
-                                            </Button>
-                                            <Button variant="secondary" mt="20px">
-                                                <Image src={facebook}></Image>
-                                                <Text>Sign Up With Facebook</Text>                       
-                                            </Button>
-                                        
-                                    </Box>
+                                <Flex justifyContent="flex-end" mr="10px" mb="16px">
+                                    <Text 
+                                    fontSize="12px" 
+                                    fontWeight="300" 
+                                    cursor="pointer" 
+                                    _hover={{textDecoration : "underline"}}
+                                    >
+                                        <Link to="/tenant/register">Sign Up as Tenant</Link>
+                                    </Text>
                                 </Flex>
+                                <hr />
+                                
+                                    <Button variant="secondary" mt="20px" onClick={handleWithGoogle}>
+                                        <Image src={google} mr="5px"></Image>
+                                        <Text>Sign Up With Google</Text>                       
+                                    </Button>
+                                    <Button variant="secondary" mt="20px" onClick={handleWithFacebook}>
+                                        <Image src={facebook}></Image>
+                                        <Text>Sign Up With Facebook</Text>                       
+                                    </Button>
+                                
                             </Box>
                         </Flex>
                     </Box>
                 </Flex>
-                <Footer
-                ss={"22em"}
-                sm={"22em"}
-                sl={"22em"}
-                />
             </Flex>
-        </Container>
-        </>
+            <Footer
+            ss={"22em"}
+            sm={"22em"}
+            sl={"22em"}
+            />
+            </Flex>
     )
 }
 
