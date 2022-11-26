@@ -13,7 +13,6 @@ module.exports = (sequelize) => {
       this.hasMany(models.Reservation)
     }
   }
-
   User.init({
     id: {
       allowNull: false,
