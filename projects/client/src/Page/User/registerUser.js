@@ -10,11 +10,13 @@ import { Flex,
     Input,
     Button,
     Text,
+    InputGroup,
+    InputRightElement,
     Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  CloseButton,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
+    CloseButton,
     FormHelperText
 } from '@chakra-ui/react'
 import turuIcon from "../../Assets/image/turuIcon.png"
@@ -37,13 +39,29 @@ import {createUserWithEmailAndPassword,
         onAuthStateChanged
     } 
         from "firebase/auth"
-import { API_URL_BE ,API_URL} from '../../Constant/api';
 import axios from "axios"
 import auth_types from '../../Redux/Reducers/Types/userTypes';
-import {useDispatch} from "react-redux"
-import ModalAlert from '../../Components/ModalAlert';
+import {useDispatch, useSelector} from "react-redux"
 
 function RegisterUser(){
+    // utk testing
+    const { data } =  axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/greetings`
+    );
+        console.log(data?.message || "error");
+
+        
+    // for show password
+    const [showPassword, setShowPassword] = React.useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = React.useState(false)
+    const handleClick = (cek) =>{
+        if (cek === "showPassword"){
+            setShowPassword(!showPassword)
+        } else if (cek === "showConfirmPassword"){
+            setShowConfirmPassword(!showConfirmPassword)
+        }
+    }
+
     const dispatch = useDispatch()
     let history = useHistory()
     // authentication
@@ -127,15 +145,40 @@ function RegisterUser(){
                         .catch((err) => {
                             console.error("error send email", err.message);
                         })
+
+                        // fetch(`${process.env.REACT_APP_API_BASE_URL}/user/register`, {
+                        //     headers: {
+                        //         'Accept': 'application/json',
+                        //         'Content-Type': 'application/json',
+                        //         'Access-Control-Allow-Origin' : '*',
+                        //         'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+                        //     },
+                        //     method: 'POST',
+                        //     body: JSON.stringify({
+                        //         name,
+                        //         email,
+                        //         phone_number: phoneNumber,
+                        //         is_verified : "false"
+                        //     })
+                        // })
+                        // .then((res) => {
+                        //     console.log(res);
+                        //     dispatch({
+                        //         type: auth_types.Register,
+                        //         payload : res
+                        //     })
+                        // })
+                        // .catch((err) => {
+                        //     console.error(err)
+                        // })
+
                         // endpoinnt utk register user ==> belum dibuat
-                        axios.post(`${process.env.API_URL_BE}/user/register` , {
+                        axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
                             // id: res.user.uid, // akan dpt uid dari firebase
                             name,
                             email,
-                            phone_number :parseInt(phoneNumber),
-                            // role: "user",
+                            phone_number :phoneNumber,
                             is_verified: "false" //dpt boolean sudah verified atau belum
-                            // providerId : res.additionalUserInfo.providerId // utk cek masuk lewat jalur mana
                         })
                         .then((res) => {
                             alert(res.message)
@@ -251,12 +294,23 @@ function RegisterUser(){
                                         }
                                     </FormControl>
                                     <FormControl id="password" pb="12px">
-                                        <Input 
-                                        type="password" 
-                                        placeholder="Password" 
-                                        borderRadius="0"
-                                        onChange={(e) => formik.setFieldValue("password", e.target.value)}
-                                        />
+                                        <InputGroup>
+                                            <Input 
+                                            type={showPassword ?"text" : "password"} 
+                                            placeholder="Password" 
+                                            borderRadius="0"
+                                            onChange={(e) => formik.setFieldValue("password", e.target.value)}
+                                            />
+                                            <InputRightElement>
+                                                <Button onClick={() => handleClick("showPassword")}>
+                                                { showPassword? 
+                                                    <i className="fa-sharp fa-solid fa-eye"></i> 
+                                                    :
+                                                    <i className="fa-solid fa-eye-slash"></i>
+                                                }
+                                                </Button>
+                                            </InputRightElement>
+                                        </InputGroup>
                                         {formik.errors.password ? 
                                             <FormHelperText color="red" textAlign="center">
                                                 {formik.errors.password}
@@ -266,12 +320,23 @@ function RegisterUser(){
                                         }
                                     </FormControl>
                                     <FormControl id="confirmPassword" pb="12px">
-                                        <Input 
-                                        type="password" 
-                                        placeholder="Confirm Password" 
-                                        borderRadius="0"
-                                        onChange={(e) => formik.setFieldValue("confirmPassword", e.target.value)}
-                                        />
+                                        <InputGroup>
+                                            <Input 
+                                            type={showConfirmPassword ? "text" :"password"} 
+                                            placeholder="Confirm Password" 
+                                            borderRadius="0"
+                                            onChange={(e) => formik.setFieldValue("confirmPassword", e.target.value)}
+                                            />
+                                            <InputRightElement >
+                                                <Button onClick={(e) => handleClick("showConfirmPassword")}>
+                                                { showConfirmPassword? 
+                                                    <i className="fa-sharp fa-solid fa-eye"></i> 
+                                                    :
+                                                    <i className="fa-solid fa-eye-slash"></i>
+                                                }
+                                                </Button>
+                                            </InputRightElement>
+                                        </InputGroup>
                                         {formik.errors.confirmPassword ? 
                                             <FormHelperText color="red" textAlign="center">
                                                 {formik.errors.confirmPassword}
@@ -315,7 +380,7 @@ function RegisterUser(){
             sm={"22em"}
             sl={"22em"}
             />
-        </Flex>
+            </Flex>
     )
 }
 

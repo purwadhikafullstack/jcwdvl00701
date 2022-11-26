@@ -8,7 +8,9 @@ import { Flex,
     FormErrorMessage,
     Input,
     Button,
-    Text
+    Text,
+    InputGroup,
+    InputRightElement
 } from '@chakra-ui/react'
 import turuIcon from "../../Assets/image/turuIcon.png"
 import google from "../../Assets/image/google.png"
@@ -18,6 +20,11 @@ import Footer from '../../Components/Footer';
 import {Link} from "react-router-dom"
 
 function LoginTenant() {
+    // for show password
+    const [showPassword, setShowPassword] = React.useState(false)
+    const handleClick = () => {
+        setShowPassword(!showPassword)
+    }
     return (
         <Flex flexDirection="column" bg="black">
             {/* flex container utk dekstop */}
@@ -48,7 +55,24 @@ function LoginTenant() {
                                         <Input type="email" placeholder="Email/Phone number" borderRadius="0"  bg="white"/>
                                     </FormControl>
                                     <FormControl id="password" pb="15px">
-                                        <Input type="password" placeholder="Password" borderRadius="0" bg="white" />
+                                        <InputGroup>
+                                            <Input 
+                                            type={showPassword ? "text" : "password"}  
+                                            placeholder="Password" 
+                                            borderRadius="0" 
+                                            bg="white" 
+                                            />
+                                            <InputRightElement>
+                                            <Button onClick={handleClick}>
+                                                { showPassword? 
+                                                    <i className="fa-sharp fa-solid fa-eye"></i> 
+                                                    :
+                                                    <i className="fa-solid fa-eye-slash"></i>
+                                                }
+                                                </Button>
+                                        </InputRightElement>
+                                        
+                                        </InputGroup>
                                     </FormControl> 
                                     <Button variant="primary" mb="12px">
                                         Login

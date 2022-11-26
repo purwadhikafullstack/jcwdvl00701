@@ -5,25 +5,28 @@ const { join } = require("path");
 const {sequelize} = require("./lib/sequelize")
 const {env} = require("./config")
 
-const corsOptions = {
-    origin: "*",
-    credentials : true,
-    optionSuccesStatus : 200
-}
-
 const PORT = process.env.PORT || 8000;
 const app = express();
+
+console.log("dari .env =",process.env.WHITELISTED_DOMAIN );
 app.use(
   cors({
-    origin: [
-      process.env.WHITELISTED_DOMAIN &&
-        process.env.WHITELISTED_DOMAIN.split(","),
-    ],
+    origin:
+      process.env.WHITELISTED_DOMAIN 
+      // process.env.WHITELISTED_DOMAIN.split(","),
   })
 );
 
-app.use(cors(corsOptions))
+// app.use(
+//   cors({
+//     origin: "*",
+//     credentials:true
+//   })
+// );
+
+
 app.use(express.json());
+
 
 //#region API ROUTES
 
@@ -32,7 +35,7 @@ app.use(express.json());
 // sequelize.sync({ alter: true })
 const {userRouters} = require("./routes")
 
-app.use("/api/user", userRouters)
+app.use("/user", userRouters)
 
 app.get("/api", (req, res) => {
   console.log('test')
