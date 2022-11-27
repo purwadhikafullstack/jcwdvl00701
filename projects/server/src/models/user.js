@@ -50,7 +50,10 @@ module.exports = (sequelize) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       default: false
-    }
+    },
+    firebaseProviderId: {
+      type: DataTypes.STRING,
+    },
   }, {
     sequelize,
     modelName: 'User',

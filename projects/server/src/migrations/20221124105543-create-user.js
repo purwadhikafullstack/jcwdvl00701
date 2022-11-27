@@ -41,6 +41,9 @@ module.exports = {
                 allowNull: false,
                 default: false
             },
+            firebaseProviderId: {
+                type: Sequelize.STRING,
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
