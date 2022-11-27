@@ -28,6 +28,11 @@ module.exports = (sequelize) => {
     description : {
       type : DataTypes.TEXT,
     },
+    capacity: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      default: 1
+    },
     categoryId : {
       type: DataTypes.INTEGER,
       allowNull: false
