@@ -19,6 +19,13 @@ import facebook from "../../Assets/image/facebook.png"
 import registerTenant from "../../Assets/image/registerTenant.png"
 import Footer from "../../Components/Footer"
 import {Link} from "react-router-dom"
+import {signInWithPopup, 
+    getAuth, 
+    createUserWithEmailAndPassword, 
+    sendEmailVerification , 
+    GoogleAuthProvider, 
+    FacebookAuthProvider
+} from "firebase/auth"
 
 function RegisterTenant(){
      // for show password
@@ -67,10 +74,10 @@ function RegisterTenant(){
                                             Join Turu
                                         </Heading>
                                         <Flex w="184px" h="37px" justifyContent="center">
-                                            <Text fontSize="12px" lineHeight="15.6px" fontWeight="300" textAlign="center" mr="5px" color="white">
+                                            <Text fontSize="12px" lineHeight="15.6" fontWeight="300" textAlign="center" mr="5px" color="white">
                                                 Already have an acount?
                                             </Text>
-                                            <Text fontSize="12px" lineHeight="15.6px" fontWeight="300" textAlign="center" color="white" 
+                                            <Text fontSize="12px" lineHeight="15.6" fontWeight="300" textAlign="center" color="white" 
                                             _hover={{textDecoration : "underline", fontWeight: "bold"}} cursor="pointer">
                                                 <Link to="/tenant/login">Login</Link>
                                             </Text>

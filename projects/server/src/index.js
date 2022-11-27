@@ -8,23 +8,30 @@ const {env} = require("./config")
 const PORT = process.env.PORT || 8000;
 const app = express();
 
+// const corsOptions = {
+//     origin: "*",
+//     credentials : true,
+//     optionSuccesStatus : 200
+// }
+
 console.log("dari .env =",process.env.WHITELISTED_DOMAIN );
+
 app.use(
   cors({
     origin:
-      process.env.WHITELISTED_DOMAIN 
-      // process.env.WHITELISTED_DOMAIN.split(","),
+      process.env.WHITELISTED_DOMAIN &&
+      process.env.WHITELISTED_DOMAIN.split(","),
   })
 );
 
 // app.use(
 //   cors({
 //     origin: "*",
-//     credentials:true
+//     credentials:true,
 //   })
 // );
 
-
+// app.use(cors(corsOptions))
 app.use(express.json());
 
 

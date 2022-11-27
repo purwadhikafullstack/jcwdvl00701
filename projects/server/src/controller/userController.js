@@ -6,16 +6,16 @@ module.exports = ({
     addUser : async (req,res) => {
         try {
             console.log(req.body);
-            const {name, email,phone_number,gender, birthdate, profile_pic, is_verified } = req.body
+            const {id,name, email,phoneNumber,gender, birthdate, profile_pic, is_verified } = req.body
 
             await User.create({
+                id,
                 name,
                 email,
-                phone_number,
+                phoneNumber,
                 gender,
                 birthdate,
                 profile_pic,
-                is_verified
             })
 
             return res.status(200).send({

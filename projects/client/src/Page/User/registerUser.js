@@ -44,11 +44,7 @@ import auth_types from '../../Redux/Reducers/Types/userTypes';
 import {useDispatch, useSelector} from "react-redux"
 
 function RegisterUser(){
-    // utk testing
-    const { data } =  axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/greetings`
-    );
-        console.log(data?.message || "error");
+
     // for show password
     const [showPassword, setShowPassword] = React.useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = React.useState(false)
@@ -144,39 +140,12 @@ function RegisterUser(){
                             console.error("error send email", err.message);
                         })
 
-                        // fetch(`${process.env.REACT_APP_API_BASE_URL}/user/register`, {
-                        //     headers: {
-                        //         'Accept': 'application/json',
-                        //         'Content-Type': 'application/json',
-                        //         'Access-Control-Allow-Origin' : '*',
-                        //         'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-                        //     },
-                        //     method: 'POST',
-                        //     body: JSON.stringify({
-                        //         name,
-                        //         email,
-                        //         phone_number: phoneNumber,
-                        //         is_verified : "false"
-                        //     })
-                        // })
-                        // .then((res) => {
-                        //     console.log(res);
-                        //     dispatch({
-                        //         type: auth_types.Register,
-                        //         payload : res
-                        //     })
-                        // })
-                        // .catch((err) => {
-                        //     console.error(err)
-                        // })
-
                         // endpoinnt utk register user ==> belum dibuat
                         axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
-                            // id: res.user.uid, // akan dpt uid dari firebase
+                            id: 2,
                             name,
                             email,
-                            phone_number :phoneNumber,
-                            is_verified: "false" //dpt boolean sudah verified atau belum
+                            phoneNumber,
                         })
                         .then((res) => {
                             alert(res.message)
