@@ -72,34 +72,41 @@ function Report() {
         <FormControl pb="20px">
           <Input type="name" placeholder="Short by:" borderRadius="0" />
         </FormControl>
-        <TableContainer fontSize="12px" color="red" padding="0px">
-          <Table variant="simple" padding="0px">
-            <Thead padding="0px">
-              <Tr padding="0px">
-                <Th padding="0px" isNumeric>
-                  No.
-                </Th>
-                <Th padding="0px">PROPERTY NAME</Th>
-                <Th> padding="0px"INCOME</Th>
+        <TableContainer fontSize="12px" color="black" mb="30px">
+          <Table variant="simple">
+            <Thead bg="rgba(217, 217, 217, 1)">
+              <Tr>
+                <Th px="2px">No.</Th>
+                <Th px="2px">PROPERTY NAME</Th>
+                <Th px="2px"> INCOME</Th>
               </Tr>
             </Thead>
             <Tbody>
               <Tr>
-                <Td padding="0px">1</Td>
-                <Td>Apartement in Bandung</Td>
-                <Td isNumeric>Rp. 300.000,00</Td>
+                <Td px="2px">1</Td>
+                <Td px="2px">Apartement in Bandung</Td>
+                <Td px="2px">Rp. 300.000,00</Td>
               </Tr>
               <Tr>
-                <Td padding="0px">2</Td>
-                <Td>Apartement in Bandung</Td>
-                <Td isNumeric>Rp. 300.000,00</Td>
+                <Td px="2px">2</Td>
+                <Td px="2px">Apartement in Bandung</Td>
+                <Td px="2px">Rp. 300.000,00</Td>
               </Tr>
               <Tr>
-                <Td padding="0px">3</Td>
-                <Td>Apartement in Bandung</Td>
-                <Td isNumeric>Rp. 300.000,00</Td>
+                <Td px="2px">3</Td>
+                <Td px="2px">Apartement in Bandung</Td>
+                <Td px="2px">Rp. 300.000,00</Td>
               </Tr>
             </Tbody>
+            <Tfoot bg="primary">
+              <Tr>
+                <Th colSpan={2} px="2px">
+                  Total Income:
+                </Th>
+
+                <Th px="2px">Rp. 300.000,00</Th>
+              </Tr>
+            </Tfoot>
           </Table>
         </TableContainer>
       </Container>

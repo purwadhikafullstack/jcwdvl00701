@@ -28,6 +28,7 @@ import Report from "./Pages/Tenant/report";
 import Order from "./Pages/Tenant/order";
 import Price from "./Pages/Tenant/price";
 import Dashboard from "./Pages/Tenant/dashboard";
+import ProfileTenant from "./Pages/Tenant/profileTenant";
 
 class App extends React.Component {
   render() {
@@ -47,7 +48,8 @@ class App extends React.Component {
           <Route component={Report} path="/tenant/report" />
           <Route component={Order} path="/tenant/order" />
           <Route component={Price} path="/tenant/price" />
-          <Route component={Dashboard} path="/tenant" />
+          <Route component={Dashboard} path="/tenant/dashboard" />
+          <Route component={ProfileTenant} path="/tenant/profile" />
 
           {/* page user */}
           <Route component={PropertyList} path="/list" />
