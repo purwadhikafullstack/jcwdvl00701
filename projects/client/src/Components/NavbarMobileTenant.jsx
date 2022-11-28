@@ -40,7 +40,7 @@ function NavbarMobileTenant() {
               my="auto"
             />
             <MenuList borderRadius="0px" width="100vw" border="none">
-              <Link to="/tenant">
+              <Link to="/tenant/dashboard">
                 <MenuItem>
                   <Button
                     variant="primary"
@@ -51,15 +51,17 @@ function NavbarMobileTenant() {
                   </Button>
                 </MenuItem>
               </Link>
-              <MenuItem>
-                <Button
-                  variant="primary"
-                  w="100%"
-                  leftIcon={<i class="fa-solid fa-circle-user"></i>}
-                >
-                  Profile
-                </Button>
-              </MenuItem>
+              <Link to="/tenant/profile">
+                <MenuItem>
+                  <Button
+                    variant="primary"
+                    w="100%"
+                    leftIcon={<i class="fa-solid fa-circle-user"></i>}
+                  >
+                    Profile
+                  </Button>
+                </MenuItem>
+              </Link>
               <Link to="/tenant/order">
                 <MenuItem>
                   <Button
