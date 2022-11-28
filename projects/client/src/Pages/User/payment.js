@@ -10,7 +10,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import Footer from "../../Components/Footer";
+
 import NavbarMobile from "../../Components/NavbarMobile";
 import { Link } from "react-router-dom";
 import NavbarDestop from "../../Components/NavbarDestop";
@@ -203,7 +203,7 @@ function Payment() {
           </Box>
         </Flex>
       </Container>
-      <Footer />
+
       <NavbarMobile />
     </Box>
   );
