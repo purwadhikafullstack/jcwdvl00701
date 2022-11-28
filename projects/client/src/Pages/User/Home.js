@@ -15,7 +15,6 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
 import StepperInput from "../../Components/StepperInput";
-import Footer from "../../Components/Footer";
 
 function useOnClickOutside(ref, handler) {
   useEffect(
@@ -233,8 +232,6 @@ function Home(props) {
         <Thumbnail />
         <Thumbnail />
       </Container>
-
-      <Footer />
     </Box>
   );
 }

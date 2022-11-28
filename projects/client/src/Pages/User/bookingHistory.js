@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 import Image1 from "../../Assets/bookingHistory1.png";
 import Image2 from "../../Assets/bookingHistory2.png";
 import Image3 from "../../Assets/bookingHistory3.png";
+import Footer from "../../Components/Footer";
 
 import NavbarDestop from "../../Components/NavbarDestop";
 import NavbarMobile from "../../Components/NavbarMobile";
@@ -185,7 +186,7 @@ function BookingHistory() {
     return booking.map((val) => {
       if (val.satatus === "ongoing") {
         return (
-          <Box bg="primary" w="100%" p="20px" color="white">
+          <Box bg="primary" w="100%" p="20px" color="white" position="relative">
             <Container maxW="1140px" px={{ sm: "0px", sl: "15px" }}>
               <Flex direction={{ ss: "column", sm: "column", sl: "row" }}>
                 <Box
@@ -311,6 +312,7 @@ function BookingHistory() {
 
   return (
     <Box
+      position="absolute"
       w="100%"
       h="90px"
       mt={{ ss: "0px", sm: "0px", sl: "80px" }}
