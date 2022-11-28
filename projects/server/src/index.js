@@ -8,12 +8,6 @@ const {env} = require("./config")
 const PORT = process.env.PORT || 8000;
 const app = express();
 
-// const corsOptions = {
-//     origin: "*",
-//     credentials : true,
-//     optionSuccesStatus : 200
-// }
-
 console.log("dari .env =",process.env.WHITELISTED_DOMAIN );
 
 app.use(
@@ -24,14 +18,6 @@ app.use(
   })
 );
 
-// app.use(
-//   cors({
-//     origin: "*",
-//     credentials:true,
-//   })
-// );
-
-// app.use(cors(corsOptions))
 app.use(express.json());
 
 
@@ -42,7 +28,7 @@ app.use(express.json());
 // sequelize.sync({ alter: true })
 const {userRouters} = require("./routes")
 
-app.use("/user", userRouters)
+app.use("/api/user", userRouters)
 
 app.get("/api", (req, res) => {
   console.log('test')

@@ -9,8 +9,14 @@ import Slider from "react-slick";
 
 import StepperInput from "../Components/StepperInput";
 import Footer from "../Components/Footer"
+import { useSelector } from "react-redux";
 
 function useOnClickOutside(ref, handler) {
+  const {name,storageIsChecked,email,id} = useSelector(state => state.user)
+  console.log(storageIsChecked);
+  console.log(email);
+  console.log(id);
+  console.log(name);
   useEffect(
     () => {
       const listener = (event) => {
