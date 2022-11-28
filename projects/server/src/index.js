@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
 const {sequelize} = require("./lib/sequelize")
+// const {sequelize} = require("./models")  // uncomment to use sequelize default utility
 const {env} = require("./config")
 
 const PORT = process.env.PORT || 8000;
