@@ -16,13 +16,13 @@ import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import registerTenant from "../../Assets/image/registerTenant.png";
-import Footer from "../../Components/Footer";
+
 import { Link } from "react-router-dom";
 
 function RegisterTenant() {
   return (
     <>
-      <Container maxW="2x1">
+      <Container maxW="2x1" px="0px">
         <Flex flexDirection="column" bg="black">
           {/* flex container utk dekstop */}
           <Flex>
@@ -185,7 +185,6 @@ function RegisterTenant() {
               </Flex>
             </Box>
           </Flex>
-          <Footer ss={"22em"} sm={"22em"} sl={"22em"} />
         </Flex>
       </Container>
     </>

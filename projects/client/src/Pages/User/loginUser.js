@@ -16,13 +16,13 @@ import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import loginImage from "../../Assets/image/loginImage.png";
-import Footer from "../../Components/Footer";
+
 import { Link } from "react-router-dom";
 
 function LoginUser() {
   return (
     <>
-      <Container maxW="2x1">
+      <Container maxW="2x1" px="0px">
         <Flex flexDirection="column">
           {/* flex container utk dekstop */}
           <Flex>
@@ -145,7 +145,6 @@ function LoginUser() {
               </Flex>
             </Box>
           </Flex>
-          <Footer ss={"13em"} sm={"14em"} sl={"15em"} />
         </Flex>
       </Container>
     </>

@@ -16,7 +16,7 @@ import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import registerImage from "../../Assets/image/registerImage.png";
-import Footer from "../../Components/Footer";
+
 import { Link } from "react-router-dom";
 
 import { Flex,
@@ -278,7 +278,7 @@ function RegisterUser(){
 function RegisterUser() {
   return (
     <>
-      <Container maxW="2x1">
+      <Container maxW="2x1" px="0px">
         <Flex flexDirection="column">
           {/* flex container utk dekstop */}
           <Flex>
