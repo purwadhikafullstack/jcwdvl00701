@@ -14,25 +14,10 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
-import StepperInput from "../../Components/User/StepperInput";
-import { useSelector } from "react-redux";
-import {getAuth} from "firebase/auth"
-import {authFirebase} from "../../Config/firebase"
+import StepperInput from "../../Components/StepperInput";
+import Footer from "../../Components/Footer";
 
 function useOnClickOutside(ref, handler) {
-  const {name, email ,isVerified, firebaseProviderId} = useSelector(state => state.user)
-
-   // // untuk dpt info user auth
-  const auth = getAuth()
-  try {
-    const emailVerified = auth.currentUser.emailVerified
-    console.log(emailVerified);
-
-    // utk cek prider mana
-    const providerId = auth.currentUser.providerData[0].providerId
-  } catch (e) {}
-
-
   useEffect(
     () => {
       const listener = (event) => {
