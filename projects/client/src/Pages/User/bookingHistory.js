@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 import Image1 from "../../Assets/bookingHistory1.png";
 import Image2 from "../../Assets/bookingHistory2.png";
 import Image3 from "../../Assets/bookingHistory3.png";
-import Footer from "../../Components/Footer";
+
 import NavbarDestop from "../../Components/NavbarDestop";
 import NavbarMobile from "../../Components/NavbarMobile";
 // import Footer from '../Components/Footer';
@@ -353,7 +353,7 @@ function BookingHistory() {
           </SimpleGrid>
         </Container>
       </Box>
-      <Footer />
+
       <NavbarMobile />
     </Box>
   );
