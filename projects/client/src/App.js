@@ -19,7 +19,7 @@ import Home from "./Pages/User/Home";
 import Profile from "./Pages/User/profile";
 
 import PropertyListTenant from "./Pages/Tenant/propertyListTenant";
-import NavbarMobileTenant from "./Components/NavbarMobileTenant";
+import NavbarTuru from "./Components/NavbarTuru";
 import Footer from "./Components/Footer";
 import RoomListTenant from "./Pages/Tenant/roomListTenant";
 import EditProperty from "./Pages/Tenant/editProperty";

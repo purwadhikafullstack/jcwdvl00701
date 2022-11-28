@@ -14,7 +14,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
-import StepperInput from "../../Components/StepperInput";
+import StepperInput from "../../Components/User/StepperInput";
 
 function useOnClickOutside(ref, handler) {
   useEffect(
