@@ -1,33 +1,29 @@
 'use strict';
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Rooms', {
+    await queryInterface.createTable('VerificationCodes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name : {
-        type : Sequelize.STRING,
-        allowNull : false
+      otp: {
+        type: Sequelize.STRING(4),
+        allowNull: false
       },
-      defaultPrice : {
-        type : Sequelize.INTEGER,
-        allowNull : false
-      },
-      description : {
-        type : Sequelize.TEXT,
-      },
-      capacity: {
-        type: Sequelize.INTEGER.UNSIGNED,
+      isActive: {
+        type: Sequelize.BOOLEAN,
         allowNull: false,
-        default: 1
+        default: true
       },
-      propertyId : {
-        type: Sequelize.INTEGER,
+      expirationDate: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      userId : {
+        type: Sequelize.STRING,
         allowNull: false
       },
       createdAt: {
@@ -41,6 +37,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Rooms');
+    await queryInterface.dropTable('VerificationCodes');
   }
 };

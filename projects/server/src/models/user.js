@@ -17,34 +17,43 @@ module.exports = (sequelize) => {
     id: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      autoIncrement: true
     },
-    name : {
-      type : DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    email :  {
-      type : DataTypes.STRING,
-      allowNull : false,
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
       unique: true
     },
-    phoneNumber : {
-      type : DataTypes.STRING
+    phoneNumber: {
+      type: DataTypes.STRING
     },
-    gender : {
-      type : DataTypes.STRING
+    gender: {
+      type: DataTypes.STRING
     },
-    birthdate : {
-      type : DataTypes.DATEONLY
+    birthdate: {
+      type: DataTypes.DATEONLY
     },
-    profilePic : {
-      type : DataTypes.TEXT
+    profilePic: {
+      type: DataTypes.TEXT
     },
-    resetPasswordToken : {
-      type : DataTypes.STRING
+    resetPasswordToken: {
+      type: DataTypes.STRING
     },
-    resetPasswordExpires : {
-      type : DataTypes.DATE
+    resetPasswordExpires: {
+      type: DataTypes.DATE
+    },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      default: false
+    },
+    firebaseProviderId: {
+      type: DataTypes.STRING,
     },
   }, {
     sequelize,

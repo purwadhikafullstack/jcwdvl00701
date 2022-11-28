@@ -7,7 +7,7 @@ module.exports = ({
     addUser : async (req,res) => {
         try {
             console.log(req.body);
-            const {id,name, email,phoneNumber,gender, birthdate, profile_pic, is_verified } = req.body
+            const {id,name, email,phoneNumber,gender, birthdate, profile_pic, isVerified, firebaseProviderId } = req.body
 
             const newUser = await User.create({
                 id,
@@ -17,6 +17,8 @@ module.exports = ({
                 gender,
                 birthdate,
                 profile_pic,
+                isVerified,
+                firebaseProviderId
             })
 
             // const Otp = await sendEmailVerification.create({
@@ -51,13 +53,12 @@ module.exports = ({
     getUserOne : async (req,res) => {
         try {
             console.log(req.query.email)
-            console.log(req.query.id)
+            
             const email = req.query.email
-            const id = req.query.id
+            
             const getUserOne = await User.findOne({
                 where : {
-                    email,
-                    id
+                    email
                 }
             })
             console.log(getUserOne);

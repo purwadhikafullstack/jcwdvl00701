@@ -1,7 +1,7 @@
 import { Box, Flex, Button, Text, Image, Container } from "@chakra-ui/react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Footer from "../../Components/Footer";
+
 import NavbarMobile from "../../Components/NavbarMobile";
 
 import bookingImage from "../../Assets/image/booking.png";
@@ -260,7 +260,6 @@ function Booking() {
         </Flex>
       </Container>
 
-      <Footer />
       <NavbarMobile />
     </Box>
   );

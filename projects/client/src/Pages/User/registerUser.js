@@ -69,9 +69,12 @@ function RegisterUser(){
     // masuk melalui google    
     const handleWithGoogle = async () => {
         try{
+            // masuk lewat google
             const userWithGoogle = await signInWithPopup(authFirebase , providerGoogle)
             console.log("info seluruh masuk google : ",userWithGoogle);
+            // info user
             var userGoogle = (await userWithGoogle).user
+            var providerIdGoogle = userWithGoogle.providerId
             console.log("info user :", userGoogle);
             console.log("info provider : ", (await userWithGoogle).providerId);
         } catch(error) {
@@ -80,9 +83,10 @@ function RegisterUser(){
 
          // endpoinnt utk register user
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
-                id: 3,
                 name : userGoogle.displayName,
                 email : userGoogle.email,
+                isVerified : userGoogle.emailVerified,
+                firebaseProviderId : providerIdGoogle
             })
             .then(async (res) => {
                 alert(res.message)
@@ -90,7 +94,6 @@ function RegisterUser(){
                 await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
                     params : {
                         email : userGoogle.email,
-                        id : 3
                     }
                 })
                 .then((res) => {
@@ -115,9 +118,12 @@ function RegisterUser(){
     // masuk lewat facebook
     const handleWithFacebook = async () => {
         try {
+            // masuk lewat facebook
             const userWithFacebook =  await signInWithPopup(authFirebase, providerFacebook)
             console.log("info keseluruhan Facebook : ", userWithFacebook);
+            // info user
             var userFacebook = await userWithFacebook.user
+            var providerIdFacebook = await userWithFacebook.providerId
             console.log("info user Fb",userFacebook);
             console.log("info provider",userWithFacebook.providerId);
 
@@ -126,9 +132,10 @@ function RegisterUser(){
         }
          // endpoinnt utk register user
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
-                id: 3,
                 name : userFacebook.displayName,
                 email : userFacebook.email,
+                isVerified : userFacebook.emailVerified,
+                firebaseProviderId : providerIdFacebook
             })
             .then(async (res) => {
                 alert(res.message)
@@ -136,7 +143,6 @@ function RegisterUser(){
                 await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
                     params : {
                         email : userFacebook.email,
-                        id : 3
                     }
                 })
                 .then((res) => {
@@ -199,10 +205,11 @@ function RegisterUser(){
 
                 // endpoinnt utk register user ==> belum dibuat
                     await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
-                        id: 3,
                         name,
                         email,
                         phoneNumber,
+                        isVerified : "false",
+                        firebaseProviderId : "password"
                     })
                     .then(async (res) => {
                         alert(res.message)
@@ -210,7 +217,6 @@ function RegisterUser(){
                         await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
                             params : {
                                 email,
-                                id : 3
                             }
                         })
                         .then((res) => {
