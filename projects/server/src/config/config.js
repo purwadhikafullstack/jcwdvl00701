@@ -1,9 +1,12 @@
-{
+const path = require("path");
+require('dotenv').config({path:path.resolve(__dirname, './.env')})
+
+module.exports = {
   "development": {
-    "username": "root",
-    "password": "briktruw",
-    "database": "turudb",
-    "host": "127.0.0.1",
+    "username": process.env.MYSQL_USER,
+    "password": process.env.MYSQL_PASSWORD,
+    "database": process.env.MYSQL_DB_NAME,
+    "host": process.env.DB_HOST,
     "dialect": "mysql"
   },
   "test": {
@@ -20,4 +23,4 @@
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
-}
+};
