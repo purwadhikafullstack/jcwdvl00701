@@ -11,6 +11,8 @@ import {
   Button,
   Text,
   Container,
+  InputGroup,
+  InputRightElement
 } from "@chakra-ui/react";
 import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
@@ -20,6 +22,11 @@ import loginImage from "../../Assets/image/loginImage.png";
 import { Link } from "react-router-dom";
 
 function LoginUser() {
+    // for show password
+    const [showPassword, setShowPassword] = React.useState(false)
+    const handleClick = () => {
+        setShowPassword(!showPassword)
+    }
   return (
     <>
       <Container maxW="2x1" px="0px">
@@ -75,15 +82,24 @@ function LoginUser() {
                           />
                         </FormControl>
                         <FormControl id="password" pb="15px">
-                          <Input
-                            type="password"
-                            placeholder="Password"
-                            borderRadius="0"
-                          />
+                          <InputGroup>
+                              <Input 
+                              type={showPassword ? "text" : "password"} 
+                              placeholder="Password" 
+                              borderRadius="0" 
+                              />
+                              <InputRightElement>
+                                  <Button onClick={handleClick}>
+                                      { showPassword? 
+                                          <i className="fa-sharp fa-solid fa-eye"></i> 
+                                          :
+                                          <i className="fa-solid fa-eye-slash"></i>
+                                      }
+                                      </Button>
+                              </InputRightElement>
+                              
+                          </InputGroup>
                         </FormControl>
-                        {/* <Flex alignItems="flex-end">
-                                                    <i  className="fa-solid fa-eye"></i>
-                                            </Flex> */}
 
                         <Button variant="primary" mb="12px">
                           Login
