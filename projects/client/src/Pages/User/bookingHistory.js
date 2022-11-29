@@ -186,11 +186,13 @@ function BookingHistory() {
     return booking.map((val) => {
       if (val.satatus === "ongoing") {
         return (
-          <Box bg="primary" w="100%" p="20px" color="white" position="relative">
+          <Box bg="primary" w="100%" p="20px" color="white">
             <Container maxW="1140px" px={{ sm: "0px", sl: "15px" }}>
-              <Flex direction={{ ss: "column", sm: "column", sl: "row" }}>
+              <Flex
+                direction={{ ss: "column", sm: "column", sl: "row" }}
+                position="relative"
+              >
                 <Box
-                  position="relative"
                   mb="20px"
                   w={{ ss: "100%", sm: "100%", sl: "750px" }}
                   me="20px"
@@ -312,7 +314,6 @@ function BookingHistory() {
 
   return (
     <Box
-      position="absolute"
       w="100%"
       h="90px"
       mt={{ ss: "0px", sm: "0px", sl: "80px" }}
