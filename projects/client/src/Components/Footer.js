@@ -21,7 +21,7 @@ function Footer(props) {
                         <Image src={vectorIg} mr="20px" mt="10px" widht="36px" height="36px"></Image>
                         <Image src={vectorFb}  mt="10px" mr="10px" widht="36px" height="36px"></Image>
                     </Flex>
-                    <Text fontSize="18px" fontWeight="700" mt="19px" lineHeights="26px">+62 82 288 2288 22</Text>
+                    <Text fontSize="18px" fontWeight="700" mt="19px" lineHeight="26px">+62 82 288 2288 22</Text>
                 </Flex >
             </Flex>
                 <Flex mt="2em" ml={{ss:"1em", sm:"1em", sl:"1em" , md:"0"}}>

@@ -15,13 +15,15 @@ import {
 } from '@chakra-ui/react'
 import {Link} from "react-router-dom"
 
-import {useFormik, useFormikContext} from 'formik'
+import {useFormik} from 'formik'
+import * as Yup from 'yup';
 
 import DatePicker from "react-datepicker";
 
 import Footer from '../../Components/Footer';
 import NavbarMobile from '../../Components/NavbarMobile';
-import {current} from "@reduxjs/toolkit";
+import {getValue} from "@testing-library/user-event/dist/utils";
+import axios from "axios";
 
 function renderInput(isEditActive, props) {
     return React.Children.map(props.children, child => {
@@ -33,36 +35,84 @@ function renderInput(isEditActive, props) {
 
 function UpdateInput(props) {
     const [isEditActive, setIsEditActive] = useState(false)
+    const [isEditingForm, setIsEditingForm] = props.formState
+    const [isLoading, setIsLoading] = useState(false)
+
+    const handleEdit = async () => {
+        if (props.errorMsg) return  // if there's error prevent submission
+
+        if (isEditActive) {
+            setIsLoading(true)
+            props.formik.submitForm()
+        }
+        setIsEditActive(current => !current)
+        setIsEditingForm(current => !current)
+        setIsLoading(false)
+    }
 
     return (
-        <Box h="max-content" borderBottom="1px" mt={5}>
-            <Flex justifyContent="space-between">
+        <Box h="max-content" mt={5}>
+            <Flex justifyContent="space-between" align='center'>
                 <Text>{props.inputDisplayName}</Text>
-                <Text textDecoration="underline" cursor="pointer" onClick={() => {
-                    if (isEditActive) props.formik.submitForm()
-                    setIsEditActive(current => !current)
-                }}>
+                <Button onClick={handleEdit} variant='link' disabled={isEditingForm && !isEditActive}
+                        isLoading={isLoading}>
                     {!isEditActive ? "Edit" : "Save"}
-                </Text>
+                </Button>
             </Flex>
 
             {renderInput(isEditActive, props)}
 
+            {props.errorMsg ? <Text color={'red'}>*{props.errorMsg}</Text> : null}
         </Box>
     )
 }
 
+const UpdateSchema = Yup.object().shape({
+    name: Yup.string()
+        .min(2, 'Too Short!')
+        .max(255, 'Too Long!')
+        .required('Required'),
+    email: Yup.string()
+        .email('Invalid email')
+        .required('Required'),
+    gender: Yup.string()
+        .min(1, 'test')
+        .required('Required'),
+    birthdate: Yup.date()
+        .required('Required')
+});
+
 function Profile() {
+
+    const [name, setName] = useState('Kratos')
+    const [email, setEmail] = useState('test@test.test')
+    const [gender, setGender] = useState('Male')
+    const [birthdate, setBirthdate] = useState(new Date())
+
+    const [firebaseProviderId, setfirebaseProviderId] = useState('password')
+
+    const [isEditingForm, setIsEditingForm] = useState(false)
 
     const formik = useFormik({
         initialValues: {
-            name: 'Kratos',
-            email: 'test@test.test',
-            gender: 'Male',
-            birthdate: new Date()
+            name: name,
+            email: email,
+            gender: gender,
+            birthdate: birthdate
         },
-        onSubmit: values => {
-            alert(JSON.stringify(values, null, 2));
+        validationSchema: UpdateSchema,
+        onSubmit: async (values, {props}) => {
+            // if values unchanged then prevent submission
+            if (values.name === name && values.email === email && values.gender === gender && values.birthdate === birthdate) return
+
+            values.id = 'test'  // dummy id
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/update`, values)
+            // axios.get(`${process.env.REACT_APP_API_BASE_URL}`)
+
+            setName(values.name)
+            setEmail(values.email)
+            setGender(values.gender)
+            setBirthdate(values.birthdate)
         },
     })
 
@@ -71,46 +121,66 @@ function Profile() {
             <Container maxW='1140px'>
                 <Flex justifyContent="center" alignItems="center" direction={["column"]}>
                     <Box width="360px" height="max-content" pb="20px" pl="20px" pr="20px" mb={{sm: "0", md: "4em"}}>
+
                         {/*Profile header*/}
-                        <Flex pt="40px">
+                        <Flex pt="10">
                             <Box mr="20px" w="80px" h="80px">
                                 <Avatar w="80px" h="80px"/>
                             </Box>
                             <Box>
-                                <Text fontSize="22px" fontWeight="600">Kratos</Text>
-                                <Text color="#AFAFAF">28 November 1820</Text>
+                                <Text fontSize="xl" fontWeight="600">{name}</Text>
+                                <Text color="gray.400">{
+                                    birthdate.toLocaleDateString(
+                                        'en-GB', {day: 'numeric', month: 'long', year: 'numeric'}
+                                    )
+                                }</Text>
                                 <Text textDecoration="underline" fontSize="16px" fontWeight="400" cursor="pointer"
                                       _hover={{textDecoration: "underline", fontWeight: "bold"}}>Update Photo</Text>
                             </Box>
                         </Flex>
                         {/*Profile header ends*/}
 
+                        {/*Profile form*/}
                         <Box pt="10">
                             <Heading as='h1' size="md">Personal Info</Heading>
-                        </Box>
 
-                        <Box mt={5}>
-                            <UpdateInput inputDisplayName={'Name'} formik={formik}>
-                                <Input id='name' type="text" variant='flushed' placeholder='insert your name'
+                            <UpdateInput inputDisplayName={'Name'} formik={formik} errorMsg={formik.errors.name}
+                                         formState={[isEditingForm, setIsEditingForm]}>
+                                <Input style={{borderBottom: "1px solid"}} id='name' type="text" variant='flushed'
+                                       placeholder='insert your name'
                                        defaultValue={formik.values.name} onChange={formik.handleChange}/>
                             </UpdateInput>
-                            <UpdateInput inputDisplayName={'Email'} formik={formik}>
-                                <Input id='email' type="text" variant='flushed' placeholder='insert your email'
-                                       defaultValue={formik.values.email} onChange={formik.handleChange}/>
-                            </UpdateInput>
-                            <UpdateInput inputDisplayName={'Gender'} formik={formik}>
-                                <Select id='gender' placeholder='select your gender' variant='flushed' icon=''
+
+                            {
+                                firebaseProviderId === 'password' ?
+                                    <UpdateInput inputDisplayName={'Email'} formik={formik}
+                                                 errorMsg={formik.errors.email}
+                                                 formState={[isEditingForm, setIsEditingForm]}>
+                                        <Input style={{borderBottom: "1px solid"}} id='email' type="text"
+                                               variant='flushed'
+                                               placeholder='insert your email'
+                                               defaultValue={formik.values.email} onChange={formik.handleChange}/>
+                                    </UpdateInput> : null
+                            }
+
+                            <UpdateInput inputDisplayName={'Gender'} formik={formik} errorMsg={formik.errors.gender}
+                                         formState={[isEditingForm, setIsEditingForm]}>
+                                <Select style={{borderBottom: "1px solid"}} id='gender' variant='flushed' icon=''
                                         defaultValue={formik.values.gender} onChange={formik.handleChange}>
                                     <option value='Male'>Male</option>
                                     <option value='Female'>Female</option>
                                 </Select>
                             </UpdateInput>
-                            <UpdateInput inputDisplayName={'Birthdate'} formik={formik}>
+
+                            <UpdateInput inputDisplayName={'Birthdate'} formik={formik}
+                                         errorMsg={formik.errors.birthdate}
+                                         formState={[isEditingForm, setIsEditingForm]}>
                                 <DatePicker selected={formik.values.birthdate}
                                             onChange={(date) => formik.setFieldValue('birthdate', date)}
                                             showMonthDropdown showYearDropdown dropdownMode="select" withPortal/>
                             </UpdateInput>
                         </Box>
+                        {/*Profile form ends*/}
 
                         <Box h="max-content" pt="16px" pb="30px">
                             <Text textDecoration="underline" _hover={{textDecoration: "underline", fontWeight: "bold"}}>
