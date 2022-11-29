@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Flex,
     Spacer,
@@ -84,9 +84,10 @@ const UpdateSchema = Yup.object().shape({
 
 function Profile() {
 
-    const [name, setName] = useState('Kratos')
-    const [email, setEmail] = useState('test@test.test')
-    const [gender, setGender] = useState('Male')
+    const userId = 'test'
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [gender, setGender] = useState('')
     const [birthdate, setBirthdate] = useState(new Date())
 
     const [firebaseProviderId, setfirebaseProviderId] = useState('password')
@@ -105,9 +106,8 @@ function Profile() {
             // if values unchanged then prevent submission
             if (values.name === name && values.email === email && values.gender === gender && values.birthdate === birthdate) return
 
-            values.id = 'test'  // dummy id
-            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/update`, values)
-            // axios.get(`${process.env.REACT_APP_API_BASE_URL}`)
+            values.id = userId  // dummy id
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/update`, values)
 
             setName(values.name)
             setEmail(values.email)
@@ -115,6 +115,26 @@ function Profile() {
             setBirthdate(values.birthdate)
         },
     })
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_BASE_URL}/user/get`,
+                {params: {id: userId}}
+            )
+
+            setName(response.data.result.name)
+            setEmail(response.data.result.email)
+            setGender(response.data.result.gender)
+            setBirthdate(new Date(response.data.result.birthdate))
+
+            formik.values.name = response.data.result.name
+            formik.values.email = response.data.result.email
+            formik.values.gender = response.data.result.gender
+            formik.values.birthdate = new Date(response.data.result.birthdate)
+        }
+        fetchData()
+    }, [])
 
     return (
         <Container maxW='container.sm' p={0}>
@@ -148,7 +168,7 @@ function Profile() {
                                          formState={[isEditingForm, setIsEditingForm]}>
                                 <Input style={{borderBottom: "1px solid"}} id='name' type="text" variant='flushed'
                                        placeholder='insert your name'
-                                       defaultValue={formik.values.name} onChange={formik.handleChange}/>
+                                       value={formik.values.name} onChange={formik.handleChange}/>
                             </UpdateInput>
 
                             {
@@ -159,14 +179,14 @@ function Profile() {
                                         <Input style={{borderBottom: "1px solid"}} id='email' type="text"
                                                variant='flushed'
                                                placeholder='insert your email'
-                                               defaultValue={formik.values.email} onChange={formik.handleChange}/>
+                                               value={formik.values.email} onChange={formik.handleChange}/>
                                     </UpdateInput> : null
                             }
 
                             <UpdateInput inputDisplayName={'Gender'} formik={formik} errorMsg={formik.errors.gender}
                                          formState={[isEditingForm, setIsEditingForm]}>
                                 <Select style={{borderBottom: "1px solid"}} id='gender' variant='flushed' icon=''
-                                        defaultValue={formik.values.gender} onChange={formik.handleChange}>
+                                        value={formik.values.gender} onChange={formik.handleChange}>
                                     <option value='Male'>Male</option>
                                     <option value='Female'>Female</option>
                                 </Select>
