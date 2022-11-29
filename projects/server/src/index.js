@@ -5,6 +5,7 @@ const { join } = require("path");
 const {sequelize} = require("./lib/sequelize")
 // const {sequelize} = require("./models")  // uncomment to use sequelize default utility
 const {env} = require("./config")
+const {userRoutes} = require("./routes")
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -35,6 +36,7 @@ app.get("/api/greetings", (req, res, next) => {
   });
 });
 
+app.use("/api/user", userRoutes)
 // ===========================
 
 // not found

@@ -34,7 +34,7 @@ function Footer(props) {
             <Box bg="primary" mt="10px">
                 <Flex justifyContent="center">
                     <Text pt="25px" pb="26px" fontWeight="600" fontSize="14px">
-                        2022, PT.Turu Jaya Abadi
+                        2022, PT.Turu Jaya Abadi<br/>
                     </Text>
                 </Flex>
             </Box>

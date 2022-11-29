@@ -2,21 +2,21 @@ import "./App.css";
 import React from "react";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import Test from "./Components/Test";
-import PropertyList from './Pages/PropertyList';
-import PropertyDetail from "./Pages/PropertyDetail";
-import LoginUser from "./Page/User/loginUser";
-import RegisterUser from "./Page/User/registerUser";
-import LoginTenant from "./Page/Tenant/loginTenant";
-import RegisterTenant from "./Page/Tenant/registerTenant";
-import BookingHistory from "./Page/User/bookingHistory";
-import Booking from "./Page/User/booking";
-import Payment from "./Page/User/payment";
-import ForgotPassword from "./Page/forgotPassword";
-import ResetPassword from "./Page/resetPassword";
-import ChangePassword from "./Page/changePassword";
-import VerifyAccount from "./Page/verifyAccount";
-import Home from "./Pages/Home";
-import Profile from "./Page/profile";
+import PropertyList from './Pages/User/PropertyList';
+import PropertyDetail from "./Pages/User/PropertyDetail";
+import LoginUser from "./Pages/User/loginUser";
+import RegisterUser from "./Pages/User/registerUser";
+import LoginTenant from "./Pages/Tenant/loginTenant";
+import RegisterTenant from "./Pages/Tenant/registerTenant";
+import BookingHistory from "./Pages/User/bookingHistory";
+import Booking from "./Pages/User/booking";
+import Payment from "./Pages/User/payment";
+import ForgotPassword from "./Pages/forgotPassword";
+import ResetPassword from "./Pages/resetPassword";
+import ChangePassword from "./Pages/changePassword";
+import VerifyAccount from "./Pages/verifyAccount";
+import Home from "./Pages/User/Home";
+import Profile from "./Pages/User/profile";
 
 class App extends React.Component {
   render() {

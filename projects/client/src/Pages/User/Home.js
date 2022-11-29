@@ -7,8 +7,8 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
 
-import StepperInput from "../Components/StepperInput";
-import Footer from "../Components/Footer"
+import StepperInput from "../../Components/StepperInput";
+import Footer from "../../Components/Footer"
 
 function useOnClickOutside(ref, handler) {
   useEffect(
@@ -128,11 +128,10 @@ function Home(props) {
     slidesToScroll: 1
   };
 
-  return (<Box>
+  return (<Container maxW='container.sm' p={0}>
     <TopBar />
 
     <Container maxW='container.lg'>
-
       <Box my={4} py={8}>
         <Slider {...sliderSettings}>
           <Box h={'15vh'} backgroundColor={'red'} overflow={'hidden'}>
@@ -153,7 +152,7 @@ function Home(props) {
     </Container>
 
     <Footer />
-  </Box>)
+  </Container>)
 }
 
 export default Home;
