@@ -72,4 +72,19 @@ module.exports = ({
             })
         }
     },
+    verificationUser : async (req, res) => {
+        try {
+            console.log(req.body);
+            const UpdateVerified = await User.update({
+                isVerified : "true"
+            })
+            return res.status(200).json({
+                message : "Password Updated"
+            })
+        } catch (error) {
+            res.status(500).json({
+                message : "Invalid Change Password"
+            })
+        }
+    }
 })

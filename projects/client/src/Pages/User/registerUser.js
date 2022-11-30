@@ -71,12 +71,11 @@ function RegisterUser(){
         try{
             // masuk lewat google
             const userWithGoogle = await signInWithPopup(authFirebase , providerGoogle)
-            console.log("info seluruh masuk google : ",userWithGoogle);
+            console.log("info keseluruhan :", userWithGoogle);
             // info user
             var userGoogle = (await userWithGoogle).user
             var providerIdGoogle = userWithGoogle.providerId
-            console.log("info user :", userGoogle);
-            console.log("info provider : ", (await userWithGoogle).providerId);
+
         } catch(error) {
             console.error(error.message)
         }
@@ -97,8 +96,6 @@ function RegisterUser(){
                     }
                 })
                 .then((res) => {
-                    console.log("data get4 :", res.data.results);
-                    console.log("data get6 :", res.data.results.id);
                     dispatch({
                         type : auth_types.Register,
                         payload : res.data.results
@@ -120,12 +117,18 @@ function RegisterUser(){
         try {
             // masuk lewat facebook
             const userWithFacebook =  await signInWithPopup(authFirebase, providerFacebook)
-            console.log("info keseluruhan Facebook : ", userWithFacebook);
+            // console.log("info keseluruhan Facebook : ", userWithFacebook);
             // info user
             var userFacebook = await userWithFacebook.user
+            sendEmailVerification(userFacebook)
+                .then((res) => {
+                    alert("Please check your email verification")
+                })
+                .catch((err) => {
+                    console.error("err send email :", err.message)
+                })
+
             var providerIdFacebook = await userWithFacebook.providerId
-            console.log("info user Fb",userFacebook);
-            console.log("info provider",userWithFacebook.providerId);
 
         } catch (error) {
             console.error(error)
@@ -192,12 +195,21 @@ function RegisterUser(){
                 try{
                     // const phone = await signInWithPhoneNumber(authFirebase, phoneNumber, password)
                     const userCredential = await createUserWithEmailAndPassword(authFirebase, email, password)
-                    console.log("keseluruhan", userCredential);
+                    // kirim email
+                    const user = userCredential.user
+                    // kirim meail verification firebase
+                    sendEmailVerification(user)
+                    .then((res) => {
+                        alert("Please check your email verification")
+                    })
+                    .catch((err) => {
+                        console.error("err send email :", err.message)
+                    })
+
                     var userPassword = userCredential.user // object dari user firebase
                     const providerId = userCredential.providerId // utk tau provider
-                    console.log("info provider", providerId);
-                    console.log("info user",userPassword);
-                    console.log("info user",userPassword.uid);
+                    //utk ambil uid
+                    const firebaseUid = userPassword.uid
                     
                 } catch (error) {
                     console.error(error.message)
@@ -235,7 +247,7 @@ function RegisterUser(){
                         console.error(err.message);
                     })
                     // akan dikirim ke home tapi berstatus berlum terverifikasi
-                    // history.push("account/verify")
+                    history.push("account/verify")
                     history.push("/")
 
             } else {
