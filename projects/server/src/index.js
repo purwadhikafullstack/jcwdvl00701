@@ -5,25 +5,29 @@ const { join } = require("path");
 const {sequelize} = require("./lib/sequelize")
 // const {sequelize} = require("./models")  // uncomment to use sequelize default utility
 const {env} = require("./config")
-const {userRoutes} = require("./routes")
 
 const PORT = process.env.PORT || 8000;
 const app = express();
+
+console.log("dari .env =",process.env.WHITELISTED_DOMAIN );
+
 app.use(
   cors({
-    origin: [
-      process.env.WHITELISTED_DOMAIN &&
-        process.env.WHITELISTED_DOMAIN.split(","),
-    ],
+    origin:'*'
   })
 );
 
 app.use(express.json());
 
+
 //#region API ROUTES
 
 // ===========================
 // NOTE : Add your routes here
+// sequelize.sync({ alter: true })
+const {userRouters} = require("./routes")
+
+app.use("/api/user", userRouters)
 
 app.get("/api", (req, res) => {
   console.log('test')
@@ -36,7 +40,6 @@ app.get("/api/greetings", (req, res, next) => {
   });
 });
 
-app.use("/api/user", userRoutes)
 // ===========================
 
 // not found

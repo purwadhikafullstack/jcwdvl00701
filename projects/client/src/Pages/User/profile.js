@@ -119,7 +119,7 @@ function Profile() {
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get(
-                `${process.env.REACT_APP_API_BASE_URL}/user/get`,
+                `${process.env.REACT_APP_API_BASE_URL}/user/getById`,
                 {params: {id: userId}}
             )
 
@@ -214,10 +214,6 @@ function Profile() {
                     <NavbarMobile/>
                 </Flex>
             </Container>
-            <Box mb={{ss: "50px", sm: "62px", md: "0em"}}></Box>
-            <Box mb={{ss: "50px", sm: "62px", md: "0em"}}>
-                <Footer/>
-            </Box>
         </Container>
     )
 }

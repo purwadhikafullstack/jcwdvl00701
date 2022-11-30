@@ -1,3 +1,6 @@
-const userRoutes = require("./userRoutes")
+const userRouters = require("./userRouters")
 
-module.exports = {userRoutes}
+
+module.exports = {
+    userRouters
+}
