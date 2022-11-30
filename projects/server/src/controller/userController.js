@@ -20,11 +20,6 @@ module.exports = ({
                 isVerified,
                 firebaseProviderId
             })
-
-            // const Otp = await sendEmailVerification.create({
-            //     const otp = 1000 * mathR
-            // })
-
             return res.status(200).json({
                 message : "success add data",
                 results : newUser
@@ -68,7 +63,7 @@ module.exports = ({
         } catch (err) {
             console.log(err);
             return res.status(500).json({
-                message : err.toString()
+                message : "your email not registered"
             })
         }
     },

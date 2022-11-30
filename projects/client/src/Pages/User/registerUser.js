@@ -175,107 +175,93 @@ function RegisterUser() {
     history.push("/");
   };
 
-  // masuk melalu email dan password
-  // configure yup
-  YupPassword(Yup);
-  //formik initialization
-  const formik = useFormik({
-    initialValues: {
-      name: "",
-      email: "",
-      phoneNumber: "",
-      password: "",
-      confirmPassword: "",
-    },
-    validationSchema: Yup.object().shape({
-      email: Yup.string()
-        .required("your email is invalid")
-        .email("format yang dimasukan bukan email"),
-      phoneNumber: Yup.string().phone("ID").required(),
-      password: Yup.string()
-        .required("please fill in the password")
-        .min(8)
-        .minUppercase(1)
-        .minNumbers(1),
-      confirmPassword: Yup.string()
-        .required("please fill in the confirmation password")
-        .min(8)
-        .minUppercase(1)
-        .minNumbers(1),
-    }),
-    validateOnChange: false,
-    onSubmit: async (values) => {
-      console.log(values);
-      const { name, email, phoneNumber, password, confirmPassword } = values;
-      // condition for password
-      if (password === confirmPassword) {
-        // make user use firebase
-        try {
-          // const phone = await signInWithPhoneNumber(authFirebase, phoneNumber, password)
-          const userCredential = await createUserWithEmailAndPassword(
-            authFirebase,
-            email,
-            password
-          );
-          // kirim email
-          const user = userCredential.user;
-          // kirim meail verification firebase
-          sendEmailVerification(user)
-            .then((res) => {
-              alert("Please check your email verification");
-            })
-            .catch((err) => {
-              console.error("err send email :", err.message);
-            });
+    // masuk melalu email dan password
+    // configure yup
+    YupPassword(Yup)
+    //formik initialization
+    const formik = useFormik({
+        initialValues : {
+            name : "",
+            email : "",
+            phoneNumber : "",
+            password : "",
+            confirmPassword : ""
+        },
+        validationSchema : Yup.object().shape({
+            email: Yup.string().required("your email is invalid").email("format yang dimasukan bukan email"),
+            phoneNumber : Yup.string().phone("ID").required(),
+            password : Yup.string().required("please fill in the password").min(8).minUppercase(1).minNumbers(1),
+            confirmPassword :  Yup.string().required("please fill in the confirmation password").min(8).minUppercase(1).minNumbers(1)
+        }),
+        validateOnChange : false,
+        onSubmit: async (values) => {
+            console.log(values);
+            const {name, email, phoneNumber, password, confirmPassword} = values
+            // condition for password
+            if(password === confirmPassword){
+                // make user use firebase
+                try{
+                    // const phone = await signInWithPhoneNumber(authFirebase, phoneNumber, password)
+                    const userCredential = await createUserWithEmailAndPassword(authFirebase, email, password)
+                    // kirim email
+                    const user = userCredential.user
+                    // kirim meail verification firebase
+                    sendEmailVerification(user)
+                    .then((res) => {
+                        alert("Please check your email verification")
+                    })
+                    .catch((err) => {
+                        console.error("err send email :", err.message)
+                    })
 
-          var userPassword = userCredential.user; // object dari user firebase
-          const providerId = userCredential.providerId; // utk tau provider
-          //utk ambil uid
-          const firebaseUid = userPassword.uid;
-        } catch (error) {
-          console.error(error.message);
+                    var userPassword = userCredential.user // object dari user firebase
+                    const providerId = userCredential.providerId // utk tau provider
+                    //utk ambil uid
+                    const firebaseUid = userPassword.uid
+                    
+                } catch (error) {
+                    console.error(error.message)
+                }
+
+                // endpoinnt utk register user ==> belum dibuat
+                    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
+                        name,
+                        email,
+                        phoneNumber,
+                        isVerified : "false",
+                        firebaseProviderId : "password"
+                    })
+                    .then(async (res) => {
+                        alert("account have been register")
+                        //utk get data sesuai yg masuk
+                        await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
+                            params : {
+                                email,
+                            }
+                        })
+                        .then((res) => {
+                            console.log("data get4 :", res.data.results);
+                            console.log("data get6 :", res.data.results.id);
+                            dispatch({
+                                type : auth_types.Register,
+                                payload : res.data.results
+                            })
+                        })
+                        .catch((err) => {
+                            console.error(err.message)
+                        })
+                    })
+                    .catch((err) => {
+                        console.error(err.message);
+                    })
+                    // akan dikirim ke home tapi berstatus berlum terverifikasi
+                    history.push("account/verify")
+                    history.push("/")
+
+            } else {
+                alert("password is not same, please check your password!")
+            }
         }
-
-        // endpoinnt utk register user ==> belum dibuat
-        await axios
-          .post(`${process.env.REACT_APP_API_BASE_URL}/user/register`, {
-            name,
-            email,
-            phoneNumber,
-            isVerified: "false",
-            firebaseProviderId: "password",
-          })
-          .then(async (res) => {
-            alert(res.message);
-            //utk get data sesuai yg masuk
-            await axios
-              .get(`${process.env.REACT_APP_API_BASE_URL}/user/login`, {
-                params: {
-                  email,
-                },
-              })
-              .then((res) => {
-                console.log("data get4 :", res.data.results);
-                console.log("data get6 :", res.data.results.id);
-                dispatch({
-                  type: auth_types.Register,
-                  payload: res.data.results,
-                });
-              })
-              .catch((err) => {
-                console.error(err.message);
-              });
-          })
-          .catch((err) => {
-            console.error(err.message);
-          });
-        // akan dikirim ke home tapi berstatus berlum terverifikasi
-        history.push("account/verify");
-        history.push("/");
-      } else {
-        alert("password is not same, please check your password!");
-      }
-    },
   });
   return (
     <Flex flexDirection="column">
