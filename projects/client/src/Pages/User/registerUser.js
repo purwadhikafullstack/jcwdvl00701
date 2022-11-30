@@ -224,7 +224,7 @@ function RegisterUser(){
                         firebaseProviderId : "password"
                     })
                     .then(async (res) => {
-                        alert(res.message)
+                        alert("account have been register")
                         //utk get data sesuai yg masuk
                         await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
                             params : {
