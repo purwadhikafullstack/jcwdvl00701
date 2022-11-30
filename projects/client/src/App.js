@@ -1,6 +1,7 @@
 import "./App.css";
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
+
 import PropertyList from "./Pages/User/PropertyList";
 import PropertyDetail from "./Pages/User/PropertyDetail";
 import LoginUser from "./Pages/User/loginUser";
@@ -16,6 +17,7 @@ import ChangePassword from "./Pages/changePassword";
 import VerifyAccount from "./Pages/verifyAccount";
 import Home from "./Pages/User/Home";
 import Profile from "./Pages/User/profile";
+
 import PropertyListTenant from "./Pages/Tenant/propertyListTenant";
 import NavbarTuru from "./Components/NavbarTuru";
 import Footer from "./Components/Footer";

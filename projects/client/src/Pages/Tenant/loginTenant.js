@@ -58,7 +58,7 @@ function LoginTenant() {
 
             {/* Form */}
             <Box w="50em">
-              <Flex justifyContent="center" alignItemns="center" my="3em">
+              <Flex justifyContent="center" alignItems="center" my="3em">
                 <Box width="360px" height="297px">
                   <Flex
                     flexDirection="column"
