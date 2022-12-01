@@ -2,10 +2,11 @@ import {
   Box,
   Container,
   Flex,
-  Button,
+  IconButton,
   Text,
   FormControl,
   Input,
+  HStack,
 } from "@chakra-ui/react";
 import CardPropertyTenant from "../../Components/Tenant/CardPropertyTenant";
 import { Link } from "react-router-dom";
@@ -38,7 +39,27 @@ function PropertyListTenant() {
             </Link>
           </Flex>
           <FormControl pb="20px">
-            <Input type="name" placeholder="Search Property" borderRadius="0" />
+            <HStack>
+              <Input
+                type="name"
+                placeholder="Search Property"
+                borderRadius="0"
+                borderColor="rgba(175, 175, 175, 1)"
+              />
+              <IconButton
+                color="rgba(175, 175, 175, 1)"
+                aria-label="toggle filters"
+                icon={<i className="fa-solid fa-filter" />}
+                backgroundColor="white"
+                border="1px"
+                borderRadius={0}
+                m={2}
+                _hover={{
+                  bg: "black",
+                  color: "white",
+                }}
+              />
+            </HStack>
           </FormControl>
           {/* card property */}
           <CardPropertyTenant />

@@ -20,6 +20,7 @@ import {
   TableContainer,
   Thead,
   Tbody,
+  Select,
 } from "@chakra-ui/react";
 import Layout from "../../Components/Layout";
 import DatePicker from "react-datepicker";
@@ -61,9 +62,17 @@ function SpecialPrice() {
           />
         </Box>
       </Flex>
-      <FormControl my="20px">
-        <Input type="name" placeholder="Short by:" borderRadius="0" />
-      </FormControl>
+      <Select
+        my="20px"
+        placeholder="Select Property
+        "
+        borderRadius={0}
+        borderColor="rgba(175, 175, 175, 1)"
+      >
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+      </Select>
       <Flex>
         <FormControl flexDirection="column">
           <Input type="name" placeholder="Special price" borderRadius="0" />
@@ -92,7 +101,7 @@ function SpecialPrice() {
           </Thead>
           <Tbody>
             <Tr>
-              <Td colSpan={2} px="2px">
+              <Td colSpan={2} px="2px" fontSize="14px" fontWeight="bold">
                 Apartement in Bandung
               </Td>
             </Tr>
@@ -190,7 +199,7 @@ function SpecialPrice() {
               <Td px="2px">Rp. 250.000,00</Td>
             </Tr>
             <Tr>
-              <Td colSpan={2} px="2px">
+              <Td colSpan={2} px="2px" fontSize="14px" fontWeight="bold">
                 Apartement in Bandung
               </Td>
             </Tr>

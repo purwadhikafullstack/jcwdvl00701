@@ -3,10 +3,7 @@ import {
   Container,
   Flex,
   Text,
-  FormControl,
-  Input,
-  Button,
-  Image,
+  Select,
   Tr,
   Th,
   Td,
@@ -71,9 +68,16 @@ function Report() {
               />
             </Box>
           </Flex>
-          <FormControl pb="20px">
-            <Input type="name" placeholder="Short by:" borderRadius="0" />
-          </FormControl>
+          <Select
+            mb="20px"
+            placeholder="sort by"
+            borderRadius={0}
+            borderColor="rgba(175, 175, 175, 1)"
+          >
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </Select>
           <TableContainer fontSize="12px" color="black" mb="30px">
             <Table variant="simple">
               <Thead bg="rgba(217, 217, 217, 1)">

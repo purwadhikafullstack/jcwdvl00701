@@ -7,6 +7,7 @@ import {
   Input,
   Button,
   Image,
+  Select,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import Layout from "../../Components/Layout";
@@ -51,13 +52,22 @@ function EditProperty() {
             me="10px"
             mt="5px"
             mb="20px"
+            overflow="hiden"
+            objectFit="cover"
           />
           <FormControl pb="20px">
             <Input type="name" placeholder="Name Property" borderRadius="0" />
           </FormControl>
-          <FormControl pb="20px">
-            <Input type="name" placeholder="Search Property" borderRadius="0" />
-          </FormControl>
+          <Select
+            mb="20px"
+            placeholder="Location"
+            borderRadius={0}
+            borderColor="rgba(175, 175, 175, 1)"
+          >
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </Select>
           <Button variant="secondary" w="100%" mb="20px">
             Edit Photo
           </Button>

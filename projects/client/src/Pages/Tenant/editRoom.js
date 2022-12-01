@@ -11,6 +11,7 @@ import {
   Stack,
   Checkbox,
   Textarea,
+  Select,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import Layout from "../../Components/Layout";
@@ -56,10 +57,19 @@ function EditRoom() {
             me="10px"
             mt="5px"
             mb="20px"
+            overflow="hiden"
+            objectFit="cover"
           />
-          <FormControl pb="20px">
-            <Input type="name" placeholder="Name Property" borderRadius="0" />
-          </FormControl>
+          <Select
+            mb="20px"
+            placeholder="Select Property"
+            borderRadius={0}
+            borderColor="rgba(175, 175, 175, 1)"
+          >
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </Select>
           <FormControl pb="20px">
             <Input type="name" placeholder="Name Room" borderRadius="0" />
           </FormControl>
