@@ -79,8 +79,10 @@ function LoginUser() {
           history.push("/")
       })
       .catch((err) => {
+          alert("please registered your account in form register")
           console.error(err.message)
           console.error(err.data.message)
+          history.push("/register")
       })
     }
 
@@ -117,6 +119,7 @@ function LoginUser() {
       .catch((err) => {
           alert("please registered your account in form register")
           console.error(err.message)
+          history.push("/register")
       })
     }
 
@@ -135,15 +138,13 @@ function LoginUser() {
       }),
       validateOnChange : false,
       onSubmit: async (values) => {
-
         const {email , password} = values
-        console.log(email);
-        console.log(password);
+        
         try {
           const handleWithEmailPassword =  await signInWithEmailAndPassword(authFirebase,email, password)
-          console.log(handleWithEmailPassword);
+          // console.log(handleWithEmailPassword);
           var userPassword = handleWithEmailPassword.user
-          console.log(userPassword.uid);
+          // console.log(userPassword.uid);
 
         } catch (error) {
           console.error(error)
@@ -158,10 +159,9 @@ function LoginUser() {
             }
         })
         .then((res) => {
-            console.log("data get4 :", res.data.results);
-            console.log("data get6 :", res.data.results.id);
+            // console.log("data get4 :", res.data.results);
+            // console.log("data get6 :", res.data.results.id);
             if(res.data.results === null) {
-              alert("1")
               alert("please register for your account")
             } else {
               dispatch({
@@ -173,8 +173,7 @@ function LoginUser() {
             }
         })
         .catch((err) => {
-            alert("2")
-            alert("please register for your account")
+            alert("please registered your account in form register")
             console.error(err.message)
         })
         
