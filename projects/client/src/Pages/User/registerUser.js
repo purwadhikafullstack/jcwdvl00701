@@ -74,6 +74,7 @@ function RegisterUser(){
             console.log("info keseluruhan :", userWithGoogle);
             // info user
             var userGoogle = (await userWithGoogle).user
+            console.log(userGoogle.uid );
             var providerIdGoogle = userWithGoogle.providerId
 
         } catch(error) {
@@ -82,6 +83,7 @@ function RegisterUser(){
 
          // endpoinnt utk register user
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
+                id : userGoogle.uid,
                 name : userGoogle.displayName,
                 email : userGoogle.email,
                 isVerified : userGoogle.emailVerified,
@@ -92,6 +94,7 @@ function RegisterUser(){
                 //utk get data sesuai yg masuk
                 await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
                     params : {
+                        id : userGoogle.uid,
                         email : userGoogle.email,
                     }
                 })
@@ -100,6 +103,8 @@ function RegisterUser(){
                         type : auth_types.Register,
                         payload : res.data.results
                     })
+                    // di arahkan ke home
+                    history.push("/")
                 })
                 .catch((err) => {
                     console.error(err.message)
@@ -108,8 +113,7 @@ function RegisterUser(){
             .catch((err) => {
                 console.error(err.message);
             })
-            // di arahkan ke home
-            history.push("/")
+
     }
 
     // masuk lewat facebook
@@ -133,8 +137,9 @@ function RegisterUser(){
         } catch (error) {
             console.error(error)
         }
-         // endpoinnt utk register user
+        // endpoinnt utk register user
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
+                id : userFacebook.uid,
                 name : userFacebook.displayName,
                 email : userFacebook.email,
                 isVerified : userFacebook.emailVerified,
@@ -145,6 +150,7 @@ function RegisterUser(){
                 //utk get data sesuai yg masuk
                 await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
                     params : {
+                        id : userFacebook.uid,
                         email : userFacebook.email,
                     }
                 })
@@ -155,6 +161,8 @@ function RegisterUser(){
                         type : auth_types.Register,
                         payload : res.data.results
                     })
+                    // di arahkan ke home
+                    history.push("/")
                 })
                 .catch((err) => {
                     console.error(err.message)
@@ -163,8 +171,7 @@ function RegisterUser(){
             .catch((err) => {
                 console.error(err.message);
             })
-            // di arahkan ke home
-            history.push("/")
+            
     }
 
     // masuk melalu email dan password
@@ -207,9 +214,8 @@ function RegisterUser(){
                     })
 
                     var userPassword = userCredential.user // object dari user firebase
-                    const providerId = userCredential.providerId // utk tau provider
                     //utk ambil uid
-                    const firebaseUid = userPassword.uid
+                    // const firebaseUid = userPassword.uid
                     
                 } catch (error) {
                     console.error(error.message)
@@ -217,6 +223,7 @@ function RegisterUser(){
 
                 // endpoinnt utk register user ==> belum dibuat
                     await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
+                        id : userPassword.uid,
                         name,
                         email,
                         phoneNumber,
@@ -228,6 +235,7 @@ function RegisterUser(){
                         //utk get data sesuai yg masuk
                         await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
                             params : {
+                                id : userPassword.uid,
                                 email,
                             }
                         })
@@ -238,6 +246,8 @@ function RegisterUser(){
                                 type : auth_types.Register,
                                 payload : res.data.results
                             })
+                            // akan dikirim ke home tapi berstatus berlum terverifikasi
+                            history.push("/")
                         })
                         .catch((err) => {
                             console.error(err.message)
@@ -246,9 +256,7 @@ function RegisterUser(){
                     .catch((err) => {
                         console.error(err.message);
                     })
-                    // akan dikirim ke home tapi berstatus berlum terverifikasi
-                    history.push("account/verify")
-                    history.push("/")
+                    
 
             } else {
                 alert("password is not same, please check your password!")

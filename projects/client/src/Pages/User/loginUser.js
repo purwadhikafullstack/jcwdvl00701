@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState } from "react";
 import {
   Flex,
   Spacer,
@@ -12,20 +12,22 @@ import {
   Text,
   Container,
   InputGroup,
-  InputRightElement
+  InputRightElement,
+  FormHelperText
 } from "@chakra-ui/react";
 import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import loginImage from "../../Assets/image/loginImage.png";
-import {useFormik} from "formik"
+import {Formik, useFormik} from "formik"
 import * as Yup from "yup"
 import YupPassword from "yup-password"
 import { getAuth ,
     signInWithPopup,
     GoogleAuthProvider,
     FacebookAuthProvider,
-    sendEmailVerification
+    sendEmailVerification,
+    signInWithEmailAndPassword
 } from "firebase/auth";
 import { authFirebase } from "../../Config/firebase";
 import axios from "axios"
@@ -35,7 +37,7 @@ import { Link, useHistory } from "react-router-dom";
 
 function LoginUser() {
     // for show password
-    const [showPassword, setShowPassword] = React.useState(false)
+    const [showPassword, setShowPassword] = useState(false)
     const handleClick = () => {
         setShowPassword(!showPassword)
     }
@@ -45,15 +47,16 @@ function LoginUser() {
 
     const auth = getAuth()
     const providerGoogle = new GoogleAuthProvider()
-    console.log(providerGoogle);
+    // console.log(providerGoogle);
     const providerFacebook = new FacebookAuthProvider()
-    console.log(providerFacebook)
+    // console.log(providerFacebook)
     
     // utk login google
     const handleWithGoogle = async () => {
       try {
         const handleWithGoogle = await signInWithPopup(authFirebase,providerGoogle)
         console.log(handleWithGoogle);
+        var userGoogle = handleWithGoogle.user
         var emailGoogle = handleWithGoogle.user.email
 
       } catch(error) {
@@ -61,6 +64,7 @@ function LoginUser() {
       }
       await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
           params : {
+              id : userGoogle.uid,
               email : emailGoogle,
           }
       })
@@ -71,11 +75,13 @@ function LoginUser() {
               type : auth_types.Login,
               payload : res.data.results
           })
+          // akn di kirim ke home
+          history.push("/")
       })
       .catch((err) => {
           console.error(err.message)
+          console.error(err.data.message)
       })
-      history.push("/")
     }
 
     // utk login facebook
@@ -84,27 +90,18 @@ function LoginUser() {
         const handleWithFacebook = await signInWithPopup(authFirebase, providerFacebook )
         console.log(handleWithFacebook);
         // utk cek email verified atau tidak
-        const userFacebook = handleWithFacebook.user
-        var emailFacebook = handleWithFacebook.user.email
-        const emailFacebookVerified = handleWithFacebook.user.emailVerified
+        var userFacebook = await handleWithFacebook.user
+        var emailFacebook = await handleWithFacebook.user.email
+        var providerIdFacebook = await handleWithFacebook.providerId
 
-        if(emailFacebookVerified === " false"){
-          sendEmailVerification(userFacebook)
-              .then((res) => {
-                  alert("Please check your email verification")
-              })
-              .catch((err) => {
-                  console.error("err send email :", err.message)
-              })
-        }
-        
       } catch (error){
         console.error(error)
       }
-      
+
       // utk redux
       await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
           params : {
+              id : userFacebook.uid,
               email : emailFacebook,
           }
       })
@@ -115,11 +112,12 @@ function LoginUser() {
               type : auth_types.Login,
               payload : res.data.results
           })
+          history.push("/")
       })
       .catch((err) => {
+          alert("please registered your account in form register")
           console.error(err.message)
       })
-      history.push("/")
     }
 
     //masuk melalui email dan password
@@ -134,8 +132,55 @@ function LoginUser() {
       validationSchema : Yup.object().shape({
         email: Yup.string().required("your email is invalid").email("input your email"),
         password : Yup.string().required("please fill in the password").min(8).minUppercase(1).minNumbers(1)
-      })
+      }),
+      validateOnChange : false,
+      onSubmit: async (values) => {
+
+        const {email , password} = values
+        console.log(email);
+        console.log(password);
+        try {
+          const handleWithEmailPassword =  await signInWithEmailAndPassword(authFirebase,email, password)
+          console.log(handleWithEmailPassword);
+          var userPassword = handleWithEmailPassword.user
+          console.log(userPassword.uid);
+
+        } catch (error) {
+          console.error(error)
+          alert(error.message)
+        }
+
+        // utk get data ke back-end dan di simpan di redux
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
+            params : {
+                id : userPassword.uid,
+                email : email,
+            }
+        })
+        .then((res) => {
+            console.log("data get4 :", res.data.results);
+            console.log("data get6 :", res.data.results.id);
+            if(res.data.results === null) {
+              alert("1")
+              alert("please register for your account")
+            } else {
+              dispatch({
+                  type : auth_types.Login,
+                  payload : res.data.results
+                })
+                // kirim ke home jika sudah teregist
+                history.push("/")
+            }
+        })
+        .catch((err) => {
+            alert("2")
+            alert("please register for your account")
+            console.error(err.message)
+        })
+        
+      }
     })
+
   return (
     <>
       <Container maxW="2x1" px="0px">
@@ -188,7 +233,16 @@ function LoginUser() {
                             type="email"
                             placeholder="Email/Phone number"
                             borderRadius="0"
+                            // onChange={(e) => inputHandler(e, "email")}
+                            onChange={(e) => formik.setFieldValue("email", e.target.value)}
                           />
+                          {formik.errors.email ? 
+                              <FormHelperText color="red" textAlign="center">
+                                  {formik.errors.email}
+                              </FormHelperText >
+                              :
+                              null
+                          }
                         </FormControl>
                         <FormControl id="password" pb="15px">
                           <InputGroup>
@@ -196,6 +250,8 @@ function LoginUser() {
                               type={showPassword ? "text" : "password"} 
                               placeholder="Password" 
                               borderRadius="0" 
+                              // onChange={(e) => inputHandler(e, "password")}
+                              onChange={(e) => formik.setFieldValue("password", e.target.value)}
                               />
                               <InputRightElement>
                                   <Button onClick={handleClick}>
@@ -208,9 +264,21 @@ function LoginUser() {
                               </InputRightElement>
                               
                           </InputGroup>
+                          {formik.errors.password ? 
+                              <FormHelperText color="red" textAlign="center">
+                                  {formik.errors.password}
+                              </FormHelperText >
+                              :
+                              null
+                          }
                         </FormControl>
 
-                        <Button variant="primary" mb="12px">
+                        <Button 
+                        variant="primary" 
+                        mb="12px" 
+                        // onClick={handleWithEmailPassword}
+                        onClick={formik.handleSubmit}
+                        >
                           Login
                         </Button>
                       </Flex>
