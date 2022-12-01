@@ -16,12 +16,12 @@ import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import registerTenant from "../../Assets/image/registerTenant.png";
-
+import Layout from "../../Components/Layout";
 import { Link } from "react-router-dom";
 
 function RegisterTenant() {
   return (
-    <>
+    <Layout>
       <Container maxW="2x1" px="0px">
         <Flex flexDirection="column" bg="black">
           {/* flex container utk dekstop */}
@@ -187,7 +187,7 @@ function RegisterTenant() {
           </Flex>
         </Flex>
       </Container>
-    </>
+    </Layout>
   );
 }
 

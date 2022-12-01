@@ -17,10 +17,11 @@ import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import loginTenant from "../../Assets/image/loginTenant.png";
 import { Link } from "react-router-dom";
+import Layout from "../../Components/Layout";
 
 function LoginTenant() {
   return (
-    <>
+    <Layout>
       <Container maxW="2x1" px="0px">
         <Flex flexDirection="column" bg="black">
           {/* flex container utk dekstop */}
@@ -151,7 +152,7 @@ function LoginTenant() {
           </Flex>
         </Flex>
       </Container>
-    </>
+    </Layout>
   );
 }
 

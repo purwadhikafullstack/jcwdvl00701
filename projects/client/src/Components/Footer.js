@@ -3,6 +3,7 @@ import { Text, Image, Flex, Box } from "@chakra-ui/react";
 import vectorFb from "../Assets/image/vectorFb.png";
 import vectorIg from "../Assets/image/vectorIg.png";
 import turuIcon from "../Assets/image/turuIcon.png";
+import NavbarMobile from "./NavbarMobile";
 
 function Footer(props) {
   // props utk ukuran margin top footer agar dinamis
@@ -14,7 +15,6 @@ function Footer(props) {
       bg="white"
       borderTop="1px"
       borderColor="gray.200"
-      position="relative"
     >
       <Flex
         direction={["column", "column", "column", "row"]}
@@ -66,6 +66,7 @@ function Footer(props) {
           </Text>
         </Flex>
       </Box>
+      <NavbarMobile />
     </Box>
   );
 }

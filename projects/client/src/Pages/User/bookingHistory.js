@@ -12,10 +12,10 @@ import { useState, useEffect } from "react";
 import Image1 from "../../Assets/bookingHistory1.png";
 import Image2 from "../../Assets/bookingHistory2.png";
 import Image3 from "../../Assets/bookingHistory3.png";
-import Footer from "../../Components/Footer";
+import Layout from "../../Components/Layout";
 
 import NavbarDestop from "../../Components/NavbarDestop";
-import NavbarMobile from "../../Components/NavbarMobile";
+
 // import Footer from '../Components/Footer';
 
 function BookingHistory() {
@@ -313,52 +313,52 @@ function BookingHistory() {
   }
 
   return (
-    <Box
-      w="100%"
-      h="90px"
-      mt={{ ss: "0px", sm: "0px", sl: "80px" }}
-      mb={{ ss: "160px", sm: "160px", sl: "0px" }}
-    >
-      <NavbarDestop />
+    <Layout>
       <Box
-        bg="white"
         w="100%"
-        p="20px"
-        display={{ ss: "flex", sm: "flex", sl: "none" }}
+        h="90px"
+        mt={{ ss: "0px", sm: "0px", sl: "80px" }}
+        mb={{ ss: "160px", sm: "160px", sl: "0px" }}
       >
-        <Flex>
-          <Box boxSize="50px">
-            <Image src={"https://bit.ly/dan-abramov"} alt="Dan Abramov" />
-          </Box>
-          <Box ms="10px">
-            <Text fontWeight="semibold" fontSize="22px">
-              Kratos
-            </Text>
-            <Text
-              fontWeight="regular"
-              fontSize="14px"
-              color="rgba(175, 175, 175, 1)"
-            >
-              28 November 1820
-            </Text>
-          </Box>
-        </Flex>
-      </Box>
+        <NavbarDestop />
+        <Box
+          bg="white"
+          w="100%"
+          p="20px"
+          display={{ ss: "flex", sm: "flex", sl: "none" }}
+        >
+          <Flex>
+            <Box boxSize="50px">
+              <Image src={"https://bit.ly/dan-abramov"} alt="Dan Abramov" />
+            </Box>
+            <Box ms="10px">
+              <Text fontWeight="semibold" fontSize="22px">
+                Kratos
+              </Text>
+              <Text
+                fontWeight="regular"
+                fontSize="14px"
+                color="rgba(175, 175, 175, 1)"
+              >
+                28 November 1820
+              </Text>
+            </Box>
+          </Flex>
+        </Box>
 
-      {renderBooking()}
-      <Box bg="white" w="100%" py="30px" px="20px">
-        <Container maxW="1140px" px={{ sm: "0px", sl: "15px" }}>
-          <Text fontWeight="Bold" fontSize="22px" pb="20px">
-            History Booking:
-          </Text>
-          <SimpleGrid minChildWidth="320px" spacing="30px">
-            {renderHistory()}
-          </SimpleGrid>
-        </Container>
+        {renderBooking()}
+        <Box bg="white" w="100%" py="30px" px="20px">
+          <Container maxW="1140px" px={{ sm: "0px", sl: "15px" }}>
+            <Text fontWeight="Bold" fontSize="22px" pb="20px">
+              History Booking:
+            </Text>
+            <SimpleGrid minChildWidth="320px" spacing="30px">
+              {renderHistory()}
+            </SimpleGrid>
+          </Container>
+        </Box>
       </Box>
-
-      <NavbarMobile />
-    </Box>
+    </Layout>
   );
 }
 
