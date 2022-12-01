@@ -17,13 +17,20 @@ const init_state = {
 export default (state = init_state, action) => {
   switch (action.type) {
     case userTypes.Login:
-      return {...state, ...action.payload };
+      return {...state,
+        ...action.payload,
+        id : action.payload.id,
+        name : action.payload.name,
+        email : action.payload.email,
+        firebaseProviderId : action.payload.firebaseProviderId
+      };
     case userTypes.Register:
       return {...state,
         ...action.payload , 
         id : action.payload.id,
         name : action.payload.name,
         email : action.payload.email,
+        firebaseProviderId : action.payload.firebaseProviderId
       }
     default:
       return state;
