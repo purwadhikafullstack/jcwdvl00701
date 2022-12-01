@@ -45,7 +45,7 @@ function NavbarMobileTenant() {
                   <Button
                     variant="primary"
                     w="100%"
-                    leftIcon={<i class="fa-solid fa-table-list"></i>}
+                    leftIcon={<i className="fa-solid fa-table-list"></i>}
                   >
                     Dashboard
                   </Button>
@@ -56,7 +56,7 @@ function NavbarMobileTenant() {
                   <Button
                     variant="primary"
                     w="100%"
-                    leftIcon={<i class="fa-solid fa-circle-user"></i>}
+                    leftIcon={<i className="fa-solid fa-circle-user"></i>}
                   >
                     Profile
                   </Button>
@@ -67,7 +67,7 @@ function NavbarMobileTenant() {
                   <Button
                     variant="primary"
                     w="100%"
-                    leftIcon={<i class="fa-solid fa-clipboard-list"></i>}
+                    leftIcon={<i className="fa-solid fa-clipboard-list"></i>}
                   >
                     Order
                   </Button>
@@ -78,7 +78,7 @@ function NavbarMobileTenant() {
                   <Button
                     variant="primary"
                     w="100%"
-                    leftIcon={<i class="fa-solid fa-building"></i>}
+                    leftIcon={<i className="fa-solid fa-building"></i>}
                   >
                     Property
                   </Button>
@@ -89,7 +89,7 @@ function NavbarMobileTenant() {
                   <Button
                     variant="primary"
                     w="100%"
-                    leftIcon={<i class="fa-solid fa-bed"></i>}
+                    leftIcon={<i className="fa-solid fa-bed"></i>}
                   >
                     Room
                   </Button>
@@ -100,7 +100,7 @@ function NavbarMobileTenant() {
                   <Button
                     variant="primary"
                     w="100%"
-                    leftIcon={<i class="fa-solid fa-chart-simple"></i>}
+                    leftIcon={<i className="fa-solid fa-chart-simple"></i>}
                   >
                     Report
                   </Button>
@@ -111,7 +111,7 @@ function NavbarMobileTenant() {
                   <Button
                     variant="primary"
                     w="100%"
-                    leftIcon={<i class="fa-solid fa-cash-register"></i>}
+                    leftIcon={<i className="fa-solid fa-cash-register"></i>}
                   >
                     Price
                   </Button>

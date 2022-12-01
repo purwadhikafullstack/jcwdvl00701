@@ -24,11 +24,14 @@ function useOnClickOutside(ref, handler) {
 
    // // untuk dpt info user auth
   const auth = getAuth()
-  const emailVerified = auth.currentUser.emailVerified
-  console.log(emailVerified);
+  try {
+    const emailVerified = auth.currentUser.emailVerified
+    console.log(emailVerified);
 
-  // utk cek prider mana
-  const providerId = auth.currentUser.providerData[0].providerId
+    // utk cek prider mana
+    const providerId = auth.currentUser.providerData[0].providerId
+  } catch (e) {}
+
 
   useEffect(
     () => {

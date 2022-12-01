@@ -13,9 +13,7 @@ console.log("dari .env =",process.env.WHITELISTED_DOMAIN );
 
 app.use(
   cors({
-    origin:
-      process.env.WHITELISTED_DOMAIN &&
-      process.env.WHITELISTED_DOMAIN.split(","),
+    origin:'*'
   })
 );
 

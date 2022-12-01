@@ -15,7 +15,7 @@ function NavbarMobile() {
     >
       <Flex justifyContent="space-around" py="5px">
         <Box fontSize="22px" textAlign="center" color="black">
-          <i class="fa-solid fa-magnifying-glass-location"></i>
+          <i className="fa-solid fa-magnifying-glass-location"></i>
           <Text fontWeight="regular" fontSize="12px">
             Search
           </Text>
@@ -29,7 +29,7 @@ function NavbarMobile() {
           </Box>
         </Link>
         <Box fontSize="22px" textAlign="center" color="black">
-          <i class="fa-solid fa-circle-user"></i>
+          <i className="fa-solid fa-circle-user"></i>
           <Text fontWeight="regular" fontSize="12px">
             Profile
           </Text>
