@@ -48,11 +48,12 @@ module.exports = ({
     getUserOne : async (req,res) => {
         try {
             console.log(req.query.email)
-            
+            console.log(req.query.id);
             const email = req.query.email
-            
+            const id = req.query.id
             const getUserOne = await User.findOne({
                 where : {
+                    id,
                     email
                 }
             })

@@ -66,115 +66,113 @@ function RegisterUser() {
   //provider facebook
   const providerFacebook = new FacebookAuthProvider();
 
-  // masuk melalui google
-  const handleWithGoogle = async () => {
-    try {
-      // masuk lewat google
-      const userWithGoogle = await signInWithPopup(
-        authFirebase,
-        providerGoogle
-      );
-      console.log("info keseluruhan :", userWithGoogle);
-      // info user
-      var userGoogle = (await userWithGoogle).user;
-      var providerIdGoogle = userWithGoogle.providerId;
-    } catch (error) {
-      console.error(error.message);
+    // masuk melalui google    
+    const handleWithGoogle = async () => {
+        try{
+            // masuk lewat google
+            const userWithGoogle = await signInWithPopup(authFirebase , providerGoogle)
+            console.log("info keseluruhan :", userWithGoogle);
+            // info user
+            var userGoogle = (await userWithGoogle).user
+            console.log(userGoogle.uid );
+            var providerIdGoogle = userWithGoogle.providerId
+
+        } catch(error) {
+            console.error(error.message)
+        }
+
+         // endpoinnt utk register user
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
+                id : userGoogle.uid,
+                name : userGoogle.displayName,
+                email : userGoogle.email,
+                isVerified : userGoogle.emailVerified,
+                firebaseProviderId : providerIdGoogle
+            })
+            .then(async (res) => {
+                alert(res.message)
+                //utk get data sesuai yg masuk
+                await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
+                    params : {
+                        id : userGoogle.uid,
+                        email : userGoogle.email,
+                    }
+                })
+                .then((res) => {
+                    dispatch({
+                        type : auth_types.Register,
+                        payload : res.data.results
+                    })
+                    // di arahkan ke home
+                    history.push("/")
+                })
+                .catch((err) => {
+                    console.error(err.message)
+                })
+            })
+            .catch((err) => {
+                console.error(err.message);
+            })
     }
 
-    // endpoinnt utk register user
-    await axios
-      .post(`${process.env.REACT_APP_API_BASE_URL}/user/register`, {
-        name: userGoogle.displayName,
-        email: userGoogle.email,
-        isVerified: userGoogle.emailVerified,
-        firebaseProviderId: providerIdGoogle,
-      })
-      .then(async (res) => {
-        alert(res.message);
-        //utk get data sesuai yg masuk
-        await axios
-          .get(`${process.env.REACT_APP_API_BASE_URL}/user/login`, {
-            params: {
-              email: userGoogle.email,
-            },
-          })
-          .then((res) => {
-            dispatch({
-              type: auth_types.Register,
-              payload: res.data.results,
-            });
-          })
-          .catch((err) => {
-            console.error(err.message);
-          });
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
-    // di arahkan ke home
-    history.push("/");
-  };
+    // masuk lewat facebook
+    const handleWithFacebook = async () => {
+        try {
+            // masuk lewat facebook
+            const userWithFacebook =  await signInWithPopup(authFirebase, providerFacebook)
+            // console.log("info keseluruhan Facebook : ", userWithFacebook);
+            // info user
+            var userFacebook = await userWithFacebook.user
+            sendEmailVerification(userFacebook)
+                .then((res) => {
+                    alert("Please check your email verification")
+                })
+                .catch((err) => {
+                    console.error("err send email :", err.message)
+                })
 
-  // masuk lewat facebook
-  const handleWithFacebook = async () => {
-    try {
-      // masuk lewat facebook
-      const userWithFacebook = await signInWithPopup(
-        authFirebase,
-        providerFacebook
-      );
-      // console.log("info keseluruhan Facebook : ", userWithFacebook);
-      // info user
-      var userFacebook = await userWithFacebook.user;
-      sendEmailVerification(userFacebook)
-        .then((res) => {
-          alert("Please check your email verification");
-        })
-        .catch((err) => {
-          console.error("err send email :", err.message);
-        });
+            var providerIdFacebook = await userWithFacebook.providerId
 
-      var providerIdFacebook = await userWithFacebook.providerId;
-    } catch (error) {
-      console.error(error);
-    }
-    // endpoinnt utk register user
-    await axios
-      .post(`${process.env.REACT_APP_API_BASE_URL}/user/register`, {
-        name: userFacebook.displayName,
-        email: userFacebook.email,
-        isVerified: userFacebook.emailVerified,
-        firebaseProviderId: providerIdFacebook,
-      })
-      .then(async (res) => {
-        alert(res.message);
-        //utk get data sesuai yg masuk
-        await axios
-          .get(`${process.env.REACT_APP_API_BASE_URL}/user/login`, {
-            params: {
-              email: userFacebook.email,
-            },
-          })
-          .then((res) => {
-            console.log("data get4 :", res.data.results);
-            console.log("data get6 :", res.data.results.id);
-            dispatch({
-              type: auth_types.Register,
-              payload: res.data.results,
-            });
-          })
-          .catch((err) => {
-            console.error(err.message);
-          });
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
-    // di arahkan ke home
-    history.push("/");
-  };
-
+        } catch (error) {
+            console.error(error)
+        }
+        // endpoinnt utk register user
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
+                id : userFacebook.uid,
+                name : userFacebook.displayName,
+                email : userFacebook.email,
+                isVerified : userFacebook.emailVerified,
+                firebaseProviderId : providerIdFacebook
+            })
+            .then(async (res) => {
+                alert(res.message)
+                //utk get data sesuai yg masuk
+                await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
+                    params : {
+                        id : userFacebook.uid,
+                        email : userFacebook.email,
+                    }
+                })
+                .then((res) => {
+                    console.log("data get4 :", res.data.results);
+                    console.log("data get6 :", res.data.results.id);
+                    dispatch({
+                        type : auth_types.Register,
+                        payload : res.data.results
+                    })
+                    // di arahkan ke home
+                    history.push("/")
+                })
+                .catch((err) => {
+                    console.error(err.message)
+                })
+            })
+            .catch((err) => {
+                console.error(err.message);
+            })
+            
+          }
+          
     // masuk melalu email dan password
     // configure yup
     YupPassword(Yup)
@@ -215,9 +213,8 @@ function RegisterUser() {
                     })
 
                     var userPassword = userCredential.user // object dari user firebase
-                    const providerId = userCredential.providerId // utk tau provider
                     //utk ambil uid
-                    const firebaseUid = userPassword.uid
+                    // const firebaseUid = userPassword.uid
                     
                 } catch (error) {
                     console.error(error.message)
@@ -225,6 +222,7 @@ function RegisterUser() {
 
                 // endpoinnt utk register user ==> belum dibuat
                     await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register` , {
+                        id : userPassword.uid,
                         name,
                         email,
                         phoneNumber,
@@ -236,6 +234,7 @@ function RegisterUser() {
                         //utk get data sesuai yg masuk
                         await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/login` , {
                             params : {
+                                id : userPassword.uid,
                                 email,
                             }
                         })
@@ -246,6 +245,8 @@ function RegisterUser() {
                                 type : auth_types.Register,
                                 payload : res.data.results
                             })
+                            // akan dikirim ke home tapi berstatus berlum terverifikasi
+                            history.push("/")
                         })
                         .catch((err) => {
                             console.error(err.message)
@@ -254,10 +255,6 @@ function RegisterUser() {
                     .catch((err) => {
                         console.error(err.message);
                     })
-                    // akan dikirim ke home tapi berstatus berlum terverifikasi
-                    history.push("account/verify")
-                    history.push("/")
-
             } else {
                 alert("password is not same, please check your password!")
             }
