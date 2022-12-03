@@ -20,6 +20,7 @@ import {
   chakra,
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
+import Layout from "../../Components/Layout";
 
 function Topbar(props) {
   return (
@@ -236,28 +237,30 @@ function PropertyDetail(props) {
   };
 
   return (
-    <div>
-      <Topbar />
-      <Container maxW="container.lg">
-        <Content data={data} />
-        <Box my={3}>
-          <Text fontWeight="bold" fontSize="xl" mb={1}>
-            check availability
-          </Text>
-          <DatePicker
-            selected={startDate}
-            onChange={datepickerOnChange}
-            startDate={startDate}
-            endDate={endDate}
-            selectsRange
-            inline
-            renderDayContents={renderDayContents}
-          />
-        </Box>
-        <Detail />
-        <Reviews />
-      </Container>
-    </div>
+    <Layout>
+      <div>
+        <Topbar />
+        <Container maxW="container.lg">
+          <Content data={data} />
+          <Box my={3}>
+            <Text fontWeight="bold" fontSize="xl" mb={1}>
+              check availability
+            </Text>
+            <DatePicker
+              selected={startDate}
+              onChange={datepickerOnChange}
+              startDate={startDate}
+              endDate={endDate}
+              selectsRange
+              inline
+              renderDayContents={renderDayContents}
+            />
+          </Box>
+          <Detail />
+          <Reviews />
+        </Container>
+      </div>
+    </Layout>
   );
 }
 
