@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState  } from "react";
 import {
   Box,
   Button,
@@ -15,6 +15,10 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
 import StepperInput from "../../Components/User/StepperInput";
+import { useSelector } from "react-redux";
+import {getAuth, onAuthStateChanged, sendEmailVerification, signOut} from "firebase/auth"
+import {authFirebase} from "../../Config/firebase"
+import {useHistory} from "react-router-dom"
 
 function useOnClickOutside(ref, handler) {
   useEffect(
@@ -189,6 +193,54 @@ function Thumbnail(props) {
 }
 
 function Home(props) {
+    const [emailVerified, setEmailVerified] = useState("")
+    const [userLogin, setUserLogin] = useState({})
+    const [firebaseProvider, setFirebaseProvider ] = useState("")
+
+    const {name, email ,isVerified, firebaseProviderId} = useSelector(state => state.user)
+    // console.log("redux",name);
+    // console.log("redux",email);
+    // console.log("redux",firebaseProviderId);
+    const history = useHistory()
+
+    // untuk dpt info user auth
+    const auth = getAuth()
+    //pengecekan user ada yg login atau tidak
+    onAuthStateChanged(auth, (user) => {
+      console.log("onAuthStateChanged :", user);
+      if (user) {
+        setUserLogin(user)
+        alert("ada yg login")
+        setFirebaseProvider(user.providerData[0].providerId);
+        let emailVerified = user.emailVerified
+        setEmailVerified(emailVerified)
+        // user.reload()
+
+        // kondisi jika sudah terverifikasi
+          if(user.emailVerified){
+              alert("your account has been verified")
+          } else {
+            // kirim email jika belum terverfikasi
+            sendEmailVerification(user)
+              .then(() => {
+                alert("check your email verification")
+              })
+              .catch((err) => {
+                console.error(err)
+              })
+            alert("Your account has not been verified")
+        }
+
+      } else {
+        alert("tidak ada yg login")
+        // jika tidak ada akan di logout
+        auth.signOut()
+        history.push("/login")
+      }
+    })
+
+    
+
   const sliderSettings = {
     dots: true,
     infinite: true,
