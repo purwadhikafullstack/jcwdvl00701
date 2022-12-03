@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
     Flex,
     Spacer,
@@ -13,17 +13,20 @@ import {
     Avatar,
     Container, Select
 } from '@chakra-ui/react'
-import {Link} from "react-router-dom"
+import {Link, useHistory} from "react-router-dom"
 
 import {useFormik} from 'formik'
 import * as Yup from 'yup';
 
 import DatePicker from "react-datepicker";
 
-import Footer from '../../Components/Footer';
 import NavbarMobile from '../../Components/NavbarMobile';
-import {getValue} from "@testing-library/user-event/dist/utils";
 import axios from "axios";
+import {authFirebase} from "../../Config/firebase";
+
+import store from "../../Redux/Reducers";
+import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
+import {useSelector} from "react-redux";
 
 function renderInput(isEditActive, props) {
     return React.Children.map(props.children, child => {
@@ -75,20 +78,36 @@ const UpdateSchema = Yup.object().shape({
     email: Yup.string()
         .email('Invalid email')
         .required('Required'),
-    gender: Yup.string()
-        .min(1, 'test')
-        .required('Required'),
+    gender: Yup.string().nullable().required('Required')
+        .min(1, 'test'),
     birthdate: Yup.date()
         .required('Required')
 });
 
 function Profile() {
+    const history = useHistory();
 
-    const userId = 'test'
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [gender, setGender] = useState('')
     const [birthdate, setBirthdate] = useState(new Date())
+
+    const [userId, setUserId] = useState('')
+    const getUser = useCallback(() => {
+        onAuthStateChanged(authFirebase, (user) => {
+            if (user) {
+                setUserId(user.uid)
+            } else {
+                history.push('/')
+            }
+        });
+    }, [setUserId, history])
+
+    const currentUser = useSelector(state => state)
+
+    useEffect(() => {
+        getUser()
+    }, [getUser])
 
     const [firebaseProviderId, setfirebaseProviderId] = useState('password')
 
@@ -116,25 +135,30 @@ function Profile() {
         },
     })
 
+    const fetchData = useCallback(async () => {
+        const response = await axios.get(
+            `${process.env.REACT_APP_API_BASE_URL}/user/getById`,
+            {params: {id: userId}}
+        )
+
+        setName(response.data.result.name)
+        setEmail(response.data.result.email)
+        setGender(response.data.result.gender)
+        setBirthdate(new Date(response.data.result.birthdate))
+
+        setfirebaseProviderId(response.data.result.firebaseProviderId)
+
+        formik.values.name = response.data.result.name
+        formik.values.email = response.data.result.email
+        formik.values.gender = response.data.result.gender
+        formik.values.birthdate = new Date(response.data.result.birthdate)
+    }, [userId])
+
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await axios.get(
-                `${process.env.REACT_APP_API_BASE_URL}/user/getById`,
-                {params: {id: userId}}
-            )
+        if (userId) fetchData()
+    }, [fetchData, userId])
 
-            setName(response.data.result.name)
-            setEmail(response.data.result.email)
-            setGender(response.data.result.gender)
-            setBirthdate(new Date(response.data.result.birthdate))
-
-            formik.values.name = response.data.result.name
-            formik.values.email = response.data.result.email
-            formik.values.gender = response.data.result.gender
-            formik.values.birthdate = new Date(response.data.result.birthdate)
-        }
-        fetchData()
-    }, [])
+    if (!userId) return
 
     return (
         <Container maxW='container.sm' p={0}>
@@ -186,7 +210,7 @@ function Profile() {
                             <UpdateInput inputDisplayName={'Gender'} formik={formik} errorMsg={formik.errors.gender}
                                          formState={[isEditingForm, setIsEditingForm]}>
                                 <Select style={{borderBottom: "1px solid"}} id='gender' variant='flushed' icon=''
-                                        value={formik.values.gender} onChange={formik.handleChange}>
+                                        value={formik.values.gender} onChange={formik.handleChange} placeholder='select your gender'>
                                     <option value='Male'>Male</option>
                                     <option value='Female'>Female</option>
                                 </Select>
