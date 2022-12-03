@@ -19,8 +19,6 @@ import Home from "./Pages/User/Home";
 import Profile from "./Pages/User/profile";
 
 import PropertyListTenant from "./Pages/Tenant/propertyListTenant";
-import NavbarTuru from "./Components/NavbarTuru";
-import Footer from "./Components/Footer";
 import RoomListTenant from "./Pages/Tenant/roomListTenant";
 import EditProperty from "./Pages/Tenant/editProperty";
 import EditRoom from "./Pages/Tenant/editRoom";
@@ -36,7 +34,6 @@ class App extends React.Component {
   render() {
     return (
       <BrowserRouter>
-        <NavbarTuru />
         <Switch>
           {/* page tenant */}
           <Route component={RegisterTenant} path="/tenant/register" />
@@ -68,7 +65,6 @@ class App extends React.Component {
           <Route component={Payment} path="/payment" />
           <Route component={Home} path="/" />
         </Switch>
-        <Footer />
       </BrowserRouter>
     );
   }

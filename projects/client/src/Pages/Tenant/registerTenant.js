@@ -11,29 +11,17 @@ import {
   Button,
   Text,
   Container,
-  InputGroup,
-  InputRightElement,
 } from "@chakra-ui/react";
 import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import registerTenant from "../../Assets/image/registerTenant.png";
-
+import Layout from "../../Components/Layout";
 import { Link } from "react-router-dom";
 
 function RegisterTenant() {
-   // for show password
-    const [showPassword, setShowPassword] = React.useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = React.useState(false)
-    const handleClick = (cek) =>{
-        if (cek === "showPassword"){
-            setShowPassword(!showPassword)
-        } else if (cek === "showConfirmPassword"){
-            setShowConfirmPassword(!showConfirmPassword)
-        }
-    }
   return (
-    <>
+    <Layout>
       <Container maxW="2x1" px="0px">
         <Flex flexDirection="column" bg="black">
           {/* flex container utk dekstop */}
@@ -142,42 +130,22 @@ function RegisterTenant() {
                           />
                         </FormControl>
                         <FormControl id="password" pb="12px">
-                            <InputGroup>
-                                <Input 
-                                type={showPassword ?"text" : "password"} 
-                                placeholder="Password" 
-                                borderRadius="0"  
-                                bg="white"
-                                />
-                                <InputRightElement>
-                                    <Button onClick={() => handleClick("showPassword")}>
-                                    { showPassword? 
-                                        <i className="fa-sharp fa-solid fa-eye"></i> 
-                                        :
-                                        <i className="fa-solid fa-eye-slash"></i>
-                                    }
-                                    </Button>
-                                </InputRightElement>
-                            </InputGroup>
+                          <Input
+                            type="password"
+                            placeholder="Password"
+                            borderRadius="0"
+                            bg="white"
+                          />
+                          {/* <i class="fa-solid fa-eye"></i> */}
                         </FormControl>
                         <FormControl id="confirmPassword" pb="12px">
-                            <InputGroup>
-                                <Input 
-                                type={showConfirmPassword ? "text" :"password"} 
-                                placeholder="Confirm Password" 
-                                borderRadius="0"  
-                                bg="white"
-                                />
-                                            <InputRightElement >
-                                    <Button onClick={(e) => handleClick("showConfirmPassword")}>
-                                    { showConfirmPassword? 
-                                        <i className="fa-sharp fa-solid fa-eye"></i> 
-                                        :
-                                        <i className="fa-solid fa-eye-slash"></i>
-                                    }
-                                                </Button>
-                                </InputRightElement>
-                            </InputGroup>
+                          <Input
+                            type="password"
+                            placeholder="Confirm Password"
+                            borderRadius="0"
+                            bg="white"
+                          />
+                          {/* <i class="fa-solid fa-eye"></i> */}
                         </FormControl>
                         <FormControl id="idCard" pb="12px">
                           <Input
@@ -219,7 +187,7 @@ function RegisterTenant() {
           </Flex>
         </Flex>
       </Container>
-    </>
+    </Layout>
   );
 }
 

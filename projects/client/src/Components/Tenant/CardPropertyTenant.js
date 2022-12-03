@@ -1,4 +1,4 @@
-import { Box, Image, Text, Flex, Spacer } from "@chakra-ui/react";
+import { Box, Image, Text, Flex, Spacer, Tooltip } from "@chakra-ui/react";
 import Foto from "../../Assets/bookingHistory3.png";
 
 function CardPropertyTenant() {
@@ -21,37 +21,41 @@ function CardPropertyTenant() {
           </Text>
         </Box>
         <Spacer />
-        <Box
-          as="button"
-          h="25px"
-          w="25px"
-          fontSize="12px"
-          transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
-          _hover={{
-            bg: "black",
-            color: "white",
-          }}
-          bg="primary"
-        >
-          <i className="fa-solid fa-pen-to-square"></i>
-        </Box>
+        <Tooltip label="Edit Property" aria-label="A tooltip">
+          <Box
+            as="button"
+            h="25px"
+            w="25px"
+            fontSize="12px"
+            transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
+            _hover={{
+              bg: "black",
+              color: "white",
+            }}
+            bg="primary"
+          >
+            <i className="fa-solid fa-pen-to-square"></i>
+          </Box>
+        </Tooltip>
       </Flex>
       <Flex justifyContent="space-between">
         <Text>Number of rooms : 2 Rooms</Text>
-        <Box
-          as="button"
-          h="25px"
-          w="25px"
-          fontSize="12px"
-          transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
-          color="white"
-          _hover={{
-            bg: "black",
-          }}
-          bg="rgba(251, 38, 38, 1)"
-        >
-          <i className="fa-solid fa-trash-can"></i>
-        </Box>
+        <Tooltip label="Delete Property" aria-label="A tooltip">
+          <Box
+            as="button"
+            h="25px"
+            w="25px"
+            fontSize="12px"
+            transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
+            color="white"
+            _hover={{
+              bg: "black",
+            }}
+            bg="rgba(251, 38, 38, 1)"
+          >
+            <i className="fa-solid fa-trash-can"></i>
+          </Box>
+        </Tooltip>
       </Flex>
     </Box>
   );

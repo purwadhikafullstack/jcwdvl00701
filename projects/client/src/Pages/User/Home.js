@@ -9,30 +9,14 @@ import {
   Text,
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
-
+import Layout from "../../Components/Layout";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
 import StepperInput from "../../Components/User/StepperInput";
-import { useSelector } from "react-redux";
-import {getAuth} from "firebase/auth"
-import {authFirebase} from "../../Config/firebase"
 
 function useOnClickOutside(ref, handler) {
-  const {name, email ,isVerified, firebaseProviderId} = useSelector(state => state.user)
-
-   // // untuk dpt info user auth
-  const auth = getAuth()
-  try {
-    const emailVerified = auth.currentUser.emailVerified
-    console.log(emailVerified);
-
-    // utk cek prider mana
-    const providerId = auth.currentUser.providerData[0].providerId
-  } catch (e) {}
-
-
   useEffect(
     () => {
       const listener = (event) => {
@@ -214,41 +198,43 @@ function Home(props) {
   };
 
   return (
-    <Box>
-      <TopBar />
+    <Layout>
+      <Box>
+        <TopBar />
 
-      <Container maxW="container.lg">
-        <Box my={4} py={8}>
-          <Slider {...sliderSettings}>
-            <Box h={"15vh"} backgroundColor={"red"} overflow={"hidden"}>
-              <Image
-                src={"/Assets/room1.png"}
-                w={"100%"}
-                objectFit="cover"
-              ></Image>
-            </Box>
-            <Box h={"15vh"} backgroundColor={"green"} overflow={"hidden"}>
-              <Image
-                src={"/Assets/room2.png"}
-                w={"100%"}
-                objectFit="cover"
-              ></Image>
-            </Box>
-            <Box h={"15vh"} backgroundColor={"blue"}>
-              <Image
-                src={"/Assets/room3.png"}
-                w={"100%"}
-                objectFit="cover"
-              ></Image>
-            </Box>
-          </Slider>
-        </Box>
+        <Container maxW="container.lg">
+          <Box my={4} py={8}>
+            <Slider {...sliderSettings}>
+              <Box h={"15vh"} backgroundColor={"red"} overflow={"hidden"}>
+                <Image
+                  src={"/Assets/room1.png"}
+                  w={"100%"}
+                  objectFit="cover"
+                ></Image>
+              </Box>
+              <Box h={"15vh"} backgroundColor={"green"} overflow={"hidden"}>
+                <Image
+                  src={"/Assets/room2.png"}
+                  w={"100%"}
+                  objectFit="cover"
+                ></Image>
+              </Box>
+              <Box h={"15vh"} backgroundColor={"blue"}>
+                <Image
+                  src={"/Assets/room3.png"}
+                  w={"100%"}
+                  objectFit="cover"
+                ></Image>
+              </Box>
+            </Slider>
+          </Box>
 
-        <Thumbnail />
-        <Thumbnail />
-        <Thumbnail />
-      </Container>
-    </Box>
+          <Thumbnail />
+          <Thumbnail />
+          <Thumbnail />
+        </Container>
+      </Box>
+    </Layout>
   );
 }
 

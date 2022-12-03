@@ -30,6 +30,10 @@ function NavbarMobileTenant() {
           <Image src={turuIcon} mr="1em" width="50px" height="50px"></Image>
           <Menu>
             <MenuButton
+              _hover={{ bg: "white" }}
+              _active={{
+                bg: "white",
+              }}
               fontSize="20px"
               icon={<i className="fa-solid fa-bars"></i>}
               as={IconButton}
@@ -41,7 +45,7 @@ function NavbarMobileTenant() {
             />
             <MenuList borderRadius="0px" width="100vw" border="none">
               <Link to="/tenant/dashboard">
-                <MenuItem>
+                <MenuItem _hover={{ bg: "white" }}>
                   <Button
                     variant="primary"
                     w="100%"
@@ -52,7 +56,7 @@ function NavbarMobileTenant() {
                 </MenuItem>
               </Link>
               <Link to="/tenant/profile">
-                <MenuItem>
+                <MenuItem _hover={{ bg: "white" }}>
                   <Button
                     variant="primary"
                     w="100%"
@@ -63,7 +67,7 @@ function NavbarMobileTenant() {
                 </MenuItem>
               </Link>
               <Link to="/tenant/order">
-                <MenuItem>
+                <MenuItem _hover={{ bg: "white" }}>
                   <Button
                     variant="primary"
                     w="100%"
@@ -74,7 +78,7 @@ function NavbarMobileTenant() {
                 </MenuItem>
               </Link>
               <Link to="/tenant/property">
-                <MenuItem>
+                <MenuItem _hover={{ bg: "white" }}>
                   <Button
                     variant="primary"
                     w="100%"
@@ -85,7 +89,7 @@ function NavbarMobileTenant() {
                 </MenuItem>
               </Link>
               <Link to="/tenant/room">
-                <MenuItem>
+                <MenuItem _hover={{ bg: "white" }}>
                   <Button
                     variant="primary"
                     w="100%"
@@ -96,7 +100,7 @@ function NavbarMobileTenant() {
                 </MenuItem>
               </Link>
               <Link to="/tenant/report">
-                <MenuItem>
+                <MenuItem _hover={{ bg: "white" }}>
                   <Button
                     variant="primary"
                     w="100%"
@@ -107,7 +111,7 @@ function NavbarMobileTenant() {
                 </MenuItem>
               </Link>
               <Link to="/tenant/price">
-                <MenuItem>
+                <MenuItem _hover={{ bg: "white" }}>
                   <Button
                     variant="primary"
                     w="100%"
