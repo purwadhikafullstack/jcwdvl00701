@@ -11,24 +11,17 @@ import {
   Button,
   Text,
   Container,
-  InputGroup,
-  InputRightElement
 } from "@chakra-ui/react";
 import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import loginTenant from "../../Assets/image/loginTenant.png";
-
 import { Link } from "react-router-dom";
+import Layout from "../../Components/Layout";
 
 function LoginTenant() {
-   // for show password
-    const [showPassword, setShowPassword] = React.useState(false)
-    const handleClick = () => {
-        setShowPassword(!showPassword)
-    }
   return (
-    <>
+    <Layout>
       <Container maxW="2x1" px="0px">
         <Flex flexDirection="column" bg="black">
           {/* flex container utk dekstop */}
@@ -89,24 +82,12 @@ function LoginTenant() {
                           />
                         </FormControl>
                         <FormControl id="password" pb="15px">
-                          <InputGroup>
-                            <Input 
-                            type={showPassword ? "text" : "password"}  
-                            placeholder="Password" 
-                            borderRadius="0" 
-                            bg="white" 
-                            />
-                            <InputRightElement>
-                            <Button onClick={handleClick}>
-                                { showPassword? 
-                                    <i className="fa-sharp fa-solid fa-eye"></i> 
-                                    :
-                                    <i className="fa-solid fa-eye-slash"></i>
-                                }
-                                </Button>
-                            </InputRightElement>
-                          
-                          </InputGroup>
+                          <Input
+                            type="password"
+                            placeholder="Password"
+                            borderRadius="0"
+                            bg="white"
+                          />
                         </FormControl>
                         <Button variant="primary" mb="12px">
                           Login
@@ -171,7 +152,7 @@ function LoginTenant() {
           </Flex>
         </Flex>
       </Container>
-    </>
+    </Layout>
   );
 }
 

@@ -28,6 +28,7 @@ import {
   HStack,
   useNumberInput,
 } from "@chakra-ui/react";
+import Layout from "../../Components/Layout";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -351,14 +352,16 @@ function PropertyList(props) {
   }, []);
 
   return (
-    <div>
-      <SearchBox />
-      <Container maxW="container.lg">
-        {properties.map((property) => (
-          <PropertyCard data={property} />
-        ))}
-      </Container>
-    </div>
+    <Layout>
+      <div>
+        <SearchBox />
+        <Container maxW="container.lg">
+          {properties.map((property) => (
+            <PropertyCard data={property} />
+          ))}
+        </Container>
+      </div>
+    </Layout>
   );
 }
 

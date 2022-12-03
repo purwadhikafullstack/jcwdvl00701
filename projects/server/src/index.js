@@ -2,14 +2,14 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
-const {sequelize} = require("./lib/sequelize")
-// const {sequelize} = require("./models")  // uncomment to use sequelize default utility
-const {env} = require("./config")
+const { sequelize } = require("./lib/sequelize");
+// const { sequelize } = require("./models"); // uncomment to use sequelize default utility
+const { env } = require("./config");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
 
-console.log("dari .env =",process.env.WHITELISTED_DOMAIN );
+console.log("dari .env =", process.env.WHITELISTED_DOMAIN);
 
 app.use(
   cors({
@@ -19,18 +19,17 @@ app.use(
 
 app.use(express.json());
 
-
 //#region API ROUTES
 
 // ===========================
 // NOTE : Add your routes here
-// sequelize.sync({ alter: true })
-const {userRouters} = require("./routes")
+// sequelize.sync({ alter: true });
+const { userRouters } = require("./routes");
 
-app.use("/api/user", userRouters)
+app.use("/api/user", userRouters);
 
 app.get("/api", (req, res) => {
-  console.log('test')
+  console.log("test");
   res.send(`Hello, this is my API`);
 });
 
