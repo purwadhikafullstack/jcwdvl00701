@@ -285,6 +285,9 @@ function Home(props) {
           <Thumbnail />
           <Thumbnail />
         </Container>
+         <Button onClick={keluar}>
+        log-out
+      </Button>
       </Box>
     </Layout>
   );
