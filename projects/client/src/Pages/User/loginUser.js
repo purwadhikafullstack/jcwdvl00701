@@ -34,6 +34,7 @@ import axios from "axios"
 import { useDispatch } from "react-redux";
 import auth_types from "../../Redux/Reducers/Types/userTypes";
 import { Link, useHistory } from "react-router-dom";
+import Layout from "../../Components/Layout";
 
 function LoginUser() {
     // for show password
