@@ -1,4 +1,4 @@
-import React, {forwardRef, useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
     AlertDialog,
     AlertDialogBody,
@@ -28,7 +28,6 @@ import NavbarMobile from '../../Components/NavbarMobile';
 import axios from "axios";
 import {authFirebase} from "../../Config/firebase";
 import {onAuthStateChanged} from "firebase/auth";
-import * as PropTypes from "prop-types";
 
 function renderInput(isEditActive, props) {
     return React.Children.map(props.children, child => {
@@ -215,7 +214,10 @@ function Profile() {
         onClose()
     }
 
-    const calendarRef = React.useRef();
+    const datepickerRef = useRef(null);
+    function handleClickDatepickerIcon() {
+        datepickerRef.current.setFocus(true);
+    }
 
     if (!userId) return
 
@@ -287,14 +289,26 @@ function Profile() {
                                 </Select>
                             </UpdateInput>
 
+
                             <UpdateInput inputDisplayName={'Birthdate'} formik={formik}
                                          errorMsg={formik.errors.birthdate}
                                          formState={[isEditingForm, setIsEditingForm]}>
+
+                                <Input style={{borderBottom: "1px solid"}} id='phoneNumber' type="text"
+                                       variant='flushed'
+                                       placeholder='insert your phone number'
+                                       value={formik.values.birthdate.toLocaleString('en-US', {day: "2-digit", month: "long", year: "numeric"})}
+                                       onClick={() => handleClickDatepickerIcon()}/>
+                            </UpdateInput>
+
+                            <Box position={'absolute'} top={"-2rem"}>
                                 <DatePicker selected={formik.values.birthdate}
                                             onChange={(date) => formik.setFieldValue('birthdate', date)}
-                                            showMonthDropdown showYearDropdown dropdownMode="select" withPortal/>
-                                
-                            </UpdateInput>
+                                            showMonthDropdown showYearDropdown dropdownMode="select"
+                                            ref={datepickerRef} withPortal/>
+                                <Box background={"white"} h={"100%"} w={"100%"} position={"absolute"} top={0}></Box>
+                            </Box>
+
                         </Box>
                         {/*Profile form ends*/}
 
