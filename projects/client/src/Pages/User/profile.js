@@ -11,7 +11,15 @@ import {
     Button,
     Text,
     Avatar,
-    Container, Select
+    Container, Select, useDisclosure
+} from '@chakra-ui/react'
+import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogOverlay,
 } from '@chakra-ui/react'
 import {Link, useHistory} from "react-router-dom"
 
@@ -41,6 +49,9 @@ function UpdateInput(props) {
     const [isEditingForm, setIsEditingForm] = props.formState
     const [isLoading, setIsLoading] = useState(false)
 
+    const {isOpen, onOpen, onClose} = useDisclosure()
+    const cancelRef = React.useRef()
+
     const handleEdit = async () => {
         if (props.errorMsg && isEditActive) return  // if there's error prevent submission
 
@@ -53,11 +64,34 @@ function UpdateInput(props) {
         setIsLoading(false)
     }
 
+    const handleEditNew = async () => {
+        if (props.errorMsg && isEditActive) return  // if there's error prevent submission
+
+        if (isEditActive) {
+            onOpen()
+        } else {
+            setIsEditActive(current => !current)
+            setIsEditingForm(current => !current)
+        }
+    }
+
+    const handlePost = async () => {
+        setIsLoading(true)
+        if (isEditActive) {
+            props.formik.submitForm()
+        }
+        onClose()
+        setIsEditActive(current => !current)
+        setIsEditingForm(current => !current)
+        setIsLoading(false)
+
+    }
+
     return (
         <Box h="max-content" mt={5}>
             <Flex justifyContent="space-between" align='center'>
                 <Text>{props.inputDisplayName}</Text>
-                <Button onClick={handleEdit} variant='link' disabled={isEditingForm && !isEditActive}
+                <Button onClick={props.needConfirm ? handleEditNew : handleEdit} variant='link' disabled={isEditingForm && !isEditActive}
                         isLoading={isLoading}>
                     {!isEditActive ? "Edit" : "Save"}
                 </Button>
@@ -66,6 +100,38 @@ function UpdateInput(props) {
             {renderInput(isEditActive, props)}
 
             {props.errorMsg ? <Text color={'red'}>*{props.errorMsg}</Text> : null}
+
+            {
+                props.needConfirm ?
+                <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+                    <AlertDialogOverlay>
+                        <AlertDialogContent>
+                            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                                Changing Sensitive Information
+                            </AlertDialogHeader>
+
+                            <AlertDialogBody>
+                                <Text>
+                                    Changing email address old phone number will cause you to
+                                    <strong> not be able to login with old email old old phone number</strong>.
+                                </Text>
+                                <Text pt={5}>
+                                    Are you sure to proceed?
+                                </Text>
+                            </AlertDialogBody>
+
+                            <AlertDialogFooter>
+                                <Button ref={cancelRef} onClick={onClose}>
+                                    Cancel
+                                </Button>
+                                <Button colorScheme='blue' onClick={handlePost} ml={3}>
+                                    Update
+                                </Button>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialogOverlay>
+                </AlertDialog> : null
+            }
         </Box>
     )
 }
@@ -126,7 +192,7 @@ function Profile() {
         validationSchema: UpdateSchema,
         onSubmit: async (values, {props}) => {
             // if values unchanged then prevent submission
-            if (values.name === name && values.email === email && values.gender === gender && values.birthdate === birthdate) return
+            if (values.name === name && values.email === email && values.phoneNumber === phoneNumber && values.gender === gender && values.birthdate.getTime() === birthdate.getTime()) return
 
             values.id = userId  // dummy id
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/update`, values)
@@ -195,7 +261,7 @@ function Profile() {
                             <Heading as='h1' size="md">Personal Info</Heading>
 
                             <UpdateInput inputDisplayName={'Name'} formik={formik} errorMsg={formik.errors.name}
-                                         formState={[isEditingForm, setIsEditingForm]}>
+                                         formState={[isEditingForm, setIsEditingForm]} needConfirm={false}>
                                 <Input style={{borderBottom: "1px solid"}} id='name' type="text" variant='flushed'
                                        placeholder='insert your name'
                                        value={formik.values.name} onChange={formik.handleChange}/>
@@ -205,7 +271,7 @@ function Profile() {
                                 firebaseProviderId === 'password' ?
                                     <UpdateInput inputDisplayName={'Email'} formik={formik}
                                                  errorMsg={formik.errors.email}
-                                                 formState={[isEditingForm, setIsEditingForm]}>
+                                                 formState={[isEditingForm, setIsEditingForm]} needConfirm={true}>
                                         <Input style={{borderBottom: "1px solid"}} id='email' type="text"
                                                variant='flushed'
                                                placeholder='insert your email'
@@ -213,17 +279,20 @@ function Profile() {
                                     </UpdateInput> : null
                             }
 
-                            <UpdateInput inputDisplayName={'Phone Number'} formik={formik} errorMsg={formik.errors.phoneNumber}
-                                         formState={[isEditingForm, setIsEditingForm]}>
-                                <Input style={{borderBottom: "1px solid"}} id='phoneNumber' type="text" variant='flushed'
+                            <UpdateInput inputDisplayName={'Phone Number'} formik={formik}
+                                         errorMsg={formik.errors.phoneNumber}
+                                         formState={[isEditingForm, setIsEditingForm]} needConfirm={true}>
+                                <Input style={{borderBottom: "1px solid"}} id='phoneNumber' type="text"
+                                       variant='flushed'
                                        placeholder='insert your phone number'
                                        value={formik.values.phoneNumber} onChange={formik.handleChange}/>
                             </UpdateInput>
 
                             <UpdateInput inputDisplayName={'Gender'} formik={formik} errorMsg={formik.errors.gender}
-                                         formState={[isEditingForm, setIsEditingForm]}>
+                                         formState={[isEditingForm, setIsEditingForm]} needConfirm={false}>
                                 <Select style={{borderBottom: "1px solid"}} id='gender' variant='flushed' icon=''
-                                        value={formik.values.gender} onChange={formik.handleChange} placeholder='select your gender'>
+                                        value={formik.values.gender} onChange={formik.handleChange}
+                                        placeholder='select your gender'>
                                     <option value='Male'>Male</option>
                                     <option value='Female'>Female</option>
                                 </Select>
@@ -231,7 +300,7 @@ function Profile() {
 
                             <UpdateInput inputDisplayName={'Birthdate'} formik={formik}
                                          errorMsg={formik.errors.birthdate}
-                                         formState={[isEditingForm, setIsEditingForm]}>
+                                         formState={[isEditingForm, setIsEditingForm]} needConfirm={false}>
                                 <DatePicker selected={formik.values.birthdate}
                                             onChange={(date) => formik.setFieldValue('birthdate', date)}
                                             showMonthDropdown showYearDropdown dropdownMode="select" withPortal/>
@@ -241,11 +310,12 @@ function Profile() {
 
                         {
                             firebaseProviderId === 'password' ?
-                            <Box h="max-content" pt="16px" pb="30px">
-                                <Text textDecoration="underline" _hover={{textDecoration: "underline", fontWeight: "bold"}}>
-                                    <Link to="/reset-password">Change Password</Link>
-                                </Text>
-                            </Box> : null
+                                <Box h="max-content" pt="16px" pb="30px">
+                                    <Text textDecoration="underline"
+                                          _hover={{textDecoration: "underline", fontWeight: "bold"}}>
+                                        <Link to="/reset-password">Change Password</Link>
+                                    </Text>
+                                </Box> : null
                         }
                     </Box>
                 </Flex>
