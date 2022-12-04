@@ -42,7 +42,7 @@ function UpdateInput(props) {
     const [isLoading, setIsLoading] = useState(false)
 
     const handleEdit = async () => {
-        if (props.errorMsg) return  // if there's error prevent submission
+        if (props.errorMsg && isEditActive) return  // if there's error prevent submission
 
         if (isEditActive) {
             setIsLoading(true)
@@ -78,6 +78,7 @@ const UpdateSchema = Yup.object().shape({
     email: Yup.string()
         .email('Invalid email')
         .required('Required'),
+    phoneNumber: Yup.string().phone('id').nullable().required(),
     gender: Yup.string().nullable().required('Required')
         .min(1, 'test'),
     birthdate: Yup.date()
@@ -89,6 +90,7 @@ function Profile() {
 
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('')
     const [gender, setGender] = useState('')
     const [birthdate, setBirthdate] = useState(new Date())
 
@@ -117,6 +119,7 @@ function Profile() {
         initialValues: {
             name: name,
             email: email,
+            phoneNumber: phoneNumber,
             gender: gender,
             birthdate: birthdate
         },
@@ -130,6 +133,7 @@ function Profile() {
 
             setName(values.name)
             setEmail(values.email)
+            setPhoneNumber(values.phoneNumber)
             setGender(values.gender)
             setBirthdate(values.birthdate)
         },
@@ -143,6 +147,7 @@ function Profile() {
 
         setName(response.data.result.name)
         setEmail(response.data.result.email)
+        setPhoneNumber(response.data.result.phoneNumber)
         setGender(response.data.result.gender)
         setBirthdate(new Date(response.data.result.birthdate))
 
@@ -150,6 +155,7 @@ function Profile() {
 
         formik.values.name = response.data.result.name
         formik.values.email = response.data.result.email
+        formik.values.phoneNumber = response.data.result.phoneNumber
         formik.values.gender = response.data.result.gender
         formik.values.birthdate = new Date(response.data.result.birthdate)
     }, [userId])
@@ -206,6 +212,13 @@ function Profile() {
                                                value={formik.values.email} onChange={formik.handleChange}/>
                                     </UpdateInput> : null
                             }
+
+                            <UpdateInput inputDisplayName={'Phone Number'} formik={formik} errorMsg={formik.errors.phoneNumber}
+                                         formState={[isEditingForm, setIsEditingForm]}>
+                                <Input style={{borderBottom: "1px solid"}} id='phoneNumber' type="text" variant='flushed'
+                                       placeholder='insert your phone number'
+                                       value={formik.values.phoneNumber} onChange={formik.handleChange}/>
+                            </UpdateInput>
 
                             <UpdateInput inputDisplayName={'Gender'} formik={formik} errorMsg={formik.errors.gender}
                                          formState={[isEditingForm, setIsEditingForm]}>
