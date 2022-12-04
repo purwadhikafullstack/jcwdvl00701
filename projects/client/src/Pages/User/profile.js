@@ -1,25 +1,21 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {
-    Flex,
-    Spacer,
-    Image,
-    Box,
-    Heading,
-    FormControl,
-    FormErrorMessage,
-    Input,
-    Button,
-    Text,
-    Avatar,
-    Container, Select, useDisclosure
-} from '@chakra-ui/react'
+import React, {forwardRef, useCallback, useEffect, useState} from 'react';
 import {
     AlertDialog,
     AlertDialogBody,
+    AlertDialogContent,
     AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogContent,
     AlertDialogOverlay,
+    Avatar,
+    Box,
+    Button,
+    Container,
+    Flex,
+    Heading,
+    Input,
+    Select,
+    Text,
+    useDisclosure
 } from '@chakra-ui/react'
 import {Link, useHistory} from "react-router-dom"
 
@@ -31,10 +27,8 @@ import DatePicker from "react-datepicker";
 import NavbarMobile from '../../Components/NavbarMobile';
 import axios from "axios";
 import {authFirebase} from "../../Config/firebase";
-
-import store from "../../Redux/Reducers";
-import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
-import {useSelector} from "react-redux";
+import {onAuthStateChanged} from "firebase/auth";
+import * as PropTypes from "prop-types";
 
 function renderInput(isEditActive, props) {
     return React.Children.map(props.children, child => {
@@ -44,7 +38,7 @@ function renderInput(isEditActive, props) {
     })
 }
 
-function UpdateInput({formState, formik, errorMsg, onOpen, inputDisplayName, needConfirm=false, ...rest}) {
+function UpdateInput({formState, formik, errorMsg, onOpen, inputDisplayName, needConfirm = false, ...rest}) {
     const [isEditActive, setIsEditActive] = useState(false)
     const [isEditingForm, setIsEditingForm] = formState
     const [isLoading, setIsLoading] = useState(false)
@@ -99,11 +93,45 @@ const UpdateSchema = Yup.object().shape({
         .email('Invalid email')
         .required('Required'),
     phoneNumber: Yup.string().phone('id').nullable().required(),
-    gender: Yup.string().nullable().required('Required')
-        .min(1, 'test'),
+    gender: Yup.string().nullable().required('Required'),
     birthdate: Yup.date()
         .required('Required')
 });
+
+function ConfirmationModal({open, leastDestructiveRef, onClose, onClick, ...rest}) {
+    return (
+        <AlertDialog isOpen={open} leastDestructiveRef={leastDestructiveRef} onClose={onClose}>
+            <AlertDialogOverlay>
+                <AlertDialogContent>
+
+                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                        Changing Sensitive Information
+                    </AlertDialogHeader>
+
+                    <AlertDialogBody>
+                        <Text>
+                            Changing email address or phone number will cause you to
+                            <strong> not be able to login using the old credentials</strong>.
+                        </Text>
+                        <Text pt={5}>
+                            Are you willing to proceed?
+                        </Text>
+                    </AlertDialogBody>
+
+                    <AlertDialogFooter>
+                        <Button colorScheme="red" ref={leastDestructiveRef} onClick={onClose}>
+                            Cancel
+                        </Button>
+                        <Button variant={"link"} onClick={onClick} ml={3}>
+                            Yes, I wanted to change it
+                        </Button>
+                    </AlertDialogFooter>
+
+                </AlertDialogContent>
+            </AlertDialogOverlay>
+        </AlertDialog>
+    );
+}
 
 function Profile() {
     const history = useHistory();
@@ -130,7 +158,6 @@ function Profile() {
     }, [getUser])
 
     const [firebaseProviderId, setfirebaseProviderId] = useState('password')
-
     const [isEditingForm, setIsEditingForm] = useState(false)
 
     const formik = useFormik({
@@ -143,7 +170,7 @@ function Profile() {
             birthdate: birthdate
         },
         validationSchema: UpdateSchema,
-        onSubmit: async (values, formikHelpers) => {
+        onSubmit: async (values) => {
             values.id = userId  // dummy id
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/update`, values)
 
@@ -188,6 +215,8 @@ function Profile() {
         onClose()
     }
 
+    const calendarRef = React.useRef();
+
     if (!userId) return
 
     return (
@@ -229,7 +258,8 @@ function Profile() {
                                 firebaseProviderId === 'password' ?
                                     <UpdateInput inputDisplayName={'Email'} formik={formik}
                                                  errorMsg={formik.errors.email}
-                                                 formState={[isEditingForm, setIsEditingForm]} needConfirm={true} onOpen={onOpen}>
+                                                 formState={[isEditingForm, setIsEditingForm]} needConfirm={true}
+                                                 onOpen={onOpen}>
                                         <Input style={{borderBottom: "1px solid"}} id='email' type="text"
                                                variant='flushed'
                                                placeholder='insert your email'
@@ -239,7 +269,8 @@ function Profile() {
 
                             <UpdateInput inputDisplayName={'Phone Number'} formik={formik}
                                          errorMsg={formik.errors.phoneNumber}
-                                         formState={[isEditingForm, setIsEditingForm]} needConfirm={true} onOpen={onOpen}>
+                                         formState={[isEditingForm, setIsEditingForm]} needConfirm={true}
+                                         onOpen={onOpen}>
                                 <Input style={{borderBottom: "1px solid"}} id='phoneNumber' type="text"
                                        variant='flushed'
                                        placeholder='insert your phone number'
@@ -262,6 +293,7 @@ function Profile() {
                                 <DatePicker selected={formik.values.birthdate}
                                             onChange={(date) => formik.setFieldValue('birthdate', date)}
                                             showMonthDropdown showYearDropdown dropdownMode="select" withPortal/>
+                                
                             </UpdateInput>
                         </Box>
                         {/*Profile form ends*/}
@@ -284,34 +316,8 @@ function Profile() {
                 </Flex>
 
                 {/*confirmation modal*/}
-                <AlertDialog isOpen={isOpen} leastDestructiveRef={updateConfirmRef} onClose={onClose}>
-                    <AlertDialogOverlay>
-                        <AlertDialogContent>
-                            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-                                Changing Sensitive Information
-                            </AlertDialogHeader>
-
-                            <AlertDialogBody>
-                                <Text>
-                                    Changing email address or phone number will cause you to
-                                    <strong> not be able to login using the old credentials</strong>.
-                                </Text>
-                                <Text pt={5}>
-                                    Are you willing to proceed?
-                                </Text>
-                            </AlertDialogBody>
-
-                            <AlertDialogFooter>
-                                <Button colorScheme='red' ref={updateConfirmRef} onClick={onClose}>
-                                    Cancel
-                                </Button>
-                                <Button variant={'link'} onClick={handlePostModal} ml={3}>
-                                    Yes, I wanted to change it
-                                </Button>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialogOverlay>
-                </AlertDialog>
+                <ConfirmationModal open={isOpen} leastDestructiveRef={updateConfirmRef} onClose={onClose}
+                                   onClick={handlePostModal}/>
                 {/*confirmation modal end*/}
 
             </Container>
