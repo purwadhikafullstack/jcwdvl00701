@@ -20,11 +20,6 @@ module.exports = ({
                 isVerified,
                 firebaseProviderId
             })
-
-            // const Otp = await sendEmailVerification.create({
-            //     const otp = 1000 * mathR
-            // })
-
             return res.status(200).json({
                 message : "success add data",
                 results : newUser
@@ -53,11 +48,12 @@ module.exports = ({
     getUserOne : async (req,res) => {
         try {
             console.log(req.query.email)
-            
+            console.log(req.query.id);
             const email = req.query.email
-            
+            const id = req.query.id
             const getUserOne = await User.findOne({
                 where : {
+                    id,
                     email
                 }
             })
@@ -68,7 +64,7 @@ module.exports = ({
         } catch (err) {
             console.log(err);
             return res.status(500).json({
-                message : err.toString()
+                message : "your email not registered"
             })
         }
     },

@@ -13,6 +13,8 @@ import {
 } from "@chakra-ui/react";
 import turuIcon from "../Assets/image/turuIcon.png";
 import { Link } from "react-router-dom";
+import {authFirebase} from "../Config/firebase";
+import {signOut} from "firebase/auth";
 
 function NavbarMobileTenant() {
   return (
@@ -121,6 +123,21 @@ function NavbarMobileTenant() {
                   </Button>
                 </MenuItem>
               </Link>
+
+              <MenuItem>
+                <Button
+                    variant="primary"
+                    w="100%"
+                    leftIcon={<i className="fa-solid fa-cash-register"></i>}
+                    onClick={() => {
+                      const auth = authFirebase
+                      signOut(auth).then(() => alert('signed out')).catch((error) => alert(error))
+                    }}
+                >
+                  Sign Out
+                </Button>
+              </MenuItem>
+
             </MenuList>
           </Menu>
         </Flex>
