@@ -49,49 +49,35 @@ function UpdateInput(props) {
     const [isEditingForm, setIsEditingForm] = props.formState
     const [isLoading, setIsLoading] = useState(false)
 
-    const {isOpen, onOpen, onClose} = useDisclosure()
-    const cancelRef = React.useRef()
-
     const handleEdit = async () => {
+        setIsLoading(true)
         if (props.errorMsg && isEditActive) return  // if there's error prevent submission
 
-        if (isEditActive) {
-            setIsLoading(true)
-            props.formik.submitForm()
-        }
-        setIsEditActive(current => !current)
-        setIsEditingForm(current => !current)
-        setIsLoading(false)
-    }
-
-    const handleEditNew = async () => {
-        if (props.errorMsg && isEditActive) return  // if there's error prevent submission
-
-        if (isEditActive) {
-            onOpen()
-        } else {
+        // check value changes
+        if (JSON.stringify(props.formik.initialValues) === JSON.stringify(props.formik.values)) {
             setIsEditActive(current => !current)
             setIsEditingForm(current => !current)
+            setIsLoading(false)
+            return // immediate return if not value changes
         }
-    }
 
-    const handlePost = async () => {
-        setIsLoading(true)
         if (isEditActive) {
-            props.formik.submitForm()
+            if (props.needConfirm) props.onOpen()
+            else await props.formik.submitForm()
         }
-        onClose()
+
         setIsEditActive(current => !current)
         setIsEditingForm(current => !current)
         setIsLoading(false)
-
     }
+
 
     return (
         <Box h="max-content" mt={5}>
             <Flex justifyContent="space-between" align='center'>
                 <Text>{props.inputDisplayName}</Text>
-                <Button onClick={props.needConfirm ? handleEditNew : handleEdit} variant='link' disabled={isEditingForm && !isEditActive}
+                <Button onClick={handleEdit} variant='link'
+                        disabled={(isEditingForm && !isEditActive) || props.errorMsg}
                         isLoading={isLoading}>
                     {!isEditActive ? "Edit" : "Save"}
                 </Button>
@@ -100,38 +86,6 @@ function UpdateInput(props) {
             {renderInput(isEditActive, props)}
 
             {props.errorMsg ? <Text color={'red'}>*{props.errorMsg}</Text> : null}
-
-            {
-                props.needConfirm ?
-                <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
-                    <AlertDialogOverlay>
-                        <AlertDialogContent>
-                            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-                                Changing Sensitive Information
-                            </AlertDialogHeader>
-
-                            <AlertDialogBody>
-                                <Text>
-                                    Changing email address old phone number will cause you to
-                                    <strong> not be able to login with old email old old phone number</strong>.
-                                </Text>
-                                <Text pt={5}>
-                                    Are you sure to proceed?
-                                </Text>
-                            </AlertDialogBody>
-
-                            <AlertDialogFooter>
-                                <Button ref={cancelRef} onClick={onClose}>
-                                    Cancel
-                                </Button>
-                                <Button colorScheme='blue' onClick={handlePost} ml={3}>
-                                    Update
-                                </Button>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialogOverlay>
-                </AlertDialog> : null
-            }
         </Box>
     )
 }
@@ -171,8 +125,6 @@ function Profile() {
         });
     }, [setUserId, history])
 
-    const currentUser = useSelector(state => state)
-
     useEffect(() => {
         getUser()
     }, [getUser])
@@ -182,6 +134,7 @@ function Profile() {
     const [isEditingForm, setIsEditingForm] = useState(false)
 
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
             name: name,
             email: email,
@@ -190,10 +143,7 @@ function Profile() {
             birthdate: birthdate
         },
         validationSchema: UpdateSchema,
-        onSubmit: async (values, {props}) => {
-            // if values unchanged then prevent submission
-            if (values.name === name && values.email === email && values.phoneNumber === phoneNumber && values.gender === gender && values.birthdate.getTime() === birthdate.getTime()) return
-
+        onSubmit: async (values, formikHelpers) => {
             values.id = userId  // dummy id
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/update`, values)
 
@@ -229,6 +179,14 @@ function Profile() {
     useEffect(() => {
         if (userId) fetchData()
     }, [fetchData, userId])
+
+    const {isOpen, onOpen, onClose} = useDisclosure()
+    const updateConfirmRef = React.useRef()
+
+    const handlePostModal = async () => {
+        await formik.submitForm()
+        onClose()
+    }
 
     if (!userId) return
 
@@ -271,7 +229,7 @@ function Profile() {
                                 firebaseProviderId === 'password' ?
                                     <UpdateInput inputDisplayName={'Email'} formik={formik}
                                                  errorMsg={formik.errors.email}
-                                                 formState={[isEditingForm, setIsEditingForm]} needConfirm={true}>
+                                                 formState={[isEditingForm, setIsEditingForm]} needConfirm={true} onOpen={onOpen}>
                                         <Input style={{borderBottom: "1px solid"}} id='email' type="text"
                                                variant='flushed'
                                                placeholder='insert your email'
@@ -281,7 +239,7 @@ function Profile() {
 
                             <UpdateInput inputDisplayName={'Phone Number'} formik={formik}
                                          errorMsg={formik.errors.phoneNumber}
-                                         formState={[isEditingForm, setIsEditingForm]} needConfirm={true}>
+                                         formState={[isEditingForm, setIsEditingForm]} needConfirm={true} onOpen={onOpen}>
                                 <Input style={{borderBottom: "1px solid"}} id='phoneNumber' type="text"
                                        variant='flushed'
                                        placeholder='insert your phone number'
@@ -315,7 +273,8 @@ function Profile() {
                                           _hover={{textDecoration: "underline", fontWeight: "bold"}}>
                                         <Link to="/reset-password">Change Password</Link>
                                     </Text>
-                                </Box> : null
+                                </Box>
+                                : null
                         }
                     </Box>
                 </Flex>
@@ -323,6 +282,38 @@ function Profile() {
                 <Flex justifyContent="center">
                     <NavbarMobile/>
                 </Flex>
+
+                {/*confirmation modal*/}
+                <AlertDialog isOpen={isOpen} leastDestructiveRef={updateConfirmRef} onClose={onClose}>
+                    <AlertDialogOverlay>
+                        <AlertDialogContent>
+                            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                                Changing Sensitive Information
+                            </AlertDialogHeader>
+
+                            <AlertDialogBody>
+                                <Text>
+                                    Changing email address or phone number will cause you to
+                                    <strong> not be able to login using the old credentials</strong>.
+                                </Text>
+                                <Text pt={5}>
+                                    Are you willing to proceed?
+                                </Text>
+                            </AlertDialogBody>
+
+                            <AlertDialogFooter>
+                                <Button colorScheme='red' ref={updateConfirmRef} onClick={onClose}>
+                                    Cancel
+                                </Button>
+                                <Button variant={'link'} onClick={handlePostModal} ml={3}>
+                                    Yes, I wanted to change it
+                                </Button>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialogOverlay>
+                </AlertDialog>
+                {/*confirmation modal end*/}
+
             </Container>
         </Container>
     )
