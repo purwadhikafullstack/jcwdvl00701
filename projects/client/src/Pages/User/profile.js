@@ -239,11 +239,14 @@ function Profile() {
                         </Box>
                         {/*Profile form ends*/}
 
-                        <Box h="max-content" pt="16px" pb="30px">
-                            <Text textDecoration="underline" _hover={{textDecoration: "underline", fontWeight: "bold"}}>
-                                <Link to="/reset-password">Change Password</Link>
-                            </Text>
-                        </Box>
+                        {
+                            firebaseProviderId === 'password' ?
+                            <Box h="max-content" pt="16px" pb="30px">
+                                <Text textDecoration="underline" _hover={{textDecoration: "underline", fontWeight: "bold"}}>
+                                    <Link to="/reset-password">Change Password</Link>
+                                </Text>
+                            </Box> : null
+                        }
                     </Box>
                 </Flex>
 
