@@ -44,17 +44,17 @@ function renderInput(isEditActive, props) {
     })
 }
 
-function UpdateInput(props) {
+function UpdateInput({formState, formik, errorMsg, onOpen, inputDisplayName, needConfirm=false, ...rest}) {
     const [isEditActive, setIsEditActive] = useState(false)
-    const [isEditingForm, setIsEditingForm] = props.formState
+    const [isEditingForm, setIsEditingForm] = formState
     const [isLoading, setIsLoading] = useState(false)
 
     const handleEdit = async () => {
         setIsLoading(true)
-        if (props.errorMsg && isEditActive) return  // if there's error prevent submission
+        if (errorMsg && isEditActive) return  // if there's error prevent submission
 
         // check value changes
-        if (JSON.stringify(props.formik.initialValues) === JSON.stringify(props.formik.values)) {
+        if (JSON.stringify(formik.initialValues) === JSON.stringify(formik.values)) {
             setIsEditActive(current => !current)
             setIsEditingForm(current => !current)
             setIsLoading(false)
@@ -62,8 +62,8 @@ function UpdateInput(props) {
         }
 
         if (isEditActive) {
-            if (props.needConfirm) props.onOpen()
-            else await props.formik.submitForm()
+            if (needConfirm) onOpen()
+            else await formik.submitForm()
         }
 
         setIsEditActive(current => !current)
@@ -75,17 +75,17 @@ function UpdateInput(props) {
     return (
         <Box h="max-content" mt={5}>
             <Flex justifyContent="space-between" align='center'>
-                <Text>{props.inputDisplayName}</Text>
+                <Text>{inputDisplayName}</Text>
                 <Button onClick={handleEdit} variant='link'
-                        disabled={(isEditingForm && !isEditActive) || props.errorMsg}
+                        disabled={(isEditingForm && !isEditActive) || errorMsg}
                         isLoading={isLoading}>
                     {!isEditActive ? "Edit" : "Save"}
                 </Button>
             </Flex>
 
-            {renderInput(isEditActive, props)}
+            {renderInput(isEditActive, rest)}
 
-            {props.errorMsg ? <Text color={'red'}>*{props.errorMsg}</Text> : null}
+            {errorMsg ? <Text color={'red'}>*{errorMsg}</Text> : null}
         </Box>
     )
 }
@@ -219,7 +219,7 @@ function Profile() {
                             <Heading as='h1' size="md">Personal Info</Heading>
 
                             <UpdateInput inputDisplayName={'Name'} formik={formik} errorMsg={formik.errors.name}
-                                         formState={[isEditingForm, setIsEditingForm]} needConfirm={false}>
+                                         formState={[isEditingForm, setIsEditingForm]}>
                                 <Input style={{borderBottom: "1px solid"}} id='name' type="text" variant='flushed'
                                        placeholder='insert your name'
                                        value={formik.values.name} onChange={formik.handleChange}/>
@@ -247,7 +247,7 @@ function Profile() {
                             </UpdateInput>
 
                             <UpdateInput inputDisplayName={'Gender'} formik={formik} errorMsg={formik.errors.gender}
-                                         formState={[isEditingForm, setIsEditingForm]} needConfirm={false}>
+                                         formState={[isEditingForm, setIsEditingForm]}>
                                 <Select style={{borderBottom: "1px solid"}} id='gender' variant='flushed' icon=''
                                         value={formik.values.gender} onChange={formik.handleChange}
                                         placeholder='select your gender'>
@@ -258,7 +258,7 @@ function Profile() {
 
                             <UpdateInput inputDisplayName={'Birthdate'} formik={formik}
                                          errorMsg={formik.errors.birthdate}
-                                         formState={[isEditingForm, setIsEditingForm]} needConfirm={false}>
+                                         formState={[isEditingForm, setIsEditingForm]}>
                                 <DatePicker selected={formik.values.birthdate}
                                             onChange={(date) => formik.setFieldValue('birthdate', date)}
                                             showMonthDropdown showYearDropdown dropdownMode="select" withPortal/>
