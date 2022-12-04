@@ -239,7 +239,10 @@ function Home(props) {
       }
     })
 
-    
+    const keluar = () => {
+      auth.signOut()
+      history.push("/login")
+    }
 
   const sliderSettings = {
     dots: true,

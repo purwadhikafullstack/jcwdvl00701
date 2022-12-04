@@ -14,7 +14,7 @@ import {
   FormHelperText
 } from "@chakra-ui/react";
 import turuIcon from "../Assets/image/turuIcon.png";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {auth, getAuth, sendPasswordResetEmail} from "firebase/auth"
 import {useFormik} from "formik"
 import * as Yup from "yup"
@@ -23,11 +23,7 @@ import { async } from "@firebase/util";
 import { authFirebase } from "../Config/firebase";
 
 function ForgotPassword() {
-  const [isEmail, setIsEmail] = useState(false);
-
-  const check = () => {
-    setIsEmail(true);
-  };
+  const history = useHistory()
 
   // utk cek email validation pakai formik
   //consfigure yup
@@ -48,6 +44,7 @@ function ForgotPassword() {
       sendPasswordResetEmail(auth, email)
       .then(() => {
         alert("please check your email for reset password")
+        history.push("/login")
       })
       .catch((err) => {
         console.error(err)
@@ -99,9 +96,6 @@ function ForgotPassword() {
                   <Button variant="primary" mb="12px" onClick={formik.handleSubmit}>
                     Send Email
                   </Button>
-                  {isEmail ? (
-                    <Text>Please Check Email for Your Account</Text>
-                  ) : null}
                 </Flex>
               </Box>
             </Flex>
