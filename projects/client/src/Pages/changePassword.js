@@ -10,13 +10,13 @@ import {
     Input,
     Button,
     Text,
-    Container, Avatar, Select, Divider,
+    Container, Avatar, Select, Divider, AlertIcon, CloseButton, Alert, AlertTitle, AlertDescription, useDisclosure
 } from "@chakra-ui/react";
 import turuIcon from "../Assets/image/turuIcon.png";
 import {Link, useHistory} from "react-router-dom";
 import DatePicker from "react-datepicker";
 import NavbarMobile from "../Components/NavbarMobile";
-import {onAuthStateChanged} from "firebase/auth";
+import {onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential, updatePassword} from "firebase/auth";
 import {authFirebase} from "../Config/firebase";
 import {useFormik} from "formik";
 import axios from "axios";
@@ -25,12 +25,18 @@ import YupPassword from "yup-password";
 
 function ChangePassword() {
     const history = useHistory();
+    const [isLoading, setIsLoading] = useState(false)
+
+    const [user, setUser] = useState(null)
+    const [email, setEmail] = useState('')
 
     const [userId, setUserId] = useState('')
     const getUser = useCallback(() => {
         onAuthStateChanged(authFirebase, (user) => {
             if (user) {
+                setUser(user)
                 setUserId(user.uid)
+                setEmail(user.email)
             } else {
                 history.push('/')
             }
@@ -41,17 +47,10 @@ function ChangePassword() {
         getUser()
     }, [getUser])
 
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [phoneNumber, setPhoneNumber] = useState('')
-    const [gender, setGender] = useState('')
-    const [birthdate, setBirthdate] = useState(new Date())
-    const [profilePic, setProfilePic] = useState('')
-
-    const [firebaseProviderId, setfirebaseProviderId] = useState('password')
-    const [isEditingForm, setIsEditingForm] = useState(false)
-
     YupPassword(Yup)
+
+    const {isOpen: isVisible, onClose, onOpen} = useDisclosure({defaultIsOpen: false})
+    const [nonFieldError, setNonFieldError] = useState('')
 
     const formik = useFormik({
         initialValues: {
@@ -68,11 +67,41 @@ function ChangePassword() {
             confirmPassword: Yup.string().required("please re-type your new password")
                 .oneOf([Yup.ref('newPassword'), null], 'Didn\'t match with new password')
         }),
-        onSubmit: async (values) => {
+        onSubmit: async (values, {setErrors, resetForm}) => {
+            setIsLoading(true)
             values.id = userId  // dummy id
-            console.log('test')
+            const credential = EmailAuthProvider.credential(email, values.oldPassword)
+
+            try {
+                const result = await reauthenticateWithCredential(user, credential)
+            } catch (err) {
+                setErrors({oldPassword: 'current password isn\'t match'})
+                setIsLoading(false)
+                return
+            }
+
+            if (values.oldPassword === values.newPassword) {
+                setErrors({newPassword: 'new password can\'t be same with old password'})
+                setIsLoading(false)
+                return
+            }
+
+            try {
+                const response = await updatePassword(user, formik.values.newPassword)
+                resetForm()
+                onOpen()
+            } catch (err) {
+                setNonFieldError('Failed to change password. Please refresh the page and try again')
+                setIsLoading(false)
+            }
+            setIsLoading(false)
         },
     })
+
+    const [name, setName] = useState('')
+    const [birthdate, setBirthdate] = useState(new Date())
+    const [profilePic, setProfilePic] = useState('')
+    const [firebaseProviderId, setfirebaseProviderId] = useState()
 
     const fetchData = useCallback(async () => {
         const response = await axios.get(
@@ -80,21 +109,52 @@ function ChangePassword() {
             {params: {id: userId}}
         )
 
+        setfirebaseProviderId(response.data.result.firebaseProviderId)
+        if (response.data.result.firebaseProviderId !== 'password') history.push('/')
         setName(response.data.result.name)
-        setEmail(response.data.result.email)
-        setPhoneNumber(response.data.result.phoneNumber)
-        setGender(response.data.result.gender)
         setBirthdate(new Date(response.data.result.birthdate))
         setProfilePic(`${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.profilePic}`)
-        setfirebaseProviderId(response.data.result.firebaseProviderId)
     }, [userId])
 
     useEffect(() => {
         if (userId) fetchData()
     }, [fetchData, userId])
 
+
+    if (!user || firebaseProviderId !== 'password') return
+
     return (
         <Container maxW='container.sm' p={0}>
+
+            {nonFieldError ? (
+                <Alert status={'error'} position={'absolute'} top={0} zIndex={10}>
+                    {nonFieldError}
+                </Alert>
+            ) : null}
+
+            {isVisible ? (
+                <Alert status={"success"} position={'absolute'} top={0} zIndex={10}>
+                    <Flex justifyContent={'space-between'} w={'100%'}>
+                        <AlertIcon/>
+                        <Box>
+                            <AlertTitle>
+                                You successfully changed your password
+                            </AlertTitle>
+                            <AlertDescription>
+                                Please re-login and use your new password to sign in.
+                            </AlertDescription>
+                        </Box>
+                        <CloseButton
+                            alignSelf='flex-start'
+                            position='relative'
+                            right={-1}
+                            top={-1}
+                            onClick={onClose}
+                        />
+                    </Flex>
+                </Alert>
+            ) : null}
+
             <Container maxW='1140px'>
                 <Flex justifyContent="center" alignItems="center" direction={["column"]}>
                     <Box width="360px" height="max-content" pb="20px" pl="20px" pr="20px" mb={{sm: "0", md: "4em"}}>
@@ -162,7 +222,7 @@ function ChangePassword() {
                             </Box>
 
                             <Flex justifyContent={"end"}>
-                                <Button colorScheme={"blue"} mt={5} onClick={formik.handleSubmit}>Save</Button>
+                                <Button colorScheme={"blue"} mt={5} onClick={formik.handleSubmit} isLoading={isLoading}>Save</Button>
                             </Flex>
 
                         </Box>
