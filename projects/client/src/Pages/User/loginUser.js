@@ -135,7 +135,7 @@ function LoginUser() {
       },
       validationSchema : Yup.object().shape({
         email: Yup.string().required("your email is invalid").email("input your email"),
-        password : Yup.string().required("please fill in the password").min(8).minUppercase(1).minNumbers(1)
+        password : Yup.string().required("please fill in the password")
       }),
       validateOnChange : false,
       onSubmit: async (values) => {
@@ -282,7 +282,15 @@ function LoginUser() {
                           Login
                         </Button>
                       </Flex>
-                      <Flex justifyContent="flex-end" mr="10px" mb="16px">
+                      <Flex justifyContent="space-between" mx="10px" mb="16px">
+                        <Text
+                          fontSize="12px"
+                          fontWeight="300"
+                          cursor="pointer"
+                          _hover={{ textDecoration: "underline" }}
+                        >
+                          <Link to="/forgot-password">Forgot Password</Link>
+                        </Text>
                         <Text
                           fontSize="12px"
                           fontWeight="300"

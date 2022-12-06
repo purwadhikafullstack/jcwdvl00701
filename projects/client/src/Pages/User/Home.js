@@ -239,7 +239,10 @@ function Home(props) {
       }
     })
 
-    
+    const keluar = () => {
+      auth.signOut()
+      history.push("/login")
+    }
 
   const sliderSettings = {
     dots: true,
@@ -285,6 +288,9 @@ function Home(props) {
           <Thumbnail />
           <Thumbnail />
         </Container>
+         <Button onClick={keluar}>
+        log-out
+      </Button>
       </Box>
     </Layout>
   );
