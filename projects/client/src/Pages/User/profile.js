@@ -135,12 +135,6 @@ function ConfirmationModal({open, leastDestructiveRef, onClose, onClick, ...rest
 function Profile() {
     const history = useHistory();
 
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [phoneNumber, setPhoneNumber] = useState('')
-    const [gender, setGender] = useState('')
-    const [birthdate, setBirthdate] = useState(new Date())
-
     const [userId, setUserId] = useState('')
     const getUser = useCallback(() => {
         onAuthStateChanged(authFirebase, (user) => {
@@ -155,6 +149,13 @@ function Profile() {
     useEffect(() => {
         getUser()
     }, [getUser])
+
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('')
+    const [gender, setGender] = useState('')
+    const [birthdate, setBirthdate] = useState(new Date())
+    const [profilePic, setProfilePic] = useState('')
 
     const [firebaseProviderId, setfirebaseProviderId] = useState('password')
     const [isEditingForm, setIsEditingForm] = useState(false)
@@ -192,6 +193,7 @@ function Profile() {
         setPhoneNumber(response.data.result.phoneNumber)
         setGender(response.data.result.gender)
         setBirthdate(new Date(response.data.result.birthdate))
+        setProfilePic(`${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.profilePic}`)
 
         setfirebaseProviderId(response.data.result.firebaseProviderId)
 
@@ -215,11 +217,35 @@ function Profile() {
     }
 
     const datepickerRef = useRef(null);
+
     function handleClickDatepickerIcon() {
         datepickerRef.current.setFocus(true);
     }
 
+
+    const updateProfilePic = async (e) => {
+        let file = e.target.files[0]
+
+        if (!file.type.match('image.*')) return
+        if (file.size > 1048576) return
+
+        let formData = new FormData()
+        formData.append("image", e.target.files[0])
+        formData.append('id', userId)
+
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/profilePic`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        console.log(response)
+        setProfilePic(`${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.profilePic}`)
+    };
+    const proflePicInputRef = useRef(null)
+
     if (!userId) return
+
+
 
     return (
         <Container maxW='container.sm' p={0}>
@@ -230,7 +256,7 @@ function Profile() {
                         {/*Profile header*/}
                         <Flex pt="10">
                             <Box mr="20px" w="80px" h="80px">
-                                <Avatar w="80px" h="80px"/>
+                                <Avatar w="80px" h="80px" src={profilePic}/>
                             </Box>
                             <Box>
                                 <Text fontSize="xl" fontWeight="600">{name}</Text>
@@ -240,7 +266,9 @@ function Profile() {
                                     )
                                 }</Text>
                                 <Text textDecoration="underline" fontSize="16px" fontWeight="400" cursor="pointer"
-                                      _hover={{textDecoration: "underline", fontWeight: "bold"}}>Update Photo</Text>
+                                      _hover={{textDecoration: "underline", fontWeight: "bold"}} onClick={() => proflePicInputRef.current.click()}>Update Photo</Text>
+                                <Input type={'file'} accept={'image/*'} onChange={updateProfilePic} hidden ref={proflePicInputRef}/>
+
                             </Box>
                         </Flex>
                         {/*Profile header ends*/}
@@ -297,7 +325,11 @@ function Profile() {
                                 <Input style={{borderBottom: "1px solid"}} id='phoneNumber' type="text"
                                        variant='flushed'
                                        placeholder='insert your phone number'
-                                       value={formik.values.birthdate.toLocaleString('en-US', {day: "2-digit", month: "long", year: "numeric"})}
+                                       value={formik.values.birthdate.toLocaleString('en-US', {
+                                           day: "2-digit",
+                                           month: "long",
+                                           year: "numeric"
+                                       })}
                                        onClick={() => handleClickDatepickerIcon()}/>
                             </UpdateInput>
 

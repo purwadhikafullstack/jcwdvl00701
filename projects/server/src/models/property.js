@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
     static associate(models) {
       this.hasMany(models.Room)
       this.belongsTo(models.Tenant)
-      this.hasMany(models.Room)
+      this.hasOne(models.Category)
     }
   }
   Property.init({
