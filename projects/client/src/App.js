@@ -55,7 +55,7 @@ class App extends React.Component {
           <Route component={PropertyDetail} path="/detail/:id" />
           <Route component={Profile} path="/profile" />
           <Route component={VerifyAccount} path="/verify-account" />
-          <Route component={ChangePassword} path="/change-password" />
+          <Route component={ChangePassword} path="/settings/password" />
           <Route component={ResetPassword} path="/reset-password" />
           <Route component={ForgotPassword} path="/forgot-password" />
           <Route component={RegisterUser} path="/register" />
