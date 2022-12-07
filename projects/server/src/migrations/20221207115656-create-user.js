@@ -1,18 +1,22 @@
 'use strict';
+const {DataTypes} = require("sequelize");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Banks', {
+    await queryInterface.createTable('Users', {
       id: {
+        type: DataTypes.STRING,
         allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
+        primaryKey: true
       },
-      name: {
-        type: Sequelize.STRING,
+      firebaseProviderId: {
+        type: DataTypes.STRING,
+        unique: true
+      },
+      email: {
+        type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        unique: true
       },
       createdAt: {
         allowNull: false,
@@ -25,6 +29,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Banks');
+    await queryInterface.dropTable('Users');
   }
 };

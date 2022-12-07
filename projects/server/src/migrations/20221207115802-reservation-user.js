@@ -1,15 +1,15 @@
 'use strict';
 
-const constraintName = 'fk-room-property'
+const constraintName = 'fk-reservation-user'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.addConstraint('Rooms', {
-      fields: ['propertyId'],
+    await queryInterface.addConstraint('Reservations', {
+      fields: ['userId'],
       type: 'foreign key',
       name: constraintName,
       references: { //Required field
-        table: 'Properties',
+        table: 'Users',
         field: 'id'
       },
       onDelete: 'cascade',
@@ -19,7 +19,7 @@ module.exports = {
 
   async down (queryInterface, Sequelize) {
     await queryInterface.removeConstraint(
-      'Rooms', constraintName
+        'Reservations', constraintName
     )
   }
 };

@@ -1,22 +1,26 @@
 'use strict';
-const {Sequelize} = require("sequelize");
+const {DataTypes} = require("sequelize");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Transactions', {
+    await queryInterface.createTable('RoomUnavailabilities', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      paymentProof : {
-        type : Sequelize.TEXT,
-        allowNull : false
+      startDate : {
+        type : DataTypes.DATE,
+        allowNull : false,
       },
-      reservationId : {
-        type: Sequelize.INTEGER,
-        allowNull: false
+      endDate : {
+        type : DataTypes.DATE,
+        allowNull : false,
+      },
+      roomId : {
+        type : DataTypes.INTEGER,
+        allowNull : false,
       },
       createdAt: {
         allowNull: false,
@@ -29,6 +33,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Transactions');
+    await queryInterface.dropTable('RoomUnavailabilities');
   }
 };

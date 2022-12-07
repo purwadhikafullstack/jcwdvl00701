@@ -10,13 +10,14 @@ module.exports = (sequelize) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      this.belongsTo(models.Property)
+      this.hasMany(models.Property)
     }
   }
   Category.init({
     location : {
       type : DataTypes.STRING,
-      allowNull : false
+      allowNull : false,
+      unique: true
     }
   }, {
     sequelize,
