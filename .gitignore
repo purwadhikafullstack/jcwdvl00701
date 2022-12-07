@@ -2,3 +2,5 @@ node_modules/
 .idea/
 
 projects/server/src/models.old/
+
+projects/server/src/public/profile_pic/

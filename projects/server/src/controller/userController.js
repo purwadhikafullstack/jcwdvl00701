@@ -86,7 +86,6 @@ module.exports = ({
     patchUser: async (req, res) => {
         const id = req.body.id;
 
-
         try {
             await User.update(
                 req.body,
@@ -117,6 +116,29 @@ module.exports = ({
             return res.status(200).send({
                 result: user,
                 message : "success get user",
+                code: 200
+            })
+        } catch (err) {
+            return res.status(500).json({
+                message : err.toString(),
+                code: 500
+            })
+        }
+    },
+
+    updateUserProfilePic: async (req, res) => {
+        const id = req.body.id;
+        const { filename } = req.file;
+        const fileUrl = `/profile_pic/${filename}`
+
+        try {
+            await User.update(
+                {profilePic: fileUrl},
+                {where: {id}, returning: true, plain: true}
+            )
+            return res.status(200).send({
+                result: {profilePic: fileUrl},
+                message: "success update profile picture",
                 code: 200
             })
         } catch (err) {

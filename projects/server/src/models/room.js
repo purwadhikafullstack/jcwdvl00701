@@ -33,7 +33,7 @@ module.exports = (sequelize) => {
       allowNull: false,
       default: 1
     },
-    categoryId : {
+    propertyId : {
       type: DataTypes.INTEGER,
       allowNull: false
     }

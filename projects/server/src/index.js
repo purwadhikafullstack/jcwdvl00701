@@ -5,6 +5,7 @@ const { join } = require("path");
 const { sequelize } = require("./lib/sequelize");
 // const { sequelize } = require("./models"); // uncomment to use sequelize default utility
 const { env } = require("./config");
+const { userRouters } = require("./routes");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -19,17 +20,17 @@ app.use(
 
 app.use(express.json());
 
+app.use("/profile_pic", express.static(`${__dirname}/public/profile_pic`));
+
 //#region API ROUTES
 
 // ===========================
 // NOTE : Add your routes here
 // sequelize.sync({ alter: true });
-const { userRouters } = require("./routes");
 
 app.use("/api/user", userRouters);
 
 app.get("/api", (req, res) => {
-  console.log("test");
   res.send(`Hello, this is my API`);
 });
 
