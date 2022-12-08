@@ -1,12 +1,48 @@
-import { Box, Image, Text, Flex, Spacer, Tooltip } from "@chakra-ui/react";
-import Foto from "../../Assets/bookingHistory3.png";
+import {
+  Box,
+  Image,
+  Text,
+  Flex,
+  Spacer,
+  Tooltip,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Button,
+} from "@chakra-ui/react";
+import axios from "axios";
+import { Link, useHistory } from "react-router-dom";
+import { useDisclosure } from "@chakra-ui/react";
 
-function CardPropertyTenant() {
+function CardPropertyTenant(props) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  let history = useHistory();
+
+  async function deleteBtnHandler() {
+    axios
+      .post(`${process.env.REACT_APP_API_BASE_URL}/property/delete/`, {
+        old_img: props.propertyData.picture,
+        id: props.propertyData.id,
+      })
+      .then(() => {
+        history.push("/tenant/property");
+
+        props.randomNumber(Math.random());
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  }
+
   return (
     <Box borderBottom="1px" borderColor="gray.200" p="5px" mb="20px">
       <Flex>
         <Image
-          src={Foto}
+          src={process.env.REACT_APP_API_BASE_URL + props.propertyData.picture}
           alt="property image"
           width="90px"
           height="60px"
@@ -14,32 +50,34 @@ function CardPropertyTenant() {
         />
         <Box>
           <Text fontSize="16px" fontWeight="bold">
-            Apartement in Jakarta Selatan
+            {props.propertyData.name}
           </Text>
           <Text color="rgba(175, 175, 175, 1)" fontSize="12">
-            Modified: 32/13/2022
+            Modified: {props.propertyData.updatedAt}
           </Text>
         </Box>
         <Spacer />
-        <Tooltip label="Edit Property" aria-label="A tooltip">
-          <Box
-            as="button"
-            h="25px"
-            w="25px"
-            fontSize="12px"
-            transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
-            _hover={{
-              bg: "black",
-              color: "white",
-            }}
-            bg="primary"
-          >
-            <i className="fa-solid fa-pen-to-square"></i>
-          </Box>
-        </Tooltip>
+        <Link to={`/tenant/edit-property/${props.propertyData.id}`}>
+          <Tooltip label="Edit Property" aria-label="A tooltip">
+            <Box
+              as="button"
+              h="25px"
+              w="25px"
+              fontSize="12px"
+              transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
+              _hover={{
+                bg: "black",
+                color: "white",
+              }}
+              bg="primary"
+            >
+              <i className="fa-solid fa-pen-to-square"></i>
+            </Box>
+          </Tooltip>
+        </Link>
       </Flex>
       <Flex justifyContent="space-between">
-        <Text>Number of rooms : 2 Rooms</Text>
+        <Text>Number of rooms : {props.propertyData.rooms} Rooms</Text>
         <Tooltip label="Delete Property" aria-label="A tooltip">
           <Box
             as="button"
@@ -52,11 +90,34 @@ function CardPropertyTenant() {
               bg: "black",
             }}
             bg="rgba(251, 38, 38, 1)"
+            onClick={onOpen}
           >
             <i className="fa-solid fa-trash-can"></i>
           </Box>
         </Tooltip>
       </Flex>
+      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent borderRadius={0}>
+          <ModalHeader>Create your account</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}></ModalBody>
+
+          <ModalFooter>
+            <Button
+              onClick={() => deleteBtnHandler()}
+              borderRadius={0}
+              colorScheme="red"
+              mr={3}
+            >
+              Delete
+            </Button>
+            <Button borderRadius={0} onClick={onClose}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }

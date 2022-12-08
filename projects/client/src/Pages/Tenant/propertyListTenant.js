@@ -11,15 +11,46 @@ import {
 import CardPropertyTenant from "../../Components/Tenant/CardPropertyTenant";
 import { Link } from "react-router-dom";
 import Layout from "../../Components/Layout";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 function PropertyListTenant() {
+  const [propertyData, setPropertyData] = useState([]);
+  const tenantId = 1;
+  const [randomNumber, setRandomNumber] = useState(0);
+
+  // reender data property
+  function renderPropertyList() {
+    return propertyData.map((val) => {
+      console.log(val.name);
+      return (
+        <CardPropertyTenant propertyData={val} randomNumber={setRandomNumber} />
+      );
+    });
+  }
+
+  useEffect(() => {
+    async function fetchProperty() {
+      await axios(
+        `${process.env.REACT_APP_API_BASE_URL}/property/get/${tenantId}`
+      )
+        .then((res) => {
+          console.log(res.data);
+          setPropertyData(res.data);
+        })
+        .catch((err) => {
+          console.error(err.message);
+        });
+    }
+    fetchProperty();
+  }, [randomNumber]);
   return (
     <Layout>
       <Box mt="80px">
         <Container maxW="1140px">
           <Flex mb="20px" justifyContent="space-between">
             <Text fontSize="20px" fontWeight="bold">
-              7 Properties
+              {propertyData.length} Properties
             </Text>
             <Link to="/tenant/add-property">
               <Box
@@ -62,14 +93,7 @@ function PropertyListTenant() {
             </HStack>
           </FormControl>
           {/* card property */}
-          <CardPropertyTenant />
-          <CardPropertyTenant />
-          <CardPropertyTenant />
-          <CardPropertyTenant />
-          <CardPropertyTenant />
-          <CardPropertyTenant />
-          <CardPropertyTenant />
-          <CardPropertyTenant />
+          {renderPropertyList()}
         </Container>
       </Box>
     </Layout>

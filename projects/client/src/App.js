@@ -1,6 +1,6 @@
 import "./App.css";
 import React from "react";
-import {BrowserRouter, Route, Switch} from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import PropertyList from "./Pages/User/PropertyList";
 import PropertyDetail from "./Pages/User/PropertyDetail";
@@ -40,7 +40,10 @@ class App extends React.Component {
           <Route component={LoginTenant} path="/tenant/login" />
           <Route component={PropertyListTenant} path="/tenant/property" />
           <Route component={RoomListTenant} path="/tenant/room" />
-          <Route component={EditProperty} path="/tenant/edit-property" />
+          <Route
+            component={EditProperty}
+            path="/tenant/edit-property/:propertyId"
+          />
           <Route component={AddProperty} path="/tenant/add-property" />
           <Route component={EditRoom} path="/tenant/edit-room" />
           <Route component={AddRoom} path="/tenant/add-room" />

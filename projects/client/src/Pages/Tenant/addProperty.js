@@ -11,7 +11,7 @@ import {
   FormHelperText,
   Textarea,
 } from "@chakra-ui/react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import Layout from "../../Components/Layout";
 import { useFormik } from "formik";
@@ -23,7 +23,8 @@ function AddProperty() {
   const inputFileRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   let history = useHistory();
-  const tenantId = "test";
+
+  const [category, setCategory] = useState([]);
 
   const handleFile = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -31,6 +32,25 @@ function AddProperty() {
     preview.src = URL.createObjectURL(event.target.files[0]);
     formik.setFieldValue("picture", event.target.files[0]);
   };
+
+  // get data kategori (lokasi)
+  async function fetchCategory() {
+    await axios
+      .get(`${process.env.REACT_APP_API_BASE_URL}/property/seeders`)
+      .then((res) => {
+        console.log(res.data.results);
+        setCategory(res.data.results);
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  }
+
+  function renderCategory() {
+    return category.map((val) => {
+      return <option value={val.id}>{val.location}</option>;
+    });
+  }
 
   // formik
 
@@ -79,6 +99,10 @@ function AddProperty() {
         });
     },
   });
+
+  useEffect(() => {
+    fetchCategory();
+  }, []);
 
   return (
     <Layout>
@@ -146,9 +170,7 @@ function AddProperty() {
                 formik.setFieldValue("categoryId", parseInt(e.target.value));
               }}
             >
-              <option value="1">Option 1</option>
-              <option value="2">Option 2</option>
-              <option value="3">Option 3</option>
+              {renderCategory()}
             </Select>
             {formik.errors.categoryId ? (
               <FormHelperText color="red" textAlign="center">

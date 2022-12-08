@@ -1,9 +1,9 @@
 require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
-const { join } = require("path");
-// const { sequelize } = require("./lib/sequelize");
-const { sequelize } = require("./models"); // uncomment to use sequelize default utility
+const { join, dirname } = require("path");
+const { sequelize } = require("./lib/sequelize");
+// const { sequelize } = require("./models"); // uncomment to use sequelize default utility
 const { env } = require("./config");
 const { userRouters } = require("./routes");
 
@@ -19,6 +19,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use("/api", express.static(`${__dirname}/public`));
 
 app.use("/profile_pic", express.static(`${__dirname}/public/profile_pic`));
 
