@@ -19,7 +19,7 @@ module.exports = {
 
   async down (queryInterface, Sequelize) {
     await queryInterface.removeConstraint(
-      'SpecialPrices', constraintName
+        'SpecialPrices', constraintName
     )
   }
 };

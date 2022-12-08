@@ -1,15 +1,15 @@
 'use strict';
 
-const constraintName = 'fk-tenant-bank'
+const constraintName = 'fk-tenant-user'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.addConstraint('Tenants', {
-      fields: ['bankId'],
+      fields: ['userId'],
       type: 'foreign key',
       name: constraintName,
       references: { //Required field
-        table: 'Banks',
+        table: 'Users',
         field: 'id'
       },
       onDelete: 'cascade',
@@ -19,7 +19,7 @@ module.exports = {
 
   async down (queryInterface, Sequelize) {
     await queryInterface.removeConstraint(
-      'Tenants', constraintName
+        'Tenants', constraintName
     )
   }
 };

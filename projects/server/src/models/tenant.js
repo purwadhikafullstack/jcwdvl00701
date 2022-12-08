@@ -10,30 +10,34 @@ module.exports = (sequelize) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      this.belongsTo(models.User)
       this.belongsTo(models.Bank)
       this.hasMany(models.Property)
     }
   }
   Tenant.init({
-    name : {
-      type : DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    email :  {
-      type : DataTypes.STRING,
-      unique : true
+    phoneNumber: {
+      type: DataTypes.STRING,
+      unique: true
     },
-    password : {
-      type : DataTypes.STRING,
+    idCardPic: {
+      type: DataTypes.STRING,
     },
-    phone_number : {
-      type : DataTypes.STRING,
+    bankAccountNumber: {
+      type: DataTypes.STRING,
+      unique: true
     },
-    id_card_picture : {
-      type : DataTypes.STRING,
+    userId: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    bank_account_number : {
-      type : DataTypes.STRING,
-    }
+    bankId: {
+      type: DataTypes.INTEGER,
+    },
   }, {
     sequelize,
     modelName: 'Tenant',

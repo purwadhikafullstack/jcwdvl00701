@@ -1,15 +1,15 @@
 'use strict';
 
-const constraintName = 'fk-property-category'
+const constraintName = 'fk-userrole-role'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.addConstraint('Properties', {
-      fields: ['categoryId'],
+    await queryInterface.addConstraint('UserRoles', {
+      fields: ['roleId'],
       type: 'foreign key',
       name: constraintName,
       references: { //Required field
-        table: 'Categories',
+        table: 'Roles',
         field: 'id'
       },
       onDelete: 'cascade',
@@ -19,7 +19,7 @@ module.exports = {
 
   async down (queryInterface, Sequelize) {
     await queryInterface.removeConstraint(
-      'Properties', constraintName
+        'UserRoles', constraintName
     )
   }
 };

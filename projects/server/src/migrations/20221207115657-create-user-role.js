@@ -1,36 +1,21 @@
 'use strict';
+const {DataTypes} = require("sequelize");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Reservations', {
+    await queryInterface.createTable('UserRoles', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      startDate : {
-        type : Sequelize.DATE,
-        allowNull : false
-      },
-      endDate : {
-        type : Sequelize.DATE,
-        allowNull : false
-      },
-      status : {
-        type : Sequelize.SMALLINT,
-        allowNull : false
-      },
-      guestCount : {
-        type : Sequelize.INTEGER,
-        allowNull : false
-      },
       userId : {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
       },
-      roomId : {
-        type: Sequelize.INTEGER,
+      roleId : {
+        type: DataTypes.INTEGER,
         allowNull: false
       },
       createdAt: {
@@ -44,6 +29,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Reservations');
+    await queryInterface.dropTable('UserRoles');
   }
 };
