@@ -14,7 +14,7 @@ routers.post(
 );
 routers.patch("/edit", propertyController.editProperty);
 
-routers.get("/get/:tenantId", propertyController.getProperty);
+routers.get("/get/:tenantId", propertyController.getPropertyFilter);
 routers.get("/get/edit/:propertyId", propertyController.getOneProperty);
 routers.post("/delete", propertyController.deleteProperty);
 
