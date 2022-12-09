@@ -6,41 +6,43 @@ module.exports = (sequelize) => {
   class Reservation extends Model {
     /**
      * Helper method for defining associations.
-     * This method is not a part of DataTypes lifecycle.
+     * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      this.belongsTo(models.User)
+      this.belongsTo(models.Room)
       this.hasOne(models.Transaction)
       this.hasOne(models.Review)
-      this.belongsTo(models.Room)
-      this.belongsTo(models.User)
     }
   }
   Reservation.init({
     startDate : {
       type : DataTypes.DATE,
-      allowNull : false
+      allowNull : false,
     },
     endDate : {
       type : DataTypes.DATE,
-      allowNull : false
+      allowNull : false,
     },
     status : {
       type : DataTypes.SMALLINT,
-      allowNull : false
+      allowNull : false,
+      default: 0
     },
     guestCount : {
       type : DataTypes.INTEGER,
-      allowNull : false
+      allowNull : false,
+      default: 1
     },
     userId : {
-      type: DataTypes.STRING,
-      allowNull: false
+      type : DataTypes.STRING,
+      allowNull : false,
     },
     roomId : {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    }
+      type : DataTypes.INTEGER,
+      allowNull : false,
+    },
   }, {
     sequelize,
     modelName: 'Reservation',

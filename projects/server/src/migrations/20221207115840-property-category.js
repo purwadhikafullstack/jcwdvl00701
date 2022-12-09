@@ -1,15 +1,15 @@
 'use strict';
 
-const constraintName = 'fk-verificationcode-user'
+const constraintName = 'fk-property-category'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.addConstraint('VerificationCodes', {
-      fields: ['userId'],
+    await queryInterface.addConstraint('Properties', {
+      fields: ['categoryId'],
       type: 'foreign key',
       name: constraintName,
       references: { //Required field
-        table: 'Users',
+        table: 'Categories',
         field: 'id'
       },
       onDelete: 'cascade',
@@ -19,7 +19,7 @@ module.exports = {
 
   async down (queryInterface, Sequelize) {
     await queryInterface.removeConstraint(
-      'VerificationCodes', constraintName
+        'Properties', constraintName
     )
   }
 };

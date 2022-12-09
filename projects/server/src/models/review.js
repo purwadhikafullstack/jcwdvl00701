@@ -6,7 +6,7 @@ module.exports = (sequelize) => {
   class Review extends Model {
     /**
      * Helper method for defining associations.
-     * This method is not a part of DataTypes lifecycle.
+     * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
@@ -15,13 +15,13 @@ module.exports = (sequelize) => {
   }
   Review.init({
     comment : {
-      type : DataTypes.TEXT,
-      allowNull : false
+      type : DataTypes.STRING,
+      allowNull : false,
     },
     reservationId : {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    }
+      type : DataTypes.INTEGER,
+      allowNull : false,
+    },
   }, {
     sequelize,
     modelName: 'Review',

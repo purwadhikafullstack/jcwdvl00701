@@ -1,18 +1,22 @@
 'use strict';
-const {Sequelize} = require("sequelize");
+const {DataTypes} = require("sequelize");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Categories', {
+    await queryInterface.createTable('Reviews', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      location : {
-        type : Sequelize.STRING,
-        allowNull : false
+      comment : {
+        type : DataTypes.STRING,
+        allowNull : false,
+      },
+      reservationId : {
+        type : DataTypes.INTEGER,
+        allowNull : false,
       },
       createdAt: {
         allowNull: false,
@@ -25,6 +29,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Categories');
+    await queryInterface.dropTable('Reviews');
   }
 };
