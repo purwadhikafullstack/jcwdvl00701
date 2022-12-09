@@ -12,8 +12,69 @@ import {
 import Layout from "../../Components/Layout";
 import CardRoomTenant from "../../Components/Tenant/CardRoomTenant";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios"
 
 function RoomListTenant() {
+  //state
+  const [room, setRoom] = useState([])
+  const [property, setProperty] = useState([])
+  const [keyWord, setKeyWord] = useState("")
+  console.log(keyWord);
+
+  const inputHandler = (e) => {
+    const {value} = e.target
+
+    setKeyWord(value)
+  }
+  //get property berdasarkan tenant id ==> yg di simpan di dropdown
+    //buat id nya dari global store ==> tenant id
+  useEffect(() => {
+    const fetchProperty = () => {
+      axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/1?searchQuery=${keyWord}`)
+      .then((res) => {
+        // console.log(res.data.roomProperty);
+        setRoom(res.data.roomProperty)
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+    }
+    fetchProperty()
+    roomData()
+    fetchDataAll()
+    optionDropdown()
+  },[keyWord])
+
+  // get data room, yg akan di loop utk di render
+  const roomData = () => {
+    return room.map((val, index) => {
+      // console.log(val);
+      return <CardRoomTenant 
+      roomData = {val}
+      />
+    })
+  }
+
+  const fetchDataAll = () => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/1`)
+    .then((res) => {
+      // console.log(res.data.roomProperty);
+      setProperty(res.data.roomProperty)
+
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+  }
+
+  // loop utk dropdown
+  const optionDropdown = () => {
+    return property.map((val) => {
+      return <option value={val.Property.id}>{val.Property.name}</option>
+    })
+  }
+
   return (
     <Layout>
       <Box mt="90px" mb="30px">
@@ -45,9 +106,8 @@ function RoomListTenant() {
             borderRadius={0}
             borderColor="rgba(175, 175, 175, 1)"
           >
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
+            {/* render dropdown */}
+            {optionDropdown()}
           </Select>
           <FormControl pb="20px">
             <HStack>
@@ -56,6 +116,7 @@ function RoomListTenant() {
                 placeholder="Search Room"
                 borderRadius="0"
                 borderColor="rgba(175, 175, 175, 1)"
+                onChange={inputHandler}
               />
               <IconButton
                 color="rgba(175, 175, 175, 1)"
@@ -72,17 +133,14 @@ function RoomListTenant() {
               />
             </HStack>
           </FormControl>
-          <CardRoomTenant />
-          <CardRoomTenant />
-          <CardRoomTenant />
-          <CardRoomTenant />
-          <CardRoomTenant />
-          <CardRoomTenant />
-          <CardRoomTenant />
+          {/* render data room  */}
+          {roomData()}
         </Container>
       </Box>
     </Layout>
   );
 }
+
+
 
 export default RoomListTenant;

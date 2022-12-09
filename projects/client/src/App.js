@@ -42,7 +42,7 @@ class App extends React.Component {
           <Route component={RoomListTenant} path="/tenant/room" />
           <Route component={EditProperty} path="/tenant/edit-property" />
           <Route component={AddProperty} path="/tenant/add-property" />
-          <Route component={EditRoom} path="/tenant/edit-room" />
+          <Route component={EditRoom} path="/tenant/edit-room/:id" />
           <Route component={AddRoom} path="/tenant/add-room" />
           <Route component={Report} path="/tenant/report" />
           <Route component={Order} path="/tenant/order" />

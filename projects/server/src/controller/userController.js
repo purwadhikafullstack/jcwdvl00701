@@ -1,7 +1,6 @@
 const {db, dbquery} = require("../database")
 const Crypto = require("crypto")
 const {User} = require("../lib/sequelize")
-const { sendEmailVerification } = require("firebase/auth");
 
 module.exports = ({
     addUser : async (req,res) => {
