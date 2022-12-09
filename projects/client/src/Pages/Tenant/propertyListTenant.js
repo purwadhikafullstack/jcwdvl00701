@@ -23,6 +23,7 @@ import Layout from "../../Components/Layout";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useDisclosure } from "@chakra-ui/react";
+import ReactPaginate from "react-paginate";
 
 function PropertyListTenant() {
   const [propertyData, setPropertyData] = useState([]);
@@ -31,12 +32,16 @@ function PropertyListTenant() {
   const [keyword, setKeyword] = useState("");
   const [alfabet, setAlfabet] = useState("");
   const [time, setTime] = useState("");
+
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(5);
+  const [pages, setPages] = useState(0);
+  const [rows, setRows] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // reender data property
   function renderPropertyList() {
     return propertyData.map((val) => {
-      console.log(val.name);
       return (
         <CardPropertyTenant propertyData={val} randomNumber={setRandomNumber} />
       );
@@ -57,29 +62,36 @@ function PropertyListTenant() {
     setTime(value);
   }
 
+  const changePage = ({ selected }) => {
+    setPage(selected);
+  };
+
   useEffect(() => {
     async function fetchProperty() {
       await axios(
-        `${process.env.REACT_APP_API_BASE_URL}/property/get/${tenantId}?search_query=${keyword}&alfabet=${alfabet}&time=${time}`
+        `${process.env.REACT_APP_API_BASE_URL}/property/get/${tenantId}?search_query=${keyword}&alfabet=${alfabet}&time=${time}&page=${page}&limit=${limit}`
       )
         .then((res) => {
           console.log(res.data);
-          console.log(keyword);
-          setPropertyData(res.data.result);
+          console.log(res.data.result.rows);
+          setPage(res.data.page);
+          setPages(res.data.totalPage);
+          setRows(res.data.totalRows);
+          setPropertyData(res.data.result.rows);
         })
         .catch((err) => {
           console.error(err.message);
         });
     }
     fetchProperty();
-  }, [randomNumber, keyword, time, alfabet]);
+  }, [randomNumber, keyword, time, alfabet, page]);
   return (
     <Layout>
       <Box mt="80px">
         <Container maxW="1140px">
           <Flex mb="20px" justifyContent="space-between">
             <Text fontSize="20px" fontWeight="bold">
-              {/* {propertyData.length} Properties */}
+              {rows} Properties
             </Text>
             <Link to="/tenant/add-property">
               <Box
@@ -125,6 +137,51 @@ function PropertyListTenant() {
           </FormControl>
           {/* card property */}
           {renderPropertyList()}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              padding: 20,
+              boxSizing: "border-box",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <ReactPaginate
+              previousLabel={
+                <i
+                  class="fa-solid fa-chevron-left"
+                  style={{ fontSize: 18, height: 40, width: 40 }}
+                ></i>
+              }
+              nextLabel={
+                <i
+                  class="fa-solid fa-chevron-right"
+                  style={{
+                    fontSize: 18,
+                    height: 40,
+                    width: 40,
+                    position: "absolute",
+                    left: "12px",
+                    top: "12px",
+                  }}
+                ></i>
+              }
+              pageCount={pages}
+              onPageChange={changePage}
+              activeClassName={"item active "}
+              breakClassName={"item break-me "}
+              breakLabel={"..."}
+              containerClassName={"pagination"}
+              disabledClassName={"disabled-page"}
+              marginPagesDisplayed={2}
+              nextClassName={"item next "}
+              pageClassName={"item pagination-page "}
+              pageRangeDisplayed={2}
+              previousClassName={"item previous"}
+            />
+          </div>
         </Container>
       </Box>
       {/* moddal */}
