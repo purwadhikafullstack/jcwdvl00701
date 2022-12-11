@@ -12,23 +12,28 @@ module.exports = ({
 
             const result = await sequelize.transaction(async (t) => {
                 const user = await User.create({
-                    id,
-                    email,
-                    firebaseProviderId
+                    id: id,
+                    firebaseProviderId: firebaseProviderId,
+                    email: email,
                 }, {transaction: t})
 
-                const profile = await User.create({
+                const profile = await Profile.create({
                     name: name,
                     phoneNumber: phoneNumber || '',
                     gender: 'Male',
                     birthdate: birthdate,
+                    userId: id,
                 }, {transaction: t})
 
-                return [user, profile]
+                return user
             })
 
             return res.status(200).json({
-                result: result,
+                result: {
+                    id: id,
+                    firebaseProviderId: firebaseProviderId,
+                    email: email
+                },
                 message: "success add data",
                 code: 500
             })

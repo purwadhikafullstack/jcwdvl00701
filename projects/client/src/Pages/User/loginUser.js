@@ -58,13 +58,15 @@ function LoginUser() {
             params: {id: user.uid}
         })
             .then((res) => {
+                console.log(res.data.result)
                 dispatch({
                     type: auth_types.Login,
-                    payload: res.data.results
+                    payload: res.data.result
                 })
                 history.push("/")
             })
             .catch((err) => {
+                console.log(err)
                 alert("please registered your account in form register")
                 history.push("/register")
             })
@@ -86,7 +88,7 @@ function LoginUser() {
             .then((res) => {
                 dispatch({
                     type: auth_types.Login,
-                    payload: res.data.results
+                    payload: res.data.result
                 })
                 history.push("/")
             })
