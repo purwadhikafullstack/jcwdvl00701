@@ -9,6 +9,11 @@
   "scripts": {
     "start": "nodemon",
     "serve": "node .",
+    "seed": "NODE_ENV=production npx sequelize db:seed:all",
+    "deep-undo-seed": "NODE_ENV=production npx sequelize db:seed:undo:all",
+    "migrate": "NODE_ENV=production npx sequelize db:migrate",
+    "undo-migration": "NODE_ENV=production npx sequelize db:migrate:undo",
+    "deep-undo-migration": "NODE_ENV=production npx sequelize db:migrate:undo:all",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
