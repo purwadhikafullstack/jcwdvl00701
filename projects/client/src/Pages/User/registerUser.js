@@ -49,21 +49,26 @@ function RegisterUser() {
     const [showPassword, setShowPassword] = React.useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
-    const _handleRegister = async (credential) => {
+    const _handleRegister = async (credential, payload={}) => {
         const user = credential.user
-        const providerId = credential.providerId
+        const providerId = credential.providerId ? credential.providerId : 'password'
 
         if (!providerId.toLowerCase().includes('google')) {
             await sendEmailVerification(user)
         }
 
         const registerUrl = `${process.env.REACT_APP_API_BASE_URL}/user/register`
-        const payload = {
+
+        payload = Object.keys(payload).length === 0 ? {
             id: user.uid,
             name: user.displayName,
             email: user.email,
             phoneNumber: user.phoneNumber,
             firebaseProviderId: providerId
+        } : {
+            id: user.uid,
+            firebaseProviderId: providerId,
+            ...payload
         }
         const response = await axios.post(registerUrl, payload)
 
@@ -110,7 +115,7 @@ function RegisterUser() {
             const {name, email, phoneNumber, password} = values
             const credential = await createUserWithEmailAndPassword(authFirebase, email, password)
 
-            await _handleRegister(credential)
+            await _handleRegister(credential, {name: name, email: email, phoneNumber: phoneNumber})
         }
     });
 
