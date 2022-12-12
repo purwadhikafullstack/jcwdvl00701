@@ -44,7 +44,7 @@ function Footer(props) {
                 height="36px"
               ></Image>
             </Flex>
-            <Text fontSize="18px" fontWeight="700" mt="19px" lineHeights="26px">
+            <Text fontSize="18px" fontWeight="700" mt="19px" lineHeight="26px">
               +62 82 288 2288 22
             </Text>
           </Flex>
