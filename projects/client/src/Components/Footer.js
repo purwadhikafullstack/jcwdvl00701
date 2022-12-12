@@ -4,7 +4,7 @@ import vectorFb from "../Assets/image/vectorFb.png";
 import vectorIg from "../Assets/image/vectorIg.png";
 import turuIcon from "../Assets/image/turuIcon.png";
 import NavbarMobile from "./NavbarMobile";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 function Footer(props) {
   // props utk ukuran margin top footer agar dinamis
   const { ss, sm, sl } = props;
