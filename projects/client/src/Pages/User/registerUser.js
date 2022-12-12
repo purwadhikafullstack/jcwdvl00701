@@ -33,18 +33,14 @@ import "yup-phone";
 import {authFirebase} from "../../Config/firebase";
 import {
     createUserWithEmailAndPassword,
-    getAuth,
     sendEmailVerification,
     GoogleAuthProvider,
     signInWithPopup,
     FacebookAuthProvider,
-    onAuthStateChanged,
-    signInWithPhoneNumber,
 } from "firebase/auth";
 import axios from "axios";
 import auth_types from "../../Redux/Reducers/Types/userTypes";
-import {useDispatch, useSelector} from "react-redux";
-import {current} from "@reduxjs/toolkit";
+import {useDispatch} from "react-redux";
 
 function RegisterUser() {
     const dispatch = useDispatch();
@@ -53,109 +49,44 @@ function RegisterUser() {
     const [showPassword, setShowPassword] = React.useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
-    const handleWithGoogle = async () => {
-        const providerGoogle = new GoogleAuthProvider();
+    const _handleRegister = async (credential) => {
+        const user = credential.user
+        const providerId = credential.providerId
 
-        try {
-            // masuk lewat google
-            const userWithGoogle = await signInWithPopup(authFirebase, providerGoogle)
-            // info user
-            var userGoogle = (await userWithGoogle).user
-            var providerIdGoogle = userWithGoogle.providerId
-
-        } catch (error) {
-            console.error(error.message)
+        if (!providerId.toLowerCase().includes('google')) {
+            await sendEmailVerification(user)
         }
 
-        // endpoinnt utk register user
-        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register`, {
-            id: userGoogle.uid,
-            name: userGoogle.displayName,
-            email: userGoogle.email,
-            isVerified: userGoogle.emailVerified,
-            firebaseProviderId: providerIdGoogle
+        const registerUrl = `${process.env.REACT_APP_API_BASE_URL}/user/register`
+        const payload = {
+            id: user.uid,
+            name: user.displayName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            firebaseProviderId: providerId
+        }
+        const response = await axios.post(registerUrl, payload)
+
+        dispatch({
+            type: auth_types.Register,
+            payload: response.data.result
         })
-            .then(async (res) => {
-                //utk get data sesuai yg masuk
-                await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/get-by-id`, {
-                    params: {
-                        id: userGoogle.uid,
-                    }
-                })
-                    .then((res) => {
-                        console.log(res.data.result)
-                        dispatch({
-                            type: auth_types.Register,
-                            payload: res.data.result
-                        })
-                        // di arahkan ke home
-                        history.push("/")
-                    })
-                    .catch((err) => {
-                        console.error(err.message)
-                    })
-            })
-            .catch((err) => {
-                console.error(err.message);
-            })
+
+        history.push("/")
+    }
+
+    const handleWithGoogle = async () => {
+        const provider = new GoogleAuthProvider();
+        const credential = await signInWithPopup(authFirebase, provider)
+
+        await _handleRegister(credential)
     }
 
     const handleWithFacebook = async () => {
-        const providerFacebook = new FacebookAuthProvider();
+        const provider = new FacebookAuthProvider();
+        const credential = await signInWithPopup(authFirebase, provider)
 
-        try {
-            // masuk lewat facebook
-            const userWithFacebook = await signInWithPopup(authFirebase, providerFacebook)
-            // console.log("info keseluruhan Facebook : ", userWithFacebook);
-            // info user
-            var userFacebook = await userWithFacebook.user
-            sendEmailVerification(userFacebook)
-                .then((res) => {
-                    alert("Please check your email verification")
-                })
-                .catch((err) => {
-                    console.error("err send email :", err.message)
-                })
-
-            var providerIdFacebook = await userWithFacebook.providerId
-
-        } catch (error) {
-            console.error(error)
-        }
-        // endpoinnt utk register user
-        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register`, {
-            id: userFacebook.uid,
-            name: userFacebook.displayName,
-            email: userFacebook.email,
-            isVerified: userFacebook.emailVerified,
-            firebaseProviderId: providerIdFacebook
-        })
-            .then(async (res) => {
-                alert(res.message)
-                //utk get data sesuai yg masuk
-                await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/get-by-id`, {
-                    params: {
-                        id: userFacebook.uid,
-                        email: userFacebook.email,
-                    }
-                })
-                    .then((res) => {
-                        console.log(res.data.results)
-                        dispatch({
-                            type: auth_types.Register,
-                            payload: res.data.result
-                        })
-                        // di arahkan ke home
-                        history.push("/")
-                    })
-                    .catch((err) => {
-                        console.error(err.message)
-                    })
-            })
-            .catch((err) => {
-                console.error(err.message);
-            })
-
+        await _handleRegister(credential)
     }
 
     YupPassword(Yup)
@@ -177,37 +108,12 @@ function RegisterUser() {
         validateOnChange: false,
         onSubmit: async (values) => {
             const {name, email, phoneNumber, password} = values
+            const credential = await createUserWithEmailAndPassword(authFirebase, email, password)
 
-            // make user use firebase
-            const userCredential = await createUserWithEmailAndPassword(authFirebase, email, password)
-            const user = userCredential.user
-            sendEmailVerification(user)
-                .then((res) => {
-                    alert("Please check your email verification")
-                })
-                .catch((err) => {
-                    console.error("err send email :", err.message)
-                })
-
-            // endpoinnt utk register user ==> belum dibuat
-            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register`, {
-                id: user.uid,
-                name,
-                email,
-                phoneNumber,
-                firebaseProviderId: "password"
-            })
-
-            alert("account have been register")
-
-            dispatch({
-                type: auth_types.Register,
-                payload: response.data.result
-            })
-            // akan dikirim ke home tapi berstatus belum terverifikasi
-            history.push("/")
+            await _handleRegister(credential)
         }
     });
+
     return (
         <Flex flexDirection="column">
             {/* flex container utk dekstop */}

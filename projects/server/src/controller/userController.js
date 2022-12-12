@@ -1,14 +1,9 @@
-const {db, dbquery} = require("../database")
-const Crypto = require("crypto")
-// const {User} = require("../lib/sequelize")
-const {sendEmailVerification} = require("firebase/auth");
-const {sequelize, User, Profile} = require("../models")
-const {flatten} = require("express/lib/utils");
+const {sequelize, User, Profile, UserRole} = require("../models")
 
 module.exports = ({
     addUser: async (req, res) => {
         try {
-            const {id, name, email, phoneNumber, birthdate, firebaseProviderId} = req.body
+            const {id, name, email, isVerified, phoneNumber, firebaseProviderId} = req.body
 
             const result = await sequelize.transaction(async (t) => {
                 const user = await User.create({
@@ -19,21 +14,25 @@ module.exports = ({
 
                 const profile = await Profile.create({
                     name: name,
-                    phoneNumber: phoneNumber || '',
+                    phoneNumber: phoneNumber || '0',
                     gender: 'Male',
-                    birthdate: birthdate,
                     userId: id,
                 }, {transaction: t})
 
-                return user
+                const userProfile = await UserRole.create({
+                    userId: id, roleId: 1
+                }, {transaction: t})
+
+                return {
+                    id: id,
+                    name: name,
+                    firebaseProviderId: firebaseProviderId,
+                    email: email,
+                }
             })
 
             return res.status(200).json({
-                result: {
-                    id: id,
-                    firebaseProviderId: firebaseProviderId,
-                    email: email
-                },
+                result: result,
                 message: "success add data",
                 code: 500
             })
