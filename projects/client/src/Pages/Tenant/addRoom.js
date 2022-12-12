@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 function AddRoom() {
   // state
   const [property, setProperty] = useState([])
+  const [dropdown, setDropdown] = useState([])
   const history = useHistory()
 
   useEffect(() => {
@@ -40,13 +41,26 @@ function AddRoom() {
     })
   }
   fetchDataAll()
+  fetchDataDropdown()
   optionDropdown()
   }, [])
 
+  const fetchDataDropdown = () => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
+    .then((res) => {
+      // console.log(res.data.dropdown);
+      setDropdown(res.data.dropdown)
+
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+  }
+
   // loop utk dropdown
   const optionDropdown = () => {
-    return property.map((val) => {
-      return <option value={val.Property.id}>{val.Property.name}</option>
+    return dropdown.map((val) => {
+      return <option value={val.id}>{val.name}</option>
     })
   }
 
@@ -121,15 +135,6 @@ function AddRoom() {
           </Flex>
         </Container>
         <Container maxW="1140px">
-          <Image
-            src={"/Assets/add_photo.png"}
-            alt="Room image"
-            width="100%"
-            height="210px"
-            me="10px"
-            mt="5px"
-            mb="20px"
-          />
           <FormControl>
             <Select
               mb="20px"
@@ -209,9 +214,6 @@ function AddRoom() {
                 </FormHelperText>
               ) : null}
           </FormControl>
-          <Button variant="secondary" w="100%" mb="20px">
-            Add Photo
-          </Button>
           <Button variant="primary" w="100%" mb="40px" onClick={formik.handleSubmit}>
             Save
           </Button>

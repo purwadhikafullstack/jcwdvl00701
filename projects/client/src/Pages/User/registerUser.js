@@ -75,6 +75,7 @@ function RegisterUser() {
             // info user
             var userGoogle = (await userWithGoogle).user
             console.log(userGoogle.uid );
+            console.log(userGoogle.displayName );
             var providerIdGoogle = userWithGoogle.providerId
 
         } catch(error) {
@@ -86,8 +87,8 @@ function RegisterUser() {
                 id : userGoogle.uid,
                 name : userGoogle.displayName,
                 email : userGoogle.email,
-                isVerified : userGoogle.emailVerified,
-                firebaseProviderId : providerIdGoogle
+                firebaseProviderId : providerIdGoogle,
+                gender : "Male"
             })
             .then(async (res) => {
                 alert(res.message)
@@ -141,8 +142,8 @@ function RegisterUser() {
                 id : userFacebook.uid,
                 name : userFacebook.displayName,
                 email : userFacebook.email,
-                isVerified : userFacebook.emailVerified,
-                firebaseProviderId : providerIdFacebook
+                firebaseProviderId : providerIdFacebook,
+                gender : "Male"
             })
             .then(async (res) => {
                 alert(res.message)
@@ -226,8 +227,8 @@ function RegisterUser() {
                         name,
                         email,
                         phoneNumber,
-                        isVerified : "false",
-                        firebaseProviderId : "password"
+                        firebaseProviderId : 'password',
+                        gender : "Male"
                     })
                     .then(async (res) => {
                         alert("account have been register")

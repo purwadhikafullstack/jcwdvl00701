@@ -14,7 +14,7 @@ import {
   Select,
   FormHelperText
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Layout from "../../Components/Layout";
 
 import Foto from "../../Assets/bookingHistory3.png";
@@ -34,7 +34,8 @@ function EditRoom() {
   const [caption , setCaption] = useState("")
   const [property, setProperty] = useState([])
   const [propertyId, setPropertyId] = useState("")
-  console.log(propertyId);
+  const [dropdown, setDropdown] = useState([])
+  const history = useHistory()
 
   // utk get data berdasarkan id yg dikirm dari cardRoomTenant
   useEffect(() => {
@@ -58,26 +59,27 @@ function EditRoom() {
       })
     }
     fetchDataEdit()
-    fetchDataAll()
+    fetchDataDropdown()
     optionDropdown()
   }, [])
 
-  // get data propety secara keseluruhan
-  const fetchDataAll = () => {
-    axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/1`)
+    const fetchDataDropdown = () => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
     .then((res) => {
-      // console.log(res.data.roomProperty);
-      setProperty(res.data.roomProperty)
+      // console.log(res.data.dropdown);
+      setDropdown(res.data.dropdown)
+
     })
     .catch((err) => {
       console.error(err)
     })
   }
 
+
   // loop utk dropdown
   const optionDropdown = () => {
-    return property.map((val) => {
-      return <option value={val.Property.id}>{val.Property.name}</option>
+    return dropdown.map((val) => {
+      return <option value={val.id}>{val.name}</option>
     })
   }
 
@@ -119,6 +121,7 @@ function EditRoom() {
       .then((res) => {
         // alert("berhasil update data")
         alert(res.data.message)
+        history.push("/tenant/room")
       })
       .catch((err) => {
         console.error(err)

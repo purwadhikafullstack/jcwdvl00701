@@ -1,27 +1,30 @@
 const {db, dbquery} = require("../database")
 const Crypto = require("crypto")
-const {User} = require("../lib/sequelize")
+// const {User , Profile} = require("../lib/sequelize")
+const {User, Profile, UserRole, Tenant} = require("../models");
 
 module.exports = ({
     addUser : async (req,res) => {
         try {
             console.log(req.body);
+            console.log(req.body.name)
             const {id,name, email,phoneNumber,gender, birthdate, profile_pic, isVerified, firebaseProviderId } = req.body
 
-            const newUser = await User.create({
+            await User.create({
                 id,
-                name,
                 email,
-                phoneNumber,
-                gender,
-                birthdate,
-                profile_pic,
-                isVerified,
                 firebaseProviderId
             })
+
+            await Profile.create({
+                name,
+                phoneNumber,
+                gender,
+                userId : id,
+            })
+
             return res.status(200).json({
-                message : "success add data",
-                results : newUser
+                message : "success add data"
             })
         } catch (err) {
             console.log(err);
@@ -144,6 +147,37 @@ module.exports = ({
             return res.status(500).json({
                 message : err.toString(),
                 code: 500
+            })
+        }
+    },
+    userRedux : async (req, res) => {
+        try {
+            console.log(req.query.id);
+            // const email = req.query.email
+            const id = req.query.id // userId
+            const globalState= await User.findOne({
+                include : [
+                {
+                    model: UserRole,
+                    attributes : ["roleId"],
+                },
+                {
+                    model : Tenant,
+                    attributes : ["id"],
+                }           
+            ],
+                where : {
+                    id
+                }
+            })
+            // console.log(globalState);
+            return res.status(200).json({
+                globalState
+            })
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({
+                message : "your email not registered"
             })
         }
     }

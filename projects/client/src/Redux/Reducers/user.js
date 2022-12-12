@@ -1,7 +1,7 @@
 import userTypes from "./Types/userTypes";
 
 const init_state = {
-  id : 0,
+  id : "",
   name : "",
   email : "",
   phone_number : "",
@@ -11,12 +11,15 @@ const init_state = {
   is_verified: "",
   role : "",
   storageIsChecked : false,
-  firebaseProviderId : ""
+  firebaseProviderId : "",
+  roleId : [],
+  tenantId : 0
 };
 
 export default (state = init_state, action) => {
   switch (action.type) {
     case userTypes.Login:
+      console.log(...action.payload);
       return {...state,
         ...action.payload,
         id : action.payload.id,
@@ -31,6 +34,17 @@ export default (state = init_state, action) => {
         name : action.payload.name,
         email : action.payload.email,
         firebaseProviderId : action.payload.firebaseProviderId
+      };
+    case userTypes.Redux :
+      return {...state,
+      ...action.payload,
+      id : action.payload.id,
+      name : action.payload.name,
+      email : action.payload.email,
+      firebaseProviderId : action.payload.firebaseProviderId,
+      roleId : action.payload.UserRoles,
+      tenantId : action.payload.Tenant.id,
+      is_verified : action.payload.emailVerified
       }
     default:
       return state;

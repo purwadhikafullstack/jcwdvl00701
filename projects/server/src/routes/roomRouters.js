@@ -8,9 +8,7 @@ routers.patch("/update-room/:id", roomController.updateRoom)
 routers.post("/delete-room", roomController.deleteRoom)
 routers.get("/room-property/:id", roomController.getRoomProperty)
 routers.get("/room-one/:id", roomController.getRoomOne)
-
-//dummy
-routers.get("/filter", roomController.filteringRoom)
+routers.get("/room-dropdown", roomController.getPropertyDropdown)
 
 
 module.exports = routers

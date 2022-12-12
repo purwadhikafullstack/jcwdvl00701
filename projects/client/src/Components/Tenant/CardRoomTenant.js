@@ -24,7 +24,8 @@ function CardRoomTenant(props) {
   let {id, name, defaultPrice, description , capacity, propertyId , Property,updateAt, createdAt} = props.roomData
   const { isOpen, onOpen, onClose } = useDisclosure();
   const history = useHistory()
-
+  // console.log(updateAt);
+  // console.log(createdAt);
   const date = createdAt.split("T")
   // console.log(date[0]);
 

@@ -1,5 +1,6 @@
 const { registerVersion } = require("firebase/app");
-const {Room, Property, Category} = require("../lib/sequelize")
+const {Room, Property} = require("../lib/sequelize")
+// const {} = require("../models")
 const {Op} = require("sequelize")
 
 module.exports = ({
@@ -51,24 +52,58 @@ module.exports = ({
         //ambil dari tabel room yg dijoin dengan property
         try {
             const id = req.params.id
-            console.log(id);
+            const page  = parseInt(req.query.page) || 0;
+            const limit = parseInt(req.query.limit) || 10;
             const searchQuery = req.query.searchQuery || "";
+            const offset = limit * page;
+            const alfabet = req.query.alfabet || "ASC";
+            const time = req.query.time || "ASC";
+            const price = req.query.price || "ASC";
+            
             // ambil room yg di inner join ke table property berdasarkan tenant id ==> sudah ketemu
-            const roomProperty = await Room.findAll({
+
+            // kondisi utk mencari dari searh / dari propertyId nya
+            const whereCondition = {
+                name :{[Op.like] : "%" + searchQuery + "%"}
+                
+            }
+
+            if(req.query?.propertyId){
+                whereCondition.propertyId = req.query.propertyId
+            }
+
+            const roomProperty = await Room.findAndCountAll({
                 include : [{
                     model : Property,
                     // attributes : ["name", "picture"],
                     where : {
                         tenantId : id
                     },
+                    order:[
+                        ["name" , `${alfabet}`],
+                    ],
                     required : true
                 }],
-                where : {
-                    name :{[Op.like] : "%" + searchQuery + "%"}
-                }
+                where : whereCondition,
+
+                order: [
+                    ["name" , `${alfabet}`],
+                    ["updatedAt", `${time}`],
+                    ["defaultPrice", `${price}`],
+                ],
+                offset: offset,
+                limit : limit
             })
+
+            const totalRows = roomProperty.count
+            const totalPage = Math.ceil(totalRows / limit)
+            
             res.status(200).json({
-                roomProperty
+                roomProperty,
+                page,
+                limit,
+                totalRows,
+                totalPage
             })
         } catch (err) {
             // utk menampilkan error
@@ -155,24 +190,16 @@ module.exports = ({
             })
         }
     },
-    filteringRoom : async (req, res) => {
-        //dummy utk tes, nanti di hapus
+    // get property semua utk dropdown
+    getPropertyDropdown : async (req, res) => {
         try {
-            // const page  = parseInt(req.query.page) || 0;
-            // const limit = parseInt(req.query.limit) || 0;
-            const searchQuery = req.query.searchQuery || "";
-            console.log(req.query.searchQuery);
-            // const offset = limit * page
-            const totalRows = await Room.findAll({
-                where : {
-                    name :{[Op.like] : "%" + searchQuery + "%"
-                }}           
-            })
-
-            res.status(200).json({
-                totalRows
+            //dibuat khsus utk dpt dropdown
+            const dropdown = await Property.findAll()
+            res.status(200).send({
+                dropdown
             })
         } catch (err) {
+            console.error(err)
             res.status(500).json({
                 message : err.toString()
             })
