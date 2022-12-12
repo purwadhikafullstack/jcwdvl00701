@@ -118,7 +118,6 @@ function RegisterUser() {
             await _handleRegister(credential, {name: name, email: email, phoneNumber: phoneNumber})
         }
     });
-
     return (
         <Flex flexDirection="column">
             {/* flex container utk dekstop */}

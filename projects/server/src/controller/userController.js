@@ -3,7 +3,7 @@ const {sequelize, User, Profile, UserRole} = require("../models")
 module.exports = ({
     addUser: async (req, res) => {
         try {
-            const {id, name, email, isVerified, phoneNumber, firebaseProviderId} = req.body
+            const {id, name, email, phoneNumber, birthdate, firebaseProviderId} = req.body
 
             const result = await sequelize.transaction(async (t) => {
                 const user = await User.create({
@@ -44,6 +44,7 @@ module.exports = ({
         }
     },
 
+
     getUserAll: async (req, res) => {
         try {
             const users = await User.findAll({
@@ -57,7 +58,7 @@ module.exports = ({
             })
 
             return res.status(200).send({
-                result: users,
+               result: users,
                 message: "success",
                 code: 200
             })
