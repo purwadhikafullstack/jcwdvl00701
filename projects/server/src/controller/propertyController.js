@@ -8,14 +8,7 @@ module.exports = {
     try {
       console.log(req.body);
       console.log("uploader foto " + req.file);
-      const {
-        name,
-        description,
-        picture,
-        tenantId,
-        categoryId,
-        rules,
-      } = req.body;
+      const { name, description, pic, tenantId, categoryId, rules } = req.body;
 
       const filePath = "property";
       const { filename } = req.file;
@@ -23,7 +16,7 @@ module.exports = {
       const neWProperty = await Property.create({
         name,
         description,
-        picture: `/${filePath}/${filename}`,
+        pic: `/${filePath}/${filename}`,
         tenantId,
         categoryId,
         rules,
@@ -42,9 +35,9 @@ module.exports = {
   },
   editProperty: async (req, res) => {
     console.log(req.body);
-    const { id, old_img, description, rules, categoryId, name } = req.body;
+    const { id, old_img, description, rules, categoryId, name, pic } = req.body;
     const filePath = "property";
-    console.log(req.body.id);
+    console.log(req.body);
     let editData = {};
     if (req.file?.filename) {
       const { filename } = req.file;
@@ -67,7 +60,7 @@ module.exports = {
         description,
         rules,
         categoryId,
-        picture: `/${filePath}/${filename}`,
+        pic: `/${filePath}/${filename}`,
       };
     } else {
       editData = {
@@ -96,24 +89,6 @@ module.exports = {
       message: "success edit data property1111",
       results: editData,
     });
-  },
-  getProperty: async (req, res) => {
-    const tenantId = req.params.tenantId;
-    try {
-      const results = await Property.findAll({
-        where: {
-          tenantId,
-        },
-        include: [{ model: Room, required: false }],
-      });
-      console.log(results);
-      return res.send(results);
-    } catch (err) {
-      return res.status(500).json({
-        message: err.toString(),
-        code: 500,
-      });
-    }
   },
 
   getPropertyFilter: async (req, res) => {

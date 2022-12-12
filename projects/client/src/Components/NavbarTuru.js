@@ -13,12 +13,15 @@ import {
 } from "@chakra-ui/react";
 import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { authFirebase } from "../Config/firebase";
 import { signOut } from "firebase/auth";
 
 function NavbarMobileTenant() {
   const history = useHistory();
   const auth = authFirebase;
+  const location = useLocation().pathname;
+  const pathLocation = location.split("/");
 
   const menuItemContents = [
     {

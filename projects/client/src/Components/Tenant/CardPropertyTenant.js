@@ -21,11 +21,12 @@ import { useDisclosure } from "@chakra-ui/react";
 function CardPropertyTenant(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   let history = useHistory();
+  const date = props.propertyData.updatedAt.split("T");
 
   async function deleteBtnHandler() {
     axios
       .post(`${process.env.REACT_APP_API_BASE_URL}/property/delete/`, {
-        old_img: props.propertyData.picture,
+        old_img: props.propertyData.pic,
         id: props.propertyData.id,
       })
       .then(() => {
@@ -42,18 +43,20 @@ function CardPropertyTenant(props) {
     <Box borderBottom="1px" borderColor="gray.200" p="5px" mb="20px">
       <Flex>
         <Image
-          src={process.env.REACT_APP_API_BASE_URL + props.propertyData.picture}
+          src={process.env.REACT_APP_API_BASE_URL + props.propertyData.pic}
           alt="property image"
           width="90px"
           height="60px"
           me="10px"
+          overflow="hiden"
+          objectFit="cover"
         />
         <Box>
           <Text fontSize="16px" fontWeight="bold">
             {props.propertyData.name}
           </Text>
           <Text color="rgba(175, 175, 175, 1)" fontSize="12">
-            Modified: {props.propertyData.updatedAt}
+            Modified: {date[0]}
           </Text>
         </Box>
         <Spacer />
@@ -99,9 +102,10 @@ function CardPropertyTenant(props) {
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent borderRadius={0}>
-          <ModalHeader>Create your account</ModalHeader>
+          <ModalHeader>
+            Are you sure you want to delete this property?
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6}></ModalBody>
 
           <ModalFooter>
             <Button

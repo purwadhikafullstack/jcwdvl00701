@@ -8,11 +8,19 @@ routers.post(
   fileUploader({
     destinationFolder: "property",
     fileType: "image",
-    prefix: "/PROPERTY",
-  }).single("picture"),
+    prefix: "PROPERTY",
+  }).single("pic"),
   propertyController.addProperty
 );
-routers.patch("/edit", propertyController.editProperty);
+routers.patch(
+  "/edit",
+  fileUploader({
+    destinationFolder: "property",
+    fileType: "image",
+    prefix: "PROPERTY",
+  }).single("pic"),
+  propertyController.editProperty
+);
 
 routers.get("/get/:tenantId", propertyController.getPropertyFilter);
 routers.get("/get/edit/:propertyId", propertyController.getOneProperty);
