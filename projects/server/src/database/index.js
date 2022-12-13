@@ -5,9 +5,9 @@ const util = require("util");
 const db = mysql.createPool({
   host: env.DB_HOST,
   port: env.DB_PORT,
-  user: env.DB_USER,
-  password: env.DB_PASS,
-  database: env.DB_NAME,
+  user: env.DB_USERNAME,
+  password: env.DB_PASSWORD,
+  database: env.DB_DATABASE,
   multipleStatements: true,
 });
 

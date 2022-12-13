@@ -6,7 +6,11 @@ This is monorepo contain frontend project using ReactJS and backend project usin
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run install`
+
+Install all dependencies managed by lerna
+
+### `npm run start`
 
 Runs the app in the development mode.
 
