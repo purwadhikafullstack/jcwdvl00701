@@ -6,7 +6,6 @@
     "serve": "lerna run serve --stream",
     "clean": "lerna clean --y",
     "test": "lerna run test",
-    "install": "npx lerna bootstrap",
     "install:server": "lerna add --scope=server",
     "install:client": "lerna add --scope=client",
     "install:server:dev": "lerna add --scope=server --dev",
