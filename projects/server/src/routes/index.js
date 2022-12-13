@@ -1,7 +1,9 @@
-const userRouters = require("./userRouters");
+const userRouters = require("./userRouters")
+const roomRouters = require("./roomRouters")
 const propertyRouters = require("./propertyRouters");
 
 module.exports = {
-  userRouters,
-  propertyRouters,
-};
+    userRouters,
+    roomRouters,
+    propertyRouters,
+}

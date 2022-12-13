@@ -25,10 +25,11 @@ import { useState, useEffect } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import ReactPaginate from "react-paginate";
 import "../../Style/pagination.css";
+import { useSelector } from "react-redux";
 
 function PropertyListTenant() {
   const [propertyData, setPropertyData] = useState([]);
-  const tenantId = 3;
+  
   const [randomNumber, setRandomNumber] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [alfabet, setAlfabet] = useState("");
@@ -39,6 +40,9 @@ function PropertyListTenant() {
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const {tenantId, firebaseProviderId,  is_verified} = useSelector(state => state.user)
+  console.log(tenantId);
 
   // reender data property
   function renderPropertyList() {
@@ -90,7 +94,7 @@ function PropertyListTenant() {
   }
   useEffect(() => {
     fetchProperty();
-  }, [randomNumber, keyword, page]);
+  }, [randomNumber, keyword, page, tenantId]);
   return (
     <Layout>
       <Box mt="80px">

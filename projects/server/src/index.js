@@ -27,9 +27,10 @@ app.use("/profile_pic", express.static(`${__dirname}/public/profile_pic`));
 // ===========================
 // NOTE : Add your routes here
 // sequelize.sync({ alter: true });
-const { userRouters, propertyRouters } = require("./routes");
+const { userRouters, roomRouters, propertyRouters } = require("./routes");
 
 app.use("/api/user", userRouters);
+app.use("/api/room", roomRouters);
 app.use("/api/property", propertyRouters);
 
 app.get("/api", (req, res) => {
