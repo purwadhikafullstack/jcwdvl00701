@@ -23,7 +23,6 @@ jobs:
       - name: Build Project
         run: |
           npm i
-          npm ci
           npm run build
 
       - name: Deploy to Linode
