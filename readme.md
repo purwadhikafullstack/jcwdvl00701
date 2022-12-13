@@ -6,9 +6,9 @@ This is monorepo contain frontend project using ReactJS and backend project usin
 
 In the project directory, you can run:
 
-### `npm run install`
+### `npm ci`
 
-Install all dependencies managed by lerna
+Install all dependencies based on package-lock.json
 
 ### `npm run start`
 
