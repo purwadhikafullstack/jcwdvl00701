@@ -1,9 +1,11 @@
-const userController = require("./userController")
-const roomController = require("./roomController")
-const propertyController = require("./propertyController")
+const userController = require("./userController");
+const roomController = require("./roomController");
+const propertyController = require("./propertyController");
+const productController = require("./productController");
 
 module.exports = {
-    userController,
-    roomController,
-    propertyController
-}
+  userController,
+  propertyController,
+  productController,
+  roomController,
+};
