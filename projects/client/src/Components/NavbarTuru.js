@@ -12,11 +12,54 @@ import {
   Button,
 } from "@chakra-ui/react";
 import turuIcon from "../Assets/image/turuIcon.png";
-import { Link } from "react-router-dom";
-import {authFirebase} from "../Config/firebase";
-import {signOut} from "firebase/auth";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import { authFirebase } from "../Config/firebase";
+import { signOut } from "firebase/auth";
 
 function NavbarMobileTenant() {
+  const location = useLocation().pathname;
+  const pathLocation = location.split("/");
+  const history = useHistory();
+  const auth = authFirebase;
+
+  const menuItemContents = [
+    {
+      url: "/tenant/dashboard",
+      icon: <i className="fa-solid fa-table-list" />,
+      text: "Dashboard",
+    },
+    {
+      url: "/tenant/profile",
+      icon: <i className="fa-solid fa-circle-user" />,
+      text: "Profile",
+    },
+    {
+      url: "/tenant/order",
+      icon: <i className="fa-solid fa-clipboard-list" />,
+      text: "Order",
+    },
+    {
+      url: "/tenant/property",
+      icon: <i className="fa-solid fa-building" />,
+      text: "Property",
+    },
+    {
+      url: "/tenant/room",
+      icon: <i className="fa-solid fa-bed" />,
+      text: "Room",
+    },
+    {
+      url: "/tenant/report",
+      icon: <i className="fa-solid fa-chart-simple" />,
+      text: "Report",
+    },
+    {
+      url: "/tenant/price",
+      icon: <i className="fa-solid fa-cash-register" />,
+      text: "Price",
+    },
+  ];
+
   return (
     <Box
       bg="white"
@@ -45,99 +88,53 @@ function NavbarMobileTenant() {
               bg="white"
               my="auto"
             />
+
             <MenuList borderRadius="0px" width="100vw" border="none">
-              <Link to="/tenant/dashboard">
-                <MenuItem _hover={{ bg: "white" }}>
-                  <Button
-                    variant="primary"
-                    w="100%"
-                    leftIcon={<i className="fa-solid fa-table-list"></i>}
+              {menuItemContents.map((content) => {
+                return (
+                  <MenuItem
+                    key={`tenant-menu-${content.text.toLowerCase()}`}
+                    _hover={{ bg: "white" }}
+                    onClick={() => history.push(content.url)}
                   >
-                    Dashboard
-                  </Button>
-                </MenuItem>
-              </Link>
-              <Link to="/tenant/profile">
-                <MenuItem _hover={{ bg: "white" }}>
-                  <Button
-                    variant="primary"
-                    w="100%"
-                    leftIcon={<i className="fa-solid fa-circle-user"></i>}
-                  >
-                    Profile
-                  </Button>
-                </MenuItem>
-              </Link>
-              <Link to="/tenant/order">
-                <MenuItem _hover={{ bg: "white" }}>
-                  <Button
-                    variant="primary"
-                    w="100%"
-                    leftIcon={<i className="fa-solid fa-clipboard-list"></i>}
-                  >
-                    Order
-                  </Button>
-                </MenuItem>
-              </Link>
-              <Link to="/tenant/property">
-                <MenuItem _hover={{ bg: "white" }}>
-                  <Button
-                    variant="primary"
-                    w="100%"
-                    leftIcon={<i className="fa-solid fa-building"></i>}
-                  >
-                    Property
-                  </Button>
-                </MenuItem>
-              </Link>
-              <Link to="/tenant/room">
-                <MenuItem _hover={{ bg: "white" }}>
-                  <Button
-                    variant="primary"
-                    w="100%"
-                    leftIcon={<i className="fa-solid fa-bed"></i>}
-                  >
-                    Room
-                  </Button>
-                </MenuItem>
-              </Link>
-              <Link to="/tenant/report">
-                <MenuItem _hover={{ bg: "white" }}>
-                  <Button
-                    variant="primary"
-                    w="100%"
-                    leftIcon={<i className="fa-solid fa-chart-simple"></i>}
-                  >
-                    Report
-                  </Button>
-                </MenuItem>
-              </Link>
-              <Link to="/tenant/price">
-                <MenuItem _hover={{ bg: "white" }}>
-                  <Button
-                    variant="primary"
-                    w="100%"
-                    leftIcon={<i className="fa-solid fa-cash-register"></i>}
-                  >
-                    Price
-                  </Button>
-                </MenuItem>
-              </Link>
+                    <Flex
+                      bg={"#fbe946"}
+                      w="100%"
+                      h={"44px"}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      _hover={{
+                        bg: "black",
+                        color: "white",
+                        transition: "0.3s",
+                      }}
+                    >
+                      {content.icon}&nbsp;<strong>{content.text}</strong>
+                    </Flex>
+                  </MenuItem>
+                );
+              })}
 
-              <MenuItem>
-                <Button
-                    variant="primary"
-                    w="100%"
-                    leftIcon={<i className="fa-solid fa-cash-register"></i>}
-                    onClick={() => {
-                      const auth = authFirebase
-                      signOut(auth).then(() => alert('signed out')).catch((error) => alert(error))
-                    }}
+              <MenuItem
+                key={`tenant-menu-signout`}
+                _hover={{ bg: "white" }}
+                onClick={() => {
+                  signOut(auth)
+                    .then(() => alert("signed out"))
+                    .catch((error) => alert(error));
+                }}
+              >
+                <Flex
+                  bg={"#fbe946"}
+                  w="100%"
+                  h={"44px"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  _hover={{ bg: "black", color: "white", transition: "0.3s" }}
                 >
-                  Sign Out
-                </Button>
+                  <strong>Sign Out</strong>
+                </Flex>
               </MenuItem>
-
             </MenuList>
           </Menu>
         </Flex>

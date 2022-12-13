@@ -16,7 +16,6 @@ module.exports = {
       },
       phoneNumber: {
         type: DataTypes.STRING,
-        allowNull: false,
         unique: true
       },
       gender: {

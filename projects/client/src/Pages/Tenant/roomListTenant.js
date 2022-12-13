@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import axios from "axios"
 import ReactPaginate from "react-paginate"
 import { useSelector } from "react-redux";
+import "../../Style/pagination.css";
 
 function RoomListTenant() {
   const [room, setRoom] = useState([])
@@ -40,8 +41,10 @@ function RoomListTenant() {
   const [price, setPrice] = useState("")
   const [propertyId , setPropertyId] = useState("")
   const {isOpen , onOpen , onClose} = useDisclosure()
+  const [randomNumber, setRandomNumber] = useState(0);
 
   const {tenantId, firebaseProviderId,  is_verified} = useSelector(state => state.user)
+  console.log(tenantId);
 
   const inputHandler = (e, field) => {
     const {value} = e.target
@@ -86,7 +89,7 @@ function RoomListTenant() {
     roomData()
     fetchDataDropdown()
     optionDropdown()
-  },[keyWord, page , time, alfabet, price, propertyId, tenantId])
+  },[keyWord, page , time, alfabet, price, propertyId, tenantId , randomNumber])
 
   // get data room, yg akan di loop utk di render
   const roomData = () => {
@@ -94,6 +97,7 @@ function RoomListTenant() {
       // console.log(val);
       return <CardRoomTenant 
       roomData = {val}
+      setRandomNumber = {setRandomNumber}
       />
     })
   }

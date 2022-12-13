@@ -45,7 +45,7 @@ function App() {
 
     const {id, name, email ,isVerified, firebaseProviderId, tenantId, roleId} = useSelector(state => state.user)
     
-  const history = useHistory()
+  let history = useHistory()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -108,7 +108,7 @@ function App() {
               }
           })
           .catch((err) => {
-              alert("please registered your account in form register")
+              // alert("please registered your account in form register")
               console.error(err.message)
           })
       }
@@ -124,7 +124,10 @@ function App() {
           <Route component={LoginTenant} path="/tenant/login" />
           <Route component={PropertyListTenant} path="/tenant/property" />
           <Route component={RoomListTenant} path="/tenant/room" />
-          <Route component={EditProperty} path="/tenant/edit-property" />
+          <Route
+            component={EditProperty}
+            path="/tenant/edit-property/:propertyId"
+          />
           <Route component={AddProperty} path="/tenant/add-property" />
           <Route component={EditRoom} path="/tenant/edit-room/:id" />
           <Route component={AddRoom} path="/tenant/add-room" />

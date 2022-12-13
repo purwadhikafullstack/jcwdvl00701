@@ -18,16 +18,17 @@ import Foto from "../../Assets/bookingHistory3.png";
 import {useHistory} from "react-router-dom"
 import { useDisclosure } from "@chakra-ui/react";
 import axios from "axios"
+import { useEffect } from "react";
 
 function CardRoomTenant(props) {
-  // console.log(props)
+  console.log(props)
   let {id, name, defaultPrice, description , capacity, propertyId , Property,updateAt, createdAt} = props.roomData
+  
   const { isOpen, onOpen, onClose } = useDisclosure();
   const history = useHistory()
-  // console.log(updateAt);
-  // console.log(createdAt);
+  
   const date = createdAt.split("T")
-  // console.log(date[0]);
+
 
   //kirim ke halaman edit-room
   const handleBtnEdit = (id) => {
@@ -35,18 +36,21 @@ function CardRoomTenant(props) {
     history.push(`/tenant/edit-room/${id}`)
   }
 
-  const deleteBtnHandler = () => {
-    alert("berhasil")
-    axios.post(`${process.env.REACT_APP_API_BASE_URL}/room/delete-room`,{
-      id
-    })
-    .then((res) => {
-      alert(res.data.message)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  }
+const deleteBtnHandler = () => {
+  alert("berhasil")
+  axios.post(`${process.env.REACT_APP_API_BASE_URL}/room/delete-room`,{
+    id
+  })
+  .then((res) => {
+    alert(res.data.message)
+    props.setRandomNumber(Math.random())
+
+    onClose()
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+}
 
   return (
     <Box borderBottom="1px" borderColor="gray.200" p="5px" mb="20px" pb="10px">
@@ -55,7 +59,7 @@ function CardRoomTenant(props) {
       </Text>
       <Flex mb="10px">
         <Image
-          src={Foto}
+          src={process.env.REACT_APP_API_BASE_URL + Property.pic}
           alt="Room image"
           width="90px"
           height="60px"
@@ -120,7 +124,7 @@ function CardRoomTenant(props) {
 
           <ModalFooter>
             <Button
-              onClick={() => deleteBtnHandler()}
+              onClick={deleteBtnHandler}
               borderRadius={0}
               colorScheme="red"
               mr={3}

@@ -1,7 +1,7 @@
 require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
-const { join } = require("path");
+const { join, dirname } = require("path");
 const { sequelize } = require("./lib/sequelize");
 // const { sequelize } = require("./models"); // uncomment to use sequelize default utility
 const { env } = require("./config");
@@ -13,11 +13,12 @@ console.log("dari .env =", process.env.WHITELISTED_DOMAIN);
 
 app.use(
   cors({
-    origin:'*'
+    origin: "*",
   })
 );
 
 app.use(express.json());
+app.use("/api", express.static(`${__dirname}/public`));
 
 app.use("/profile_pic", express.static(`${__dirname}/public/profile_pic`));
 
@@ -26,10 +27,11 @@ app.use("/profile_pic", express.static(`${__dirname}/public/profile_pic`));
 // ===========================
 // NOTE : Add your routes here
 // sequelize.sync({ alter: true });
-const { userRouters, roomRouters} = require("./routes");
+const { userRouters, roomRouters, propertyRouters } = require("./routes");
 
 app.use("/api/user", userRouters);
 app.use("/api/room", roomRouters);
+app.use("/api/property", propertyRouters);
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);
