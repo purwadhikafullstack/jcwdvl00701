@@ -22,7 +22,7 @@ jobs:
 
       - name: Build Project
         run: |
-          npm run install
+          npm ci
           npm run build
 
       - name: Deploy to Linode
@@ -44,5 +44,5 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd ${{ secrets.SSH_FOLDER }}
-            npm run install
+            npm ci
             pm2 start deploy.config.js
