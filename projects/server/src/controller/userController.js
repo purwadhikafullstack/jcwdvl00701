@@ -44,7 +44,6 @@ module.exports = ({
         }
     },
 
-
     getUserAll: async (req, res) => {
         try {
             const users = await User.findAll({
@@ -58,7 +57,7 @@ module.exports = ({
             })
 
             return res.status(200).send({
-               result: users,
+                result: users,
                 message: "success",
                 code: 200
             })
@@ -162,7 +161,6 @@ module.exports = ({
             })
         }
     },
-
 
     updateUserProfilePic: async (req, res) => {
         const id = req.body.id;
