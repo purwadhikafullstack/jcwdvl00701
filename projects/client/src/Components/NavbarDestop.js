@@ -1,8 +1,24 @@
 import { Box, Flex, Button, Text, Image, Container } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import turuIcon from "../Assets/image/turuIcon.png";
+import { useSelector } from "react-redux";
+import { authFirebase } from "../Config/firebase";
+import { signOut } from "firebase/auth";
 
 function NavbarDestop() {
+  const {id} = useSelector(state => state.user)
+  const auth = authFirebase
+  const history = useHistory()
+
+  const logout = () => {
+    signOut(auth)
+      .then(() => alert("signed out"))
+      .catch((error) => alert(error));
+  }
+
+  const switchToTenant = () => {
+    history.push("/tenant/complete-register")
+  }
   return (
     <Box
       display={{ ss: "none", sm: "none", sl: "inline" }}
@@ -34,12 +50,21 @@ function NavbarDestop() {
               <Text>Profile</Text>
             </Link>
           </Flex>
+          
+
           <Box my="auto">
-            <Link to="/login">
-              <Button variant="secondary" height="58px" w="170px">
-                Login
+              {
+                id ?
+              <Button variant="secondary" height="58px" w="170px" onClick={logout}>
+                Logout
               </Button>
-            </Link>
+              :
+              <Button variant="secondary" height="58px" w="170px">
+                <Link to="/login">
+                Login
+                </Link>
+              </Button>
+              }
           </Box>
         </Flex>
       </Container>
