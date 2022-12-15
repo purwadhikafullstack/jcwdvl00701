@@ -1,9 +1,11 @@
 const userController = require("./userController")
 const specialPriceController = require("./specialPriceController")
-const propertyController = require("../controller/propertyController")
+const roomController = require("./roomController")
+const propertyController = require("./propertyController")
 
 module.exports = {
     userController,
     specialPriceController,
+    roomController,
     propertyController
 }

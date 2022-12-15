@@ -1,15 +1,65 @@
-import { Box, Image, Text, Flex, Spacer, Tooltip } from "@chakra-ui/react";
+import {
+  Box,
+  Image,
+  Text,
+  Flex,
+  Spacer,
+  Tooltip,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Button,
+} from "@chakra-ui/react";
 import Foto from "../../Assets/bookingHistory3.png";
+import {useHistory} from "react-router-dom"
+import { useDisclosure } from "@chakra-ui/react";
+import axios from "axios"
+import { useEffect } from "react";
 
-function CardRoomTenant() {
+function CardRoomTenant(props) {
+  console.log(props)
+  let {id, name, defaultPrice, description , capacity, propertyId , Property,updateAt, createdAt} = props.roomData
+  
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const history = useHistory()
+  
+  const date = createdAt.split("T")
+
+
+  //kirim ke halaman edit-room
+  const handleBtnEdit = (id) => {
+    // console.log(id);
+    history.push(`/tenant/edit-room/${id}`)
+  }
+
+const deleteBtnHandler = () => {
+  alert("berhasil")
+  axios.post(`${process.env.REACT_APP_API_BASE_URL}/room/delete-room`,{
+    id
+  })
+  .then((res) => {
+    alert(res.data.message)
+    props.setRandomNumber(Math.random())
+
+    onClose()
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+}
+
   return (
     <Box borderBottom="1px" borderColor="gray.200" p="5px" mb="20px" pb="10px">
       <Text fontSize="16px" fontWeight="bold">
-        Apartement in Jakarta Selatan
+        {Property.name}
       </Text>
       <Flex mb="10px">
         <Image
-          src={Foto}
+          src={process.env.REACT_APP_API_BASE_URL + Property.pic}
           alt="Room image"
           width="90px"
           height="60px"
@@ -18,13 +68,14 @@ function CardRoomTenant() {
         />
         <Box>
           <Text fontSize="16px" fontWeight="reguler">
-            Room 1
+            {name}
           </Text>
           <Text color="rgba(175, 175, 175, 1)" fontSize="12">
-            Modified: 32/13/2022
+            Modified: {date[0]}
           </Text>
         </Box>
         <Spacer />
+        {/* ikon utk edit room */}
         <Tooltip label="Edit room" aria-label="A tooltip">
           <Box
             as="button"
@@ -37,13 +88,15 @@ function CardRoomTenant() {
               color: "white",
             }}
             bg="primary"
+            onClick={() => handleBtnEdit(id)}
           >
             <i className="fa-solid fa-pen-to-square"></i>
           </Box>
         </Tooltip>
       </Flex>
       <Flex justifyContent="space-between">
-        <Text>Price: Rp. 300.000,00/ per night</Text>
+        <Text>Price: Rp. {defaultPrice}/ per night</Text>
+        {/* ikon utk delete */}
         <Tooltip label="Delete room" aria-label="A tooltip">
           <Box
             as="button"
@@ -56,11 +109,34 @@ function CardRoomTenant() {
               bg: "black",
             }}
             bg="rgba(251, 38, 38, 1)"
+            onClick={onOpen}
           >
             <i className="fa-solid fa-trash-can"></i>
           </Box>
         </Tooltip>
       </Flex>
+      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent borderRadius={0}>
+          <ModalHeader>Create your account</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}></ModalBody>
+
+          <ModalFooter>
+            <Button
+              onClick={deleteBtnHandler}
+              borderRadius={0}
+              colorScheme="red"
+              mr={3}
+            >
+              Delete
+            </Button>
+            <Button borderRadius={0} onClick={onClose}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }

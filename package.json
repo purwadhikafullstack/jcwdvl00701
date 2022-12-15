@@ -14,14 +14,10 @@
     "client": "lerna exec --scope client yarn"
   },
   "private": true,
-  "devDependencies": {
-    "lerna": "^5.4.0"
-  },
   "workspaces": [
     "projects/*"
   ],
-  "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "firebase": "^9.14.0"
+  "devDependencies": {
+    "lerna": "^5.4.0"
   }
 }

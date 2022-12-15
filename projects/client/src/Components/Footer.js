@@ -4,10 +4,12 @@ import vectorFb from "../Assets/image/vectorFb.png";
 import vectorIg from "../Assets/image/vectorIg.png";
 import turuIcon from "../Assets/image/turuIcon.png";
 import NavbarMobile from "./NavbarMobile";
-
+import { useLocation } from "react-router-dom";
 function Footer(props) {
   // props utk ukuran margin top footer agar dinamis
   const { ss, sm, sl } = props;
+  const location = useLocation().pathname;
+  const pathLocation = location.split("/");
   // console.log(props);
   return (
     <Box
@@ -59,14 +61,33 @@ function Footer(props) {
           </Box>
         </Flex>
       </Flex>
-      <Box bg="primary" mt="10px">
-        <Flex justifyContent="center">
-          <Text pt="25px" pb="26px" fontWeight="600" fontSize="14px">
-            2022, PT.Turu Jaya Abadi
-          </Text>
-        </Flex>
-      </Box>
-      <NavbarMobile />
+
+      {pathLocation[1] === "tenant" ? (
+        <>
+          <Box bg="primary" mt="10px">
+            <Flex justifyContent="center">
+              <Text pt="25px" pb="26px" fontWeight="600" fontSize="14px">
+                2022, PT.Turu Jaya Abadi
+              </Text>
+            </Flex>
+          </Box>
+        </>
+      ) : (
+        <>
+          <Box
+            bg="primary"
+            mt="10px"
+            mb={{ ss: "60px", sm: "60px", sl: "0px", md: "0px" }}
+          >
+            <Flex justifyContent="center">
+              <Text pt="25px" pb="26px" fontWeight="600" fontSize="14px">
+                2022, PT.Turu Jaya Abadi
+              </Text>
+            </Flex>
+          </Box>
+          <NavbarMobile />
+        </>
+      )}
     </Box>
   );
 }
