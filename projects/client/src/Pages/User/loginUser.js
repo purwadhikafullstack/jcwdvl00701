@@ -116,7 +116,7 @@ function LoginUser() {
             const user = userCredential.user
 
             // utk get data ke back-end dan di simpan di redux
-            const response = axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/getById`, {
+            const response = axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/get-by-id`, {
                 params: {id: user.uid}
             })
 

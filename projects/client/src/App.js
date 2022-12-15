@@ -30,6 +30,7 @@ import Order from "./Pages/Tenant/order";
 import Price from "./Pages/Tenant/price";
 import Dashboard from "./Pages/Tenant/dashboard";
 import ProfileTenant from "./Pages/Tenant/profileTenant";
+import CompleteFormTenant from "./Pages/Tenant/completeFormTenant";
 import { authFirebase } from "./Config/firebase";
 import {getAuth, onAuthStateChanged, sendEmailVerification, signOut} from "firebase/auth"
 import {useHistory} from "react-router-dom"
@@ -62,7 +63,6 @@ function App() {
         setFirebaseProvider(user.providerData[0].providerId);
         let emailVerified = user.emailVerified
         setEmailVerified(emailVerified)
-        // user.reload()
 
         // kondisi jika sudah terverifikasi
           if(user.emailVerified){
@@ -96,11 +96,15 @@ function App() {
           })
           .then((res) => {
               // console.log("data get1 :", res.data.globalState);
-              // console.log("data get2 :", res.data.results.UserRoles[0]);
+              // console.log("data get2 :", res.data.results.UserRoles);
               // console.log("data get3 :", res.data.results.Tenant.id);
               if(res.data.globalState === null) {
                 alert("loading....")
               } else {
+                res.data.globalState.UserRoles = res.data.globalState.UserRoles.map((val) => {
+                  // console.log(val);
+                  return val.roleId
+                })
                 dispatch({
                     type : auth_types.Redux,
                     payload : {...res.data.globalState , emailVerified}
@@ -136,6 +140,7 @@ function App() {
           <Route component={Price} path="/tenant/price" />
           <Route component={Dashboard} path="/tenant/dashboard" />
           <Route component={ProfileTenant} path="/tenant/profile" />
+          <Route component={CompleteFormTenant} path="/tenant/complete-register" />
 
           {/* page user */}
           <Route component={PropertyList} path="/list" />
