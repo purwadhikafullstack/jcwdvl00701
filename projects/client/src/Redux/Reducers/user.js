@@ -13,7 +13,8 @@ const init_state = {
   storageIsChecked : false,
   firebaseProviderId : "",
   roleId : [],
-  tenantId : 0
+  tenantId : 0,
+  Tenant: {}
 };
 
 export default (state = init_state, action) => {
@@ -25,7 +26,8 @@ export default (state = init_state, action) => {
         id : action.payload.id,
         name : action.payload.name,
         email : action.payload.email,
-        firebaseProviderId : action.payload.firebaseProviderId
+        firebaseProviderId : action.payload.firebaseProviderId,
+        Tenant : action.payload.Tenant
       };
     case userTypes.Register:
       return {...state,
@@ -33,7 +35,7 @@ export default (state = init_state, action) => {
         id : action.payload.id,
         name : action.payload.name,
         email : action.payload.email,
-        firebaseProviderId : action.payload.firebaseProviderId
+        firebaseProviderId : action.payload.firebaseProviderId,
       };
     case userTypes.Redux :
       return {...state,

@@ -188,6 +188,12 @@ function RegisterUser() {
                                                 formik.setFieldValue("name", e.target.value)
                                             }
                                         />
+                                        {formik.errors.name? (
+                                            <Alert status="error" color="red" text="center">
+                                                <i className="fa-solid fa-circle-exclamation"></i>
+                                                <Text ms="10px">{formik.errors.name}</Text>
+                                            </Alert>
+                                        ) : null}
                                     </FormControl>
                                     <FormControl id="email" pb="12px">
                                         <Input
@@ -199,9 +205,10 @@ function RegisterUser() {
                                             }
                                         />
                                         {formik.errors.email ? (
-                                            <FormHelperText color="red" textAlign="center">
-                                                {formik.errors.email}
-                                            </FormHelperText>
+                                            <Alert status="error" color="red" text="center">
+                                                <i className="fa-solid fa-circle-exclamation"></i>
+                                                <Text ms="10px">{formik.errors.email}</Text>
+                                            </Alert>
                                         ) : null}
                                     </FormControl>
                                     <FormControl id="phoneNumber" pb="12px">
@@ -214,9 +221,10 @@ function RegisterUser() {
                                             }
                                         />
                                         {formik.errors.phoneNumber ? (
-                                            <FormHelperText color="red" textAlign="center">
-                                                {formik.errors.phoneNumber}
-                                            </FormHelperText>
+                                            <Alert status="error" color="red" text="center">
+                                                <i className="fa-solid fa-circle-exclamation"></i>
+                                                <Text ms="10px">{formik.errors.phoneNumber}</Text>
+                                            </Alert>
                                         ) : null}
                                     </FormControl>
                                     <FormControl id="password" pb="12px">
@@ -240,9 +248,10 @@ function RegisterUser() {
                                             </InputRightElement>
                                         </InputGroup>
                                         {formik.errors.password ? (
-                                            <FormHelperText color="red" textAlign="center">
-                                                {formik.errors.password}
-                                            </FormHelperText>
+                                            <Alert status="error" color="red" text="center">
+                                                <i className="fa-solid fa-circle-exclamation"></i>
+                                                <Text ms="10px">{formik.errors.password}</Text>
+                                            </Alert>
                                         ) : null}
                                     </FormControl>
                                     <FormControl id="confirmPassword" pb="12px">
@@ -271,9 +280,10 @@ function RegisterUser() {
                                             </InputRightElement>
                                         </InputGroup>
                                         {formik.errors.confirmPassword ? (
-                                            <FormHelperText color="red" textAlign="center">
-                                                {formik.errors.confirmPassword}
-                                            </FormHelperText>
+                                            <Alert status="error" color="red" text="center">
+                                                <i className="fa-solid fa-circle-exclamation"></i>
+                                                <Text ms="10px">{formik.errors.confirmPassword}</Text>
+                                            </Alert>
                                         ) : null}
                                     </FormControl>
                                     <Button

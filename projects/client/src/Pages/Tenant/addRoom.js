@@ -12,7 +12,7 @@ import {
   Checkbox,
   Textarea,
   Select,
-  FormHelperText
+  Alert
 } from "@chakra-ui/react";
 import { Link, useHistory } from "react-router-dom";
 import Layout from "../../Components/Layout";
@@ -29,7 +29,7 @@ function AddRoom() {
   const history = useHistory()
 
   useEffect(() => {
-     const fetchDataAll = () => {
+    const fetchDataAll = () => {
     axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/1`)
     .then((res) => {
       console.log(res.data.roomProperty);
@@ -150,10 +150,11 @@ function AddRoom() {
               {optionDropdown()}
             </Select>
             {formik.errors.property ? (
-                  <FormHelperText color="red" textAlign="center">
-                    {formik.errors.property}
-                  </FormHelperText>
-                ) : null}
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.property}</Text>
+                </Alert>
+              ) : null}
           </FormControl>
           <FormControl pb="20px">
             <Input 
@@ -165,9 +166,10 @@ function AddRoom() {
             }}
             />
             {formik.errors.nameRoom ? (
-                <FormHelperText color="red" textAlign="center">
-                  {formik.errors.nameRoom}
-                </FormHelperText>
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.nameRoom}</Text>
+                </Alert>
               ) : null}
           </FormControl>
           <FormControl pb="20px">
@@ -179,9 +181,10 @@ function AddRoom() {
             }}
             />
             {formik.errors.price ? (
-                <FormHelperText color="red" textAlign="center">
-                  {formik.errors.price}
-                </FormHelperText>
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.price}</Text>
+                </Alert>
               ) : null}
           </FormControl>
           <FormControl pb="20px">
@@ -193,9 +196,10 @@ function AddRoom() {
             }}
             />
             {formik.errors.capacity ? (
-                <FormHelperText color="red" textAlign="center">
-                  {formik.errors.capacity}
-                </FormHelperText>
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.capacity}</Text>
+                </Alert>
               ) : null}
           </FormControl>
           <FormControl>
@@ -209,9 +213,10 @@ function AddRoom() {
               }}
             />
             {formik.errors.caption ? (
-                <FormHelperText color="red" textAlign="center">
-                  {formik.errors.caption}
-                </FormHelperText>
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.caption}</Text>
+                </Alert>
               ) : null}
           </FormControl>
           <Button variant="primary" w="100%" mb="40px" onClick={formik.handleSubmit}>

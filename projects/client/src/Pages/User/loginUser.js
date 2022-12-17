@@ -13,7 +13,7 @@ import {
     Container,
     InputGroup,
     InputRightElement,
-    FormHelperText
+    Alert
 } from "@chakra-ui/react";
 import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
@@ -116,18 +116,18 @@ function LoginUser() {
             const user = userCredential.user
 
             // utk get data ke back-end dan di simpan di redux
-            const response = axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/getById`, {
+            const response = axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/get-by-id`, {
                 params: {id: user.uid}
             })
 
-            if (response.data.code !== 200) {
+            if ((await response).data.code !== 200) {
                 alert("please register for your account")
             } else {
-                dispatch({
-                    type: auth_types.Login,
-                    payload: response.data.result
-                })
-                history.push("/")
+                if((await response).data.result !== null){
+                    history.push("/")
+                } else {
+                    alert("your account is not user")
+                }
             }
         }
     })
@@ -188,9 +188,10 @@ function LoginUser() {
                                                         onChange={(e) => formik.setFieldValue("email", e.target.value)}
                                                     />
                                                     {formik.errors.email ?
-                                                        <FormHelperText color="red" textAlign="center">
-                                                            {formik.errors.email}
-                                                        </FormHelperText>
+                                                        <Alert status="error" color="red" text="center">
+                                                            <i className="fa-solid fa-circle-exclamation"></i>
+                                                            <Text ms="10px">{formik.errors.email}</Text>
+                                                        </Alert>
                                                         :
                                                         null
                                                     }
@@ -212,9 +213,10 @@ function LoginUser() {
 
                                                     </InputGroup>
                                                     {formik.errors.password ?
-                                                        <FormHelperText color="red" textAlign="center">
-                                                            {formik.errors.password}
-                                                        </FormHelperText>
+                                                        <Alert status="error" color="red" text="center">
+                                                            <i className="fa-solid fa-circle-exclamation"></i>
+                                                            <Text ms="10px">{formik.errors.password}</Text>
+                                                        </Alert>
                                                         :
                                                         null
                                                     }

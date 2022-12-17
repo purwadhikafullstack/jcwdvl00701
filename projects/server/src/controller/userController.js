@@ -51,7 +51,7 @@ module.exports = {
       return res.status(200).json({
         result: result,
         message: "success add data",
-        code: 500,
+        code: 200,
       });
     } catch (err) {
       return res.status(500).json({
@@ -92,11 +92,11 @@ module.exports = {
     const id = req.query.id;
 
     try {
-      const user = await User.findOne({
-        where: {id: id},
+      const user = await Profile.findOne({
+        where: { userId : id },
         include: [
           {
-            model: Profile,
+            model: User,
             required: true,
             attributes: {
               exclude: ["id", "userId", "UserId"],
