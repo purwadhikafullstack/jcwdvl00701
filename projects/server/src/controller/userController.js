@@ -92,11 +92,11 @@ module.exports = {
     const id = req.query.id;
 
     try {
-      const user = await User.findOne({
-        where: { id: id },
+      const user = await Profile.findOne({
+        where: { userId : id },
         include: [
           {
-            model: Profile,
+            model: User,
             required: true,
             attributes: {
               exclude: ["id", "userId", "UserId"],
