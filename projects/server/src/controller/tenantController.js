@@ -93,5 +93,31 @@ module.exports = {
                 message : err.toString()
             })
         }
+    },
+    getTenantById : async (req,res) => {
+        const id = req.query.id
+
+        try {
+            // ambil berdasarkan user yg disantukan dengan tenant(include)
+            const tenantOne = await Tenant.findOne({
+                where : {userId : id},
+                include: [
+                    {
+                        model:User,
+                        required:true
+                    }
+                ]
+            })
+
+            res.status(200).send({
+                result: tenantOne,
+                message: "success",
+                code: 200,
+            })
+        } catch (err) {
+            res.status(500).json({
+                message: err.toString()
+            })
+        }
     } 
 }
