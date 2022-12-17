@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { useHistory, useParams } from "react-router-dom";
 import {
@@ -6,21 +6,19 @@ import {
   Button,
   Container,
   Flex,
-  Card,
-  CardBody,
   Image,
   Stack,
   Heading,
   Text,
-  Divider,
-  CardFooter,
-  ButtonGroup,
   Center,
   IconButton,
   chakra,
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
+import { addDays } from "date-fns";
+
 import Layout from "../../Components/Layout";
+import axios from "axios";
 
 function Topbar(props) {
   return (
@@ -42,222 +40,274 @@ function Topbar(props) {
   );
 }
 
-function Content(props) {
-  return (
-    <Box>
-      <Box my={3}>
-        <Text fontWeight="bold" fontSize="xl" mb={1}>
-          {props.data.name}
-        </Text>
-        <Text fontSize="sm" color="grey">
-          {props.data.address}
-        </Text>
-      </Box>
-
-      <Image
-        objectFit="cover"
-        maxW={{ base: "100%", sm: "50%" }}
-        src={props.data.pic}
-        alt={props.data.name}
-      />
-
-      <Box my={8}>
-        <Text>{props.data.description}</Text>
-        <Flex align="center" my={8}>
-          <Stack>
-            <IconButton
-              icon={<i className="fa-solid fa-bed" />}
-              backgroundColor="gray.200"
-            />
-            <Center>
-              <Text>room 1</Text>
-            </Center>
-          </Stack>
-          <Stack mx={4}>
-            <IconButton
-              icon={<i className="fa-solid fa-bed" />}
-              backgroundColor="gray.200"
-            />
-            <Center>
-              <Text>room 1</Text>
-            </Center>
-          </Stack>
-          <Stack>
-            <IconButton
-              icon={<i className="fa-solid fa-bed" />}
-              backgroundColor="gray.200"
-            />
-            <Center>
-              <Text>room 1</Text>
-            </Center>
-          </Stack>
-        </Flex>
-        <Flex align="center">
-          <Stack width="25%">
-            <Center>
-              <i className="fa-solid fa-wifi" />
-            </Center>
-            <Center>
-              <Text>wifi</Text>
-            </Center>
-          </Stack>
-          <Stack width="25%">
-            <Center>
-              <i className="fa-solid fa-box-archive" />
-            </Center>
-            <Center>
-              <Text>locker</Text>
-            </Center>
-          </Stack>
-          <Stack width="25%">
-            <Center>
-              <i className="fa-solid fa-utensils" />
-            </Center>
-            <Center>
-              <Text>menu</Text>
-            </Center>
-          </Stack>
-          <Stack width="25%">
-            <Center>
-              <i className="fa-solid fa-couch" />
-            </Center>
-            <Center>
-              <Text>sofa</Text>
-            </Center>
-          </Stack>
-        </Flex>
-      </Box>
-
-      <Flex border="3px solid lightgrey" p={5}>
-        <Box h="50px" w="50px" backgroundColor="grey" mr={5}></Box>
-        <Box>
-          <Text fontWeight="bold" fontSize="md">
-            Tanent
-          </Text>
-          <Text fontSize="md" color="grey">
-            Joined since 2018
-          </Text>
-        </Box>
-      </Flex>
-    </Box>
-  );
-}
-
-function Reviews(props) {
-  return (
-    <Box>
-      <Box my={3}>
-        <Text fontWeight="bold" fontSize="xl" mb={1}>
-          <i className="fa-solid fa-star" /> 5 Reviews
-        </Text>
-      </Box>
-
-      <Box border="3px solid lightgrey" p={5}>
-        <Flex mb={2}>
-          <Box h="50px" w="50px" backgroundColor="grey" mr={5}></Box>
-          <Box>
-            <Text fontWeight="bold" fontSize="md">
-              Username
-            </Text>
-            <Text fontSize="md" color="grey">
-              October 2022
-            </Text>
-          </Box>
-        </Flex>
-        <Text>
-          The decade that brought us Star Trek and Doctor Who also resurrected
-          Cicero—or at least what used to be Cicero
-        </Text>
-      </Box>
-
-      <Button w="100%" variant="secondary" my={2}>
-        Show All
-      </Button>
-    </Box>
-  );
-}
-
-function Detail(props) {
-  return (
-    <Box>
-      <Box my={3}>
-        <Text fontWeight="bold" fontSize="xl" mb={1}>
-          Details
-        </Text>
-      </Box>
-
-      <Box backgroundColor="gray.200" p={3} mb={8}>
-        <Text fontWeight="bold" fontSize="lg">
-          1 Guest
-        </Text>
-      </Box>
-
-      <Text fontWeight="bold" fontSize="lg" mb={2}>
-        Rp. 300.000,00 per bed
-      </Text>
-      <Text fontWeight="bold" fontSize="lg" mb={2}>
-        Total: Rp. 300.000,00
-      </Text>
-
-      <Button w="100%" variant="primary" my={2}>
-        Reserve
-      </Button>
-    </Box>
-  );
-}
-
 function PropertyDetail(props) {
-  const data = {
-    pic:
-      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-    name: "Living room Sofa",
-    description:
-      "This sofa is perfect for modern tropical spaces, baroque inspired spaces, earthy toned spaces and for people who love a chic design with a sprinkle of vintage design.",
-    address:
-      "Jl. Dr. Saharjo No.104, RT.2/RW.7, Menteng Atas, Kec. Tebet, Kota Jakarta Selatan",
-    price: "450.000",
-  };
-
+  const [roomButton, setRoomButton] = useState([]);
+  const [reviewData, setReviewData] = useState([]);
+  const [propertyName, setPropertyName] = useState("");
+  const [desProperty, setDesProperty] = useState("");
+  const [category, setCategory] = useState("");
+  const [tenantData, setTenantData] = useState({});
+  const [pic, setPic] = useState("");
+  const [roomData, setRoomData] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
+  const [idRoom, setIdRoom] = useState(1);
+
   const datepickerOnChange = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
   };
 
-  const renderDayContents = (day, date) => {
+  const idProperty = 19;
+
+  function Reviews(props) {
     return (
-      <Box>
-        {date.getDate()}
-        <br />
-        300k
+      <Box mb="20px">
+        <Box border="1px solid lightgrey" p={5}>
+          <Flex mb={2}>
+            <Image
+              src={
+                process.env.REACT_APP_API_BASE_URL +
+                props.data.User.Profile.profilePic
+              }
+              alt="profile picture"
+              width="50px"
+              height="50px"
+              overflow="hiden"
+              objectFit="cover"
+              mr={5}
+            />
+            <Box>
+              <Text fontWeight="bold" fontSize="md">
+                {props.data.User.Profile.name}
+              </Text>
+              <Text fontSize="md" color="grey">
+                {props.data.Review.createdAt}
+              </Text>
+            </Box>
+          </Flex>
+          <Text>{props.data.Review.comment}</Text>
+        </Box>
       </Box>
     );
-  };
+  }
+
+  function renderReview() {
+    return reviewData.map((room) => {
+      return room.Reservations.map((val) => {
+        return <Reviews data={val} />;
+      });
+    });
+  }
+  function renderCalendar() {
+    console.log(roomData);
+
+    const price = Math.ceil(roomData[0].defaultPrice / 1000);
+    console.log(roomData[0].SpecialPrices);
+    const renderDayContents = (day, date) => {
+      let finalPrice = price;
+
+      const found = roomData[0].SpecialPrices.find((element) => {
+        if (
+          new Date(date) >= new Date(element.startDate) &&
+          new Date(date) <= new Date(element.endDate)
+        ) {
+          console.log(new Date(element.startDate));
+          console.log(new Date(date));
+          return true;
+        }
+        console.log(new Date(element.startDate));
+        console.log(new Date(date));
+        return false;
+      });
+
+      if (found) {
+        if (found.type === "nominal") {
+          finalPrice = found.discount;
+        }
+      }
+      // find icoockkan tanggalnya
+      return (
+        <Box>
+          {date.getDate()}
+
+          <br />
+          <Text fontSize={12}>{finalPrice}</Text>
+        </Box>
+      );
+    };
+    return (
+      <Box my={3}>
+        <Text mb={1}>{roomData[0].description}</Text>
+        <Text fontWeight="bold" fontSize="xl" mb={1}>
+          check availability
+        </Text>
+        <DatePicker
+          selected={startDate}
+          onChange={datepickerOnChange}
+          startDate={startDate}
+          endDate={endDate}
+          selectsRange
+          inline
+          minDate={new Date()}
+          renderDayContents={renderDayContents}
+          excludeDates={[addDays(new Date("2022-12-25T00:00:00.000Z"), 0)]}
+        />
+      </Box>
+    );
+  }
+
+  function renderRoomButton() {
+    return roomButton.map((room, idx) => {
+      return (
+        <Box key={idx}>
+          <Stack mx={2}>
+            <IconButton
+              width={"50px"}
+              height={"40px"}
+              variant={"primary"}
+              borderRadius={0}
+              icon={<i className="fa-solid fa-bed" />}
+              onClick={() => setIdRoom(room.id)}
+            />
+            <Center>
+              <Text>{room.name}</Text>
+            </Center>
+          </Stack>
+        </Box>
+      );
+    });
+  }
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      await axios(
+        `${process.env.REACT_APP_API_BASE_URL}/product/get/${idProperty}`
+      )
+        .then((res) => {
+          setPropertyName(res.data.results.name);
+          setDesProperty(res.data.results.description);
+          setCategory(res.data.results.Category.location);
+          setRoomButton(res.data.results.Rooms);
+          setTenantData(res.data.results.Tenant);
+          setPic(res.data.results.pic);
+        })
+        .catch((err) => {
+          console.error(err.message);
+        });
+    };
+
+    async function fetchReview() {
+      await axios(
+        `${process.env.REACT_APP_API_BASE_URL}/product/get/review/${idProperty}`
+      )
+        .then((res) => {
+          console.log(res.data.results.Rooms);
+          setReviewData(res.data.results.Rooms);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    async function fetchRoom(id) {
+      await axios(
+        `${process.env.REACT_APP_API_BASE_URL}/product/get/room/${roomButton.id}`
+      )
+        .then((res) => {
+          setRoomData(res.data.results);
+          console.log(res.data.results);
+        })
+        .catch((err) => {
+          console.error(err.message);
+        });
+    }
+    fetchProperty();
+    fetchReview();
+    // renderCalendar();
+    fetchRoom();
+  }, []);
 
   return (
     <Layout>
       <div>
         <Topbar />
         <Container maxW="container.lg">
-          <Content data={data} />
+          {/* ////////////////////////////// */}
+          <Box>
+            <Box my={3}>
+              <Text fontWeight="bold" fontSize="xl" mb={1}>
+                {propertyName}
+              </Text>
+
+              <Text fontSize="sm" color="grey">
+                {category}
+              </Text>
+            </Box>
+
+            <Image
+              overflow="hiden"
+              objectFit="cover"
+              width="100%"
+              height="210px"
+              src={process.env.REACT_APP_API_BASE_URL + pic}
+            />
+
+            <Box my={8}>
+              <Text>{desProperty}</Text>
+
+              <Flex align="center" my={8}>
+                {renderRoomButton()}
+              </Flex>
+              {renderCalendar()}
+            </Box>
+
+            <Flex border="3px solid lightgrey" p={5}>
+              <Box h="50px" w="50px" backgroundColor="grey" mr={5}></Box>
+              <Box>
+                <Text fontWeight="bold" fontSize="md">
+                  {tenantData.name}
+                </Text>
+                <Text fontSize="md" color="grey">
+                  {/* Joined since {joinTime[0]} */}
+                </Text>
+              </Box>
+            </Flex>
+          </Box>
+          {/* //////////detail/////////////////// */}
+          <Box>
+            <Box my={3}>
+              <Text fontWeight="bold" fontSize="xl" mb={1}>
+                Details
+              </Text>
+            </Box>
+
+            <Box backgroundColor="gray.200" p={3} mb={8}>
+              <Text fontWeight="bold" fontSize="lg">
+                1 Guest
+              </Text>
+            </Box>
+
+            <Text fontWeight="bold" fontSize="lg" mb={2}>
+              Rp. 300.000,00 per bed
+            </Text>
+            <Text fontWeight="bold" fontSize="lg" mb={2}>
+              Total: Rp. 300.000,00
+            </Text>
+
+            <Button w="100%" variant="primary" my={2}>
+              Reserve
+            </Button>
+          </Box>
           <Box my={3}>
             <Text fontWeight="bold" fontSize="xl" mb={1}>
-              check availability
+              <i className="fa-solid fa-star" /> 5 Reviews
             </Text>
-            <DatePicker
-              selected={startDate}
-              onChange={datepickerOnChange}
-              startDate={startDate}
-              endDate={endDate}
-              selectsRange
-              inline
-              renderDayContents={renderDayContents}
-            />
           </Box>
-          <Detail />
-          <Reviews />
+          {renderReview()}
+          <Button w="100%" variant="secondary" my={2}>
+            Show All
+          </Button>
         </Container>
       </div>
     </Layout>
