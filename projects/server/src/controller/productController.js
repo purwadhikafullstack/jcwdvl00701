@@ -1,28 +1,177 @@
 const { db, dbquery } = require("../database");
+const {
+  Property,
+  Room,
+  Tenant,
+  SpecialPrice,
+  RoomUnavailability,
+  User,
+  Profile,
+  Category,
+  Reservation,
+  Review,
+} = require("../models");
 
 module.exports = {
   getProductDetail: async (req, res) => {
-    const { id } = req.params;
-    let sqlGet = `SELECT p.name as nameProperty, p.pic, p.rules, p.id, p.description, 
-    r.defaultPrice, r.description as roomDes, r.name as roomName, r.capacity,
-    t.name as tenantName, t.createdAt,
-    c.location,
-    s.type, s.discount, s.startDate, s.endDate,
-    ru.startDate, ru.endDate
-    from properties p 
-    join rooms r on p.id = r.propertyId 
-    join tenants t on t.id = p.tenantId 
-    join categories c on c.id = p.categoryId
-    left join specialprices s on s.roomId = r.id
-    left join roomunavailabilities ru on ru.roomId = r.id where p.id = ${db.escape(
-      id
-    )};`;
+    try {
+      const { id } = req.params;
 
-    db.query(sqlGet, (err, result) => {
-      if (err) {
-        res.status(500).send(err);
-      }
-      res.status(200).send(result);
-    });
+      const getProperty = await Property.findOne({
+        where: {
+          id,
+        },
+
+        include: [
+          {
+            model: Category,
+            required: true,
+            attributes: ["location"],
+          },
+          {
+            model: Room,
+            required: false,
+            attributes: ["id", "name"],
+          },
+          {
+            model: Tenant,
+            required: false,
+            attributes: ["name", "createdAt"],
+            include: [
+              {
+                model: User,
+                required: false,
+                attributes: ["id"],
+                include: [
+                  {
+                    model: Profile,
+                    required: false,
+                    attributes: ["profilePic"],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+      return res.status(200).json({
+        message: "Berhasil",
+        results: getProperty,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: err,
+      });
+    }
+  },
+
+  getRoom: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const getRoom = await Room.findAll({
+        where: {
+          id,
+        },
+        include: [
+          {
+            model: RoomUnavailability,
+            required: false,
+            attributes: ["id", "startDate", "endDate", "roomId"],
+          },
+          {
+            model: SpecialPrice,
+            required: false,
+            attributes: [
+              "id",
+              "startDate",
+              "endDate",
+              "roomId",
+              "type",
+              "discount",
+            ],
+          },
+        ],
+      });
+      // console.log("TESSSS");
+      // console.log(getRoom[0].SpecialPrices[0].type);
+
+      // let price = getRoom[0].SpecialPrice.map((val) => {
+      //   if (val.type === "nominal") {
+      //     return val.discount;
+      //   } else if (val.type === "persen") {
+      //     price = getRoom.defaultPrice * (100 + getRoom.SpecialPrice.discount);
+      //   }
+      // });
+
+      return res.status(200).send({
+        message: "Berhasil",
+        results: getRoom,
+        // price,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: err,
+      });
+    }
+  },
+
+  getReview: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const getReview = await Property.findOne({
+        where: {
+          id,
+        },
+        attributes: ["id"],
+        required: true,
+        include: [
+          {
+            model: Room,
+            required: false,
+            attributes: ["id", "name"],
+            include: [
+              {
+                model: Reservation,
+                required: false,
+                attributes: ["id"],
+                order: ["id", "DESC"],
+                include: [
+                  {
+                    model: Review,
+                    required: true,
+                    attributes: ["id", "comment", "createdAt"],
+                  },
+                  {
+                    model: User,
+                    required: true,
+                    attributes: ["id"],
+                    include: [
+                      {
+                        model: Profile,
+                        required: true,
+                        attributes: ["name", "profilePic"],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+      return res.status(200).json({
+        message: "Berhasil",
+        results: getReview,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: err,
+      });
+    }
   },
 };
