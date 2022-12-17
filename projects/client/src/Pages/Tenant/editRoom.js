@@ -12,7 +12,7 @@ import {
   Checkbox,
   Textarea,
   Select,
-  FormHelperText
+  Alert
 } from "@chakra-ui/react";
 import { Link, useHistory } from "react-router-dom";
 import Layout from "../../Components/Layout";
@@ -102,9 +102,9 @@ function EditRoom() {
       caption : caption
     },
     validationSchema : Yup.object().shape({
-      nameRoom : Yup.string().required("required"),
-      price : Yup.number("input number").required("required please input type number"),
-      capacity : Yup.number("input number").required("required please input type number").min(1).max(10),
+      nameRoom : Yup.string().required("please fill name room"),
+      price : Yup.number("input number").required("please input price number"),
+      capacity : Yup.number("input number").required("please input capacity room").min(1).max(10),
       caption : Yup.string().required("required").min(2, "To Short").max(255, "To Long")
     }),
     onSubmit : async (values) => {
@@ -180,9 +180,10 @@ function EditRoom() {
                 {optionDropdown()}
             </Select>
               {formik.errors.property ? (
-                <FormHelperText color="red" textAlign="center">
-                  {formik.errors.property}
-                </FormHelperText>
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.property}</Text>
+                </Alert>
               ) : null}
           </FormControl>
           <FormControl pb="20px">
@@ -197,9 +198,10 @@ function EditRoom() {
             }}
             />
             {formik.errors.nameRoom ? (
-                <FormHelperText color="red" textAlign="center">
-                  {formik.errors.nameRoom}
-                </FormHelperText>
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.nameRoom}</Text>
+                </Alert>
               ) : null}
           </FormControl>
           <FormControl pb="20px">
@@ -213,9 +215,10 @@ function EditRoom() {
             }}
             />
             {formik.errors.price ? (
-                <FormHelperText color="red" textAlign="center">
-                  {formik.errors.price}
-                </FormHelperText>
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.price}</Text>
+                </Alert>
               ) : null}
           </FormControl>
           <FormControl pb="20px">
@@ -228,9 +231,10 @@ function EditRoom() {
             }}
             />
             {formik.errors.capacity ? (
-                <FormHelperText color="red" textAlign="center">
-                  {formik.errors.capacity}
-                </FormHelperText>
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.capacity}</Text>
+                </Alert>
               ) : null}
           </FormControl>
           <FormControl>
@@ -245,9 +249,10 @@ function EditRoom() {
               }}
             />
             {formik.errors.caption ? (
-                <FormHelperText color="red" textAlign="center">
-                  {formik.errors.caption}
-                </FormHelperText>
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.caption}</Text>
+                </Alert>
               ) : null}
           </FormControl>
           <Button variant="secondary" w="100%" mb="20px">
