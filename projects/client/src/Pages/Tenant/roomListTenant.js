@@ -49,15 +49,15 @@ function RoomListTenant() {
   const inputHandler = (e, field) => {
     const {value} = e.target
 
-    if (field == "keyword"){
+    if (field === "keyword"){
       setKeyWord(value)
-    } else if (field == "alfabet"){
+    } else if (field === "alfabet"){
       setAlfabet(value)
-    } else if (field == "time"){
+    } else if (field === "time"){
       setTime(value)
-    } else if (field == "price"){
+    } else if (field === "price"){
       setPrice(value)
-    } else if(field == "propertyId"){
+    } else if(field === "propertyId"){
       setPropertyId(value)
     }
   }
@@ -147,7 +147,7 @@ function RoomListTenant() {
                 }}
                 bg="primary"
               >
-                <i class="fa-solid fa-plus"></i>
+                <i className="fa-solid fa-plus"></i>
               </Box>
             </Link>
           </Flex>
@@ -202,13 +202,13 @@ function RoomListTenant() {
             <ReactPaginate
               previousLabel={
                 <i
-                  class="fa-solid fa-chevron-left"
+                  className="fa-solid fa-chevron-left"
                   style={{ fontSize: 18}}
                 ></i>
               }
               nextLabel={
                 <i
-                  class="fa-solid fa-chevron-right"
+                  className="fa-solid fa-chevron-right"
                   style={{
                     fontSize: 18
                   }}

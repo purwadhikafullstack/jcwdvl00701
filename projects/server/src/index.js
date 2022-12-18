@@ -4,7 +4,7 @@ const cors = require("cors");
 const { join, dirname } = require("path");
 const { sequelize } = require("./models"); // uncomment to use sequelize default utility
 const { env } = require("./config");
-const { userRouters, roomRouters, specialPriceRouters, propertyRouters } = require("./routes");
+const { userRouters, roomRouters, specialPriceRouters, propertyRouters, tenantRouters } = require("./routes");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -27,7 +27,6 @@ app.use("/profile_pic", express.static(`${__dirname}/public/profile_pic`));
 // ===========================
 // NOTE : Add your routes here
 // sequelize.sync({ alter: true });
-const { userRouters, roomRouters, propertyRouters, tenantRouters } = require("./routes");
 
 app.use("/api/user", userRouters);
 app.use("/api/specialprice", specialPriceRouters)

@@ -23,6 +23,26 @@ module.exports = ({
             })
         }
     },
+    getRoomForTenantPage : async (req,res) => {
+        try{
+            const room = await Room.findAll({
+                where: req.query,
+                include: [
+                    {
+                        model: Property,
+                    }
+                ]
+            })
+            return res.status(200).send({
+                result: room,
+                code: 200
+            })
+        } catch (error) {
+            return res.status(500).json({
+                message : "you dont have room right now"
+            })
+        }
+    },
     addRoom : async (req,res) => {
         try {
             console.log(req.body);

@@ -20,7 +20,7 @@ const init_state = {
 export default (state = init_state, action) => {
   switch (action.type) {
     case userTypes.Login:
-      console.log(...action.payload);
+      // console.log(...action.payload);
       return {...state,
         ...action.payload,
         id : action.payload.id,

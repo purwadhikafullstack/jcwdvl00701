@@ -42,42 +42,42 @@ function Dashboard() {
           <SimpleGrid columns={[2, null, 3]} spacing="20px">
             <Link to="/tenant/profile">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-circle-user"></i>}
+                icon={<i className="fa-solid fa-circle-user"></i>}
                 menu=" Edit your Profile"
                 bg="/Assets/profile.png"
               />
             </Link>
             <Link to="/tenant/order">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-clipboard-list"></i>}
+                icon={<i className="fa-solid fa-clipboard-list"></i>}
                 menu="See your order"
                 bg="/Assets/order.png"
               />
             </Link>
             <Link to="/tenant/property">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-building"></i>}
+                icon={<i className="fa-solid fa-building"></i>}
                 menu="Manage your property"
                 bg="/Assets/property.png"
               />
             </Link>
             <Link to="/tenant/room">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-bed"></i>}
+                icon={<i className="fa-solid fa-bed"></i>}
                 menu="Manage your room"
                 bg="/Assets/room.png"
               />
             </Link>
             <Link to="/tenant/report">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-chart-simple"></i>}
+                icon={<i className="fa-solid fa-chart-simple"></i>}
                 menu="Report"
                 bg="/Assets/report.png"
               />
             </Link>
             <Link to="/tenant/price">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-cash-register"></i>}
+                icon={<i className="fa-solid fa-cash-register"></i>}
                 menu=" Set a special price"
                 bg="/Assets/price.png"
               />

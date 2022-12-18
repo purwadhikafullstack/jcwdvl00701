@@ -116,7 +116,7 @@ function PropertyListTenant() {
                 }}
                 bg="primary"
               >
-                <i class="fa-solid fa-plus"></i>
+                <i className="fa-solid fa-plus"></i>
               </Box>
             </Link>
           </Flex>
@@ -161,7 +161,7 @@ function PropertyListTenant() {
             <ReactPaginate
               previousLabel={
                 <i
-                  class="fa-solid fa-chevron-left"
+                  className="fa-solid fa-chevron-left"
                   style={{
                     fontSize: 18,
                     height: 40,
@@ -174,7 +174,7 @@ function PropertyListTenant() {
               }
               nextLabel={
                 <i
-                  class="fa-solid fa-chevron-right"
+                  className="fa-solid fa-chevron-right"
                   style={{
                     fontSize: 18,
                     height: 40,
