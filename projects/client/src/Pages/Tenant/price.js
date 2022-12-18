@@ -89,10 +89,10 @@ function PriceForm(props) {
         amount: ''
       },
       validationSchema: Yup.object().shape({
-        startDate: Yup.string().required('Required'),
-        endDate: Yup.string().required('Required'),
-        selectedRooms: Yup.array().min(1, 'Required'),
-        type: Yup.string().matches(/^nominal|percentage$/, 'invalid value').required('Required'),
+        startDate: Yup.string().required(),
+        endDate: Yup.string().required(),
+        selectedRooms: Yup.array().min(1),
+        type: Yup.string().matches(/^nominal|percentage$/, ).required(),
         amount: Yup.number().test({
           name: 'min',
           test: function (value, context) {
@@ -197,7 +197,7 @@ function PriceForm(props) {
             name={'rooms'}
             options={roomOptions}
             onChange={choice => {
-              formik.values.selectedRooms = choice.map(option => option.value)
+              formik.setFieldValue('selectedRooms', choice.map(option => option.value))
               setSelectedRooms(choice)
             }}
             isDisabled={roomOptions.length === 0}
