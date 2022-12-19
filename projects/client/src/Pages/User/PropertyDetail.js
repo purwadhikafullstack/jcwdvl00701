@@ -67,23 +67,21 @@ function PropertyDetail(props) {
       date.setDate(date.getDate() + 1);
     }
 
+    // ////// FilterDate
+    // const filterDate = datesRanges.filter((filDate) => {
+    //   return (
+    //     filDate >=
+    //       new Date(roomData.RoomUnavailabilities.startDate)
+    //         .toISOString()
+    //         .split("T")[0] &&
+    //     filDate <=
+    //       new Date(roomData.RoomUnavailabilities.endDate)
+    //         .toISOString()
+    //         .split("T")[0]
+    //   );
+    // });
     console.log(datesRanges);
-
-    const filterDate = datesRanges.filter((filDate) => {
-      return (
-        filDate >=
-          new Date(roomData.RoomUnavailabilities.startDate)
-            .toISOString()
-            .split("T")[0] &&
-        filDate <=
-          new Date(roomData.RoomUnavailabilities.endDate)
-            .toISOString()
-            .split("T")[0]
-      );
-    });
-
     countFinalPrice();
-    console.log(filterDate);
     return datesRanges;
   };
   const countFinalPrice = () => {
@@ -100,19 +98,6 @@ function PropertyDetail(props) {
             .toISOString()
             .split("T")[0]
       ) {
-        console.log(i);
-        console.log(element);
-        console.log(
-          new Date(roomData.SpecialPrices[0].startDate)
-            .toISOString()
-            .split("T")[0]
-        );
-        console.log(
-          new Date(roomData.SpecialPrices[0].endDate)
-            .toISOString()
-            .split("T")[0]
-        );
-        console.log(roomData.SpecialPrices[0].discount);
         let finalPrice = 0;
         if (roomData.SpecialPrices[0].type === "nominal") {
           console.log(roomData.SpecialPrices[0].type);
@@ -127,16 +112,7 @@ function PropertyDetail(props) {
         totalPrice = totalPrice + finalPrice;
         return totalPrice;
       }
-      console.log(i);
-      console.log(element);
-      console.log(
-        new Date(roomData.SpecialPrices[0].startDate)
-          .toISOString()
-          .split("T")[0]
-      );
-      console.log(
-        new Date(roomData.SpecialPrices[0].endDate).toISOString().split("T")[0]
-      );
+
       totalPrice = totalPrice + roomData.defaultPrice;
       return totalPrice;
     });
