@@ -64,24 +64,41 @@ function PropertyDetail(props) {
     const date = new Date(start.getTime());
 
     while (date <= end) {
-      datesRanges.push(new Date(date).toISOString().split("T")[0]);
+      // if (
+      //   date >=
+      //     new Date(roomData.RoomUnavailabilities.startDate)
+      //       .toISOString()
+      //       .split("T")[0] &&
+      //   date <=
+      //     new Date(roomData.RoomUnavailabilities.endDate)
+      //       .toISOString()
+      //       .split("T")[0]
+      // ) {
 
-      date.setDate(date.getDate() + 1);
+      // }
+
+      const found = roomData.RoomUnavailabilities.find((element, idx) => {
+        if (
+          addDays(new Date(date), 1).toISOString().split("T")[0] >=
+            new Date(element.startDate).toISOString().split("T")[0] &&
+          new Date(date).toISOString().split("T")[0] <
+            new Date(element.endDate).toISOString().split("T")[0]
+        ) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (!found) {
+        datesRanges.push(new Date(date).toISOString().split("T")[0]);
+
+        date.setDate(date.getDate() + 1);
+      }
     }
 
-    // ////// FilterDate
-    // const filterDate = datesRanges.filter((filDate) => {
-    //   return (
-    //     filDate >=
-    //       new Date(roomData.RoomUnavailabilities.startDate)
-    //         .toISOString()
-    //         .split("T")[0] &&
-    //     filDate <=
-    //       new Date(roomData.RoomUnavailabilities.endDate)
-    //         .toISOString()
-    //         .split("T")[0]
-    //   );
-    // });
+    ////// FilterDate
+
     console.log(datesRanges);
     countFinalPrice();
     return datesRanges;
