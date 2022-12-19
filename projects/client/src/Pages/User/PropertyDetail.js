@@ -8,14 +8,14 @@ import {
   Flex,
   Image,
   Stack,
-  Heading,
+  Skeleton,
   Text,
   Center,
   IconButton,
   chakra,
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
-import { addDays } from "date-fns";
+import { addDays, subDays } from "date-fns";
 
 import Layout from "../../Components/Layout";
 import axios from "axios";
@@ -52,11 +52,104 @@ function PropertyDetail(props) {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
   const [idRoom, setIdRoom] = useState(1);
+  const [finalCountPrice, setFinalCountPrice] = useState(0);
 
+  const datesRanges = [];
   const datepickerOnChange = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
+    const date = new Date(start.getTime());
+
+    while (date <= end) {
+      datesRanges.push(new Date(date).toISOString().split("T")[0]);
+
+      date.setDate(date.getDate() + 1);
+    }
+
+    console.log(datesRanges);
+
+    const filterDate = datesRanges.filter((filDate) => {
+      return (
+        filDate >=
+          new Date(roomData.RoomUnavailabilities.startDate)
+            .toISOString()
+            .split("T")[0] &&
+        filDate <=
+          new Date(roomData.RoomUnavailabilities.endDate)
+            .toISOString()
+            .split("T")[0]
+      );
+    });
+
+    countFinalPrice();
+    console.log(filterDate);
+    return datesRanges;
+  };
+  const countFinalPrice = () => {
+    let totalPrice = 0;
+
+    const found = datesRanges.map((element, i) => {
+      if (
+        element >=
+          new Date(roomData.SpecialPrices[0].startDate)
+            .toISOString()
+            .split("T")[0] &&
+        element <=
+          new Date(roomData.SpecialPrices[0].endDate)
+            .toISOString()
+            .split("T")[0]
+      ) {
+        console.log(i);
+        console.log(element);
+        console.log(
+          new Date(roomData.SpecialPrices[0].startDate)
+            .toISOString()
+            .split("T")[0]
+        );
+        console.log(
+          new Date(roomData.SpecialPrices[0].endDate)
+            .toISOString()
+            .split("T")[0]
+        );
+        console.log(roomData.SpecialPrices[0].discount);
+        let finalPrice = 0;
+        if (roomData.SpecialPrices[0].type === "nominal") {
+          console.log(roomData.SpecialPrices[0].type);
+          finalPrice = roomData.SpecialPrices[0].discount;
+        } else if (roomData.SpecialPrices[0].type === "persen") {
+          console.log(roomData.SpecialPrices[0].type);
+          finalPrice =
+            roomData.defaultPrice +
+            roomData.defaultPrice * (roomData.SpecialPrices[0].discount / 100);
+        }
+
+        totalPrice = totalPrice + finalPrice;
+        return totalPrice;
+      }
+      console.log(i);
+      console.log(element);
+      console.log(
+        new Date(roomData.SpecialPrices[0].startDate)
+          .toISOString()
+          .split("T")[0]
+      );
+      console.log(
+        new Date(roomData.SpecialPrices[0].endDate).toISOString().split("T")[0]
+      );
+      totalPrice = totalPrice + roomData.defaultPrice;
+      return totalPrice;
+    });
+
+    // ////////
+
+    // //////
+
+    console.log(found);
+    console.log(totalPrice);
+
+    setFinalCountPrice(totalPrice);
+    return totalPrice;
   };
 
   const idProperty = 19;
@@ -101,61 +194,81 @@ function PropertyDetail(props) {
     });
   }
   function renderCalendar() {
-    console.log(roomData);
+    if (roomData.defaultPrice) {
+      const price = roomData.defaultPrice;
 
-    const price = Math.ceil(roomData[0].defaultPrice / 1000);
-    console.log(roomData[0].SpecialPrices);
-    const renderDayContents = (day, date) => {
-      let finalPrice = price;
+      const renderDayContents = (day, date) => {
+        let finalPrice = price;
 
-      const found = roomData[0].SpecialPrices.find((element) => {
-        if (
-          new Date(date) >= new Date(element.startDate) &&
-          new Date(date) <= new Date(element.endDate)
-        ) {
-          console.log(new Date(element.startDate));
-          console.log(new Date(date));
-          return true;
+        const found = roomData.SpecialPrices.find((element) => {
+          if (
+            addDays(new Date(date), 1).toISOString().split("T")[0] >=
+              new Date(element.startDate).toISOString().split("T")[0] &&
+            new Date(date).toISOString().split("T")[0] <
+              new Date(element.endDate).toISOString().split("T")[0]
+          ) {
+            return true;
+          }
+
+          return false;
+        });
+
+        if (found) {
+          if (found.type === "nominal") {
+            finalPrice = found.discount;
+          } else if (found.type === "persen") {
+            finalPrice = finalPrice + (finalPrice * found.discount) / 100;
+          }
         }
-        console.log(new Date(element.startDate));
-        console.log(new Date(date));
-        return false;
-      });
+        // find icoockkan tanggalnya
+        return (
+          <Box>
+            {date.getDate()}
 
-      if (found) {
-        if (found.type === "nominal") {
-          finalPrice = found.discount;
-        }
-      }
-      // find icoockkan tanggalnya
+            <br />
+            <Text fontSize={12}>{Math.ceil(finalPrice / 1000) + "k"}</Text>
+          </Box>
+        );
+      };
+
+      const disabledDateRanges = roomData.RoomUnavailabilities.map((range) => ({
+        start: new Date(range.startDate),
+        end: new Date(range.endDate),
+      }));
       return (
-        <Box>
-          {date.getDate()}
+        <Box my={3}>
+          <Text mb={1}>{roomData.description}</Text>
+          <Text fontWeight="bold" fontSize="xl" mb={1}>
+            check availability
+          </Text>
+          <DatePicker
+            selected={startDate}
+            onChange={datepickerOnChange}
+            startDate={startDate}
+            endDate={endDate}
+            selectsRange
+            inline
+            minDate={new Date()}
+            renderDayContents={renderDayContents}
+            excludeDateIntervals={disabledDateRanges}
+            calendarClassName="rasta-stripes"
+          />
+          <Box my={3}>
+            <Text fontWeight="bold" fontSize="xl" mb={1}>
+              Details
+            </Text>
+          </Box>
 
-          <br />
-          <Text fontSize={12}>{finalPrice}</Text>
+          <Box backgroundColor="gray.200" p={3} mb={8}>
+            <Text fontWeight="bold" fontSize="lg">
+              {roomData.capacity} Guest
+            </Text>
+          </Box>
         </Box>
       );
-    };
-    return (
-      <Box my={3}>
-        <Text mb={1}>{roomData[0].description}</Text>
-        <Text fontWeight="bold" fontSize="xl" mb={1}>
-          check availability
-        </Text>
-        <DatePicker
-          selected={startDate}
-          onChange={datepickerOnChange}
-          startDate={startDate}
-          endDate={endDate}
-          selectsRange
-          inline
-          minDate={new Date()}
-          renderDayContents={renderDayContents}
-          excludeDates={[addDays(new Date("2022-12-25T00:00:00.000Z"), 0)]}
-        />
-      </Box>
-    );
+    } else {
+      <Skeleton height="280px" />;
+    }
   }
 
   function renderRoomButton() {
@@ -178,6 +291,21 @@ function PropertyDetail(props) {
         </Box>
       );
     });
+  }
+
+  async function fetchRoom() {
+    await axios(
+      `${process.env.REACT_APP_API_BASE_URL}/product/get/room/${idRoom}`
+    )
+      .then((res) => {
+        setRoomData(res.data.results[0]);
+
+        setStartDate(new Date());
+        setEndDate(null);
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
   }
 
   useEffect(() => {
@@ -203,30 +331,20 @@ function PropertyDetail(props) {
         `${process.env.REACT_APP_API_BASE_URL}/product/get/review/${idProperty}`
       )
         .then((res) => {
-          console.log(res.data.results.Rooms);
           setReviewData(res.data.results.Rooms);
         })
         .catch((err) => {
           console.log(err);
         });
     }
-    async function fetchRoom(id) {
-      await axios(
-        `${process.env.REACT_APP_API_BASE_URL}/product/get/room/${roomButton.id}`
-      )
-        .then((res) => {
-          setRoomData(res.data.results);
-          console.log(res.data.results);
-        })
-        .catch((err) => {
-          console.error(err.message);
-        });
-    }
+
     fetchProperty();
     fetchReview();
-    // renderCalendar();
+    renderCalendar();
     fetchRoom();
-  }, []);
+  }, [idRoom]);
+
+  // let joinTime = tenantData.createdAt.split("T");
 
   return (
     <Layout>
@@ -261,44 +379,28 @@ function PropertyDetail(props) {
               </Flex>
               {renderCalendar()}
             </Box>
-
-            <Flex border="3px solid lightgrey" p={5}>
-              <Box h="50px" w="50px" backgroundColor="grey" mr={5}></Box>
-              <Box>
-                <Text fontWeight="bold" fontSize="md">
-                  {tenantData.name}
-                </Text>
-                <Text fontSize="md" color="grey">
-                  {/* Joined since {joinTime[0]} */}
-                </Text>
-              </Box>
-            </Flex>
           </Box>
           {/* //////////detail/////////////////// */}
           <Box>
-            <Box my={3}>
-              <Text fontWeight="bold" fontSize="xl" mb={1}>
-                Details
-              </Text>
-            </Box>
-
-            <Box backgroundColor="gray.200" p={3} mb={8}>
-              <Text fontWeight="bold" fontSize="lg">
-                1 Guest
-              </Text>
-            </Box>
-
             <Text fontWeight="bold" fontSize="lg" mb={2}>
-              Rp. 300.000,00 per bed
-            </Text>
-            <Text fontWeight="bold" fontSize="lg" mb={2}>
-              Total: Rp. 300.000,00
+              Total: Rp. {finalCountPrice}
             </Text>
 
             <Button w="100%" variant="primary" my={2}>
               Reserve
             </Button>
           </Box>
+          <Flex border="3px solid lightgrey" p={5}>
+            <Box h="50px" w="50px" backgroundColor="grey" mr={5}></Box>
+            <Box>
+              <Text fontWeight="bold" fontSize="md">
+                {tenantData.name}
+              </Text>
+              <Text fontSize="md" color="grey">
+                {/* Joined since {joinTime[0]} */}
+              </Text>
+            </Box>
+          </Flex>
           <Box my={3}>
             <Text fontWeight="bold" fontSize="xl" mb={1}>
               <i className="fa-solid fa-star" /> 5 Reviews

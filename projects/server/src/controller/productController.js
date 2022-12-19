@@ -136,7 +136,7 @@ module.exports = {
             include: [
               {
                 model: Reservation,
-                required: false,
+                required: true,
                 attributes: ["id"],
                 order: ["id", "DESC"],
                 include: [
@@ -160,6 +160,7 @@ module.exports = {
                 ],
               },
             ],
+            limit: 1,
           },
         ],
       });
