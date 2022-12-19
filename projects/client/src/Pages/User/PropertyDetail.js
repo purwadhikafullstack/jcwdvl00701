@@ -54,11 +54,13 @@ function PropertyDetail(props) {
   const [idRoom, setIdRoom] = useState(1);
   const [finalCountPrice, setFinalCountPrice] = useState(0);
 
+  // menyimpan tanggal-tanggal yang di pilih
   const datesRanges = [];
   const datepickerOnChange = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
+
     const date = new Date(start.getTime());
 
     while (date <= end) {
@@ -84,6 +86,8 @@ function PropertyDetail(props) {
     countFinalPrice();
     return datesRanges;
   };
+
+  // untuk menghitung total harga
   const countFinalPrice = () => {
     let totalPrice = 0;
 
@@ -98,6 +102,19 @@ function PropertyDetail(props) {
             .toISOString()
             .split("T")[0]
       ) {
+        console.log(i);
+        console.log(element);
+        console.log(
+          new Date(roomData.SpecialPrices[0].startDate)
+            .toISOString()
+            .split("T")[0]
+        );
+        console.log(
+          new Date(roomData.SpecialPrices[0].endDate)
+            .toISOString()
+            .split("T")[0]
+        );
+        console.log(roomData.SpecialPrices[0].discount);
         let finalPrice = 0;
         if (roomData.SpecialPrices[0].type === "nominal") {
           console.log(roomData.SpecialPrices[0].type);
@@ -112,14 +129,19 @@ function PropertyDetail(props) {
         totalPrice = totalPrice + finalPrice;
         return totalPrice;
       }
-
+      console.log(i);
+      console.log(element);
+      console.log(
+        new Date(roomData.SpecialPrices[0].startDate)
+          .toISOString()
+          .split("T")[0]
+      );
+      console.log(
+        new Date(roomData.SpecialPrices[0].endDate).toISOString().split("T")[0]
+      );
       totalPrice = totalPrice + roomData.defaultPrice;
       return totalPrice;
     });
-
-    // ////////
-
-    // //////
 
     console.log(found);
     console.log(totalPrice);
@@ -176,6 +198,7 @@ function PropertyDetail(props) {
       const renderDayContents = (day, date) => {
         let finalPrice = price;
 
+        // untuk menampilkan special price di kalender
         const found = roomData.SpecialPrices.find((element) => {
           if (
             addDays(new Date(date), 1).toISOString().split("T")[0] >=
@@ -207,6 +230,7 @@ function PropertyDetail(props) {
         );
       };
 
+      // untuk menampilkan ruangan yang tidak tersedia di kalendar
       const disabledDateRanges = roomData.RoomUnavailabilities.map((range) => ({
         start: new Date(range.startDate),
         end: new Date(range.endDate),
