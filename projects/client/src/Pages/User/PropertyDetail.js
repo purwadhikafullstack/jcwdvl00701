@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { useHistory, useParams } from "react-router-dom";
 import {
@@ -51,7 +51,7 @@ function PropertyDetail(props) {
   const [roomData, setRoomData] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
-  const [idRoom, setIdRoom] = useState(1);
+  const [idRoom, setIdRoom] = useState(roomButton[0]?.id); // untuk menyimpan roomId
   const [finalCountPrice, setFinalCountPrice] = useState(0);
 
   // menyimpan tanggal-tanggal yang di pilih
@@ -64,43 +64,30 @@ function PropertyDetail(props) {
     const date = new Date(start.getTime());
 
     while (date <= end) {
-      // if (
-      //   date >=
-      //     new Date(roomData.RoomUnavailabilities.startDate)
-      //       .toISOString()
-      //       .split("T")[0] &&
-      //   date <=
-      //     new Date(roomData.RoomUnavailabilities.endDate)
-      //       .toISOString()
-      //       .split("T")[0]
-      // ) {
-
-      // }
-
+      /**
+       * NOTE: convert date ke string dulu, lalu convert lagi ke date supaya timenya 00.00
+       */
       const found = roomData.RoomUnavailabilities.find((element, idx) => {
         if (
-          addDays(new Date(date), 1).toISOString().split("T")[0] >=
-            new Date(element.startDate).toISOString().split("T")[0] &&
-          new Date(date).toISOString().split("T")[0] <
-            new Date(element.endDate).toISOString().split("T")[0]
+          new Date(date.toDateString()) >
+            new Date(new Date(element.startDate).toDateString()) &&
+          new Date(date.toDateString()) <=
+            new Date(new Date(element.endDate).toDateString())
         ) {
           return true;
         }
-
         return false;
       });
 
       if (!found) {
         datesRanges.push(new Date(date).toISOString().split("T")[0]);
-
-        date.setDate(date.getDate() + 1);
       }
+
+      date.setDate(date.getDate() + 1);
     }
 
-    ////// FilterDate
-
+    countFinalPrice(datesRanges);
     console.log(datesRanges);
-    countFinalPrice();
     return datesRanges;
   };
 
@@ -168,6 +155,7 @@ function PropertyDetail(props) {
   };
 
   const idProperty = 19;
+  // const idProperty = props.match.params.propertyId;
 
   function Reviews(props) {
     return (
@@ -209,14 +197,14 @@ function PropertyDetail(props) {
     });
   }
   function renderCalendar() {
-    if (roomData.defaultPrice) {
-      const price = roomData.defaultPrice;
+    if (roomData?.defaultPrice) {
+      const price = roomData?.defaultPrice;
 
       const renderDayContents = (day, date) => {
         let finalPrice = price;
 
         // untuk menampilkan special price di kalender
-        const found = roomData.SpecialPrices.find((element) => {
+        const found = roomData?.SpecialPrices.find((element) => {
           if (
             addDays(new Date(date), 1).toISOString().split("T")[0] >=
               new Date(element.startDate).toISOString().split("T")[0] &&
@@ -248,13 +236,15 @@ function PropertyDetail(props) {
       };
 
       // untuk menampilkan ruangan yang tidak tersedia di kalendar
-      const disabledDateRanges = roomData.RoomUnavailabilities.map((range) => ({
-        start: new Date(range.startDate),
-        end: new Date(range.endDate),
-      }));
+      const disabledDateRanges = roomData?.RoomUnavailabilities.map(
+        (range) => ({
+          start: new Date(range.startDate),
+          end: new Date(range.endDate),
+        })
+      );
       return (
         <Box my={3}>
-          <Text mb={1}>{roomData.description}</Text>
+          <Text mb={1}>{roomData?.description}</Text>
           <Text fontWeight="bold" fontSize="xl" mb={1}>
             check availability
           </Text>
@@ -278,7 +268,8 @@ function PropertyDetail(props) {
 
           <Box backgroundColor="gray.200" p={3} mb={8}>
             <Text fontWeight="bold" fontSize="lg">
-              {roomData.capacity} Guest
+              {roomData?.capacity} Guest
+              {/* guest count ddapatnya dari state roomData*/}
             </Text>
           </Box>
         </Box>
@@ -294,6 +285,10 @@ function PropertyDetail(props) {
         <Box key={idx}>
           <Stack mx={2}>
             <IconButton
+              _focus={{
+                bg: "black",
+                color: "white",
+              }}
               width={"50px"}
               height={"40px"}
               variant={"primary"}
@@ -324,6 +319,17 @@ function PropertyDetail(props) {
         console.error(err.message);
       });
   }
+  async function fetchReview(e) {
+    await axios(
+      `${process.env.REACT_APP_API_BASE_URL}/product/get/review/${idProperty}?show=${e}`
+    )
+      .then((res) => {
+        setReviewData(res.data.results.Rooms);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -335,30 +341,22 @@ function PropertyDetail(props) {
           setDesProperty(res.data.results.description);
           setCategory(res.data.results.Category.location);
           setRoomButton(res.data.results.Rooms);
+
           setTenantData(res.data.results.Tenant);
+
           setPic(res.data.results.pic);
+          console.log(res.data.results.Tenant);
         })
         .catch((err) => {
           console.error(err.message);
         });
     };
 
-    async function fetchReview() {
-      await axios(
-        `${process.env.REACT_APP_API_BASE_URL}/product/get/review/${idProperty}`
-      )
-        .then((res) => {
-          setReviewData(res.data.results.Rooms);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-
     fetchProperty();
     fetchReview();
     renderCalendar();
     fetchRoom();
+    renderReview();
   }, [idRoom]);
 
   // let joinTime = tenantData.createdAt.split("T");
@@ -387,20 +385,23 @@ function PropertyDetail(props) {
               height="210px"
               src={process.env.REACT_APP_API_BASE_URL + pic}
             />
-
-            <Box my={8}>
-              <Text>{desProperty}</Text>
-
-              <Flex align="center" my={8}>
-                {renderRoomButton()}
-              </Flex>
-              {renderCalendar()}
-            </Box>
           </Box>
-          {/* //////////detail/////////////////// */}
+          <Box my={8}>
+            <Text>{desProperty}</Text>
+
+            <Flex align="center" my={8}>
+              {renderRoomButton()}
+            </Flex>
+            {renderCalendar()}
+          </Box>
+
           <Box>
             <Text fontWeight="bold" fontSize="lg" mb={2}>
-              Total: Rp. {finalCountPrice}
+              Total:
+              {new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              }).format(finalCountPrice)}
             </Text>
 
             <Button w="100%" variant="primary" my={2}>
@@ -408,23 +409,35 @@ function PropertyDetail(props) {
             </Button>
           </Box>
           <Flex border="3px solid lightgrey" p={5}>
-            <Box h="50px" w="50px" backgroundColor="grey" mr={5}></Box>
+            <Image
+              src={"tenantData.User.Profile.profilePic"}
+              width="50px"
+              height="50px"
+              me="10px"
+              overflow="hiden"
+              objectFit="cover"
+            />
             <Box>
               <Text fontWeight="bold" fontSize="md">
                 {tenantData.name}
               </Text>
               <Text fontSize="md" color="grey">
-                {/* Joined since {joinTime[0]} */}
+                Joined since {tenantData.createdAt}
               </Text>
             </Box>
           </Flex>
           <Box my={3}>
             <Text fontWeight="bold" fontSize="xl" mb={1}>
-              <i className="fa-solid fa-star" /> 5 Reviews
+              <i className="fa-solid fa-star" /> Review
             </Text>
           </Box>
           {renderReview()}
-          <Button w="100%" variant="secondary" my={2}>
+          <Button
+            w="100%"
+            variant="secondary"
+            my={2}
+            onClick={() => fetchReview("show")}
+          >
             Show All
           </Button>
         </Container>

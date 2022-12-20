@@ -31,7 +31,8 @@ module.exports = {
           {
             model: Room,
             required: false,
-            attributes: ["id", "name"],
+            attributes: ["id", "name", "defaultPrice"],
+            order: ["defaultPrice", "DESC"],
           },
           {
             model: Tenant,
@@ -120,7 +121,16 @@ module.exports = {
 
   getReview: async (req, res) => {
     try {
+      console.log(req.query);
       const { id } = req.params;
+      let show = req.query.show || "close";
+
+      let a;
+      if (show === "show") {
+        a = null;
+      } else {
+        a = 1;
+      }
 
       const getReview = await Property.findOne({
         where: {
@@ -160,7 +170,8 @@ module.exports = {
                 ],
               },
             ],
-            limit: 1,
+
+            limit: a,
           },
         ],
       });

@@ -3,6 +3,7 @@ const roomController = require("./roomController");
 const propertyController = require("./propertyController");
 const tenantController = require("./tenantController");
 const productController = require("./productController");
+const reportController = require("./reportConstroller");
 
 module.exports = {
   userController,
@@ -10,4 +11,5 @@ module.exports = {
   propertyController,
   tenantController,
   productController,
+  reportController,
 };

@@ -49,89 +49,89 @@ function App() {
   const [firebaseProvider, setFirebaseProvider] = useState("");
   const [userId, setUserId] = useState("");
 
-  const {
-    id,
-    name,
-    email,
-    isVerified,
-    firebaseProviderId,
-    tenantId,
-    roleId,
-  } = useSelector((state) => state.user);
+  // const {
+  //   id,
+  //   name,
+  //   email,
+  //   isVerified,
+  //   firebaseProviderId,
+  //   tenantId,
+  //   roleId,
+  // } = useSelector((state) => state.user);
 
-  let history = useHistory();
-  const dispatch = useDispatch();
+  // let history = useHistory();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    // untuk dpt info user auth
-    const auth = getAuth();
-    //pengecekan user ada yg login atau tidak
-    onAuthStateChanged(auth, (user) => {
-      // console.log("onAuthStateChanged :", user);
-      if (user) {
-        setUserLogin(user);
-        setUserId(user.uid);
-        alert("ada yg login");
-        setFirebaseProvider(user.providerData[0].providerId);
-        let emailVerified = user.emailVerified;
-        setEmailVerified(emailVerified);
+  // useEffect(() => {
+  //   // untuk dpt info user auth
+  //   const auth = getAuth();
+  //   //pengecekan user ada yg login atau tidak
+  //   onAuthStateChanged(auth, (user) => {
+  //     // console.log("onAuthStateChanged :", user);
+  //     if (user) {
+  //       setUserLogin(user);
+  //       setUserId(user.uid);
+  //       alert("ada yg login");
+  //       setFirebaseProvider(user.providerData[0].providerId);
+  //       let emailVerified = user.emailVerified;
+  //       setEmailVerified(emailVerified);
 
-        // kondisi jika sudah terverifikasi
-        if (user.emailVerified) {
-          alert("your account has been verified");
-        } else {
-          // kirim email jika belum terverfikasi
-          sendEmailVerification(user)
-            .then(() => {
-              alert("check your email verification");
-            })
-            .catch((err) => {
-              console.error(err);
-            });
-          alert("Your account has not been verified");
-        }
-      } else {
-        alert("tidak ada yg login");
-        // jika tidak ada akan di logout
-        auth.signOut();
-        history.push("/login");
-      }
-    });
-    //get data dan dimasukan ke redux
-    // utk get data ke back-end dan di simpan di redux
-    const getDataGlobal = () => {
-      axios
-        .get(`${process.env.REACT_APP_API_BASE_URL}/user/redux-user`, {
-          params: {
-            id: userId,
-          },
-        })
-        .then((res) => {
-          // console.log("data get1 :", res.data.globalState);
-          // console.log("data get2 :", res.data.results.UserRoles);
-          // console.log("data get3 :", res.data.results.Tenant.id);
-          if (res.data.globalState === null) {
-            alert("loading....");
-          } else {
-            res.data.globalState.UserRoles = res.data.globalState.UserRoles.map(
-              (val) => {
-                // console.log(val);
-                return val.roleId;
-              }
-            );
-            dispatch({
-              type: auth_types.Redux,
-              payload: { ...res.data.globalState, emailVerified },
-            });
-          }
-        })
-        .catch((err) => {
-          // alert("please registered your account in form register")
-          console.error(err.message);
-        });
-    };
-    getDataGlobal();
-  }, [userId]);
+  //       // kondisi jika sudah terverifikasi
+  //       if (user.emailVerified) {
+  //         alert("your account has been verified");
+  //       } else {
+  //         // kirim email jika belum terverfikasi
+  //         sendEmailVerification(user)
+  //           .then(() => {
+  //             alert("check your email verification");
+  //           })
+  //           .catch((err) => {
+  //             console.error(err);
+  //           });
+  //         alert("Your account has not been verified");
+  //       }
+  //     } else {
+  //       alert("tidak ada yg login");
+  //       // jika tidak ada akan di logout
+  //       auth.signOut();
+  //       history.push("/login");
+  //     }
+  //   });
+  //   //get data dan dimasukan ke redux
+  //   // utk get data ke back-end dan di simpan di redux
+  //   const getDataGlobal = () => {
+  //     axios
+  //       .get(`${process.env.REACT_APP_API_BASE_URL}/user/redux-user`, {
+  //         params: {
+  //           id: userId,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         // console.log("data get1 :", res.data.globalState);
+  //         // console.log("data get2 :", res.data.results.UserRoles);
+  //         // console.log("data get3 :", res.data.results.Tenant.id);
+  //         if (res.data.globalState === null) {
+  //           alert("loading....");
+  //         } else {
+  //           res.data.globalState.UserRoles = res.data.globalState.UserRoles.map(
+  //             (val) => {
+  //               // console.log(val);
+  //               return val.roleId;
+  //             }
+  //           );
+  //           dispatch({
+  //             type: auth_types.Redux,
+  //             payload: { ...res.data.globalState, emailVerified },
+  //           });
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         // alert("please registered your account in form register")
+  //         console.error(err.message);
+  //       });
+  //   };
+  //   getDataGlobal();
+  // }, [userId]);
 
   return (
     <BrowserRouter>
