@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useEffect, useState } from "react";
-import {BrowserRouter, Route, Switch} from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 // import {getAuth} from "firebase/auth"
 
 import PropertyList from "./Pages/User/PropertyList";
@@ -32,133 +32,149 @@ import Dashboard from "./Pages/Tenant/dashboard";
 import ProfileTenant from "./Pages/Tenant/profileTenant";
 import CompleteFormTenant from "./Pages/Tenant/completeFormTenant";
 import { authFirebase } from "./Config/firebase";
-import {getAuth, onAuthStateChanged, sendEmailVerification, signOut} from "firebase/auth"
-import {useHistory} from "react-router-dom"
-import axios from "axios"
+import {
+  getAuth,
+  onAuthStateChanged,
+  sendEmailVerification,
+  signOut,
+} from "firebase/auth";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import auth_types from "./Redux/Reducers/Types/userTypes";
 
 function App() {
-    const [emailVerified, setEmailVerified] = useState("")
-    const [userLogin, setUserLogin] = useState({})
-    const [firebaseProvider, setFirebaseProvider ] = useState("")
-    const [userId , setUserId] = useState("")
+  const [emailVerified, setEmailVerified] = useState("");
+  const [userLogin, setUserLogin] = useState({});
+  const [firebaseProvider, setFirebaseProvider] = useState("");
+  const [userId, setUserId] = useState("");
 
-    const {id, name, email ,isVerified, firebaseProviderId, tenantId, roleId} = useSelector(state => state.user)
-    
-  let history = useHistory()
-  const dispatch = useDispatch()
+  // const {
+  //   id,
+  //   name,
+  //   email,
+  //   isVerified,
+  //   firebaseProviderId,
+  //   tenantId,
+  //   roleId,
+  // } = useSelector((state) => state.user);
 
-  useEffect(() => {
+  // let history = useHistory();
+  // const dispatch = useDispatch();
 
-    // untuk dpt info user auth
-    const auth = getAuth()
-    //pengecekan user ada yg login atau tidak
-    onAuthStateChanged(auth, (user) => {
-      // console.log("onAuthStateChanged :", user);
-      if (user) {
-        setUserLogin(user)
-        setUserId(user.uid)
-        alert("ada yg login")
-        setFirebaseProvider(user.providerData[0].providerId);
-        let emailVerified = user.emailVerified
-        setEmailVerified(emailVerified)
+  // useEffect(() => {
+  //   // untuk dpt info user auth
+  //   const auth = getAuth();
+  //   //pengecekan user ada yg login atau tidak
+  //   onAuthStateChanged(auth, (user) => {
+  //     // console.log("onAuthStateChanged :", user);
+  //     if (user) {
+  //       setUserLogin(user);
+  //       setUserId(user.uid);
+  //       alert("ada yg login");
+  //       setFirebaseProvider(user.providerData[0].providerId);
+  //       let emailVerified = user.emailVerified;
+  //       setEmailVerified(emailVerified);
 
-        // kondisi jika sudah terverifikasi
-          if(user.emailVerified){
-              alert("your account has been verified")
-          } else {
-            // kirim email jika belum terverfikasi
-            sendEmailVerification(user)
-              .then(() => {
-                alert("check your email verification")
-              })
-              .catch((err) => {
-                console.error(err)
-              })
-            alert("Your account has not been verified")
-        }
+  //       // kondisi jika sudah terverifikasi
+  //       if (user.emailVerified) {
+  //         alert("your account has been verified");
+  //       } else {
+  //         // kirim email jika belum terverfikasi
+  //         sendEmailVerification(user)
+  //           .then(() => {
+  //             alert("check your email verification");
+  //           })
+  //           .catch((err) => {
+  //             console.error(err);
+  //           });
+  //         alert("Your account has not been verified");
+  //       }
+  //     } else {
+  //       alert("tidak ada yg login");
+  //       // jika tidak ada akan di logout
+  //       auth.signOut();
+  //       history.push("/login");
+  //     }
+  //   });
+  //   //get data dan dimasukan ke redux
+  //   // utk get data ke back-end dan di simpan di redux
+  //   const getDataGlobal = () => {
+  //     axios
+  //       .get(`${process.env.REACT_APP_API_BASE_URL}/user/redux-user`, {
+  //         params: {
+  //           id: userId,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         // console.log("data get1 :", res.data.globalState);
+  //         // console.log("data get2 :", res.data.results.UserRoles);
+  //         // console.log("data get3 :", res.data.results.Tenant.id);
+  //         if (res.data.globalState === null) {
+  //           alert("loading....");
+  //         } else {
+  //           res.data.globalState.UserRoles = res.data.globalState.UserRoles.map(
+  //             (val) => {
+  //               // console.log(val);
+  //               return val.roleId;
+  //             }
+  //           );
+  //           dispatch({
+  //             type: auth_types.Redux,
+  //             payload: { ...res.data.globalState, emailVerified },
+  //           });
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         // alert("please registered your account in form register")
+  //         console.error(err.message);
+  //       });
+  //   };
+  //   getDataGlobal();
+  // }, [userId]);
 
-      } else {
-        alert("tidak ada yg login")
-        // jika tidak ada akan di logout
-        auth.signOut()
-        history.push("/login")
-      }
-    })
-    //get data dan dimasukan ke redux
-     // utk get data ke back-end dan di simpan di redux
-      const getDataGlobal = () => {
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/redux-user` , {
-              params : {
-                  id : userId
-              }
-          })
-          .then((res) => {
-              // console.log("data get1 :", res.data.globalState);
-              // console.log("data get2 :", res.data.results.UserRoles);
-              // console.log("data get3 :", res.data.results.Tenant.id);
-              if(res.data.globalState === null) {
-                alert("loading....")
-              } else {
-                res.data.globalState.UserRoles = res.data.globalState.UserRoles.map((val) => {
-                  // console.log(val);
-                  return val.roleId
-                })
-                dispatch({
-                    type : auth_types.Redux,
-                    payload : {...res.data.globalState , emailVerified}
-                  })
-              }
-          })
-          .catch((err) => {
-              // alert("please registered your account in form register")
-              console.error(err.message)
-          })
-      }
-    getDataGlobal()
-  }, [userId])
-  
+  return (
+    <BrowserRouter>
+      <Switch>
+        {/* page tenant */}
+        <Route component={RegisterTenant} path="/tenant/register" />
+        <Route component={LoginTenant} path="/tenant/login" />
+        <Route component={PropertyListTenant} path="/tenant/property" />
+        <Route component={RoomListTenant} path="/tenant/room" />
+        <Route
+          component={EditProperty}
+          path="/tenant/edit-property/:propertyId"
+        />
+        <Route component={AddProperty} path="/tenant/add-property" />
+        <Route component={EditRoom} path="/tenant/edit-room/:id" />
+        <Route component={AddRoom} path="/tenant/add-room" />
+        <Route component={Report} path="/tenant/report" />
+        <Route component={Order} path="/tenant/order" />
+        <Route component={Price} path="/tenant/price" />
+        <Route component={Dashboard} path="/tenant/dashboard" />
+        <Route component={ProfileTenant} path="/tenant/profile" />
+        <Route
+          component={CompleteFormTenant}
+          path="/tenant/complete-register"
+        />
 
-    return (
-      <BrowserRouter>
-        <Switch>
-          {/* page tenant */}
-          <Route component={RegisterTenant} path="/tenant/register" />
-          <Route component={LoginTenant} path="/tenant/login" />
-          <Route component={PropertyListTenant} path="/tenant/property" />
-          <Route component={RoomListTenant} path="/tenant/room" />
-          <Route
-            component={EditProperty}
-            path="/tenant/edit-property/:propertyId"
-          />
-          <Route component={AddProperty} path="/tenant/add-property" />
-          <Route component={EditRoom} path="/tenant/edit-room/:id" />
-          <Route component={AddRoom} path="/tenant/add-room" />
-          <Route component={Report} path="/tenant/report" />
-          <Route component={Order} path="/tenant/order" />
-          <Route component={Price} path="/tenant/price" />
-          <Route component={Dashboard} path="/tenant/dashboard" />
-          <Route component={ProfileTenant} path="/tenant/profile" />
-          <Route component={CompleteFormTenant} path="/tenant/complete-register" />
-
-          {/* page user */}
-          <Route component={PropertyList} path="/list" />
-          <Route component={PropertyDetail} path="/detail/:id" />
-          <Route component={Profile} path="/profile" />
-          <Route component={VerifyAccount} path="/verify-account" />
-          <Route component={ChangePassword} path="/settings/password" />
-          <Route component={ResetPassword} path="/reset-password" />
-          <Route component={ForgotPassword} path="/forgot-password" />
-          <Route component={RegisterUser} path="/register" />
-          <Route component={LoginUser} path="/login" />
-          <Route component={BookingHistory} path="/booking-history" />
-          <Route component={Booking} path="/booking" />
-          <Route component={Payment} path="/payment" />
-          <Route component={Home} path="/" />
-        </Switch>
-      </BrowserRouter>
-    );
+        {/* page user */}
+        <Route component={PropertyList} path="/list" />
+        <Route component={PropertyDetail} path="/detail/:id" />
+        <Route component={Profile} path="/profile" />
+        <Route component={VerifyAccount} path="/verify-account" />
+        <Route component={ChangePassword} path="/settings/password" />
+        <Route component={ResetPassword} path="/reset-password" />
+        <Route component={ForgotPassword} path="/forgot-password" />
+        <Route component={RegisterUser} path="/register" />
+        <Route component={LoginUser} path="/login" />
+        <Route component={BookingHistory} path="/booking-history" />
+        <Route component={Booking} path="/booking" />
+        <Route component={Payment} path="/payment" />
+        <Route component={Home} path="/" />
+      </Switch>
+    </BrowserRouter>
+  );
 }
 
 export default App;

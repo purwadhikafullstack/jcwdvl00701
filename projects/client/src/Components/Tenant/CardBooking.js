@@ -20,7 +20,7 @@ function CardBooking(props) {
             h="120px"
             overflow="hiden"
             objectFit="cover"
-            src={props.pic}
+            src={process.env.REACT_APP_API_BASE_URL + props.pic}
             alt="room picture"
           />
           <Center
@@ -28,9 +28,23 @@ function CardBooking(props) {
             height="30px"
             fontWeight="Bold"
             fontSize="15px"
-            bg="blue"
+            bg={
+              props.status == 1
+                ? "blue"
+                : props.status == 2
+                ? "yellow"
+                : props.status == 3
+                ? "red"
+                : "white"
+            }
           >
-            ongoing
+            {props.status == 1
+              ? "ongoing"
+              : props.status == 2
+              ? "Finished"
+              : props.status == 3
+              ? "Cancled"
+              : "tes"}
           </Center>
         </Box>
         <Box w="50%">
