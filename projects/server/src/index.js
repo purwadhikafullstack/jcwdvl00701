@@ -34,7 +34,6 @@ const {
   tenantRouters,
   productRoutrs,
   reportRouters,
-  tenantRouters,
   reservationRouters
 } = require("./routes");
 

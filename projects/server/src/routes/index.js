@@ -4,7 +4,6 @@ const propertyRouters = require("./propertyRouters");
 const tenantRouters = require("./tenantRouters");
 const productRoutrs = require("./productRouters");
 const reportRouters = require("./reportRouters");
-const tenantRouters = require("./tenantRouters")
 const reservationRouters = require("./reservationRouters")
 module.exports = {
   userRouters,

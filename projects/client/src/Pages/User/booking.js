@@ -9,7 +9,8 @@ import { useParams } from "react-router-dom";
 
 function Booking() {
   // akan menerima 1 id params utk get data, dari page detail/id
-  // const {id} = useParams()
+  const {id} = useParams()
+  console.log(id);
   const [dataBooking, setDataBooking] = useState({});
   const [dataRoom, setDataRoom] = useState({})
   const [startDate, setStartDate] = useState("")
@@ -26,7 +27,7 @@ function Booking() {
           const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/reservation/get-reservation`, {
             // masih nembak sampai page mas imam beres
             params : {
-              id : 2
+              id : id
             }
           })
           // console.log((await response)?.data.result);

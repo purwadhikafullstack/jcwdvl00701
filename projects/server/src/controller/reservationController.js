@@ -65,7 +65,7 @@ module.exports = {
                 )
             })
             return res.status(200).json({
-                result : reservation,
+                result : result,
                 code: 200
             })
         } catch (err){

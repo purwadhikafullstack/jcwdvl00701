@@ -160,7 +160,7 @@ function App() {
           <Route component={RegisterUser} path="/register" />
           <Route component={LoginUser} path="/login" />
           <Route component={BookingHistory} path="/booking-history" />
-          <Route component={Booking} path="/booking" />
+          <Route component={Booking} path="/booking/:id" />
           <Route component={Payment} path="/payment/:id" />
           <Route component={Home} path="/" />
         </Switch>
