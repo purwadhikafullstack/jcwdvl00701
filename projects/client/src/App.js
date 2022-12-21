@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useEffect, useState } from "react";
-import {BrowserRouter, Route, Switch} from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 // import {getAuth} from "firebase/auth"
 
 import PropertyList from "./Pages/User/PropertyList";
@@ -32,17 +32,22 @@ import Dashboard from "./Pages/Tenant/dashboard";
 import ProfileTenant from "./Pages/Tenant/profileTenant";
 import CompleteFormTenant from "./Pages/Tenant/completeFormTenant";
 import { authFirebase } from "./Config/firebase";
-import {getAuth, onAuthStateChanged, sendEmailVerification, signOut} from "firebase/auth"
-import {useHistory} from "react-router-dom"
-import axios from "axios"
+import {
+  getAuth,
+  onAuthStateChanged,
+  sendEmailVerification,
+  signOut,
+} from "firebase/auth";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import auth_types from "./Redux/Reducers/Types/userTypes";
 
 function App() {
-    const [emailVerified, setEmailVerified] = useState("")
-    const [userLogin, setUserLogin] = useState({})
-    const [firebaseProvider, setFirebaseProvider ] = useState("")
-    const [userId , setUserId] = useState("")
+  const [emailVerified, setEmailVerified] = useState("");
+  const [userLogin, setUserLogin] = useState({});
+  const [firebaseProvider, setFirebaseProvider] = useState("");
+  const [userId, setUserId] = useState("");
 
     const {id, name, email , UserRoles , Tenant} = useSelector(state => state.user)
     // console.log(UserRoles);
@@ -119,7 +124,7 @@ function App() {
           })
       }
     getDataGlobal()
-  }, [userId])
+  },[userId])
   
 
     return (
