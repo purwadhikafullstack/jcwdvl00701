@@ -44,7 +44,9 @@ function App() {
     const [firebaseProvider, setFirebaseProvider ] = useState("")
     const [userId , setUserId] = useState("")
 
-    const {id, name, email ,isVerified, firebaseProviderId, tenantId, roleId} = useSelector(state => state.user)
+    const {id, name, email , UserRoles , Tenant} = useSelector(state => state.user)
+    // console.log(UserRoles);
+    // console.log(Tenant);
     
   let history = useHistory()
   const dispatch = useDispatch()
@@ -59,11 +61,10 @@ function App() {
       if (user) {
         setUserLogin(user)
         setUserId(user.uid)
-        alert("ada yg login")
         setFirebaseProvider(user.providerData[0].providerId);
-        let emailVerified = user.emailVerified
-        setEmailVerified(emailVerified)
-
+        setEmailVerified(user.emailVerified)
+        alert("ada yg login")
+        
         // kondisi jika sudah terverifikasi
           if(user.emailVerified){
               alert("your account has been verified")
@@ -95,19 +96,20 @@ function App() {
               }
           })
           .then((res) => {
-              // console.log("data get1 :", res.data.globalState);
+              console.log("data get1 :", res.data.globalState);
               // console.log("data get2 :", res.data.results.UserRoles);
               // console.log("data get3 :", res.data.results.Tenant.id);
               if(res.data.globalState === null) {
-                alert("loading....")
+                alert("loading...")
               } else {
                 res.data.globalState.UserRoles = res.data.globalState.UserRoles.map((val) => {
                   // console.log(val);
                   return val.roleId
                 })
+              res.data.globalState.Tenant = res.data.globalState.Tenant.id
                 dispatch({
                     type : auth_types.Redux,
-                    payload : {...res.data.globalState , emailVerified}
+                    payload : {...res.data.globalState , emailVerified }
                   })
               }
           })
@@ -154,7 +156,7 @@ function App() {
           <Route component={LoginUser} path="/login" />
           <Route component={BookingHistory} path="/booking-history" />
           <Route component={Booking} path="/booking" />
-          <Route component={Payment} path="/payment" />
+          <Route component={Payment} path="/payment/:id" />
           <Route component={Home} path="/" />
         </Switch>
       </BrowserRouter>

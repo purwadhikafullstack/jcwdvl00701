@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
 import Layout from "../../Components/Layout";
+import axios from "axios"
 
 function Topbar(props) {
   return (
@@ -178,6 +179,23 @@ function Reviews(props) {
 }
 
 function Detail(props) {
+  const btnHandlerReservation = async () => {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/reservation/add-reservation`, {
+      startDate : "2022-12-25",
+      endDate : "2022-12-26",
+      status : 1,
+      guestCount : 7 ,
+      userId : "KY5iaG2HvGYCYmQ1nMiCV1bjuno2",
+      roomId : 2,
+      finalPrice : 550000
+    })
+    console.log(response.data);
+    } catch (err) {
+      console.error(err.data.message)
+    }
+  }
+
   return (
     <Box>
       <Box my={3}>
@@ -199,7 +217,7 @@ function Detail(props) {
         Total: Rp. 300.000,00
       </Text>
 
-      <Button w="100%" variant="primary" my={2}>
+      <Button w="100%" variant="primary" my={2} onClick={btnHandlerReservation}>
         Reserve
       </Button>
     </Box>
