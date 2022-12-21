@@ -9,15 +9,124 @@ import {
   TabPanel,
   Tabs,
   TabPanels,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Flex,
   Select,
   HStack,
   IconButton,
+  Button,
 } from "@chakra-ui/react";
 import Layout from "../../Components/Layout";
 import CardBooking from "../../Components/Tenant/CardBooking";
 import Image3 from "../../Assets/bookingHistory3.png";
-
+import axios from "axios";
+import { useState, useEffect } from "react";
+import { useDisclosure } from "@chakra-ui/react";
+import ReactPaginate from "react-paginate";
+import "../../Style/pagination.css";
 function Order() {
+  const [order, setOrder] = useState([]);
+  const [status, setStatus] = useState(null);
+  const [keyword, setKeyword] = useState("");
+  const [dropdown, setDropdown] = useState([]);
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(5);
+  const [pages, setPages] = useState(0);
+  const [rows, setRows] = useState(0);
+  const [alfabet, setAlfabet] = useState("");
+  const [time, setTime] = useState("");
+  const [price, setPrice] = useState("");
+  const [propertyId, setPropertyId] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const tenantId = 3;
+  async function fetchOrder() {
+    await axios
+      .get(
+        `${process.env.REACT_APP_API_BASE_URL}/report/get/${tenantId}?status=${status}&searchQuery=${keyword}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`
+      )
+      .then((res) => {
+        setOrder(res.data.result.rows);
+        setPage(res.data.page);
+        setPages(res.data.totalPage);
+        setRows(res.data.totalRows);
+        onClose();
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  }
+
+  const fetchDataDropdown = () => {
+    axios
+      .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
+      .then((res) => {
+        // console.log(res.data.dropdown);
+        setDropdown(res.data.dropdown);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const optionDropdown = () => {
+    return dropdown.map((val) => {
+      // console.log(val);
+      return <option value={val.id}>{val.name}</option>;
+    });
+  };
+  function renderOrder() {
+    return order?.map((val, idx) => {
+      return (
+        <CardBooking
+          key={idx}
+          pic={val.Room.Property.pic}
+          user={val.User.Profile.name}
+          status={val.status}
+          name={val.Room.Property.name}
+          start_date={val.startDate}
+          end_date={val.endDate}
+          roomName={val.Room.name}
+          guest_count={val.guestCount}
+          price="300000"
+        />
+      );
+    });
+  }
+
+  const changePage = ({ selected }) => {
+    setPage(selected);
+  };
+
+  function inputHandler(event) {
+    const tes = setTimeout(() => {
+      console.log(event.target.value);
+      const { value } = event.target;
+
+      setKeyword(value);
+    }, 2000);
+  }
+
+  function selectHandler(event, field) {
+    const { value } = event.target;
+    if (field === "name") {
+      setAlfabet(value);
+    } else if (field === "time") {
+      setTime(value);
+    }
+  }
+  useEffect(() => {
+    fetchOrder();
+    fetchDataDropdown();
+  }, [status, keyword, page, propertyId, tenantId]);
+
   return (
     <Layout>
       <Box mt="70px">
@@ -27,7 +136,7 @@ function Order() {
           </Text>
           <Box bg="primary" px="20px" py="10px" mt="20px">
             <CardBooking
-              pic={Image3}
+              pic=""
               user="kratos"
               status="ongoing"
               name="name Property"
@@ -38,7 +147,7 @@ function Order() {
               price="300000"
             />
             <CardBooking
-              pic={Image3}
+              pic=""
               user="kratos"
               status="ongoing"
               name="name Property"
@@ -56,20 +165,21 @@ function Order() {
             placeholder="Select Property"
             borderRadius={0}
             borderColor="rgba(175, 175, 175, 1)"
+            onChange={(e) => inputHandler(e, "propertyId")}
           >
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
+            {optionDropdown()}
           </Select>
           <FormControl pb="20px">
             <HStack>
               <Input
+                onChange={inputHandler}
                 type="name"
                 placeholder="Search Room"
                 borderRadius="0"
                 borderColor="rgba(175, 175, 175, 1)"
               />
               <IconButton
+                onClick={onOpen}
                 color="rgba(175, 175, 175, 1)"
                 aria-label="toggle filters"
                 icon={<i className="fa-solid fa-filter" />}
@@ -84,7 +194,64 @@ function Order() {
               />
             </HStack>
           </FormControl>
-          <Tabs>
+          <Flex>
+            <Button variant={"primary"} width="25%">
+              All
+            </Button>
+            <Button variant={"primary"} width="25%">
+              Ongoing
+            </Button>
+            <Button variant={"primary"} width="25%">
+              Finished
+            </Button>
+            <Button variant={"primary"} width="25%">
+              Cancled
+            </Button>
+          </Flex>
+          <Box>
+            {renderOrder()}{" "}
+            <ReactPaginate
+              previousLabel={
+                <i
+                  class="fa-solid fa-chevron-left"
+                  style={{
+                    fontSize: 18,
+                    height: 40,
+                    width: 40,
+                    position: "absolute",
+                    left: "11px",
+                    top: "11px",
+                  }}
+                ></i>
+              }
+              nextLabel={
+                <i
+                  class="fa-solid fa-chevron-right"
+                  style={{
+                    fontSize: 18,
+                    height: 40,
+                    width: 40,
+                    position: "absolute",
+                    left: "11px",
+                    top: "11px",
+                  }}
+                ></i>
+              }
+              pageCount={pages}
+              onPageChange={changePage}
+              activeClassName={"item active "}
+              breakClassName={"item break-me "}
+              breakLabel={"..."}
+              containerClassName={"pagination"}
+              disabledClassName={"disabled-page"}
+              marginPagesDisplayed={2}
+              nextClassName={"item next "}
+              pageClassName={"item pagination-page "}
+              pageRangeDisplayed={2}
+              previousClassName={"item previous"}
+            />
+          </Box>
+          {/* <Tabs>
             <TabList>
               <Tab
                 fontSize="14px"
@@ -120,46 +287,55 @@ function Order() {
               </Tab>
             </TabList>
             <TabPanels>
-              <TabPanel p="0px">
-                <CardBooking
-                  pic={Image3}
-                  user="kratos"
-                  status="ongoing"
-                  name="name Property"
-                  start_date={12}
-                  end_date={13}
-                  roomName="room1"
-                  guest_count={3}
-                  price="300000"
-                />
-                <CardBooking
-                  pic={Image3}
-                  user="kratos"
-                  status="ongoing"
-                  name="name Property"
-                  start_date={12}
-                  end_date={13}
-                  roomName="room1"
-                  guest_count={3}
-                  price="300000"
-                />
-                <CardBooking
-                  pic={Image3}
-                  user="kratos"
-                  status="ongoing"
-                  name="name Property"
-                  start_date={12}
-                  end_date={13}
-                  roomName="room1"
-                  guest_count={3}
-                  price="300000"
-                />
+              <TabPanel as="button" onClick={() => fetchOrder()} p="0px">
+                {renderOrder()}
               </TabPanel>
-              <TabPanel>Ongoing</TabPanel>
-              <TabPanel>Finished</TabPanel>
-              <TabPanel>Cancled</TabPanel>
+              <TabPanel onClick={() => fetchOrder()}>Ongoing</TabPanel>
+              <TabPanel onClick={() => fetchOrder()}>Finished</TabPanel>
+              <TabPanel onClick={() => fetchOrder()}>Cancled</TabPanel>
             </TabPanels>
-          </Tabs>
+          </Tabs> */}
+          {/* moddal */}
+          <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent borderRadius={0}>
+              <ModalHeader>Shory by:</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                <Select
+                  placeholder="short by name"
+                  borderRadius={0}
+                  onClick={(e) => selectHandler(e, "name")}
+                >
+                  <option value="ASC">name: A-Z</option>
+                  <option value="DESC">name: Z-A</option>
+                </Select>
+              </ModalBody>
+              <ModalBody pb={6} name="time">
+                <Select
+                  placeholder="short by time"
+                  borderRadius={0}
+                  onClick={(e) => selectHandler(e, "time")}
+                >
+                  <option value="DESC">Newest </option>
+                  <option value="ASC">Latest</option>
+                </Select>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button
+                  onClick={fetchOrder}
+                  variant="primary"
+                  borderRadius={0}
+                  colorScheme="red"
+                  mr={0}
+                  w="100%"
+                >
+                  Apply
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
         </Container>
       </Box>
     </Layout>

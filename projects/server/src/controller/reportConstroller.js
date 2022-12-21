@@ -1,4 +1,12 @@
-const { Property, reservation } = require("../models");
+const {
+  Property,
+  Reservation,
+  User,
+  Profile,
+  Room,
+  Transaction,
+} = require("../models");
+const { Op } = require("sequelize");
 
 module.exports = {
   getOrder: async (req, res) => {
@@ -10,14 +18,18 @@ module.exports = {
     const offset = limit * page;
     const tenantId = req.params.tenantId;
     try {
-      getReportOrder = await reservation.findAndCountAll({
+      getReportOrder = await Reservation.findAndCountAll({
         include: [
           {
             model: Room,
             required: false,
+            attributes: ["id", "name"],
+            where: { name: { [Op.like]: "%" + search + "%" } },
+            order: [["name", `${alfabet}`]],
             include: [
               {
                 model: Property,
+                attributes: ["id", "name", "pic"],
                 required: false,
                 where: {
                   tenantId,
@@ -25,7 +37,26 @@ module.exports = {
               },
             ],
           },
+          {
+            model: Transaction,
+            required: false,
+          },
+          {
+            model: User,
+            attributes: ["id"],
+            required: false,
+            include: [
+              {
+                model: Profile,
+                attributes: ["name"],
+                required: false,
+              },
+            ],
+          },
         ],
+        order: [["updatedAt", `${time}`]],
+        offset: offset,
+        limit: limit,
       });
       const totalRows = getReportOrder.count;
       const totalPage = Math.ceil(totalRows / limit);
@@ -34,6 +65,8 @@ module.exports = {
         result: getReportOrder,
         totalRows,
         totalPage,
+        page,
+        limit,
       });
     } catch (err) {
       console.log(err);
