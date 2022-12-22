@@ -12,11 +12,92 @@ import {
   Checkbox,
   Textarea,
   Select,
+  Alert,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  InputLeftElement,
+  InputGroup
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Layout from "../../Components/Layout";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import YupPassword from "yup-password";
+import axios from "axios"
+import { useEffect, useState } from "react";
 
 function AddRoom() {
+  // state
+  const [dropdown, setDropdown] = useState([])
+  const history = useHistory()
+
+  useEffect(() => {
+    const fetchDataDropdown = () => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
+    .then((res) => {
+      // console.log(res.data.dropdown);
+      setDropdown(res.data.dropdown)
+
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+  }
+  fetchDataDropdown()
+  optionDropdown()
+  }, [])
+
+  // loop utk dropdown
+  const optionDropdown = () => {
+    return dropdown.map((val) => {
+      return <option value={val.id}>{val.name}</option>
+    })
+  }
+
+  // pasang formik utk validation
+  //configure yup
+  YupPassword(Yup)
+  //formik initialization
+  const formik = useFormik({
+    initialValues: {
+      property : "",
+      nameRoom : "",
+      price : "",
+      capacity : "",
+      caption : ""
+    },
+    validationSchema : Yup.object().shape({
+      property: Yup.string().required("required"),
+      nameRoom : Yup.string().required("required"),
+      price : Yup.number("input number").required("required please input type number"),
+      capacity : Yup.number("input number").required("required please input type number").min(1).max(10),
+      caption : Yup.string().required("required").min(2, "To Short").max(255, "To Long")
+    }),
+    validateOnChange : false,
+    onSubmit: async (values) => {
+      console.log(values);
+      const {nameRoom, property, price, caption, capacity} = values
+      
+      // kirim data ke back-end
+      axios.post(`${process.env.REACT_APP_API_BASE_URL}/room/add-room`, {
+        name : nameRoom,
+        defaultPrice : parseInt(price),
+        description : caption,
+        capacity : parseInt(capacity),
+        propertyId : parseInt(property)
+      })
+      .then((res) => {
+        alert(res.data.message)
+        history.push("/tenant/room")
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+    }
+  })
   return (
     <Layout>
       <Box mt="80px">
@@ -47,76 +128,96 @@ function AddRoom() {
           </Flex>
         </Container>
         <Container maxW="1140px">
-          <Image
-            src={"/Assets/add_photo.png"}
-            alt="Room image"
-            width="100%"
-            height="210px"
-            me="10px"
-            mt="5px"
-            mb="20px"
-          />
-          <Select
-            mb="20px"
-            placeholder="Select Property"
-            borderRadius={0}
-            borderColor="rgba(175, 175, 175, 1)"
-          >
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </Select>
-          <FormControl pb="20px">
-            <Input type="name" placeholder="Name Room" borderRadius="0" />
+          <FormControl>
+            <Select
+              mb="20px"
+              placeholder="Select Property"
+              borderRadius={0}
+              borderColor="rgba(175, 175, 175, 1)"
+              onChange={(e) => {
+                formik.setFieldValue("property", e.target.value)
+              }}
+              
+            >
+              {/* render dropdown property */}
+              {optionDropdown()}
+            </Select>
+            {formik.errors.property ? (
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.property}</Text>
+                </Alert>
+              ) : null}
           </FormControl>
           <FormControl pb="20px">
-            <Input type="name" placeholder="Price" borderRadius="0" />
+            <Input 
+            type="text" 
+            placeholder="Name Room" 
+            borderRadius="0" 
+            onChange={(e) => {
+              formik.setFieldValue("nameRoom", e.target.value)
+            }}
+            />
+            {formik.errors.nameRoom ? (
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.nameRoom}</Text>
+                </Alert>
+              ) : null}
           </FormControl>
-          <Text mb="10px"> Fasility:</Text>
-          <Flex align="center" mb="20px">
-            <Stack width="25%">
-              <Center>
-                <i className="fa-solid fa-wifi" />
-              </Center>
-              <Center>
-                <Checkbox defaultChecked>wifi</Checkbox>
-              </Center>
-            </Stack>
-            <Stack width="25%">
-              <Center>
-                <i className="fa-solid fa-box-archive" />
-              </Center>
-              <Center>
-                <Checkbox defaultChecked>locker</Checkbox>
-              </Center>
-            </Stack>
-            <Stack width="25%">
-              <Center>
-                <i className="fa-solid fa-utensils" />
-              </Center>
-              <Center>
-                <Checkbox defaultChecked>menu</Checkbox>
-              </Center>
-            </Stack>
-            <Stack width="25%">
-              <Center>
-                <i className="fa-solid fa-couch" />
-              </Center>
-              <Center>
-                <Checkbox defaultChecked>sofa</Checkbox>
-              </Center>
-            </Stack>
-          </Flex>
-          <Textarea
-            height="180px"
-            mb="20px"
-            borderRadius="0px"
-            placeholder="Edit caption"
-          />
-          <Button variant="secondary" w="100%" mb="20px">
-            Add Photo
-          </Button>
-          <Button variant="primary" w="100%" mb="40px">
+          <FormControl pb="20px">
+            <InputGroup>
+              <InputLeftElement>
+                <Text>Rp.</Text>
+              </InputLeftElement>
+              <Input type="number"
+              placeholder="Price" 
+              borderRadius="0" 
+              onChange={(e) => {
+                formik.setFieldValue("price", e.target.value)
+              }}
+              />
+            </InputGroup>
+            {formik.errors.price ? (
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.price}</Text>
+                </Alert>
+              ) : null}
+          </FormControl>
+          <FormControl pb="20px">
+            <Input type="number"
+            placeholder="capacity" 
+            borderRadius="0" 
+            onChange={(e) => {
+              formik.setFieldValue("capacity", e.target.value)
+            }}
+            />
+            {formik.errors.capacity ? (
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.capacity}</Text>
+                </Alert>
+              ) : null}
+          </FormControl>
+          <FormControl>
+            <Textarea
+              height="180px"
+              mb="20px"
+              borderRadius="0px"
+              placeholder="Edit caption"
+              onChange={(e) => {
+                formik.setFieldValue("caption", e.target.value)
+              }}
+            />
+            {formik.errors.caption ? (
+                <Alert status="error" color="red" text="center">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <Text ms="10px">{formik.errors.caption}</Text>
+                </Alert>
+              ) : null}
+          </FormControl>
+          <Button variant="primary" w="100%" mb="40px" onClick={formik.handleSubmit}>
             Save
           </Button>
         </Container>

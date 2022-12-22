@@ -58,6 +58,11 @@ function NavbarMobileTenant() {
       icon: <i className="fa-solid fa-cash-register" />,
       text: "Price",
     },
+    {
+      url: "/",
+      icon: <i class="fa-solid fa-door-open"></i>,
+      text: "Switch to User",
+    },
   ];
 
   return (

@@ -35,6 +35,10 @@ module.exports = {
       roomId : {
         type : DataTypes.INTEGER,
         allowNull : false,
+      }, 
+      finalPrice : {
+        type: DataTypes.INTEGER,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,

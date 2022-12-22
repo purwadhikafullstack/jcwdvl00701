@@ -11,6 +11,9 @@ import {
   Button,
   Text,
   Container,
+  InputGroup,
+  InputRightElement,
+  Alert
 } from "@chakra-ui/react";
 import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
@@ -18,8 +21,62 @@ import facebook from "../../Assets/image/facebook.png";
 import loginTenant from "../../Assets/image/loginTenant.png";
 import { Link } from "react-router-dom";
 import Layout from "../../Components/Layout";
+import axios from "axios"
+import {signInWithEmailAndPassword} from "firebase/auth"
+import { authFirebase } from "../../Config/firebase";
+import { useFormik} from "formik"
+import * as Yup from "yup";
+import YupPassword from "yup-password"
+import auth_types from "../../Redux/Reducers/Types/userTypes";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 function LoginTenant() {
+      // for toggling password visibility
+    const [showPassword, setShowPassword] = useState(false)
+    const handleClick = () => {
+        setShowPassword(!showPassword)
+    }
+    const dispatch = useDispatch()
+    let history = useHistory()
+
+    YupPassword(Yup)
+    const formik = useFormik({
+      initialValues: {
+        email: "",
+        password: ""
+      },
+      validationSchema : Yup.object().shape({
+        email : Yup.string().required("your email is invalid").email("input your email"),
+        password: Yup.string().required("please fill in the password")
+      }),
+      validateOnChange: false,
+      onSubmit: async(values) => {
+        console.log(values);
+        const {email, password} = values
+
+        const userCredential = await signInWithEmailAndPassword(authFirebase, email, password)
+            const user = userCredential.user
+
+            // utk get data ke back-end dan di simpan di redux
+            const response = axios.get(`${process.env.REACT_APP_API_BASE_URL}/tenant/get-tenant`, {
+                params: {id: user.uid}
+            })
+
+            if ((await response).data.code !== 200) {
+                alert("please register for your account")
+            } else {
+              if((await response).data.result !== null){
+                    history.push("/tenant/dashboard")
+                } else {
+                  alert("your account is not Tenant")
+                  authFirebase.signOut()
+                  history.push("/login")
+                }                
+            }
+      }
+    })
   return (
     <Layout>
       <Container maxW="2x1" px="0px">
@@ -79,17 +136,41 @@ function LoginTenant() {
                             placeholder="Email/Phone number"
                             borderRadius="0"
                             bg="white"
+                            onChange={(e) => formik.setFieldValue("email", e.target.value)}
                           />
+                          {formik.errors.email ?
+                              <Alert status="error" color="red" text="center">
+                                  <i className="fa-solid fa-circle-exclamation"></i>
+                                  <Text ms="10px">{formik.errors.email}</Text>
+                              </Alert>
+                              :
+                              null
+                          }
                         </FormControl>
                         <FormControl id="password" pb="15px">
-                          <Input
-                            type="password"
-                            placeholder="Password"
-                            borderRadius="0"
-                            bg="white"
-                          />
+                          <InputGroup>
+                            <Input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Password"
+                                borderRadius="0"
+                                bg="white"
+                                onChange={(e) => formik.setFieldValue("password", e.target.value)}
+                            />
+                            <InputRightElement>
+                                <Button onClick={handleClick}>
+                                    <i className={showPassword ?"fa-sharp fa-solid fa-eye":"fa-solid fa-eye-slash"}/>
+                                </Button>
+                            </InputRightElement>
+
+                          </InputGroup>
+                          {formik.errors.password? (
+                            <Alert status="error" color="red" text="center">
+                                <i className="fa-solid fa-circle-exclamation"></i>
+                                <Text ms="10px">{formik.errors.password}</Text>
+                            </Alert>
+                          ) : null}
                         </FormControl>
-                        <Button variant="primary" mb="12px">
+                        <Button variant="primary" mb="12px" onClick={formik.handleSubmit}>
                           Login
                         </Button>
                       </Flex>
@@ -105,7 +186,7 @@ function LoginTenant() {
                         </Text>
                       </Flex>
                       <hr />
-                      <Button variant="secondary" mt="20px">
+                      {/* <Button variant="secondary" mt="20px">
                         <Flex justifyContent="flex-start">
                           <Image src={google} mr="5px"></Image>
                           <Text>Login With Google</Text>
@@ -114,7 +195,7 @@ function LoginTenant() {
                       <Button variant="secondary" mt="20px">
                         <Image src={facebook}></Image>
                         <Text>Login With Facebook</Text>
-                      </Button>
+                      </Button> */}
                       <Flex
                         justifyContent="center"
                         border="1px"

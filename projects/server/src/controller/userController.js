@@ -1,4 +1,4 @@
-const { sequelize, User, Profile, UserRole } = require("../models");
+const { sequelize, User, Profile, UserRole , Tenant} = require("../models");
 
 module.exports = {
   addUser: async (req, res) => {
@@ -51,7 +51,7 @@ module.exports = {
       return res.status(200).json({
         result: result,
         message: "success add data",
-        code: 500,
+        code: 200,
       });
     } catch (err) {
       return res.status(500).json({
@@ -92,11 +92,11 @@ module.exports = {
     const id = req.query.id;
 
     try {
-      const user = await User.findOne({
-        where: { id: id },
+      const user = await Profile.findOne({
+        where: { userId : id },
         include: [
           {
-            model: Profile,
+            model: User,
             required: true,
             attributes: {
               exclude: ["id", "userId", "UserId"],
@@ -208,4 +208,36 @@ module.exports = {
       });
     }
   },
+
+  userRedux : async (req, res) => {
+        try {
+            console.log(req.query.id);
+            // const email = req.query.email
+            const id = req.query.id // userId
+            const globalState= await User.findOne({
+                include : [
+                {
+                    model: UserRole,
+                    attributes : ["roleId"],
+                },
+                {
+                    model : Tenant,
+                    attributes : ["id"],
+                }           
+            ],
+                where : {
+                    id
+                }
+            })
+            // console.log(globalState);
+            return res.status(200).json({
+                globalState
+            })
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({
+                message : "your email not registered"
+            })
+        }
+  }
 };

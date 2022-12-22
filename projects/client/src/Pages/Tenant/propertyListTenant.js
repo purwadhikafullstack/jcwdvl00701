@@ -25,10 +25,11 @@ import { useState, useEffect } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import ReactPaginate from "react-paginate";
 import "../../Style/pagination.css";
+import { useSelector } from "react-redux";
 
 function PropertyListTenant() {
   const [propertyData, setPropertyData] = useState([]);
-  const tenantId = 3;
+  
   const [randomNumber, setRandomNumber] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [alfabet, setAlfabet] = useState("");
@@ -39,6 +40,9 @@ function PropertyListTenant() {
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const {Tenant, firebaseProviderId,  emailVerified} = useSelector(state => state.user)
+  console.log(Tenant);
 
   // reender data property
   function renderPropertyList() {
@@ -73,7 +77,7 @@ function PropertyListTenant() {
 
   async function fetchProperty() {
     await axios(
-      `${process.env.REACT_APP_API_BASE_URL}/property/get/${tenantId}?search_query=${keyword}&alfabet=${alfabet}&time=${time}&page=${page}&limit=${limit}`
+      `${process.env.REACT_APP_API_BASE_URL}/property/get/${Tenant}?search_query=${keyword}&alfabet=${alfabet}&time=${time}&page=${page}&limit=${limit}`
     )
       .then((res) => {
         console.log("GET DATA");
@@ -90,7 +94,7 @@ function PropertyListTenant() {
   }
   useEffect(() => {
     fetchProperty();
-  }, [randomNumber, keyword, page]);
+  }, [randomNumber, keyword, page, Tenant]);
   return (
     <Layout>
       <Box mt="80px">

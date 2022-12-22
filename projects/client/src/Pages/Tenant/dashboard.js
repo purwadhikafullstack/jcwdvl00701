@@ -1,6 +1,7 @@
 import { Box, Container, SimpleGrid, Text, Flex } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import Layout from "../../Components/Layout";
+import { useSelector } from "react-redux";
 
 function ButtonDashboard(props) {
   return (
@@ -32,6 +33,8 @@ function ButtonDashboard(props) {
 }
 
 function Dashboard() {
+    const {tenantId, firebaseProviderId,  is_verified} = useSelector(state => state.user)
+  console.log(tenantId);;
   return (
     <Layout>
       <Box mt="90px" mb="30px">
