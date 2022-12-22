@@ -127,6 +127,8 @@ function LoginUser() {
                     history.push("/")
                 } else {
                     alert("your account is not user")
+                    authFirebase.signOut()
+                    history.push("/tenant/login")
                 }
             }
         }

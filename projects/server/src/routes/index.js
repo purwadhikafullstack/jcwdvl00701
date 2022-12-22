@@ -4,6 +4,7 @@ const propertyRouters = require("./propertyRouters");
 const tenantRouters = require("./tenantRouters");
 const productRoutrs = require("./productRouters");
 const reportRouters = require("./reportRouters");
+const reservationRouters = require("./reservationRouters")
 module.exports = {
   userRouters,
   roomRouters,
@@ -11,4 +12,6 @@ module.exports = {
   tenantRouters,
   productRoutrs,
   reportRouters,
+  tenantRouters,
+  reservationRouters
 };

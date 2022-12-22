@@ -28,7 +28,7 @@ import axios from "axios"
 
 function CompleteFormTenant() {
 
-    const {id, roleId} = useSelector( state => state.user)
+    const {id, UserRoles} = useSelector( state => state.user)
     let history = useHistory()
 
     // formik initialization

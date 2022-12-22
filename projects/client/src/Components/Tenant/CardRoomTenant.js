@@ -29,6 +29,10 @@ function CardRoomTenant(props) {
   
   const date = createdAt.split("T")
 
+  const price = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(defaultPrice)
 
   //kirim ke halaman edit-room
   const handleBtnEdit = (id) => {
@@ -95,7 +99,7 @@ const deleteBtnHandler = () => {
         </Tooltip>
       </Flex>
       <Flex justifyContent="space-between">
-        <Text>Price: Rp. {defaultPrice}/ per night</Text>
+        <Text>Price: {price}/ per night</Text>
         {/* ikon utk delete */}
         <Tooltip label="Delete room" aria-label="A tooltip">
           <Box
