@@ -15,6 +15,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
 import StepperInput from "../../Components/User/StepperInput";
+import { useSelector } from "react-redux";
 
 function useOnClickOutside(ref, handler) {
   useEffect(
@@ -189,6 +190,10 @@ function Thumbnail(props) {
 }
 
 function Home(props) {
+
+  const {id, Tenant} = useSelector(state => state.user)
+  console.log(id);
+  console.log(Tenant);
   const sliderSettings = {
     dots: true,
     infinite: true,

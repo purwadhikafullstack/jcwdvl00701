@@ -19,6 +19,7 @@ import { addDays, subDays } from "date-fns";
 
 import Layout from "../../Components/Layout";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 function Topbar(props) {
   return (
@@ -53,9 +54,16 @@ function PropertyDetail(props) {
   const [endDate, setEndDate] = useState(null);
   const [idRoom, setIdRoom] = useState(roomButton[0]?.id); // untuk menyimpan roomId
   const [finalCountPrice, setFinalCountPrice] = useState(0);
+  const {id} = useSelector(state => state.user)
+  const [start , setStart] = useState("")
+  const [end , setEnd] = useState("")
+  let history = useHistory()
+  // const [totalHarga, setTotalHarga] = useState(0)
+  // console.log("start", start);
+  // console.log("end ",end);
 
   // menyimpan tanggal-tanggal yang di pilih
-  const datesRanges = [];
+  let datesRanges = [];
   const datepickerOnChange = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
@@ -87,13 +95,15 @@ function PropertyDetail(props) {
     }
 
     countFinalPrice(datesRanges);
+    setStart(datesRanges[0])
+    setEnd(datesRanges[datesRanges.length - 1])
     console.log(datesRanges);
     return datesRanges;
   };
 
   // untuk menghitung total harga
+  let totalPrice = 0;
   const countFinalPrice = () => {
-    let totalPrice = 0;
 
     const found = datesRanges.map((element, i) => {
       if (
@@ -146,15 +156,15 @@ function PropertyDetail(props) {
       totalPrice = totalPrice + roomData.defaultPrice;
       return totalPrice;
     });
-
+    
     console.log(found);
     console.log(totalPrice);
-
+    
     setFinalCountPrice(totalPrice);
     return totalPrice;
   };
 
-  const idProperty = 19;
+  const idProperty = 4;
   // const idProperty = props.match.params.propertyId;
 
   function Reviews(props) {
@@ -331,6 +341,26 @@ function PropertyDetail(props) {
       });
   }
 
+    const btnHandlerReservation = async () => {
+      try {
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/reservation/add-reservation`, {
+        startDate : start,
+        endDate : end,
+        status : 1,
+        guestCount : roomData?.capacity ,
+        userId : id,
+        roomId : idRoom,
+        finalPrice : finalCountPrice
+      })
+      console.log(response.data);
+      
+      history.push(`/booking/${idRoom}`)
+      } catch (err) {
+        console.error(err.data.message)
+      }
+  }
+
+
   useEffect(() => {
     const fetchProperty = async () => {
       await axios(
@@ -404,9 +434,17 @@ function PropertyDetail(props) {
               }).format(finalCountPrice)}
             </Text>
 
-            <Button w="100%" variant="primary" my={2}>
-              Reserve
-            </Button>
+            {
+              finalCountPrice ?
+              <Button w="100%" variant="primary" my={2} onClick={btnHandlerReservation}>
+                Reserve
+              </Button>
+              :
+              <Button w="100%" variant="primary" my={2} onClick={btnHandlerReservation} disabled={true}>
+                Reserve
+              </Button>
+            }
+
           </Box>
           <Flex border="3px solid lightgrey" p={5}>
             <Image

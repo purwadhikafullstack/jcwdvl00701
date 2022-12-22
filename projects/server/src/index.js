@@ -34,6 +34,7 @@ const {
   tenantRouters,
   productRoutrs,
   reportRouters,
+  reservationRouters
 } = require("./routes");
 
 app.use("/api/user", userRouters);
@@ -42,6 +43,8 @@ app.use("/api/property", propertyRouters);
 app.use("/api/tenant", tenantRouters);
 app.use("/api/product", productRoutrs);
 app.use("/api/report", reportRouters);
+app.use("/api/tenant" , tenantRouters)
+app.use("/api/reservation", reservationRouters)
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);

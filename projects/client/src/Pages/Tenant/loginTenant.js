@@ -71,6 +71,8 @@ function LoginTenant() {
                     history.push("/tenant/dashboard")
                 } else {
                   alert("your account is not Tenant")
+                  authFirebase.signOut()
+                  history.push("/login")
                 }                
             }
       }
