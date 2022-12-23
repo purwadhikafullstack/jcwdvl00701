@@ -10,21 +10,42 @@ const { Op } = require("sequelize");
 
 module.exports = {
   getOrder: async (req, res) => {
-    const page = parseInt(req.query.page) || 0;
-    const limit = parseInt(req.query.limit) || 10;
-    const search = req.query.search_query || "";
-    const alfabet = req.query.alfabet || "ASC";
-    const time = req.query.time || "ASC";
-    const offset = limit * page;
-    const tenantId = req.params.tenantId;
     try {
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const search = req.query.searchQuery || "";
+      const alfabet = req.query.alfabet || "ASC";
+      const time = req.query.time || "ASC";
+      const offset = limit * page;
+      const tenantId = req.params.tenantId;
+      console.log(alfabet);
+      console.log(req.query.status);
+
+      const whereCondition = {
+        name: { [Op.like]: "%" + search + "%" },
+      };
+
+      if (req.query?.propertyId) {
+        whereCondition.propertyId = req.query.propertyId;
+      }
+      let whereConditionStatus = {
+        guestCount: { [Op.like]: "%%" },
+      };
+
+      if (req.query?.status > 0) {
+        whereConditionStatus.status = req.query?.status;
+      } else if (req.query?.status == null) {
+        whereConditionStatus = { where: {} };
+      }
+
+      console.log(whereConditionStatus);
       getReportOrder = await Reservation.findAndCountAll({
         include: [
           {
             model: Room,
-            required: false,
+            required: true,
             attributes: ["id", "name"],
-            where: { name: { [Op.like]: "%" + search + "%" } },
+            where: whereCondition,
             order: [["name", `${alfabet}`]],
             include: [
               {
@@ -54,6 +75,8 @@ module.exports = {
             ],
           },
         ],
+        where: whereConditionStatus,
+
         order: [["updatedAt", `${time}`]],
         offset: offset,
         limit: limit,

@@ -32,10 +32,10 @@ function CardBooking(props) {
               props.status == 1
                 ? "blue"
                 : props.status == 2
-                ? "yellow"
+                ? "green"
                 : props.status == 3
                 ? "red"
-                : "white"
+                : "green"
             }
           >
             {props.status == 1

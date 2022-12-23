@@ -120,11 +120,14 @@ function Order() {
       setAlfabet(value);
     } else if (field === "time") {
       setTime(value);
+    } else if (field == "propertyId") {
+      setPropertyId(value);
     }
   }
   useEffect(() => {
     fetchOrder();
     fetchDataDropdown();
+    renderOrder();
   }, [status, keyword, page, propertyId, tenantId]);
 
   return (
@@ -165,7 +168,7 @@ function Order() {
             placeholder="Select Property"
             borderRadius={0}
             borderColor="rgba(175, 175, 175, 1)"
-            onChange={(e) => inputHandler(e, "propertyId")}
+            onChange={(e) => selectHandler(e, "propertyId")}
           >
             {optionDropdown()}
           </Select>
@@ -195,16 +198,38 @@ function Order() {
             </HStack>
           </FormControl>
           <Flex>
-            <Button variant={"primary"} width="25%">
+            <Button
+              onClick={() => setStatus(null)}
+              variant={"primary"}
+              width="25%"
+            >
               All
             </Button>
-            <Button variant={"primary"} width="25%">
+            <Button
+              onClick={() => setStatus(1)}
+              variant={"primary"}
+              bg="blue"
+              width="25%"
+              color={"white"}
+            >
               Ongoing
             </Button>
-            <Button variant={"primary"} width="25%">
+            <Button
+              onClick={() => setStatus(2)}
+              variant={"primary"}
+              bg="green"
+              width="25%"
+              color={"white"}
+            >
               Finished
             </Button>
-            <Button variant={"primary"} width="25%">
+            <Button
+              onClick={() => setStatus(3)}
+              variant={"primary"}
+              bg="red"
+              width="25%"
+              color={"white"}
+            >
               Cancled
             </Button>
           </Flex>
