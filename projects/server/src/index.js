@@ -21,6 +21,7 @@ app.use(express.json());
 app.use("/api", express.static(`${__dirname}/public`));
 
 app.use("/profile_pic", express.static(`${__dirname}/public/profile_pic`));
+app.use("/payment", express.static(`${__dirname}/public/payment`));
 
 //#region API ROUTES
 
@@ -34,7 +35,8 @@ const {
   tenantRouters,
   productRoutrs,
   reportRouters,
-  reservationRouters
+  reservationRouters,
+  paymentRouters
 } = require("./routes");
 
 app.use("/api/user", userRouters);
@@ -45,6 +47,7 @@ app.use("/api/product", productRoutrs);
 app.use("/api/report", reportRouters);
 app.use("/api/tenant" , tenantRouters)
 app.use("/api/reservation", reservationRouters)
+app.use("/api/payment", paymentRouters)
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);

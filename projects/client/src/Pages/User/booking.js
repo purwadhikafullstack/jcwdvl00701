@@ -77,12 +77,12 @@ function Booking() {
   }).format(dataTotalPrice)
 
     return loading ?
-    <Flex justifyContent="center" mt="21%">
+    <Flex justifyContent="center" mt="24%">
       <Spinner
         thickness='4px'
         speed='0.65s'
         emptyColor='gray.200'
-        color='blue.500'
+        color='yellow.500'
         size='xl'
       />
     </Flex>

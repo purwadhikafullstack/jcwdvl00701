@@ -8,7 +8,6 @@ module.exports = {
         name,
         email,
         phoneNumber,
-        birthdate,
         firebaseProviderId,
       } = req.body;
 
