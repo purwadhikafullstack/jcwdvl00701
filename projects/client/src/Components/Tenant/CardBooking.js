@@ -71,7 +71,7 @@ function CardBooking(props) {
         borderColor="gray.200"
         bg="white"
         mt="10px"
-        maxWidth="400px"
+        maxWidth="500px"
         boxShadow={{
           ss: "none",
           sm: "md",
@@ -185,7 +185,7 @@ function CardBooking(props) {
         </>
       ) : props.status === 2 ? (
         <>
-          <Flex maxWidth="400px">
+          <Flex maxWidth="500px">
             <Button
               me="5px"
               bg="primary"
