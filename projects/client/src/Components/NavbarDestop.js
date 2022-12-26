@@ -1,9 +1,9 @@
-import { 
+import {
   Box,
   Flex,
-  Button, 
-  Text, 
-  Image, 
+  Button,
+  Text,
+  Image,
   Container,
   Menu,
   MenuButton,
@@ -11,7 +11,7 @@ import {
   MenuItem,
   MenuDivider,
   Avatar,
-  Spacer
+  Spacer,
 } from "@chakra-ui/react";
 import { Link, useHistory } from "react-router-dom";
 import turuIcon from "../Assets/image/turuIcon.png";
@@ -21,20 +21,20 @@ import { signOut } from "firebase/auth";
 
 function NavbarDestop() {
   // const global = useSelector(state => state.user)
-  const {id, ProfilePic} = useSelector(state => state.user)
-  const auth = authFirebase
-  const history = useHistory()
+  const { id, ProfilePic } = useSelector((state) => state.user);
+  const auth = authFirebase;
+  const history = useHistory();
 
   const logout = () => {
     signOut(auth)
       .then(() => alert("signed out"))
       .catch((error) => alert(error));
-    history.push("/login")
-  }
+    history.push("/login");
+  };
 
   const switchToTenant = () => {
-    history.push("/tenant/complete-register")
-  }
+    history.push("/tenant/complete-register");
+  };
   return (
     <Box
       display={{ ss: "none", sm: "none", sl: "inline" }}
@@ -54,7 +54,7 @@ function NavbarDestop() {
             alt="turu-icon"
             width="58px"
             height="58px"
-            />
+          />
           <Spacer />
           <Flex fontWeight="bold" fontSize="18px" my="auto" mr="20px">
             <Link>
@@ -65,23 +65,34 @@ function NavbarDestop() {
             </Link>
 
             <Menu>
-              <MenuButton fontWeight="bold" fontSize="18px" my="auto">Account</MenuButton>
-                  <MenuList>
-                    <MenuItem onClick={() => history.push("/profile")}>Profile</MenuItem>
-                    <MenuDivider/>
-                    <MenuItem onClick={switchToTenant}>Switch To Tenant</MenuItem>
-                    <MenuDivider/>
-                    {
-                      id ?
-                    <MenuItem onClick={logout}>Logout</MenuItem>
-                      :
-                    <MenuItem onClick={() => history.push("/login")}>Login</MenuItem>
-                  }
-                  <MenuDivider/>
-                  </MenuList>
+              <MenuButton fontWeight="bold" fontSize="18px" my="auto">
+                Account
+              </MenuButton>
+              <MenuList>
+                <MenuItem onClick={() => history.push("/profile")}>
+                  Profile
+                </MenuItem>
+                <MenuDivider />
+                <MenuItem onClick={switchToTenant}>Switch To Tenant</MenuItem>
+                <MenuDivider />
+                {id ? (
+                  <MenuItem onClick={logout}>Logout</MenuItem>
+                ) : (
+                  <MenuItem onClick={() => history.push("/login")}>
+                    Login
+                  </MenuItem>
+                )}
+                <MenuDivider />
+              </MenuList>
             </Menu>
-          </Flex> 
-          <Avatar size="md" objectFit={"cover"} overflow="hidden" my="auto" src={ process.env.REACT_APP_API_BASE_URL + ProfilePic}/>
+          </Flex>
+          <Avatar
+            size="md"
+            objectFit={"cover"}
+            overflow="hidden"
+            my="auto"
+            src={process.env.REACT_APP_API_BASE_URL + ProfilePic}
+          />
         </Flex>
       </Container>
     </Box>

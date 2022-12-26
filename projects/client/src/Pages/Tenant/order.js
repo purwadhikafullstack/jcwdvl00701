@@ -45,12 +45,12 @@ function Order() {
   const [propertyId, setPropertyId] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { Tenant } = useSelector((state) => state.user);
-
+  const { TenantId } = useSelector((state) => state.user);
+  console.log(TenantId);
   async function fetchOrder() {
     await axios
       .get(
-        `${process.env.REACT_APP_API_BASE_URL}/report/get/${Tenant}?status=${status}&searchQuery=${keyword}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`
+        `${process.env.REACT_APP_API_BASE_URL}/report/get/${TenantId}?status=${status}&searchQuery=${keyword}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`
       )
       .then((res) => {
         setOrder(res.data.result.rows);
@@ -100,6 +100,7 @@ function Order() {
             guest_count={val.guestCount}
             price={val.finalPrice}
             paymentProof={val.Transaction?.paymentProof}
+            randomNumber={setRandomNumber}
           />
         </Box>
       );
@@ -141,7 +142,7 @@ function Order() {
     fetchOrder();
     fetchDataDropdown();
     renderOrder();
-  }, [status, keyword, page, propertyId, Tenant, randomNumber]);
+  }, [status, keyword, page, propertyId, TenantId, randomNumber]);
 
   return (
     <Layout>

@@ -54,8 +54,9 @@ function CardBooking(props) {
         `${process.env.REACT_APP_API_BASE_URL}/report/update/${props.id}?status=${status}`
       )
       .then((res) => {
-        history.push("/tenant/order");
-
+        onCancleClose();
+        onAcceptClose();
+        onRejectClose();
         props.randomNumber(Math.random());
       })
       .catch((err) => {
@@ -246,8 +247,9 @@ function CardBooking(props) {
       >
         <ModalOverlay />
         <ModalContent borderRadius={0}>
-          <ModalHeader>Are you sure you want to cancle this order?</ModalHeader>
+          <ModalHeader>cancle order</ModalHeader>
           <ModalCloseButton />
+          <ModalBody>Are you sure you want to cancle this order?</ModalBody>
 
           <ModalFooter>
             <Button
@@ -272,9 +274,9 @@ function CardBooking(props) {
       >
         <ModalOverlay />
         <ModalContent borderRadius={0}>
-          <ModalHeader>Are you sure you want to accept this order?</ModalHeader>
+          <ModalHeader> Accept order</ModalHeader>
           <ModalCloseButton />
-
+          <ModalBody>Are you sure you want to accept this order?</ModalBody>
           <ModalFooter>
             <Button
               onClick={() => updateOrder(3)}
@@ -282,7 +284,7 @@ function CardBooking(props) {
               colorScheme="green"
               mr={3}
             >
-              accept
+              Accept
             </Button>
             <Button borderRadius={0} onClick={onAcceptClose}>
               Cancel
@@ -298,8 +300,9 @@ function CardBooking(props) {
       >
         <ModalOverlay />
         <ModalContent borderRadius={0}>
-          <ModalHeader>Are you sure you want to reject this order?</ModalHeader>
+          <ModalHeader>Reject order</ModalHeader>
           <ModalCloseButton />
+          <ModalBody>Are you sure you want to reject this order?</ModalBody>
 
           <ModalFooter>
             <Button
@@ -308,7 +311,7 @@ function CardBooking(props) {
               colorScheme="red"
               mr={3}
             >
-              reject
+              Reject
             </Button>
             <Button borderRadius={0} onClick={onRejectClose}>
               Cancel
@@ -327,10 +330,9 @@ function CardBooking(props) {
           <ModalBody>
             <Image
               src={process.env.REACT_APP_API_BASE_URL + props.paymentProof}
-              alt="property image"
-              width="90px"
+              alt="paymentProof"
+              width="100%"
               height="60px"
-              me="10px"
               overflow="hiden"
               objectFit="cover"
             />

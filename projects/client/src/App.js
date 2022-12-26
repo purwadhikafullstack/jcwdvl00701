@@ -113,49 +113,37 @@ function App() {
                 // console.log(val);
                 return val.roleId;
               }
-          })
-          .then((res) => {
-              console.log("data get1 :", res.data.globalState);
-              // console.log("data get2 :", res.data.results.UserRoles);
-              // console.log("data get3 :", res.data.results.Tenant.id);
-              if(res.data.globalState === null) {
-                alert("loading...")
-              } else {
-                res.data.globalState.UserRoles = res.data.globalState.UserRoles.map((val) => {
-                  // console.log(val);
-                  return val.roleId
-                })
-                if(res.data.globalState.Tenant === null){
-                  res.data.globalState.Tenant = 0
-                }
-                if(res.data.globalState.Profile === null){
-                  res.data.globalState.Profile = 0
-                }
-                console.log("data get2 :", res.data.globalState);
-                dispatch({
-                    type : auth_types.Redux,
-                    payload : {
-                      id : res.data.globalState.id,
-                      email : res.data.globalState.email,
-                      emailVerified,
-                      firebaseProviderId : res.data.globalState.firebaseProviderId,
-                      UserRoles : res.data.globalState.UserRoles,
-                      TenantId: res.data.globalState.Tenant.id || 0,
-                      TenantName: res.data.globalState?.Tenant?.name ,
-                      ProfileName : res.data.globalState?.Profile?.name ,
-                      ProfilePic : res.data.globalState?.Profile?.profilePic
-                    }
-                  })
-              }
-          })
-          .catch((err) => {
-              // alert("please registered your account in form register")
-              console.error(err.message)
-          })
-      }
-    getDataGlobal()
-  },[userId])
-  
+            );
+            if (res.data.globalState.Tenant === null) {
+              res.data.globalState.Tenant = 0;
+            }
+            if (res.data.globalState.Profile === null) {
+              res.data.globalState.Profile = 0;
+            }
+            console.log("data get2 :", res.data.globalState);
+            dispatch({
+              type: auth_types.Redux,
+              payload: {
+                id: res.data.globalState.id,
+                email: res.data.globalState.email,
+                emailVerified,
+                firebaseProviderId: res.data.globalState.firebaseProviderId,
+                UserRoles: res.data.globalState.UserRoles,
+                TenantId: res.data.globalState.Tenant.id || 0,
+                TenantName: res.data.globalState?.Tenant?.name,
+                ProfileName: res.data.globalState?.Profile?.name,
+                ProfilePic: res.data.globalState?.Profile?.profilePic,
+              },
+            });
+          }
+        })
+        .catch((err) => {
+          // alert("please registered your account in form register")
+          console.error(err.message);
+        });
+    };
+    getDataGlobal();
+  }, [userId]);
 
   return (
     <BrowserRouter>
