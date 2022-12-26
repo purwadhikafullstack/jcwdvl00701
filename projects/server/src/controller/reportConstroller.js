@@ -7,25 +7,56 @@ const {
   Transaction,
 } = require("../models");
 const { Op } = require("sequelize");
+const reservation = require("../models/reservation");
 
 module.exports = {
   getOrder: async (req, res) => {
-    const page = parseInt(req.query.page) || 0;
-    const limit = parseInt(req.query.limit) || 10;
-    const search = req.query.search_query || "";
-    const alfabet = req.query.alfabet || "ASC";
-    const time = req.query.time || "ASC";
-    const offset = limit * page;
-    const tenantId = req.params.tenantId;
     try {
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const search = req.query.searchQuery || "";
+      const alfabet = req.query.alfabet || "ASC";
+      const time = req.query.time || "ASC";
+      const offset = limit * page;
+      const price = req.query.price || "ASC";
+      const tenantId = req.params.tenantId;
+
+      console.log("page");
+      console.log(page);
+      console.log("limit");
+      console.log(limit);
+      console.log("search");
+      console.log(search);
+      console.log("time");
+      console.log(time);
+      console.log("price");
+      console.log(price);
+
+      const whereCondition = {
+        name: { [Op.like]: "%" + search + "%" },
+      };
+
+      if (req.query?.propertyId) {
+        whereCondition.propertyId = req.query.propertyId;
+      }
+      let whereConditionStatus = {
+        guestCount: { [Op.like]: "%%" },
+      };
+
+      if (req.query?.status > 0) {
+        whereConditionStatus.status = req.query?.status;
+      } else if (req.query?.status == null) {
+        whereConditionStatus = { where: {} };
+      }
+
       getReportOrder = await Reservation.findAndCountAll({
         include: [
           {
             model: Room,
-            required: false,
+            required: true,
             attributes: ["id", "name"],
-            where: { name: { [Op.like]: "%" + search + "%" } },
-            order: [["name", `${alfabet}`]],
+            where: whereCondition,
+
             include: [
               {
                 model: Property,
@@ -54,7 +85,13 @@ module.exports = {
             ],
           },
         ],
-        order: [["updatedAt", `${time}`]],
+        where: whereConditionStatus,
+
+        order: [
+          [Room, "name", `${alfabet}`],
+          ["finalPrice", `${price}`],
+          ["endDate", `${time}`],
+        ],
         offset: offset,
         limit: limit,
       });
@@ -72,6 +109,31 @@ module.exports = {
       console.log(err);
       return res.status(500).json({
         message: err,
+      });
+    }
+  },
+  updateOrder: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const status = parseInt(req.query.status);
+      const result = await Reservation.update(
+        {
+          status,
+        },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+      return res.status(200).json({
+        message: "Berhasil update",
+        result,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString(),
+        code: 500,
       });
     }
   },

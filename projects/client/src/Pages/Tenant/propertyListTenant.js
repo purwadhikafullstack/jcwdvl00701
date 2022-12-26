@@ -29,7 +29,7 @@ import { useSelector } from "react-redux";
 
 function PropertyListTenant() {
   const [propertyData, setPropertyData] = useState([]);
-  
+
   const [randomNumber, setRandomNumber] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [alfabet, setAlfabet] = useState("");
@@ -41,7 +41,9 @@ function PropertyListTenant() {
   const [rows, setRows] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const {TenantId, firebaseProviderId,  emailVerified} = useSelector(state => state.user)
+  const { TenantId, firebaseProviderId, emailVerified } = useSelector(
+    (state) => state.user
+  );
   console.log(TenantId);
 
   // reender data property
