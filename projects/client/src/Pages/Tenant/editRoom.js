@@ -36,23 +36,27 @@ function EditRoom() {
   const [propertyId, setPropertyId] = useState("")
   const [dropdown, setDropdown] = useState([])
   const history = useHistory()
+  console.log(id);
+  console.log(property);
 
   // utk get data berdasarkan id yg dikirm dari cardRoomTenant
   useEffect(() => {
     const fetchDataEdit = () => {
       axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-one/${id}`)
       .then((res) => {
-        setNama(res.data.roomOne.name)
-        setPrice(res.data.roomOne.defaultPrice)
-        setCapacity(res.data.roomOne.capacity)
-        setCaption(res.data.roomOne.description)
-        setPropertyId(res.data.roomOne.Property.id)
+        // console.log(res.data.roomOne);
+        setNama(res.data?.roomOne?.name)
+        setPrice(res.data?.roomOne?.defaultPrice)
+        setCapacity(res.data?.roomOne?.capacity)
+        setCaption(res.data?.roomOne?.description)
+        setPropertyId(res.data?.roomOne?.Property?.id)
+        setProperty(res.data?.roomOne?.Property)
   
         //set values
-        formik.values.nameRoom = res.data.roomOne.name;
-        formik.values.price = res.data.roomOne.defaultPrice;
-        formik.values.capacity = res.data.roomOne.capacity
-        formik.values.caption = res.data.roomOne.description
+        formik.values.nameRoom = res.data?.roomOne?.name;
+        formik.values.price = res.data?.roomOne?.defaultPrice;
+        formik.values.capacity = res.data?.roomOne?.capacity
+        formik.values.caption = res.data?.roomOne?.description
       })
       .catch((err) => {
         console.error(err)
@@ -159,7 +163,7 @@ function EditRoom() {
         </Container>
         <Container maxW="1140px">
           <Image
-            src={Foto}
+            src={process.env.REACT_APP_API_BASE_URL + property?.pic}
             alt="Room image"
             width="100%"
             height="210px"

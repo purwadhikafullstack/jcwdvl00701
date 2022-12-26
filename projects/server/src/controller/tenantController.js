@@ -4,14 +4,18 @@ module.exports = {
     addTenantComplete : async (req,res) => {
         try {
             console.log(req.body);
-            const {name , phoneNumber , idCardPic , userId} = req.body
+            const {name , phoneNumber, userId} = req.body
+            const {filename} = req.file
+            console.log(filename);
+            const fileUrl = `/tenant/${filename}`
+            console.log();
 
                 const result = await sequelize.transaction(async (t) => {
                     const addCompleteTenant =  await Tenant.create(
                     {
                         name,
                         phoneNumber,
-                        idCardPic,
+                        idCardPic : fileUrl,
                         userId
                     },
                     { transaction: t }
@@ -28,7 +32,7 @@ module.exports = {
                 return {
                     name,
                     userId,
-                    idCardPic,
+                    idCardPic : fileUrl,
                     roleId : addRoleTenant.roleId
                 }
             })
@@ -47,7 +51,12 @@ module.exports = {
     addTenantRegister: async (req,res) => {
         try{
             console.log(req.body);
-            const {id, firebaseProviderId, email, phoneNumber, idCardPic, name} = req.body
+            // id cardPic nya harus bentuk foto
+            const {id, firebaseProviderId, email, phoneNumber, name} = req.body
+
+            const {filename} = req.file
+            console.log(filename);
+            const fileUrl = `/tenant/${filename}`
 
             const result = await sequelize.transaction(async(t) => {
                 const user = await User.create(
@@ -62,7 +71,7 @@ module.exports = {
                     {
                         name : name,
                         phoneNumber : phoneNumber,
-                        idCardPic : idCardPic,
+                        idCardPic : fileUrl,
                         userId : id
                     },
                     { transaction : t}

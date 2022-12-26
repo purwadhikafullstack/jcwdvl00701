@@ -5,6 +5,7 @@ const tenantController = require("./tenantController");
 const productController = require("./productController");
 const reportController = require("./reportConstroller");
 const reservationController = require("./reservationController")
+const paymentController = require("./paymentController")
 
 module.exports = {
   userController,
@@ -13,5 +14,6 @@ module.exports = {
   tenantController,
   productController,
   reportController,
-  reservationController
+  reservationController,
+  paymentController
 };

@@ -27,7 +27,8 @@ function AddProperty() {
   const [category, setCategory] = useState([]);
   const [fileSizeMsg, setFileSizeMsg] = useState("");
   let history = useHistory();
-  const {Tenant, firebaseProviderId} = useSelector(state => state.user)
+  const {TenantId, firebaseProviderId} = useSelector(state => state.user)
+  console.log(TenantId);
 
   const handleFile = (event) => {
     if (event.target.files[0].size / 1024 > 1024) {
@@ -68,7 +69,7 @@ function AddProperty() {
       pic: selectedFile,
       categoryId: 0,
       rules: "",
-      tenantId: Tenant,
+      tenantId: TenantId,
     },
 
     validationSchema: Yup.object().shape({
