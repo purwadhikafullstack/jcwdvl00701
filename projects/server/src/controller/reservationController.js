@@ -5,11 +5,14 @@ module.exports = {
     getReservation : async(req,res) => {
         // dpt dari id use params sesuai room yg di klik nya ==> utk di code front-end
         const id = req.query.id
+        // const startDate = req.query.startDate
         console.log(id);
+        // console.log(startDate);
         try{
             const reservation = await Reservation.findOne({
                 where : {
-                    roomId : id
+                    id: id,
+                    // startDate : startDate
                 },
                 include : [
                     {
@@ -63,6 +66,10 @@ module.exports = {
                     },
                     { transaction: t }
                 )
+
+                return {
+                    id : reservation.id
+                }
             })
             return res.status(200).json({
                 result : result,

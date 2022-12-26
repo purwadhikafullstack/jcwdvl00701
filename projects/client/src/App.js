@@ -111,10 +111,26 @@ function App() {
                   // console.log(val);
                   return val.roleId
                 })
-              res.data.globalState.Tenant = res.data.globalState.Tenant.id
+                if(res.data.globalState.Tenant === null){
+                  res.data.globalState.Tenant = 0
+                }
+                if(res.data.globalState.Profile === null){
+                  res.data.globalState.Profile = 0
+                }
+                console.log("data get2 :", res.data.globalState);
                 dispatch({
                     type : auth_types.Redux,
-                    payload : {...res.data.globalState , emailVerified }
+                    payload : {
+                      id : res.data.globalState.id,
+                      email : res.data.globalState.email,
+                      emailVerified,
+                      firebaseProviderId : res.data.globalState.firebaseProviderId,
+                      UserRoles : res.data.globalState.UserRoles,
+                      TenantId: res.data.globalState.Tenant.id || 0,
+                      TenantName: res.data.globalState?.Tenant?.name ,
+                      ProfileName : res.data.globalState?.Profile?.name ,
+                      ProfilePic : res.data.globalState?.Profile?.profilePic
+                    }
                   })
               }
           })

@@ -33,8 +33,8 @@ function ButtonDashboard(props) {
 }
 
 function Dashboard() {
-    const {tenantId, firebaseProviderId,  is_verified} = useSelector(state => state.user)
-  console.log(tenantId);;
+    const {TenantId, firebaseProviderId} = useSelector(state => state.user)
+  console.log(TenantId);;
   return (
     <Layout>
       <Box mt="90px" mb="30px">

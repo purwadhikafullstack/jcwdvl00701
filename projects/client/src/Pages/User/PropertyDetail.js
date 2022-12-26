@@ -13,9 +13,17 @@ import {
   Center,
   IconButton,
   chakra,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
 import { addDays, subDays } from "date-fns";
+import { useDisclosure } from "@chakra-ui/react";
 
 import Layout from "../../Components/Layout";
 import axios from "axios";
@@ -58,6 +66,7 @@ function PropertyDetail(props) {
   const [start , setStart] = useState("")
   const [end , setEnd] = useState("")
   let history = useHistory()
+    const { isOpen, onOpen, onClose } = useDisclosure();
   // const [totalHarga, setTotalHarga] = useState(0)
   // console.log("start", start);
   // console.log("end ",end);
@@ -353,8 +362,8 @@ function PropertyDetail(props) {
         finalPrice : finalCountPrice
       })
       console.log(response.data);
-      
-      history.push(`/booking/${idRoom}`)
+      history.push(`/booking/${response.data.result.id}`)
+      onClose()
       } catch (err) {
         console.error(err.data.message)
       }
@@ -436,11 +445,11 @@ function PropertyDetail(props) {
 
             {
               finalCountPrice ?
-              <Button w="100%" variant="primary" my={2} onClick={btnHandlerReservation}>
+              <Button w="100%" variant="primary" my={2} onClick={onOpen}>
                 Reserve
               </Button>
               :
-              <Button w="100%" variant="primary" my={2} onClick={btnHandlerReservation} disabled={true}>
+              <Button w="100%" variant="primary" my={2} disabled={true}>
                 Reserve
               </Button>
             }
@@ -480,6 +489,29 @@ function PropertyDetail(props) {
           </Button>
         </Container>
       </div>
+      {/* utk modal sebelum reserve */}
+      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent borderRadius={0}>
+          <ModalHeader>Are you sure to reserved ?</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}></ModalBody>
+
+          <ModalFooter>
+            <Button
+              onClick={btnHandlerReservation}
+              borderRadius={0}
+              colorScheme="red"
+              mr={3}
+            >
+              Reserve
+            </Button>
+            <Button borderRadius={0} onClick={onClose}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Layout>
   );
 }

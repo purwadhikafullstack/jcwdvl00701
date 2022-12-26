@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import {
     Flex,
     Spacer,
@@ -12,6 +12,7 @@ import {
     Text,
     Container,
     Alert,
+    FormHelperText
 } from "@chakra-ui/react";
 import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
@@ -29,31 +30,47 @@ import axios from "axios"
 function CompleteFormTenant() {
 
     const {id, UserRoles} = useSelector( state => state.user)
+    const [selectedFile, setSelectedFile] = useState(null)
+    const inputFileRef = useRef(null)
+    const [fileSizeMsg, setFileSizeMsg] = useState("");
     let history = useHistory()
+
+    const handleFile = (event) => {
+        if (event.target.files[0].size / 1024 > 1024) {
+            setFileSizeMsg("File size is greater than maximum limit");
+        } else {
+            setSelectedFile(event.target.files[0]);
+            formik.setFieldValue("idCardPic", event.target.files[0]);
+        }
+    };
 
     // formik initialization
     const formik = useFormik({
         initialValues: {
             nameLapak : "",
             phoneNumber : "",
-            idCard : ""
+            idCardPic : selectedFile
         },
         validationSchema: Yup.object().shape({
             nameLapak : Yup.string().required("name lapak can't be empty"),
             phoneNumber: Yup.string().phone("ID").required("phone number can't be empty"),
-            idCard : Yup.number("input your idCard").required("id card can't be empty")
+            idCardPic : Yup.string("input your idCard").required("id card can't be empty")
         }),
         validateOnChange : false,
         onSubmit : async (values) => {
             console.log(values)
-            const {nameLapak, phoneNumber, idCard} = values
-            axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/complete-register`, {
-                name : nameLapak,
-                phoneNumber,
-                idCardPic : idCard,
-                userId : id
-            })
+            const {nameLapak, phoneNumber, idCardPic} = values
+
+            const formData = new FormData()
+
+            formData.append("name", nameLapak)
+            formData.append("phoneNumber" , phoneNumber)
+            formData.append("idCardPic" , idCardPic)
+            formData.append("userId" , id)
+
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/complete-register`, formData)
             .then((res) => {
+                console.log(res.data);
                 alert(res.data.message)
                 history.push("/")
             })
@@ -165,38 +182,44 @@ function CompleteFormTenant() {
                                 </Alert>
                                 ) : null}
                             </FormControl>
-                            {/* <FormControl id="account-bank" pb="12px">
+                            <FormControl id="idCardPic" pb="12px">
                             <Input
-                                type="number"
-                                placeholder="Insert Account Bank"
-                                borderRadius="0"
-                                bg="white"
-                                onChange={(e) => formik.setFieldValue("accountBank", e.target.value)}
-                            />
-
-                            {formik.errors.accountBank? (
-                                <Alert status="error" color="red" text="center">
-                                    <i className="fa-solid fa-circle-exclamation"></i>
-                                    <Text ms="10px">{formik.errors.accountBank}</Text>
-                                </Alert>
-                                ) : null}
-                            </FormControl> */}
-
-                            <FormControl id="idCard" pb="12px">
-                            <Input
-                                type="Text"
+                                type="file"
                                 placeholder="Upload Id Card "
                                 borderRadius="0"
                                 bg="white"
-                                onChange={(e) => formik.setFieldValue("idCard", e.target.value)}
+                                onChange={handleFile}
+                                ref={inputFileRef}
+                                display="none"
+                                accept="image/*"
                             />
+                            <FormHelperText color="white">Max size: 1MB</FormHelperText>
+                            <Button
+                            variant="secondary"
+                            w="100%"
+                            onClick={() => inputFileRef.current.click()}
+                            >
+                            Input Id Card
+                            </Button>
 
-                            {formik.errors.idCard? (
+                            {formik.errors.idCardPic? (
                                 <Alert status="error" color="red" text="center">
                                     <i className="fa-solid fa-circle-exclamation"></i>
-                                    <Text ms="10px">{formik.errors.idCard}</Text>
+                                    <Text ms="10px">{formik.errors.idCardPic}</Text>
                                 </Alert>
-                                ) : null}
+                                ) : null
+                            }
+                            {
+                                selectedFile ? 
+                                (
+                                    <Alert status="info" color="green" text="center">
+                                    <i class="fa-solid fa-check"></i>
+                                    <Text ms="10px">Id Card uploaded</Text>
+                                    </Alert>
+                                )
+                                :
+                                null
+                            }
                             </FormControl>
                             <Button variant="primary" mb="12px" onClick={formik.handleSubmit}>
                             complete data

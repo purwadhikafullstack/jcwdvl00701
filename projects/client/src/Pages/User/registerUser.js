@@ -52,11 +52,10 @@ function RegisterUser() {
     const _handleRegister = async (credential, payload={}) => {
         const user = credential.user
         const providerId = credential.providerId ? credential.providerId : 'password'
-
         if (!providerId.toLowerCase().includes('google')) {
             await sendEmailVerification(user)
         }
-
+        
         const registerUrl = `${process.env.REACT_APP_API_BASE_URL}/user/register`
 
         payload = Object.keys(payload).length === 0 ? {
@@ -70,6 +69,7 @@ function RegisterUser() {
             firebaseProviderId: providerId,
             ...payload
         }
+
         const response = await axios.post(registerUrl, payload)
 
         dispatch({

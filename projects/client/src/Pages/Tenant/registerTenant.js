@@ -1,4 +1,4 @@
-import React from "react";
+import { useRef, useState } from "react";
 import {
   Flex,
   Spacer,
@@ -13,7 +13,8 @@ import {
   Container,
   InputGroup,
   InputRightElement,
-  Alert
+  Alert,
+  FormHelperText
 } from "@chakra-ui/react";
 import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
@@ -30,9 +31,21 @@ import YupPassword from "yup-password";
 import "yup-phone";
 
 function RegisterTenant() {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null)
+  const inputFileRef = useRef(null)
+  const [fileSizeMsg, setFileSizeMsg] = useState("");
   let history = useHistory()
+
+  const handleFile = (event) => {
+        if (event.target.files[0].size / 1024 > 1024) {
+            setFileSizeMsg("File size is greater than maximum limit");
+        } else {
+            setSelectedFile(event.target.files[0]);
+            formik.setFieldValue("idCardPic", event.target.files[0]);
+        }
+    };
 
   const _handleRegister = async (credential, payload={}) => {
 
@@ -40,13 +53,20 @@ function RegisterTenant() {
     const provider = credential.providerId ? credential.providerId : "password"
 
     const registerUrl = `${process.env.REACT_APP_API_BASE_URL}/tenant/register-tenant`
-    payload = {
-      id : user.uid,
-      firebaseProviderId : provider,
-      ...payload
-    }
+    console.log("_handleregister", payload);
 
-    const response = await axios.post(registerUrl, payload)
+    let {name, email ,phoneNumber, idCardPic} = payload
+    const formData = new FormData()
+
+    formData.append("id" , user.uid)
+    formData.append("firebaseProviderId", provider)
+    formData.append("email", email)
+    formData.append("phoneNumber", phoneNumber)
+    formData.append("idCardPic", idCardPic)
+    formData.append("name" , name)
+
+    const response = await axios.post(registerUrl, formData)
+    console.log(response.data);
 
     history.push("/tenant/dasboard")
   }
@@ -59,7 +79,7 @@ function RegisterTenant() {
         phoneNumber: "",
         password: "",
         confirmPassword: "",
-        idCard : ""
+        idCardPic : selectedFile
       },
       validationSchema: Yup.object().shape({
         name : Yup.string().required("fill your name"),
@@ -68,19 +88,19 @@ function RegisterTenant() {
         password: Yup.string().required("please fill in the password").min(8).minUppercase(1).minNumbers(1),
         confirmPassword: Yup.string().required("please re-type your password")
             .oneOf([Yup.ref('password'), null], 'Didn\'t match with password'),
-        idCard : Yup.number().required("please insert your id card")
+        idCardPic : Yup.string().required("please insert your id card")
     }),
     validateOnChange: false,
     onSubmit : async (values) => {
       console.log(values);
 
-      const {name, email, phoneNumber, password, idCard} = values
+      const {name, email, phoneNumber, password, idCardPic} = values
 
       const credential = await createUserWithEmailAndPassword(authFirebase, email, password)
       const user = credential.user
       
 
-      await _handleRegister(credential , {name : name, email : email, phoneNumber : parseInt(phoneNumber) , idCardPic : parseInt(idCard)})
+      await _handleRegister(credential , {name : name, email : email, phoneNumber : phoneNumber , idCardPic : idCardPic})
     }
   })
   return (
@@ -279,18 +299,42 @@ function RegisterTenant() {
                         </FormControl>
                         <FormControl id="idCard" pb="12px">
                           <Input
-                            type="Text"
+                            type="file"
                             placeholder="Upload Id Card "
                             borderRadius="0"
                             bg="white"
-                            onChange={(e) => formik.setFieldValue("idCard", e.target.value)}
+                            // onChange={(e) => formik.setFieldValue("idCard", e.target.value)}
+                            onChange={handleFile}
+                            ref={inputFileRef}
+                            display="none"
+                            accept="image/*"
                           />
-                          {formik.errors.idCard? (
+                          <FormHelperText color="white">Max size: 1MB</FormHelperText>
+                            <Button
+                            variant="secondary"
+                            w="100%"
+                            onClick={() => inputFileRef.current.click()}
+                            >
+                            Input Id Card
+                            </Button>
+                          {formik.errors.idCardPic? (
                             <Alert status="error" color="red" text="center">
                                 <i className="fa-solid fa-circle-exclamation"></i>
-                                <Text ms="10px">{formik.errors.idCard}</Text>
+                                <Text ms="10px">{formik.errors.idCardPic}</Text>
                             </Alert>
-                            ) : null}
+                            ) : null
+                          }
+                          {
+                            selectedFile ? 
+                            (
+                                <Alert status="info" color="green" text="center">
+                                <i class="fa-solid fa-check"></i>
+                                <Text ms="10px">Id Card uploaded</Text>
+                                </Alert>
+                            )
+                            :
+                            null
+                          }
                         </FormControl>
                         <Button variant="primary" mb="12px" onClick={formik.handleSubmit}>
                           Sign up

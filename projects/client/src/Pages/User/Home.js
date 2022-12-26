@@ -191,9 +191,10 @@ function Thumbnail(props) {
 
 function Home(props) {
 
-  const {id, Tenant} = useSelector(state => state.user)
-  console.log(id);
-  console.log(Tenant);
+  const global = useSelector(state => state.user)
+  console.log(global);
+  // console.log(Tenant);
+  // console.log(Profile);
   const sliderSettings = {
     dots: true,
     infinite: true,

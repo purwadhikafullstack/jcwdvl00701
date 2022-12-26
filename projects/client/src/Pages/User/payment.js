@@ -8,32 +8,150 @@ import {
   useMediaQuery,
   Container,
   Image,
+  FormControl,
+  Input,
+  FormHelperText,
+  Alert,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Spinner
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Layout from "../../Components/Layout";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import NavbarDestop from "../../Components/NavbarDestop";
 import bookingImage from "../../Assets/image/booking.png";
+import axios from "axios"
+import { useDisclosure } from "@chakra-ui/react";
 
 function Payment() {
-  const bookingUser = [
-    {
-      pic: "Image1",
-      name: "Apartment in Jakarta",
-      guest_count: 1,
-      start_date: 18,
-      end_date: 19,
-      price: 800000,
-      satatus: "ongoing",
-      roomName: "room 2",
-    },
-  ];
+  const [dataPayment, setDataPayment] = useState({})
+  const [dataTenant , setDataTenant] = useState({})
+  const [dataProperty, setDataProperty] = useState({})
+  const [startDate, setStartDate] = useState("")
+  const [endDate, setEndDate] = useState("")
+  const {id} = useParams()
+  const inputFileRef = useRef(null)
+  const [fileSizeMsg, setFileSizeMsg] = useState("")
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [prove, setProve] = useState(false)
+  const [err, setErr] = useState(false)
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  let history = useHistory()
+  const [loading, setLoading] = useState(true)
+  
+  const handleFile = (event) => {
 
-  const [booking, setBooking] = useState(bookingUser);
+    if (event.target.files[0].size / 1024 > 1024) {
+      setFileSizeMsg("File size is greater than maximum limit");
+      setProve(false)
+      setErr(true)
+    } else {
+      setSelectedFile(event.target.files[0]);
+      setProve(true)
+      setErr(false)
+    }
+  };
 
-  return (
-    <Layout>
+  const sDate = startDate.split("T")
+  const sDate2 = sDate[0].split("-")
+  
+  const eDate = endDate.split("T")
+  const eDate2 = eDate[0].split("-")
+  
+  const bulan = ["Januari", "Februari", "Maret", "April" ,"Mei" , "Juni" , "Juli" , "Agustus" , "September" , "Oktober", "November", "Desember"]
+  const searchBulan = (bln) => {
+    const angka = [1,2,3,4,5,6,7,8,9,10,11,12] 
+    let bulanNow = ""
+    for (let i = 0; i < bln.length; i++) {
+      if(sDate2[1] == angka[i + 1]){
+
+        return bulanNow += bln[i + 1]
+      }
+    }
+  }
+  let resultBulan = searchBulan(bulan)
+
+  let price = dataPayment?.finalPrice
+  const priceRupiah = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(price)
+
+  let tax = price/ 10
+  const taxRupiah = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(tax)
+
+  let finalPrice = price + tax
+  // console.log(finalPrice);
+
+  const finalPriceRupiah = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(finalPrice)
+
+
+  useEffect(() => {
+    setLoading(true)
+    const fetchDataPayment = async() => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/payment/get-payment` , {
+          // params nya reservation id
+          params: {
+            id : id
+          }
+        })
+  
+        // console.log(response?.data?.result)
+        setDataPayment(response?.data?.result)
+        setDataTenant(response?.data?.result.User.Tenant)
+        setDataProperty(response?.data?.result.Room.Property)
+        setStartDate(response?.data?.result.startDate)
+        setEndDate(response?.data?.result.endDate)
+      } catch (err) {
+        console.error(err.message)
+      }
+    }
+
+    fetchDataPayment()
+    setLoading(false)
+  }, [id])
+
+  const btnHandlerUpload = async () => {
+    try {
+      const formData = new FormData()
+
+    formData.append("image", selectedFile)
+    formData.append("reservationId", id)
+    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/payment/add-payment`, formData)
+    console.log(response.data);
+    onClose()
+    history.push("/booking-history")
+    } catch (err) {
+      console.error(err.message)
+    }
+  }
+
+  return loading ?
+  <Flex justifyContent="center" mt="24%">
+      <Spinner
+        thickness='4px'
+        speed='0.65s'
+        emptyColor='gray.200'
+        color='yellow.500'
+        size='xl'
+      />
+    </Flex>
+  :
+  <Layout>
       <Box
         mb={{ ss: "60px", sm: "60px", sl: "0px" }}
         mt={{ ss: "0px", sm: "0px", sl: "80px" }}
@@ -79,7 +197,7 @@ function Payment() {
                   </Box>
                   <Box>
                     <Text fontWeight="bold" fontSize="18px">
-                      {booking[0].name}
+                      {dataProperty?.name}
                     </Text>
                   </Box>
                 </Flex>
@@ -91,7 +209,7 @@ function Payment() {
                   color="rgba(175, 175, 175, 1)"
                   px="10px"
                 >
-                  12-16 Nov | 1 Guest
+                  {sDate2[2]}-{eDate2[2]} {resultBulan} | {dataPayment?.guestCount} Guest
                 </Text>
                 <Flex bg="white" border="1px" borderColor="gray.200">
                   <Link to="/booking">
@@ -118,7 +236,8 @@ function Payment() {
                       color="black"
                       px="5px"
                     >
-                      Rp. 625.000,00
+                      {/* final price + tax */}
+                      {finalPriceRupiah}
                     </Text>
                   </Box>
                 </Flex>
@@ -134,8 +253,7 @@ function Payment() {
                     color="rgba(17, 17, 17, 0.6)"
                   >
                     <ListItem>
-                      transfer money according to the total price to BNI bank
-                      with account number: 22222112121212
+                      transfer money according to the total price to {dataTenant?.Bank?.name} with account number: {dataTenant?.bankAccountNumber}
                     </ListItem>
                     <ListItem>save your proof of payment</ListItem>
                     <ListItem>
@@ -143,11 +261,56 @@ function Payment() {
                     </ListItem>
                   </OrderedList>
                 </Box>
-                <Button mx="20px" variant="secondary" w="305px">
-                  <Text fontWeight="regular" fontSize="14px">
-                    upload payment proof
-                  </Text>
-                </Button>
+                <FormControl>
+                  <Input
+                  type="file"
+                  accept="image/png, image/jpg"
+                  ref={inputFileRef}
+                  onChange={handleFile}
+                  display={"none"}
+                  />
+                  <FormHelperText ms="22px">Max size : 1MB</FormHelperText>
+                  <Button mx="20px" variant="secondary" w="305px" onClick={() => inputFileRef.current.click()}>
+                    <Text fontWeight="regular" fontSize="14px">
+                      upload image
+                    </Text>
+                  </Button>
+                  {err ? 
+                  (
+                    <Alert status="error" color="red" text="center">
+                      <i className="fa-solid fa-circle-exclamation"></i>
+                      <Text ms="10px">{fileSizeMsg}</Text>
+                    </Alert>
+                  ) : 
+                    null
+                  }
+
+                  {prove ? 
+                  (
+                    <Alert status="info" color="green" text="center">
+                      <i class="fa-solid fa-check"></i>
+                      <Text ms="10px">image uploaded</Text>
+                    </Alert>
+                  )
+                  :
+                  null
+                }
+                </FormControl>
+
+                {
+                  selectedFile ? 
+                <Button mx="20px" mt="20px" variant="secondary" w="305px" onClick={onOpen}>
+                    <Text fontWeight="regular" fontSize="14px">
+                      upload payment proof
+                    </Text>
+                  </Button>
+                  :
+                  <Button mx="20px" mt="20px" variant="secondary" w="305px" disabled="true">
+                    <Text fontWeight="regular" fontSize="14px">
+                      upload payment proof
+                    </Text>
+                  </Button>
+                }
                 <Text fontWeight="Bold" fontSize="18px" p="20px" pb="5px">
                   Price Details
                 </Text>
@@ -167,7 +330,8 @@ function Payment() {
                     </Box>
                     <Box>
                       <Text fontWeight="Bold" fontSize="14px">
-                        Rp.625.000,00
+                        {/* final price + tax */}
+                        {finalPriceRupiah}
                       </Text>
                     </Box>
                   </Flex>
@@ -179,7 +343,8 @@ function Payment() {
                     </Box>
                     <Box>
                       <Text fontWeight="reguler" fontSize="12px">
-                        Rp.300.000,00
+                        {/* price */}
+                        {priceRupiah}
                       </Text>
                     </Box>
                   </Flex>
@@ -191,7 +356,8 @@ function Payment() {
                     </Box>
                     <Box>
                       <Text fontWeight="reguler" fontSize="12px">
-                        Rp.25.000,00
+                        {/* tax */}
+                        {taxRupiah}
                       </Text>
                     </Box>
                   </Flex>
@@ -204,14 +370,36 @@ function Payment() {
                 h="618px"
                 overflow="hiden"
                 objectFit="cover"
-                src={bookingImage}
+                src={ process.env.REACT_APP_API_BASE_URL + dataProperty?.pic}
               ></Image>
             </Box>
           </Flex>
         </Container>
       </Box>
+      {/* utk modal sebelum pay*/}
+      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent borderRadius={0}>
+          <ModalHeader>Are you sure to pay room ?</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}></ModalBody>
+
+          <ModalFooter>
+            <Button
+              onClick={btnHandlerUpload}
+              borderRadius={0}
+              colorScheme="red"
+              mr={3}
+            >
+              pay
+            </Button>
+            <Button borderRadius={0} onClick={onClose}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Layout>
-  );
 }
 
 export default Payment;

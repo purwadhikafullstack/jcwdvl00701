@@ -1,8 +1,37 @@
-import { Box, Flex, Text, useMediaQuery } from "@chakra-ui/react";
+import { 
+  Box, 
+  Flex, 
+  Text, 
+  useMediaQuery ,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  Avatar
+} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { authFirebase } from "../Config/firebase";
+import { signOut } from "firebase/auth";
+import { useSelector } from "react-redux";
 
 function NavbarMobile() {
   const [isLargerThan576] = useMediaQuery("(min-width: 576px)");
+  const {id , ProfilePic} = useSelector(state => state.user)
+  const auth = authFirebase
+  const history = useHistory()
+
+  const logout = () => {
+    signOut(auth)
+      .then(() => alert("signed out"))
+      .catch((error) => alert(error));
+    history.push("/login")
+  } 
+
+  const switchToTenant = () => {
+    history.push("/tenant/complete-register")
+  }
   return (
     <Box
       bg="white"
@@ -29,10 +58,32 @@ function NavbarMobile() {
           </Box>
         </Link>
         <Box fontSize="22px" textAlign="center" color="black">
-          <i className="fa-solid fa-circle-user"></i>
-          <Text fontWeight="regular" fontSize="12px">
-            Profile
-          </Text>
+            <Menu>
+              <MenuButton fontWeight="regular">
+                {
+                  ProfilePic ?
+                  <Avatar size="sm"  my="auto" objectFit={"cover"} src={ process.env.REACT_APP_API_BASE_URL + ProfilePic}/>
+                  :
+                  <i className="fa-solid fa-circle-user"></i>
+                }
+                <Text fontWeight="regular" fontSize="12px">
+                  Account
+                </Text> 
+              </MenuButton>
+                  <MenuList>
+                    <MenuItem fontSize="14px" onClick={() => history.push("/profile")}>Profile</MenuItem>
+                    <MenuDivider/>
+                    <MenuItem onClick={switchToTenant} fontSize="14px">Switch To Tenant</MenuItem>
+                    <MenuDivider/>
+                    {
+                      id ?
+                    <MenuItem onClick={logout} fontSize="14px">Logout</MenuItem>
+                      :
+                    <MenuItem onClick={() => history.push("/login")} fontSize="14px">Login</MenuItem>
+                  }
+                  <MenuDivider/>
+                  </MenuList>
+            </Menu>
         </Box>
       </Flex>
     </Box>
