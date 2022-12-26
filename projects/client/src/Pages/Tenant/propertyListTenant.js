@@ -41,10 +41,10 @@ function PropertyListTenant() {
   const [rows, setRows] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { tenantId, firebaseProviderId, is_verified } = useSelector(
+  const { Tenant, firebaseProviderId, emailVerified } = useSelector(
     (state) => state.user
   );
-  console.log(tenantId);
+  console.log(Tenant);
 
   // reender data property
   function renderPropertyList() {

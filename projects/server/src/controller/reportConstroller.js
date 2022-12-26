@@ -7,6 +7,7 @@ const {
   Transaction,
 } = require("../models");
 const { Op } = require("sequelize");
+const reservation = require("../models/reservation");
 
 module.exports = {
   getOrder: async (req, res) => {
@@ -17,9 +18,19 @@ module.exports = {
       const alfabet = req.query.alfabet || "ASC";
       const time = req.query.time || "ASC";
       const offset = limit * page;
+      const price = req.query.price || "ASC";
       const tenantId = req.params.tenantId;
-      console.log(alfabet);
-      console.log(req.query.status);
+
+      console.log("page");
+      console.log(page);
+      console.log("limit");
+      console.log(limit);
+      console.log("search");
+      console.log(search);
+      console.log("time");
+      console.log(time);
+      console.log("price");
+      console.log(price);
 
       const whereCondition = {
         name: { [Op.like]: "%" + search + "%" },
@@ -38,7 +49,6 @@ module.exports = {
         whereConditionStatus = { where: {} };
       }
 
-      console.log(whereConditionStatus);
       getReportOrder = await Reservation.findAndCountAll({
         include: [
           {
@@ -46,7 +56,7 @@ module.exports = {
             required: true,
             attributes: ["id", "name"],
             where: whereCondition,
-            order: [["name", `${alfabet}`]],
+
             include: [
               {
                 model: Property,
@@ -77,7 +87,11 @@ module.exports = {
         ],
         where: whereConditionStatus,
 
-        order: [["updatedAt", `${time}`]],
+        order: [
+          [Room, "name", `${alfabet}`],
+          ["finalPrice", `${price}`],
+          ["endDate", `${time}`],
+        ],
         offset: offset,
         limit: limit,
       });
@@ -95,6 +109,31 @@ module.exports = {
       console.log(err);
       return res.status(500).json({
         message: err,
+      });
+    }
+  },
+  updateOrder: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const status = parseInt(req.query.status);
+      const result = await Reservation.update(
+        {
+          status,
+        },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+      return res.status(200).json({
+        message: "Berhasil update",
+        result,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString(),
+        code: 500,
       });
     }
   },
