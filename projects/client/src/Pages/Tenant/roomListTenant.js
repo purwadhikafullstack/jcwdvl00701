@@ -43,22 +43,27 @@ function RoomListTenant() {
   const {isOpen , onOpen , onClose} = useDisclosure()
   const [randomNumber, setRandomNumber] = useState(0);
 
-  const {Tenant, firebaseProviderId,  is_verified} = useSelector(state => state.user)
-  console.log(Tenant);
+  const {TenantId, firebaseProviderId} = useSelector(state => state.user)
+  console.log(TenantId);
 
   const inputHandler = (e, field) => {
     const {value} = e.target
 
     if (field == "keyword"){
       setKeyWord(value)
+      setPage(0);
     } else if (field == "alfabet"){
       setAlfabet(value)
+      setPage(0);
     } else if (field == "time"){
       setTime(value)
+      setPage(0);
     } else if (field == "price"){
       setPrice(value)
+      setPage(0);
     } else if(field == "propertyId"){
       setPropertyId(value)
+      setPage(0);
     }
   }
 
@@ -67,7 +72,7 @@ function RoomListTenant() {
     const fetchProperty = () => {
       // debounce
       const getData = setTimeout(() => {
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/${Tenant}?searchQuery=${keyWord}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`)
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/${TenantId}?searchQuery=${keyWord}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`)
         .then((res) => {
             setRoom(res.data.roomProperty.rows)
             setPage(res.data.page)
@@ -89,7 +94,7 @@ function RoomListTenant() {
     roomData()
     fetchDataDropdown()
     optionDropdown()
-  },[keyWord, page , time, alfabet, price, propertyId, Tenant, randomNumber])
+  },[keyWord, page , time, alfabet, price, propertyId, TenantId, randomNumber])
 
   // get data room, yg akan di loop utk di render
   const roomData = () => {

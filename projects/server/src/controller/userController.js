@@ -216,12 +216,16 @@ module.exports = {
             const globalState= await User.findOne({
                 include : [
                 {
+                  model : Profile,
+                  attributes : ["name" , "profilePic"]
+                },
+                {
                     model: UserRole,
                     attributes : ["roleId"],
                 },
                 {
                     model : Tenant,
-                    attributes : ["id"],
+                    attributes : ["id", "name"],
                 }           
             ],
                 where : {

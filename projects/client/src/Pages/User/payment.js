@@ -12,7 +12,7 @@ import {
   Input,
   FormHelperText,
   Alert,
-   Modal,
+  Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,

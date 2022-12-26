@@ -6,7 +6,10 @@ const init_state = {
   emailVerified: "",
   firebaseProviderId : "",
   UserRoles : [],
-  Tenant: 0
+  TenantId: 0,
+  TenantName: "",
+  ProfileName : "",
+  ProfilePic : ""
 };
 
 export default (state = init_state, action) => {
