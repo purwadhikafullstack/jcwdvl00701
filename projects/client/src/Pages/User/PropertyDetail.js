@@ -114,53 +114,61 @@ function PropertyDetail(props) {
   let totalPrice = 0;
   const countFinalPrice = () => {
     const found = datesRanges.map((element, i) => {
-      if (
-        element >=
-          new Date(roomData.SpecialPrices[0].startDate)
-            .toISOString()
-            .split("T")[0] &&
-        element <=
-          new Date(roomData.SpecialPrices[0].endDate)
-            .toISOString()
-            .split("T")[0]
-      ) {
-        console.log(i);
+      console.log("TEES111111111111");
+      if (roomData?.SpecialPrices[0].startDate) {
+        console.log("TESS22222222222222222222222222222");
+        if (
+          element >=
+            new Date(roomData?.SpecialPrices[0].startDate)
+              .toISOString()
+              .split("T")[0] &&
+          element <=
+            new Date(roomData?.SpecialPrices[0].endDate)
+              .toISOString()
+              .split("T")[0]
+        ) {
+          console.log("TESS33333333333333333333333333");
+          console.log(element);
+          console.log(
+            new Date(roomData?.SpecialPrices[0].startDate)
+              .toISOString()
+              .split("T")[0]
+          );
+          console.log(
+            new Date(roomData?.SpecialPrices[0].endDate)
+              .toISOString()
+              .split("T")[0]
+          );
+          console.log(roomData?.SpecialPrices[0].discount);
+          let finalPrice = 0;
+          if (roomData?.SpecialPrices[0].type === "nominal") {
+            console.log(roomData?.SpecialPrices[0].type);
+            finalPrice = roomData?.SpecialPrices[0].discount;
+          } else if (roomData?.SpecialPrices[0].type === "persen") {
+            console.log(roomData?.SpecialPrices[0].type);
+            finalPrice =
+              roomData.defaultPrice +
+              roomData.defaultPrice *
+                (roomData?.SpecialPrices[0].discount / 100);
+          }
+
+          totalPrice = totalPrice + finalPrice;
+          return totalPrice;
+        }
+        console.log("TESS444444444444");
         console.log(element);
         console.log(
-          new Date(roomData.SpecialPrices[0].startDate)
+          new Date(roomData?.SpecialPrices[0].startDate)
             .toISOString()
             .split("T")[0]
         );
         console.log(
-          new Date(roomData.SpecialPrices[0].endDate)
+          new Date(roomData?.SpecialPrices[0].endDate)
             .toISOString()
             .split("T")[0]
         );
-        console.log(roomData.SpecialPrices[0].discount);
-        let finalPrice = 0;
-        if (roomData.SpecialPrices[0].type === "nominal") {
-          console.log(roomData.SpecialPrices[0].type);
-          finalPrice = roomData.SpecialPrices[0].discount;
-        } else if (roomData.SpecialPrices[0].type === "persen") {
-          console.log(roomData.SpecialPrices[0].type);
-          finalPrice =
-            roomData.defaultPrice +
-            roomData.defaultPrice * (roomData.SpecialPrices[0].discount / 100);
-        }
-
-        totalPrice = totalPrice + finalPrice;
-        return totalPrice;
       }
-      console.log(i);
-      console.log(element);
-      console.log(
-        new Date(roomData.SpecialPrices[0].startDate)
-          .toISOString()
-          .split("T")[0]
-      );
-      console.log(
-        new Date(roomData.SpecialPrices[0].endDate).toISOString().split("T")[0]
-      );
+      console.log("TES55555555555555555");
       totalPrice = totalPrice + roomData.defaultPrice;
       return totalPrice;
     });
@@ -172,7 +180,7 @@ function PropertyDetail(props) {
     return totalPrice;
   };
 
-  const idProperty = 4;
+  const idProperty = 3;
   // const idProperty = props.match.params.propertyId;
 
   function Reviews(props) {

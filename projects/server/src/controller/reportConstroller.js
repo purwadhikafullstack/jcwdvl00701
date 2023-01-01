@@ -7,8 +7,7 @@ const {
   Transaction,
 } = require("../models");
 const { Op } = require("sequelize");
-const reservation = require("../models/reservation");
-
+const sequelize = require("sequelize");
 module.exports = {
   getOrder: async (req, res) => {
     try {
@@ -134,6 +133,54 @@ module.exports = {
       res.status(500).json({
         message: err.toString(),
         code: 500,
+      });
+    }
+  },
+
+  getSalesReport: async (req, res) => {
+    try {
+      const tenantId = req.params.tenantId;
+      const statusFinished = 6;
+      const SalsesReport = await Reservation.findAll({
+        include: [
+          {
+            model: Room,
+            include: [
+              {
+                model: Property,
+                where: {
+                  tenantId,
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: ["id"],
+            required: false,
+            include: [
+              {
+                model: Profile,
+                attributes: ["name"],
+                required: false,
+              },
+            ],
+          },
+        ],
+
+        attributes: [
+          sequelize.fn("SUM", sequelize.col("finalPrice")),
+          "totalSales",
+        ],
+      });
+      res.status(200).json({
+        result: SalsesReport,
+        code: 200,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: err,
       });
     }
   },
