@@ -12,6 +12,7 @@ import {
   Spacer,
   MenuDivider,
   Avatar,
+  Button,
 } from "@chakra-ui/react";
 import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory, useLocation } from "react-router-dom";
@@ -31,12 +32,13 @@ function NavbarMobileTenant() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
-  const { id, ProfilePic } = useSelector((state) => state.user);
+  const { id, ProfilePic ,ProfileName} = useSelector((state) => state.user);
 
   const logout = () => {
     signOut(auth)
       .then(() => alert("signed out"))
       .catch((error) => alert(error));
+    history.push("/login")
   };
 
   const switchToTenant = () => {
@@ -188,45 +190,54 @@ function NavbarMobileTenant() {
               alt="turu-icon"
               width="58px"
               height="58px"
-            />
-            <Spacer />
-            <Flex fontWeight="bold" fontSize="18px" my="auto" mr="20px">
-              <Link>
-                <Text>Search</Text>
-              </Link>
-              <Link to="booking-history">
-                <Text mx="50px">Room</Text>
-              </Link>
-
-              <Menu>
-                <MenuButton fontWeight="bold" fontSize="18px" my="auto">
-                  Account
-                </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={() => history.push("/profile")}>
-                    Profile
-                  </MenuItem>
-                  <MenuDivider />
-                  <MenuItem onClick={switchToTenant}>Switch To Tenant</MenuItem>
-                  <MenuDivider />
-                  {id ? (
-                    <MenuItem onClick={logout}>Logout</MenuItem>
-                  ) : (
-                    <MenuItem onClick={() => history.push("/login")}>
-                      Login
-                    </MenuItem>
-                  )}
-                  <MenuDivider />
-                </MenuList>
-              </Menu>
+              />
+            {
+              id ?
+              <Flex  w="100%" mx="auto" justifyContent="space-between">
+              <Spacer />
+              <Flex fontWeight="bold" fontSize="18px" my="auto" mr="20px">
+                <Link>
+                  <Text>Search</Text>
+                </Link>
+                <Link to="booking-history">
+                  <Text mx="50px">Room</Text>
+                </Link>
+                  <Menu>
+                    {
+                      auth ?
+                      <MenuButton fontWeight="bold" fontSize="18px" my="auto">
+                        {ProfileName}
+                      </MenuButton>
+                      :
+                      <MenuButton fontWeight="bold" fontSize="18px" my="auto">
+                        Account
+                      </MenuButton>
+                    }
+                    <MenuList>
+                      <MenuItem onClick={() => history.push("/profile")}>
+                        Profile
+                      </MenuItem>
+                      <MenuDivider />
+                      <MenuItem onClick={switchToTenant}>Switch To Tenant</MenuItem>
+                      <MenuDivider />
+                      <MenuItem onClick={logout}>Logout</MenuItem>
+                      <MenuDivider />
+                    </MenuList>
+                  </Menu>
+              </Flex>
+                <Avatar
+                    size="md"
+                    objectFit={"cover"}
+                    overflow="hidden"
+                    my="auto"
+                    src={process.env.REACT_APP_API_BASE_URL + ProfilePic}
+                  />
             </Flex>
-            <Avatar
-              size="md"
-              objectFit={"cover"}
-              overflow="hidden"
-              my="auto"
-              src={process.env.REACT_APP_API_BASE_URL + ProfilePic}
-            />
+            :
+            <Button onClick={() => history.push("/login")} variant="secondary" height="58px" w="170px" mt={"10px"}>
+              Login
+            </Button>
+          }
           </Flex>
         </Container>
       </Box>

@@ -19,13 +19,13 @@ function Booking() {
   const [dataProfile, setDataProfile] = useState({})
   const [birthdate , setBirthdate] = useState("")
   let history = useHistory()
+  console.log(dataRoom?.Property?.pic);
 
   useEffect(() => {
     setLoading(true)
       const fetchDataBooking = async () => {
         try {
           const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/reservation/get-reservation`, {
-            // masih nembak sampai page mas imam beres
             params : {
               id : id
             }
@@ -46,12 +46,23 @@ function Booking() {
     setLoading(false)
   }, [])
 
-  let sDate = startDate.split("T")
-  // console.log(sDate);
-  let eDate = endDate.split("T")
-  let bDate = birthdate.split("T")
+  let startDate2 = startDate.split("T")[0].split("-")
+    // console.log(startDate2);
+  let endDate2 = endDate.split("T")[0].split("-")
 
-
+    const bulan = ["Jan", "Feb", "Mar", "Apr" ,"Mei" , "Jun" , "Jul" , "Agus" , "Sept" , "Okt", "Nov", "Des"]
+    const searchBulan = (bln) => {
+        const angka = [1,2,3,4,5,6,7,8,9,10,11,12] 
+        let bulanNow = ""
+            for (let i = 0; i < bln.length; i++) {
+            if(startDate2[1] == angka[i + 1]){
+                return bulanNow += bln[i + 1]
+            }
+        }
+    }
+    let resultBulan = searchBulan(bulan)
+    // console.log(resultBulan);
+  let birthDate2 = birthdate.split("T")
 
   const btnHandlerPayment = (id) => {
     console.log(id);
@@ -92,7 +103,6 @@ function Booking() {
         mb={{ ss: "60px", sm: "60px", sl: "0px" }}
         mt={{ ss: "0px", sm: "0px", sl: "80px" }}
       >
-        <NavbarDestop />
         <Flex
           display={{ ss: "flex", sm: "flex", sl: "none" }}
           px="20px"
@@ -183,7 +193,7 @@ function Booking() {
                     Chek-in
                   </Text>
                   <Text fontWeight="regular" fontSize="14px" w="130px">
-                    {sDate[0]}
+                    {startDate2[2]} {resultBulan} {startDate2[0]}
                   </Text>
                 </Flex>
                 <Flex
@@ -198,7 +208,7 @@ function Booking() {
                     Chek-out
                   </Text>
                   <Text fontWeight="regular" fontSize="14px" w="130px">
-                    {eDate[0]}
+                    {endDate2[2]} {resultBulan} {endDate2[0]}
                   </Text>
                 </Flex>
                 <Text
@@ -252,7 +262,7 @@ function Booking() {
                       color="rgba(175, 175, 175, 1)"
                     >
                       {/* ulang tahun user */}
-                      {bDate[0]}
+                      {birthDate2[0]}
                     </Text>
                   </Box>
                 </Flex>

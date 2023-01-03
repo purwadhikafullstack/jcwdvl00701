@@ -25,7 +25,6 @@ import { useEffect, useRef, useState } from "react";
 
 import Layout from "../../Components/Layout";
 import { Link, useHistory, useParams } from "react-router-dom";
-import NavbarDestop from "../../Components/NavbarDestop";
 import bookingImage from "../../Assets/image/booking.png";
 import axios from "axios"
 import { useDisclosure } from "@chakra-ui/react";
@@ -47,7 +46,6 @@ function Payment() {
   const [loading, setLoading] = useState(true)
   
   const handleFile = (event) => {
-
     if (event.target.files[0].size / 1024 > 1024) {
       setFileSizeMsg("File size is greater than maximum limit");
       setProve(false)
@@ -156,7 +154,6 @@ function Payment() {
         mb={{ ss: "60px", sm: "60px", sl: "0px" }}
         mt={{ ss: "0px", sm: "0px", sl: "80px" }}
       >
-        <NavbarDestop />
         <Container
           maxW="1140px"
           display={{ ss: "none", sm: "none", sl: "flex" }}
@@ -276,24 +273,25 @@ function Payment() {
                     </Text>
                   </Button>
                   {err ? 
-                  (
-                    <Alert status="error" color="red" text="center">
-                      <i className="fa-solid fa-circle-exclamation"></i>
-                      <Text ms="10px">{fileSizeMsg}</Text>
-                    </Alert>
-                  ) : 
+                    (
+                      <Alert status="error" color="red" text="center">
+                        <i className="fa-solid fa-circle-exclamation"></i>
+                        <Text ms="10px">{fileSizeMsg}</Text>
+                      </Alert>
+                    ) 
+                    : 
                     null
                   }
 
-                  {prove ? 
-                  (
-                    <Alert status="info" color="green" text="center">
-                      <i class="fa-solid fa-check"></i>
-                      <Text ms="10px">image uploaded</Text>
-                    </Alert>
-                  )
-                  :
-                  null
+                    {prove ? 
+                    (
+                      <Alert status="info" color="green" text="center">
+                        <i class="fa-solid fa-check"></i>
+                        <Text ms="10px">image uploaded</Text>
+                      </Alert>
+                    )
+                    :
+                    null
                 }
                 </FormControl>
 

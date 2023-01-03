@@ -8,7 +8,8 @@ import {
   MenuList,
   MenuItem,
   MenuDivider,
-  Avatar
+  Avatar,
+  Button
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
@@ -18,7 +19,7 @@ import { useSelector } from "react-redux";
 
 function NavbarMobile() {
   const [isLargerThan576] = useMediaQuery("(min-width: 576px)");
-  const {id , ProfilePic} = useSelector(state => state.user)
+  const {id , ProfilePic, ProfileName} = useSelector(state => state.user)
   const auth = authFirebase
   const history = useHistory()
 
@@ -32,8 +33,8 @@ function NavbarMobile() {
   const switchToTenant = () => {
     history.push("/tenant/complete-register")
   }
-  return (
-    <Box
+  return id ?
+  <Box
       bg="white"
       pos="fixed"
       bottom="0"
@@ -61,33 +62,36 @@ function NavbarMobile() {
             <Menu>
               <MenuButton fontWeight="regular">
                 {
-                  ProfilePic ?
+                  id ?
                   <Avatar size="sm"  my="auto" objectFit={"cover"} src={ process.env.REACT_APP_API_BASE_URL + ProfilePic}/>
                   :
                   <i className="fa-solid fa-circle-user"></i>
                 }
-                <Text fontWeight="regular" fontSize="12px">
-                  Account
-                </Text> 
+                {
+                  id ?
+                  <Text fontWeight="regular" fontSize="12px">
+                    {ProfileName}
+                  </Text> 
+                  :
+                  <Text fontWeight="regular" fontSize="12px">
+                    Account
+                  </Text> 
+                }
               </MenuButton>
-                  <MenuList>
-                    <MenuItem fontSize="14px" onClick={() => history.push("/profile")}>Profile</MenuItem>
-                    <MenuDivider/>
-                    <MenuItem onClick={switchToTenant} fontSize="14px">Switch To Tenant</MenuItem>
-                    <MenuDivider/>
-                    {
-                      id ?
-                    <MenuItem onClick={logout} fontSize="14px">Logout</MenuItem>
-                      :
-                    <MenuItem onClick={() => history.push("/login")} fontSize="14px">Login</MenuItem>
-                  }
+                <MenuList>
+                  <MenuItem fontSize="14px" onClick={() => history.push("/profile")}>Profile</MenuItem>
                   <MenuDivider/>
-                  </MenuList>
-            </Menu>
+                  <MenuItem onClick={switchToTenant} fontSize="14px">Switch To Tenant</MenuItem>
+                  <MenuDivider/>
+                  <MenuItem onClick={logout} fontSize="14px">Logout</MenuItem>
+                <MenuDivider/>
+                </MenuList>
+          </Menu>
         </Box>
       </Flex>
     </Box>
-  );
+    :
+    null
 }
 
 export default NavbarMobile;

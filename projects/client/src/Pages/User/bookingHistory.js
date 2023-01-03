@@ -7,320 +7,164 @@ import {
   Button,
   Center,
   Container,
+  Input,
+  FormControl,
+  Select,
+  Spacer
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import Image1 from "../../Assets/bookingHistory1.png";
-import Image2 from "../../Assets/bookingHistory2.png";
-import Image3 from "../../Assets/bookingHistory3.png";
 import Layout from "../../Components/Layout";
-
-import NavbarDestop from "../../Components/NavbarDestop";
+import NavbarTuru from "../../Components/NavbarTuru";
+import Footer from "../../Components/Footer";
+import DatePicker from "react-datepicker";
+import { useSelector } from "react-redux";
+import axios from "axios"
+import CardBookingHistory from "../../Components/User/CardBookingHistory";
+import CardBooking from "../../Components/User/CardBooking";
+import ReactPaginate from "react-paginate"
 
 // import Footer from '../Components/Footer';
 
 function BookingHistory() {
-  const booking = [
-    {
-      pic: Image1,
-      name: "Apartment in Jakarta",
-      guest_count: 1,
-      start_date: 18,
-      end_date: 19,
-      price: 800000,
-      satatus: "ongoing",
-      roomName: "room 2",
-    },
-    {
-      pic: Image2,
-      name: "Apartment in Bandung",
-      guest_count: 1,
-      start_date: 12,
-      end_date: 14,
-      price: 600000,
-      satatus: "finished",
-      roomName: "room 2",
-    },
-    {
-      pic: Image3,
-      name: "Apartment in Depok",
-      guest_count: 2,
-      start_date: 12,
-      end_date: 15,
-      price: 700000,
-      satatus: "cancled",
-      roomName: "room 2",
-    },
-    {
-      pic: Image3,
-      name: "Apartment in Depok",
-      guest_count: 2,
-      start_date: 12,
-      end_date: 15,
-      price: 700000,
-      satatus: "cancled",
-      roomName: "room 2",
-    },
-  ];
-  const [bookingHis, setBookingHis] = useState(booking);
+  const [inputStartDate, setInputStartDate] = useState("")
+  const [inputEndDate , setInputEndDate] = useState("")
+  const [status, setStatus] = useState("")
+  const {id} = useSelector(state => state.user)
+  const [dataBooking, setDataBooking] = useState([])
+  const [page , setPage] = useState(0)
+  const [limit , setLimit] = useState(5)
+  const [pages, setPages] = useState(0)
+  const [rows , setRows] = useState(0)
+  const [randomNumber, setRandomNumber] = useState(0);
+  console.log(rows);
+
+  let date = new Date()
+  // console.log(date.toISOString().split("T")[0]);
+  date = date.toISOString().split("T")[0]
+  // console.log(date);
+  // console.log(id);
+  // console.log(inputStartDate);
+  // console.log(inputEndDate);
+  // console.log(status);
+
+  useEffect(() => {
+    const fetchDataBooking = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/history/get-history?userId=${id}&limit=${limit}&page=${page}&startDate=${inputStartDate}&endDate=${inputEndDate}&status=${status}`)
+
+        console.log((await response)?.data);
+        console.log((await response)?.data.bookingHistory.rows);
+        // console.log((await response)?.data.result.rows);
+        setDataBooking((await response)?.data?.bookingHistory?.rows)
+        setPage((await response)?.data?.page)
+        setRows((await response)?.data?.totalRows)
+        setPages((await response)?.data?.totalPage)
+
+        
+      } catch (err) {
+        console.error(err.data.message)
+      }
+    }
+    fetchDataBooking()
+  }, [inputStartDate , inputEndDate , status, id, page, randomNumber])
+
+  const handleChange = (e, field) => {
+    const {value} = e.target
+    if(field === "startDate"){
+      setInputStartDate(value)
+      setPage(0);
+    } else if (field === "endDate"){
+      setInputEndDate(value)
+      setPage(0);
+    } else if(field === "status"){
+      setStatus(value)
+      setPage(0);
+    }
+  }
+
 
   function renderHistory() {
-    return booking.map((val) => {
-      if (val.satatus == "finished") {
+    return dataBooking.map((val) => {
+      if (val.status === 6) {
         return (
-          <Box border="1px" borderColor="gray.200">
-            <Flex>
-              <Box w="50%">
-                <Image
-                  w="100%"
-                  h="120px"
-                  overflow="hiden"
-                  objectFit="cover"
-                  src={val.pic}
-                  alt="room picture"
-                />
-              </Box>
-              <Box w="50%">
-                <Box px="10px">
-                  <Text fontWeight="Bold" fontSize="14px" pb="10px">
-                    {val.name}
-                  </Text>
-                  <Text
-                    fontWeight="reguler"
-                    fontSize="12px"
-                    pb="10px"
-                    color="rgba(175, 175, 175, 1)"
-                    borderBottom="1px"
-                    borderColor="gray.200"
-                  >
-                    {val.start_date}-{val.end_date} Nov | {val.guest_count}
-                    Guest
-                  </Text>
-                  <Text fontWeight="Bold" fontSize="14px">
-                    Rp.{val.price},00
-                  </Text>
-                </Box>
-              </Box>
-            </Flex>
-            <Box>
-              <Flex>
-                <Button
-                  variant="primary"
-                  w="50%"
-                  height="30px"
-                  fontWeight="Bold"
-                  fontSize="15px"
-                >
-                  Add Review
-                </Button>
-                <Box bg="rgba(12, 211, 140, 1)" w="50%">
-                  <Center
-                    color="white"
-                    height="100%"
-                    fontWeight="Bold"
-                    fontSize="15px"
-                  >
-                    Finished
-                  </Center>
-                </Box>
-              </Flex>
-            </Box>
-          </Box>
+          <CardBookingHistory dataBooking = {val}/>
         );
-      } else if (val.satatus == "cancled") {
+      } else if (val.status == 5) {
         return (
-          <Box border="1px" borderColor="gray.200">
-            <Flex>
-              <Box w="50%">
-                <Image
-                  w="100%"
-                  h="120px"
-                  overflow="hiden"
-                  objectFit="cover"
-                  src={val.pic}
-                  alt="room picture"
-                />
-              </Box>
-              <Box w="50%">
-                <Box px="10px">
-                  <Text fontWeight="Bold" fontSize="14px" pb="10px">
-                    {val.name}
-                  </Text>
-                  <Text
-                    fontWeight="reguler"
-                    fontSize="12px"
-                    pb="10px"
-                    color="rgba(175, 175, 175, 1)"
-                    borderBottom="1px"
-                    borderColor="gray.200"
-                  >
-                    {val.start_date}-{val.end_date} Nov | {val.guest_count}
-                    Guest
-                  </Text>
-                  <Text fontWeight="Bold" fontSize="14px">
-                    Rp. {val.price},00
-                  </Text>
-                </Box>
-              </Box>
-            </Flex>
-            <Box>
-              <Box>
-                <Box bg="rgba(251, 38, 38, 1)" w="100%">
-                  <Center
-                    color="white"
-                    height="30px"
-                    fontWeight="Bold"
-                    fontSize="15px"
-                  >
-                    Cancled
-                  </Center>
-                </Box>
-              </Box>
-            </Box>
-          </Box>
+          <CardBookingHistory dataBooking = {val}/>
+        );
+      } else if (val.status === 4){
+        return (
+          <CardBookingHistory dataBooking = {val}/>
+        );
+      } else if (val.status === 3){
+        return (
+          <CardBookingHistory dataBooking = {val}/>
+        );
+      } else if (val.status === 2){
+        return (
+          <CardBookingHistory dataBooking = {val}/>
+        );
+      } else if (val.status === 1){
+        return (
+          <CardBookingHistory dataBooking = {val}/>
         );
       }
     });
   }
 
   function renderBooking() {
-    return booking.map((val) => {
-      if (val.satatus === "ongoing") {
+    return dataBooking.map((val) => {
+        console.log(val);
+        // console.log(val.status);
+      if (val.status === 1) {
         return (
-          <Box bg="primary" w="100%" p="20px" color="white">
-            <Container maxW="1140px" px={{ sm: "0px", sl: "15px" }}>
-              <Flex
-                direction={{ ss: "column", sm: "column", sl: "row" }}
-                position="relative"
-              >
-                <Box
-                  mb="20px"
-                  w={{ ss: "100%", sm: "100%", sl: "750px" }}
-                  me="20px"
-                >
-                  <Image
-                    w="100%"
-                    h={{ ss: "150px", sm: "150px", sl: "340px" }}
-                    overflow="hiden"
-                    objectFit="cover"
-                    src={val.pic}
-                    alt="room picture"
-                  />
-                  <Box
-                    bg="rgba(45, 53, 249, 1)"
-                    w="110px"
-                    h="30px"
-                    color="white"
-                    position="absolute"
-                    top={0}
-                  >
-                    <Text py="4px" px="25px" fontSize="15px">
-                      {val.satatus}
-                    </Text>
-                  </Box>
-                </Box>
-                <Box w={{ ss: "100%", sm: "100%", sl: "360px" }}>
-                  <Box
-                    bg="white"
-                    w="100%"
-                    p="20px"
-                    display={{ ss: "none", sm: "none", sl: "flex" }}
-                  >
-                    <Flex>
-                      <Box boxSize="50px">
-                        <Image
-                          src={"https://bit.ly/dan-abramov"}
-                          alt="foto profile"
-                        />
-                      </Box>
-                      <Box ms="10px">
-                        <Text
-                          fontWeight="semibold"
-                          fontSize="22px"
-                          color="black"
-                        >
-                          Kratos
-                        </Text>
-                        <Text
-                          fontWeight="regular"
-                          fontSize="14px"
-                          color="rgba(175, 175, 175, 1)"
-                        >
-                          28 November 1820
-                        </Text>
-                      </Box>
-                    </Flex>
-                  </Box>
-                  <Flex bg="white" color="black" p="10px" w="100%" mt="20px">
-                    <Box me="10px">
-                      <i className="fa-solid fa-bed"></i>
-                    </Box>
-                    <Box>
-                      <Text fontWeight="bold" fontSize="18px">
-                        {val.name}
-                      </Text>
-                    </Box>
-                  </Flex>
-                  <Flex bg="white" color="black" p="10px" pt="0px">
-                    <Text fontWeight="regular" fontSize="14px" w="110px">
-                      Chek-in
-                    </Text>
-                    <Text fontWeight="regular" fontSize="14px" w="130px">
-                      Sun, {val.start_date} Nov 2022 (14:00-22:00)
-                    </Text>
-                  </Flex>
-                  <Flex
-                    bg="white"
-                    color="black"
-                    p="10px"
-                    pt="0px"
-                    borderBottom="1px"
-                    borderColor="gray.200"
-                  >
-                    <Text fontWeight="regular" fontSize="14px" w="110px">
-                      Chek-out
-                    </Text>
-                    <Text fontWeight="regular" fontSize="14px" w="130px">
-                      Sun, {val.end_date} Nov 2022 (00:00-12:00)
-                    </Text>
-                  </Flex>
-                  <Text
-                    fontWeight="regular"
-                    fontSize="14px"
-                    bg="white"
-                    color="black"
-                    px="10px"
-                    pt="10px"
-                  >
-                    (1x) {val.roomName}
-                  </Text>
-                  <Text
-                    fontWeight="regular"
-                    fontSize="12px"
-                    bg="white"
-                    color="rgba(175, 175, 175, 1)"
-                    px="10px"
-                    pb="20px"
-                  >
-                    {val.guest_count} Guests
-                  </Text>
-                </Box>
-              </Flex>
-            </Container>
-          </Box>
+          <CardBooking 
+              id = {val.id}
+              startDate = {val?.startDate}
+              endDate = {val?.endDate}
+              status = {val?.status}
+              guestCount = {val?.guestCount}
+              userId = {val?.userId}
+              roomId = {val?.roomId}
+              Room = {val?.Room}
+              User = {val?.User}
+              randomNumber = {setRandomNumber}
+          />
         );
+      } else if (val.status === 2) {
+        return (
+          <CardBooking 
+              id = {val.id}
+              startDate = {val?.startDate}
+              endDate = {val?.endDate}
+              status = {val?.status}
+              guestCount = {val?.guestCount}
+              userId = {val?.userId}
+              roomId = {val?.roomId}
+              Room = {val?.Room}
+              User = {val?.User}
+              randomNumber = {setRandomNumber}
+          />
+        )
       }
     });
   }
 
+    const changePage = ({ selected }) => {
+      setPage(selected);
+    };
+
   return (
-    <Layout>
+    // <Layout>
+    <Box>
+    <NavbarTuru/>
       <Box
         w="100%"
         h="90px"
         mt={{ ss: "0px", sm: "0px", sl: "80px" }}
-        mb={{ ss: "160px", sm: "160px", sl: "0px" }}
+        mb={{ ss: "68em", sm: "66em", sl: "1700px" }}
       >
-        <NavbarDestop />
         <Box
           bg="white"
           w="100%"
@@ -349,16 +193,104 @@ function BookingHistory() {
         {renderBooking()}
         <Box bg="white" w="100%" py="30px" px="20px">
           <Container maxW="1140px" px={{ sm: "0px", sl: "15px" }}>
+            <Flex>
+              <FormControl border={"1px"} borderColor="gray.400" me="5px">
+                <Text ms="18px">
+                  Start Date
+                </Text>
+                <Input
+                  placeholder="Select Date and Time"
+                  defaultValue={date}
+                  size="md"
+                  type="date"
+                  border={"none"}
+                  onChange={(e) => handleChange(e, "startDate")}
+                />
+              </FormControl>
+              <FormControl border={"1px"} borderColor="gray.400">
+                {/* buat stardate adnn date dalm flex agar bias sevelahan(dicoba), dijadikan query nanti nya */}
+                <Text ms="18px">
+                  End Date
+                </Text>
+                <Input
+                  placeholder="Select Date and Time"
+                  size="md"
+                  defaultValue={date}
+                  type="date"
+                  border={"none"}
+                  onChange={(e) => handleChange(e, "endDate")}
+                />
+              </FormControl>
+            </Flex>
+            <FormControl mt="15px">
+                <Select
+                bg="white"
+                mb="20px"
+                placeholder="All Status"
+                borderRadius={0}
+                borderColor="rgba(175, 175, 175, 1)"
+                onChange={(e) => handleChange(e, "status")}
+              >
+                <option value={1}>Waiting for payment</option>;
+                <option value={2}>unconfirmed</option>;
+                <option value={3}>processing</option>;
+                <option value={4}>ongoing</option>;
+                <option value={5}>cancled</option>;
+                <option value={6}>finished</option>;
+              </Select>
+            </FormControl>
             <Text fontWeight="Bold" fontSize="22px" pb="20px">
               History Booking:
             </Text>
             <SimpleGrid minChildWidth="320px" spacing="30px">
               {renderHistory()}
             </SimpleGrid>
+            <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              padding: 20,
+              boxSizing: "border-box",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <ReactPaginate
+              previousLabel={
+                <i
+                  class="fa-solid fa-chevron-left"
+                  style={{ fontSize: 18}}
+                ></i>
+              }
+              nextLabel={
+                <i
+                  class="fa-solid fa-chevron-right"
+                  style={{
+                    fontSize: 18
+                  }}
+                ></i>
+              }
+              pageCount={pages}
+              onPageChange={changePage}
+              activeClassName={"item active "}
+              breakClassName={"item break-me "}
+              breakLabel={"..."}
+              containerClassName={"pagination"}
+              disabledClassName={"disabled-page"}
+              marginPagesDisplayed={2}
+              nextClassName={"item next "}
+              pageClassName={"item pagination-page "}
+              pageRangeDisplayed={2}
+              previousClassName={"item previous"}
+            />
+          </div>
           </Container>
         </Box>
       </Box>
-    </Layout>
+      <Footer />
+    </Box>
+    // </Layout>
   );
 }
 
