@@ -169,7 +169,7 @@ function Order() {
               fontWeight="bold"
               display={{ ss: "none", sm: "flex", sl: "flex" }}
             >
-              <i class="fa-solid fa-clipboard-list"></i>
+              <i className="fa-solid fa-clipboard-list"></i>
             </Text>
             <Text
               fontSize="32px"
@@ -261,7 +261,7 @@ function Order() {
               <ReactPaginate
                 previousLabel={
                   <i
-                    class="fa-solid fa-chevron-left"
+                    className="fa-solid fa-chevron-left"
                     style={{
                       fontSize: 18,
                       height: 40,
@@ -274,7 +274,7 @@ function Order() {
                 }
                 nextLabel={
                   <i
-                    class="fa-solid fa-chevron-right"
+                    className="fa-solid fa-chevron-right"
                     style={{
                       fontSize: 18,
                       height: 40,

@@ -104,7 +104,11 @@ function RoomListTenant() {
     return room.map((val, index) => {
       // console.log(val);
       return (
-        <CardRoomTenant roomData={val} setRandomNumber={setRandomNumber} />
+        <CardRoomTenant
+          key={index}
+          roomData={val}
+          setRandomNumber={setRandomNumber}
+        />
       );
     });
   };
@@ -125,7 +129,11 @@ function RoomListTenant() {
   const optionDropdown = () => {
     return dropdown.map((val) => {
       // console.log(val);
-      return <option value={val.id}>{val.name}</option>;
+      return (
+        <option key={val.id} value={val.id}>
+          {val.name}
+        </option>
+      );
     });
   };
 
@@ -154,7 +162,7 @@ function RoomListTenant() {
                 }}
                 bg="primary"
               >
-                <i class="fa-solid fa-plus"></i>
+                <i className=" fa-solid fa-plus"></i>
               </Box>
             </Link>
           </Flex>
@@ -209,13 +217,13 @@ function RoomListTenant() {
             <ReactPaginate
               previousLabel={
                 <i
-                  class="fa-solid fa-chevron-left"
+                  className=" fa-solid fa-chevron-left"
                   style={{ fontSize: 18 }}
                 ></i>
               }
               nextLabel={
                 <i
-                  class="fa-solid fa-chevron-right"
+                  className=" fa-solid fa-chevron-right"
                   style={{
                     fontSize: 18,
                   }}

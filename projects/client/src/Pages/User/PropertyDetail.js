@@ -113,64 +113,63 @@ function PropertyDetail(props) {
   // untuk menghitung total harga
   let totalPrice = 0;
   const countFinalPrice = () => {
-    const found = datesRanges.map((element, i) => {
-      console.log("TEES111111111111");
-      if (roomData?.SpecialPrices[0].startDate) {
-        console.log("TESS22222222222222222222222222222");
-        if (
-          element >=
-            new Date(roomData?.SpecialPrices[0].startDate)
-              .toISOString()
-              .split("T")[0] &&
-          element <=
-            new Date(roomData?.SpecialPrices[0].endDate)
-              .toISOString()
-              .split("T")[0]
-        ) {
-          console.log("TESS33333333333333333333333333");
-          console.log(element);
-          console.log(
-            new Date(roomData?.SpecialPrices[0].startDate)
-              .toISOString()
-              .split("T")[0]
-          );
-          console.log(
-            new Date(roomData?.SpecialPrices[0].endDate)
-              .toISOString()
-              .split("T")[0]
-          );
-          console.log(roomData?.SpecialPrices[0].discount);
-          let finalPrice = 0;
-          if (roomData?.SpecialPrices[0].type === "nominal") {
-            console.log(roomData?.SpecialPrices[0].type);
-            finalPrice = roomData?.SpecialPrices[0].discount;
-          } else if (roomData?.SpecialPrices[0].type === "persen") {
-            console.log(roomData?.SpecialPrices[0].type);
-            finalPrice =
-              roomData.defaultPrice +
-              roomData.defaultPrice *
-                (roomData?.SpecialPrices[0].discount / 100);
-          }
+    const found = datesRanges.map((datesRange, i) => {
+      if (roomData.SpecialPrices[0]?.discount) {
+        roomData.SpecialPrices.map((SpecialPric, i2) => {
+          if (
+            datesRange >=
+              new Date(SpecialPric.startDate).toISOString().split("T")[0] &&
+            datesRange <=
+              new Date(SpecialPric.endDate).toISOString().split("T")[0]
+          ) {
+            console.log("tess111");
+            let finalPrice = 0;
+            if (SpecialPric.type === "nominal") {
+              finalPrice = SpecialPric.discount;
+            } else if (SpecialPric.type === "persen") {
+              finalPrice =
+                roomData.defaultPrice +
+                roomData.defaultPrice * (SpecialPric.discount / 100);
+            }
 
-          totalPrice = totalPrice + finalPrice;
-          return totalPrice;
-        }
-        console.log("TESS444444444444");
-        console.log(element);
-        console.log(
-          new Date(roomData?.SpecialPrices[0].startDate)
-            .toISOString()
-            .split("T")[0]
-        );
-        console.log(
-          new Date(roomData?.SpecialPrices[0].endDate)
-            .toISOString()
-            .split("T")[0]
-        );
+            totalPrice = totalPrice + finalPrice - roomData.defaultPrice;
+            return totalPrice;
+          }
+        });
+        totalPrice = totalPrice + roomData.defaultPrice;
+        console.log("tes222  ");
+        console.log(totalPrice);
+        return totalPrice;
+        // if (
+        //   element >=
+        //     new Date(roomData?.SpecialPrices[0].startDate)
+        //       .toISOString()
+        //       .split("T")[0] &&
+        //   element <=
+        //     new Date(roomData?.SpecialPrices[0].endDate)
+        //       .toISOString()
+        //       .split("T")[0]
+        // ) {
+        //   let finalPrice = 0;
+        //   if (roomData?.SpecialPrices[0].type === "nominal") {
+        //     finalPrice = roomData?.SpecialPrices[0].discount;
+        //   } else if (roomData?.SpecialPrices[0].type === "persen") {
+        //     finalPrice =
+        //       roomData.defaultPrice +
+        //       roomData.defaultPrice *
+        //         (roomData?.SpecialPrices[0].discount / 100);
+        //   }
+
+        //   totalPrice = totalPrice + finalPrice;
+        //   return totalPrice;
+        // } else {
+        //   totalPrice = totalPrice + roomData.defaultPrice;
+        //   return totalPrice;
+        // }
+      } else {
+        totalPrice = totalPrice + roomData.defaultPrice;
+        return totalPrice;
       }
-      console.log("TES55555555555555555");
-      totalPrice = totalPrice + roomData.defaultPrice;
-      return totalPrice;
     });
 
     console.log(found);

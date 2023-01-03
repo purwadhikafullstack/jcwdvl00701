@@ -49,9 +49,13 @@ function PropertyListTenant() {
 
   // reender data property
   function renderPropertyList() {
-    return propertyData.map((val) => {
+    return propertyData.map((val, idx) => {
       return (
-        <CardPropertyTenant propertyData={val} randomNumber={setRandomNumber} />
+        <CardPropertyTenant
+          key={idx}
+          propertyData={val}
+          randomNumber={setRandomNumber}
+        />
       );
     });
   }
@@ -123,7 +127,7 @@ function PropertyListTenant() {
               fontWeight="bold"
               display={{ ss: "none", sm: "flex", sl: "flex" }}
             >
-              <i class="fa-solid fa-clipboard-list"></i>
+              <i className=" fa-solid fa-clipboard-list"></i>
             </Text>
             <Text
               fontSize="32px"
@@ -159,7 +163,7 @@ function PropertyListTenant() {
                 }}
                 bg="primary"
               >
-                <i class="fa-solid fa-plus"></i>
+                <i className=" fa-solid fa-plus"></i>
               </Center>
             </Link>
           </Flex>
@@ -251,7 +255,7 @@ function PropertyListTenant() {
             <ReactPaginate
               previousLabel={
                 <i
-                  class="fa-solid fa-chevron-left"
+                  className=" fa-solid fa-chevron-left"
                   style={{
                     fontSize: 18,
                     height: 40,
@@ -264,7 +268,7 @@ function PropertyListTenant() {
               }
               nextLabel={
                 <i
-                  class="fa-solid fa-chevron-right"
+                  className=" fa-solid fa-chevron-right"
                   style={{
                     fontSize: 18,
                     height: 40,

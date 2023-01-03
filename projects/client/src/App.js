@@ -44,6 +44,8 @@ import { useDispatch, useSelector } from "react-redux";
 import auth_types from "./Redux/Reducers/Types/userTypes";
 
 import TenantRoute from "./Components/Tenant/TenantRoute";
+import Loading from "./Components/Loading";
+import NotFound from "./Pages/notFound";
 
 function App() {
   const [emailVerified, setEmailVerified] = useState("");
@@ -82,7 +84,7 @@ function App() {
           // kirim email jika belum terverfikasi
           sendEmailVerification(user)
             .then(() => {
-              console.log("check your email verification");
+              alert("check your email verification");
             })
             .catch((err) => {
               console.error(err);
@@ -153,10 +155,9 @@ function App() {
   }, [userId]);
 
   return isLoading ? (
-    <Spinner color="red.500" />
+    <Loading />
   ) : (
     <>
-      {" "}
       <BrowserRouter>
         <Switch>
           {/* page tenant */}
@@ -194,7 +195,9 @@ function App() {
           <Route component={BookingHistory} path="/booking-history" />
           <Route component={Booking} path="/booking/:id" />
           <Route component={Payment} path="/payment/:id" />
-          <Route component={Home} path="/" />
+
+          <Route component={Home} path="/" exact />
+          <Route component={NotFound} path="*" />
         </Switch>
       </BrowserRouter>
     </>
