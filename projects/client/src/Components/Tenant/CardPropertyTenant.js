@@ -45,8 +45,8 @@ function CardPropertyTenant(props) {
         <Image
           src={process.env.REACT_APP_API_BASE_URL + props.propertyData.pic}
           alt="property image"
-          width="90px"
-          height="60px"
+          width={{ ss: "90px", sm: "70px", sl: "70px" }}
+          height={{ ss: "60px", sm: "47px", sl: "47px" }}
           me="10px"
           overflow="hiden"
           objectFit="cover"
