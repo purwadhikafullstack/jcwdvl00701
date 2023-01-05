@@ -7,7 +7,6 @@ const {
   Transaction,
 } = require("../models");
 const { Op } = require("sequelize");
-
 const sequelize = require("sequelize");
 module.exports = {
   getOrder: async (req, res) => {
@@ -169,7 +168,7 @@ module.exports = {
         ],
 
         attributes: [
-          sequelize.fn("SUM", sequelize.col("totalSales")),
+          sequelize.fn("SUM", sequelize.col("finalPrice")),
           "totalSales",
         ],
       });
