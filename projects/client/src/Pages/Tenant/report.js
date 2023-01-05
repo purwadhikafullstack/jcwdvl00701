@@ -9,10 +9,11 @@ import {
   Td,
   Tfoot,
   Table,
-  TableCaption,
   TableContainer,
   Thead,
   Tbody,
+  Input,
+  FormControl,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
@@ -20,13 +21,19 @@ import Layout from "../../Components/Layout";
 
 function Report() {
   const [isGuestInputOpen, setIsGuestInputOpen] = useState(false);
-
-  const toggleTsGuestInputOpen = () => {
-    setIsGuestInputOpen((current) => !current);
+  const [inputStartDate, setInputStartDate] = useState("");
+  const [inputEndDate, setInputEndDate] = useState("");
+  let date = new Date();
+  // console.log(date.toISOString().split("T")[0]);
+  date = date.toISOString().split("T")[0];
+  const handleChange = (e, field) => {
+    const { value } = e.target;
+    if (field === "startDate") {
+      setInputStartDate(value);
+    } else if (field === "endDate") {
+      setInputEndDate(value);
+    }
   };
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-
   return (
     <Layout>
       <Box mt="80px">
@@ -44,29 +51,30 @@ function Report() {
           </Box>
           {/* tesss */}
 
-          <Flex
-            w="100%"
-            backgroundColor="white"
-            py={3}
-            px={6}
-            my={2}
-            border="1px"
-            borderColor="rgba(175, 175, 175, 1)"
-          >
-            <Box w="50%">
-              <Text color="gray.500">Start date</Text>
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
+          <Flex>
+            <FormControl border={"1px"} borderColor="gray.400" me="5px">
+              <Text ms="18px">Start Date</Text>
+              <Input
+                placeholder="Select Date and Time"
+                defaultValue={date}
+                size="md"
+                type="date"
+                border={"none"}
+                onChange={(e) => handleChange(e, "startDate")}
               />
-            </Box>
-            <Box w="50%">
-              <Text color="gray.500">End date</Text>
-              <DatePicker
-                selected={endDate}
-                onChange={(date) => setEndDate(date)}
+            </FormControl>
+            <FormControl border={"1px"} borderColor="gray.400">
+              {/* buat stardate adnn date dalm flex agar bias sevelahan(dicoba), dijadikan query nanti nya */}
+              <Text ms="18px">End Date</Text>
+              <Input
+                placeholder="Select Date and Time"
+                size="md"
+                defaultValue={date}
+                type="date"
+                border={"none"}
+                onChange={(e) => handleChange(e, "endDate")}
               />
-            </Box>
+            </FormControl>
           </Flex>
           <Select
             mb="20px"
