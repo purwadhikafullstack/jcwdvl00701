@@ -191,11 +191,10 @@ function App() {
           <Route component={ResetPassword} path="/reset-password" />
           <Route component={ForgotPassword} path="/forgot-password" />
           <Route component={RegisterUser} path="/register" />
-          <Route component={LoginUser} path="/login" />
+          <Route component={LoginUser} path="/login" exact />
           <Route component={BookingHistory} path="/booking-history" />
           <Route component={Booking} path="/booking/:id" />
           <Route component={Payment} path="/payment/:id" />
-
           <Route component={Home} path="/" exact />
           <Route component={NotFound} path="*" />
         </Switch>

@@ -18,7 +18,7 @@ function TenantRoute(props) {
       }
     });
     return <Loading />;
-  } else if (UserRoles[1] === 2) {
+  } else if (UserRoles.includes(2)) {
     return <Route {...props} />;
   } else {
     return history.push("/");

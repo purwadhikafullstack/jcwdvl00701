@@ -138,17 +138,49 @@ module.exports = {
   },
   getSalesReport: async (req, res) => {
     try {
+      const startDate = req.query.startDate;
+      const endDate = req.query.endDate;
       const tenantId = req.params.tenantId;
+      const search = req.query.search_query || "";
+      const filter = req.query.filter;
       const statusFinished = 6;
+      let propertyFilter = "";
+      let userFilter = "";
+
+      if (filter == "Property") {
+        propertyFilter = search;
+      } else if (filter == "User") {
+        userFilter = search;
+      }
+
+      const whereCondition = {
+        status: statusFinished,
+      };
+
+      if (req.query?.startDate) {
+        whereCondition.startDate = {
+          [Op.gt]: startDate,
+        };
+      }
+
+      if (req.query?.endDate) {
+        whereCondition.endDate = {
+          [Op.lt]: endDate,
+        };
+      }
       const SalsesReport = await Reservation.findAll({
         include: [
           {
             model: Room,
+            required: true,
+
             include: [
               {
                 model: Property,
+                required: true,
                 where: {
                   tenantId,
+                  name: { [Op.like]: "%" + propertyFilter + "%" },
                 },
               },
             ],
@@ -156,21 +188,25 @@ module.exports = {
           {
             model: User,
             attributes: ["id"],
-            required: false,
+            required: true,
             include: [
               {
                 model: Profile,
                 attributes: ["name"],
-                required: false,
+                where: {
+                  name: { [Op.like]: "%" + userFilter + "%" },
+                },
+                required: true,
               },
             ],
           },
         ],
+        where: whereCondition,
 
-        attributes: [
-          sequelize.fn("SUM", sequelize.col("finalPrice")),
-          "totalSales",
-        ],
+        // attributes: [
+        //   sequelize.fn("SUM", sequelize.col("finalPrice")),
+        //   "totalSales",
+        // ],
       });
       res.status(200).json({
         result: SalsesReport,
