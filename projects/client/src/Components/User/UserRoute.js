@@ -3,7 +3,7 @@ import Loading from "../Loading";
 import { useSelector } from "react-redux";
 import { onAuthStateChanged } from "firebase/auth";
 import { authFirebase } from "../../Config/firebase";
-function TenantRoute(props) {
+function UserRoute(props) {
   const { TenantId, UserRoles } = useSelector((state) => state.user);
   console.log(UserRoles);
   console.log(TenantId);
@@ -18,11 +18,11 @@ function TenantRoute(props) {
       }
     });
     return <Loading />;
-  } else if (UserRoles.includes(2)) {
+  } else if (UserRoles.includes(1)) {
     return <Route {...props} />;
   } else {
     return history.push("/");
   }
 }
 
-export default TenantRoute;
+export default UserRoute;

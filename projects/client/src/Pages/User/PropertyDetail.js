@@ -72,6 +72,8 @@ function PropertyDetail(props) {
   // console.log("end ",end);
 
   // menyimpan tanggal-tanggal yang di pilih
+  const { UserRoles } = useSelector((state) => state.user);
+
   let datesRanges = [];
   const datepickerOnChange = (dates) => {
     const [start, end] = dates;
@@ -450,27 +452,17 @@ function PropertyDetail(props) {
                 currency: "IDR",
               }).format(finalCountPrice)}
             </Text>
-
-            {finalCountPrice ? (
+            {UserRoles.includes(1) ? (
               <Button
                 w="100%"
                 variant="primary"
                 my={2}
                 onClick={btnHandlerReservation}
+                disabled={finalCountPrice ? false : true}
               >
                 Reserve
               </Button>
-            ) : (
-              <Button
-                w="100%"
-                variant="primary"
-                my={2}
-                onClick={btnHandlerReservation}
-                disabled={true}
-              >
-                Reserve
-              </Button>
-            )}
+            ) : null}
           </Box>
           <Flex border="3px solid lightgrey" p={5}>
             <Image
