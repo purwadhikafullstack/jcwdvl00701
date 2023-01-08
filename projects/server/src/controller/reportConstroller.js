@@ -202,11 +202,6 @@ module.exports = {
           },
         ],
         where: whereCondition,
-
-        // attributes: [
-        //   sequelize.fn("SUM", sequelize.col("finalPrice")),
-        //   "totalSales",
-        // ],
       });
       res.status(200).json({
         result: SalsesReport,

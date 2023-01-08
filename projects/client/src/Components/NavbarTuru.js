@@ -12,6 +12,14 @@ import {
   Spacer,
   MenuDivider,
   Avatar,
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
 } from "@chakra-ui/react";
 import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory, useLocation } from "react-router-dom";
@@ -28,9 +36,17 @@ function NavbarMobileTenant() {
   const history = useHistory();
   const auth = authFirebase;
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
-
+  const {
+    isOpen: isDestopOpen,
+    onOpen: onDestopOpen,
+    onClose: onDestopClose,
+  } = useDisclosure();
+  const {
+    isOpen: isMobileOpen,
+    onOpen: onMobileOpen,
+    onClose: onMobileClose,
+  } = useDisclosure();
   const { id, ProfilePic } = useSelector((state) => state.user);
 
   const logout = () => {
@@ -100,7 +116,138 @@ function NavbarMobileTenant() {
         <Container maxW="1140px">
           <Flex justifyContent="space-between">
             <Image src={turuIcon} mr="1em" width="50px" height="50px"></Image>
-            <Menu>
+            <Button colorScheme="blue" onClick={onMobileOpen}>
+              <i className="fa-solid fa-bars"></i>
+            </Button>
+            <Button colorScheme="red" onClick={onDestopOpen}>
+              <i className="fa-solid fa-bars"></i>
+            </Button>
+            <Drawer
+              placement="top"
+              onClose={onMobileClose}
+              isOpen={isMobileOpen}
+            >
+              <DrawerOverlay />
+              <DrawerContent>
+                <DrawerHeader borderBottomWidth="1px">
+                  Basic Drawer
+                </DrawerHeader>
+                <DrawerBody>
+                  {menuItemContents.map((content) => {
+                    return (
+                      <Box
+                        key={`tenant-menu-${content.text.toLowerCase()}`}
+                        _hover={{ bg: "white" }}
+                        onClick={() => history.push(content.url)}
+                      >
+                        <Flex
+                          bg={"#fbe946"}
+                          w="100%"
+                          h={"44px"}
+                          justifyContent={"center"}
+                          alignItems={"center"}
+                          _hover={{
+                            bg: "black",
+                            color: "white",
+                            transition: "0.3s",
+                          }}
+                        >
+                          {content.icon}&nbsp;<strong>{content.text}</strong>
+                        </Flex>
+                      </Box>
+                    );
+                  })}
+                  <Box
+                    key={`tenant-menu-signout`}
+                    _hover={{ bg: "white" }}
+                    onClick={() => {
+                      signOut(auth)
+                        .then(() => alert("signed out"))
+                        .catch((error) => alert(error));
+                    }}
+                  >
+                    <Flex
+                      bg={"#fbe946"}
+                      w="100%"
+                      h={"44px"}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      _hover={{
+                        bg: "black",
+                        color: "white",
+                        transition: "0.3s",
+                      }}
+                    >
+                      <strong>Sign Out</strong>
+                    </Flex>
+                  </Box>
+                </DrawerBody>
+              </DrawerContent>
+            </Drawer>
+            <Drawer
+              placement="right"
+              onClose={onDestopClose}
+              isOpen={isDestopOpen}
+            >
+              <DrawerOverlay />
+              <DrawerContent>
+                <DrawerHeader borderBottomWidth="1px">
+                  Basic Drawer
+                </DrawerHeader>
+                <DrawerBody>
+                  {menuItemContents.map((content) => {
+                    return (
+                      <Box
+                        key={`tenant-menu-${content.text.toLowerCase()}`}
+                        _hover={{ bg: "white" }}
+                        onClick={() => history.push(content.url)}
+                      >
+                        <Flex
+                          bg={"#fbe946"}
+                          w="100%"
+                          h={"44px"}
+                          justifyContent={"center"}
+                          alignItems={"center"}
+                          _hover={{
+                            bg: "black",
+                            color: "white",
+                            transition: "0.3s",
+                          }}
+                        >
+                          {content.icon}&nbsp;<strong>{content.text}</strong>
+                        </Flex>
+                      </Box>
+                    );
+                  })}
+                  <Box
+                    key={`tenant-menu-signout`}
+                    _hover={{ bg: "white" }}
+                    onClick={() => {
+                      signOut(auth)
+                        .then(() => alert("signed out"))
+                        .catch((error) => alert(error));
+                    }}
+                  >
+                    <Flex
+                      bg={"#fbe946"}
+                      w="100%"
+                      h={"44px"}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      _hover={{
+                        bg: "black",
+                        color: "white",
+                        transition: "0.3s",
+                      }}
+                    >
+                      <strong>Sign Out</strong>
+                    </Flex>
+                  </Box>
+                </DrawerBody>
+              </DrawerContent>
+            </Drawer>
+
+            {/* <Menu>
               <MenuButton
                 _hover={{ bg: "white" }}
                 _active={{
@@ -163,7 +310,7 @@ function NavbarMobileTenant() {
                   </Flex>
                 </MenuItem>
               </MenuList>
-            </Menu>
+            </Menu> */}
           </Flex>
         </Container>
       </Box>

@@ -48,10 +48,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      totalSales: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
     });
   },
   async down(queryInterface, Sequelize) {
