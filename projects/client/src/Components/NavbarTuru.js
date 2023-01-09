@@ -119,9 +119,7 @@ function NavbarMobileTenant() {
             <Button colorScheme="blue" onClick={onMobileOpen}>
               <i className="fa-solid fa-bars"></i>
             </Button>
-            <Button colorScheme="red" onClick={onDestopOpen}>
-              <i className="fa-solid fa-bars"></i>
-            </Button>
+
             <Drawer
               placement="top"
               onClose={onMobileClose}
@@ -130,12 +128,19 @@ function NavbarMobileTenant() {
               <DrawerOverlay />
               <DrawerContent>
                 <DrawerHeader borderBottomWidth="1px">
-                  Basic Drawer
+                  <Image
+                    src={turuIcon}
+                    mr="1em"
+                    width="50px"
+                    height="50px"
+                  ></Image>
+                  <DrawerCloseButton />
                 </DrawerHeader>
                 <DrawerBody>
                   {menuItemContents.map((content) => {
                     return (
                       <Box
+                        my="10px"
                         key={`tenant-menu-${content.text.toLowerCase()}`}
                         _hover={{ bg: "white" }}
                         onClick={() => history.push(content.url)}
@@ -158,68 +163,7 @@ function NavbarMobileTenant() {
                     );
                   })}
                   <Box
-                    key={`tenant-menu-signout`}
-                    _hover={{ bg: "white" }}
-                    onClick={() => {
-                      signOut(auth)
-                        .then(() => alert("signed out"))
-                        .catch((error) => alert(error));
-                    }}
-                  >
-                    <Flex
-                      bg={"#fbe946"}
-                      w="100%"
-                      h={"44px"}
-                      justifyContent={"center"}
-                      alignItems={"center"}
-                      _hover={{
-                        bg: "black",
-                        color: "white",
-                        transition: "0.3s",
-                      }}
-                    >
-                      <strong>Sign Out</strong>
-                    </Flex>
-                  </Box>
-                </DrawerBody>
-              </DrawerContent>
-            </Drawer>
-            <Drawer
-              placement="right"
-              onClose={onDestopClose}
-              isOpen={isDestopOpen}
-            >
-              <DrawerOverlay />
-              <DrawerContent>
-                <DrawerHeader borderBottomWidth="1px">
-                  Basic Drawer
-                </DrawerHeader>
-                <DrawerBody>
-                  {menuItemContents.map((content) => {
-                    return (
-                      <Box
-                        key={`tenant-menu-${content.text.toLowerCase()}`}
-                        _hover={{ bg: "white" }}
-                        onClick={() => history.push(content.url)}
-                      >
-                        <Flex
-                          bg={"#fbe946"}
-                          w="100%"
-                          h={"44px"}
-                          justifyContent={"center"}
-                          alignItems={"center"}
-                          _hover={{
-                            bg: "black",
-                            color: "white",
-                            transition: "0.3s",
-                          }}
-                        >
-                          {content.icon}&nbsp;<strong>{content.text}</strong>
-                        </Flex>
-                      </Box>
-                    );
-                  })}
-                  <Box
+                    my="10px"
                     key={`tenant-menu-signout`}
                     _hover={{ bg: "white" }}
                     onClick={() => {

@@ -8,6 +8,7 @@ const {
 } = require("../models");
 const { Op } = require("sequelize");
 const sequelize = require("sequelize");
+const cron = require("node-cron");
 module.exports = {
   getOrder: async (req, res) => {
     try {
@@ -215,3 +216,41 @@ module.exports = {
     }
   },
 };
+
+cron.schedule("0 10 * * *", () => {
+  const TODAY_START = new Date().setHours(0, 0, 0, 0);
+  const NOW = new Date();
+  Reservation.update(
+    {
+      status: 4,
+    },
+    {
+      where: {
+        startDate: {
+          [Op.gte]: TODAY_START,
+          [Op.lte]: NOW,
+        },
+        status: 3,
+      },
+    }
+  );
+});
+
+cron.schedule("0 12 * * *", () => {
+  const TODAY_START = new Date().setHours(0, 0, 0, 0);
+  const NOW = new Date();
+  Reservation.update(
+    {
+      status: 6,
+    },
+    {
+      where: {
+        endDate: {
+          [Op.gte]: TODAY_START,
+          [Op.lte]: NOW,
+        },
+        status: 4,
+      },
+    }
+  );
+});
