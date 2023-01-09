@@ -29,6 +29,7 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 import YupPassword from "yup-password";
 import "yup-phone";
+import Footer from "../../Components/Footer";
 
 function RegisterTenant() {
   const [showPassword, setShowPassword] = useState(false);
@@ -104,7 +105,8 @@ function RegisterTenant() {
     }
   })
   return (
-    <Layout>
+    // <Layout>
+    <>
       <Container maxW="2x1" px="0px">
         <Flex flexDirection="column" bg="black">
           {/* flex container utk dekstop */}
@@ -134,7 +136,7 @@ function RegisterTenant() {
 
             {/* Form */}
             <Box w="50em" my="5em">
-              <Flex justifyContent="center" alignItems="center" my="3em">
+              <Flex justifyContent="center" alignItems="center" my="3em" mb={"80vh"}>
                 <Box width="360px" height="297px">
                   <Flex
                     flexDirection="column"
@@ -360,7 +362,9 @@ function RegisterTenant() {
           </Flex>
         </Flex>
       </Container>
-    </Layout>
+      <Footer/>
+    </>
+    // </Layout>
   );
 }
 

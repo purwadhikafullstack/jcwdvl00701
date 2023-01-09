@@ -242,5 +242,49 @@ module.exports = {
                 message : "your email not registered"
             })
         }
+  },
+  // add user jika dari tenant mau jadi user
+  completeDataUser : async(req,res) => {
+    try {
+      console.log(req.body);
+      const {name, phoneNumber , userId} = req.body
+      // tambahakan data ke profile
+      const result = await sequelize.transaction(async(t) => {
+        const completeDataUser = await Profile.create(
+          {
+            name,
+            phoneNumber,
+            gender : "Male",
+            userId
+          },
+          {transaction : t}
+        )
+          // tambhakan UserRole yg user [1]
+        const addRoleUser = await UserRole.create(
+          {
+            userId,
+            roleId : 1
+          },
+          {transaction: t}
+        );
+
+        return {
+          name,
+          userId,
+          roleId : addRoleUser.roleId
+        }
+      })
+
+      return res.status(200).json({
+        result : result,
+        message: "now your account can be accsess to be user",
+        code: 200
+      })
+    } catch(err) {
+      return res.status(500).json({
+        message : err.toString(),
+        code : 500
+      })
+    }
   }
 };

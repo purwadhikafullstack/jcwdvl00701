@@ -19,7 +19,8 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Spinner
+  Spinner,
+  HStack
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 
@@ -65,16 +66,17 @@ function Payment() {
   
   const bulan = ["Januari", "Februari", "Maret", "April" ,"Mei" , "Juni" , "Juli" , "Agustus" , "September" , "Oktober", "November", "Desember"]
   const searchBulan = (bln) => {
-    const angka = [1,2,3,4,5,6,7,8,9,10,11,12] 
+    const angka = ["01","02","03","04","05","06","07","08","09","10","11","12"]
     let bulanNow = ""
     for (let i = 0; i < bln.length; i++) {
-      if(sDate2[1] == angka[i + 1]){
+      if(sDate2[1] == angka[i]){
 
-        return bulanNow += bln[i + 1]
+        return bulanNow += bln[i]
       }
     }
   }
   let resultBulan = searchBulan(bulan)
+  console.log(resultBulan);
 
   let price = dataPayment?.finalPrice
   const priceRupiah = new Intl.NumberFormat("id-ID", {
@@ -159,25 +161,6 @@ function Payment() {
           display={{ ss: "none", sm: "none", sl: "flex" }}
         >
           <Flex mt="40px" mb="10px" w="100%" mx="auto">
-            <Link to="/booking">
-              <Button
-                position="relative"
-                borderRadius="0px"
-                border="1px"
-                borderColor="gray.200"
-                bg="white"
-                h="40px"
-                me="20px"
-                _hover={{
-                  background: "black",
-                  color: "white",
-                  borderColor: "black",
-                }}
-              >
-                <i className="fa-solid fa-caret-left"></i>
-              </Button>
-            </Link>
-
             <Text fontWeight="900" fontSize="36px" color="black" px="5px">
               Payment
             </Text>
@@ -209,23 +192,6 @@ function Payment() {
                   {sDate2[2]}-{eDate2[2]} {resultBulan} | {dataPayment?.guestCount} Guest
                 </Text>
                 <Flex bg="white" border="1px" borderColor="gray.200">
-                  <Link to="/booking">
-                    <Button
-                      display={{ ss: "inline", sm: "inline", sl: "none" }}
-                      borderRadius="0px"
-                      borderRight="1px"
-                      borderColor="gray.200"
-                      bg="white"
-                      h="100%"
-                      _hover={{
-                        background: "black",
-                        color: "white",
-                        borderColor: "black",
-                      }}
-                    >
-                      <i className="fa-solid fa-caret-left"></i>
-                    </Button>
-                  </Link>
                   <Box p="10px">
                     <Text
                       fontWeight="regular"
@@ -258,57 +224,63 @@ function Payment() {
                     </ListItem>
                   </OrderedList>
                 </Box>
-                <FormControl>
-                  <Input
-                  type="file"
-                  accept="image/png, image/jpg"
-                  ref={inputFileRef}
-                  onChange={handleFile}
-                  display={"none"}
-                  />
-                  <FormHelperText ms="22px">Max size : 1MB</FormHelperText>
-                  <Button mx="20px" variant="secondary" w="305px" onClick={() => inputFileRef.current.click()}>
-                    <Text fontWeight="regular" fontSize="14px">
-                      upload image
-                    </Text>
-                  </Button>
-                  {err ? 
-                    (
-                      <Alert status="error" color="red" text="center">
-                        <i className="fa-solid fa-circle-exclamation"></i>
-                        <Text ms="10px">{fileSizeMsg}</Text>
-                      </Alert>
-                    ) 
-                    : 
-                    null
-                  }
+                <Flex direction={"column"} justifyContent="center" alignItems={"center"}>
+                  <FormControl>
+                    <FormHelperText ms="22px">Max size : 1MB</FormHelperText>
+                    <Flex direction={"column"} alignItems={"center"} >
+                      <Input
+                      type="file"
+                      accept="image/png, image/jpg"
+                      ref={inputFileRef}
+                      onChange={handleFile}
+                      display={"none"}
+                      />
+                      <Button mx="20px" variant="secondary" w="305px" onClick={() => inputFileRef.current.click()}>
+                        <Text fontWeight="regular" fontSize="14px">
+                          upload image
+                        </Text>
+                      </Button>
 
-                    {prove ? 
-                    (
-                      <Alert status="info" color="green" text="center">
-                        <i class="fa-solid fa-check"></i>
-                        <Text ms="10px">image uploaded</Text>
-                      </Alert>
-                    )
+                    </Flex>
+                        {err ? 
+                          (
+                            <Alert status="error" color="red" text="center">
+                              <i className="fa-solid fa-circle-exclamation"></i>
+                              <Text ms="10px">{fileSizeMsg}</Text>
+                            </Alert>
+                          ) 
+                          : 
+                          null
+                        }
+
+                          {prove ? 
+                          (
+                            <Alert status="info" color="green" text="center">
+                              <i class="fa-solid fa-check"></i>
+                              <Text ms="10px">image uploaded</Text>
+                            </Alert>
+                          )
+                          :
+                          null
+                      }
+                      </FormControl>
+                    
+
+                  {
+                    selectedFile ? 
+                  <Button mx="20px" mt="20px" variant="secondary" w="305px" onClick={onOpen}>
+                      <Text fontWeight="regular" fontSize="14px">
+                        upload payment proof
+                      </Text>
+                    </Button>
                     :
-                    null
-                }
-                </FormControl>
-
-                {
-                  selectedFile ? 
-                <Button mx="20px" mt="20px" variant="secondary" w="305px" onClick={onOpen}>
-                    <Text fontWeight="regular" fontSize="14px">
-                      upload payment proof
-                    </Text>
-                  </Button>
-                  :
-                  <Button mx="20px" mt="20px" variant="secondary" w="305px" disabled="true">
-                    <Text fontWeight="regular" fontSize="14px">
-                      upload payment proof
-                    </Text>
-                  </Button>
-                }
+                    <Button mx="20px" mt="20px" variant="secondary" w="305px" disabled="true">
+                      <Text fontWeight="regular" fontSize="14px">
+                        upload payment proof
+                      </Text>
+                    </Button>
+                  }
+                </Flex>
                 <Text fontWeight="Bold" fontSize="18px" p="20px" pb="5px">
                   Price Details
                 </Text>

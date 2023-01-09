@@ -32,21 +32,20 @@ import {
 } from "firebase/auth";
 import {authFirebase} from "../../Config/firebase";
 import axios from "axios"
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import auth_types from "../../Redux/Reducers/Types/userTypes";
 import {Link, useHistory} from "react-router-dom";
 import Layout from "../../Components/Layout";
+import Footer from "../../Components/Footer";
 
 function LoginUser() {
-
+    const history = useHistory()
+    const dispatch = useDispatch()
     // for toggling password visibility
     const [showPassword, setShowPassword] = useState(false)
     const handleClick = () => {
         setShowPassword(!showPassword)
     }
-
-    const history = useHistory()
-    const dispatch = useDispatch()
 
     const handleWithGoogle = async () => {
         const providerGoogle = new GoogleAuthProvider()
@@ -110,9 +109,11 @@ function LoginUser() {
         }),
         validateOnChange: false,
         onSubmit: async (values) => {
+            console.log(values);
             const {email, password} = values
 
             const userCredential = await signInWithEmailAndPassword(authFirebase, email, password)
+            console.log(userCredential);
             const user = userCredential.user
 
             // utk get data ke back-end dan di simpan di redux
@@ -120,6 +121,8 @@ function LoginUser() {
                 params: {id: user.uid}
             })
 
+            console.log((await response).data);
+    
             if ((await response).data.code !== 200) {
                 alert("please register for your account")
             } else {
@@ -135,7 +138,8 @@ function LoginUser() {
     })
 
     return (
-        <Layout>
+        // <Layout>
+        <>
             <Container maxW="2x1" px="0px">
                 <Flex flexDirection="column">
                     {/* flex container utk dekstop */}
@@ -297,7 +301,12 @@ function LoginUser() {
                     </Flex>
                 </Flex>
             </Container>
-        </Layout>
+            <Footer
+            ss={"13em"}
+            sm={"14em"}
+            sl={"15em"}/>
+        </>
+        // </Layout>
     );
 }
 

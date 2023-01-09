@@ -5,6 +5,8 @@ const {
     Profile,
     Room,
     Transaction,
+    Review,
+    sequelize
 } = require("../models");
 const { Op } = require("sequelize");
 
@@ -24,73 +26,17 @@ module.exports = {
             const whereCondition = {
                 userId : id
             }
-
-            // versi awal yg paling benar, tapi tidak bsia di pakai
-            // if (req.query?.startDate && req.query?.endDate){
-            //     whereCondition.startDate = {
-            //         [Op.or] : [
-            //             {
-            //                 startDate: {
-            //                     [Op.between]: [startDate, endDate]
-            //                 }
-            //             }, {
-            //                 endDate: {
-            //                     [Op.between]: [startDate, endDate]
-            //                 }
-            //             }
-            //         ],
-            //     }
-            // }
-
-            // paling memungkin kan tapi ambil hanya dari 1 tabel, harus punya ke 2 value
-            // if (req.query?.startDate){
-            //     whereCondition.startDate =  {[Op.between] : [startDate, endDate]}
-            // }
-
-            // if (req.query?.endDate){
-            //     whereCondition.endDate =  {[Op.between] : [startDate, endDate]}
-            // }
-
-            // versi 2, hasilnya kaya lte dan gte range sama dengan tidka berguna , harus punya ke 2 value
-            // if (req.query?.startDate){
-            //     whereCondition.startDate =  {[Op.or] : {
-            //         [Op.between] : [startDate, endDate]
-            //     }}
-            // }
-            // if (req.query?.endDate){
-            //     whereCondition.endDate =  {[Op.or] : {
-            //         [Op.between] : [startDate, endDate]
-            //     }}
-            // }
-
-
-            // berdasarkan <= && >= versi 1,  range sama dengan ya tidak terpakai, yg terpakai hanya lebih kecil dan besar
-                // kalo pakai or bug nya jebool, dna ke 2 data harus di isi
-            // if (req.query?.startDate){
-            //     whereCondition.startDate =  {[Op.and] : {
-            //         [Op.gte] : startDate,
-            //         [Op.lte] : endDate
-            //     }}
-            // }
-
-            // if (req.query?.endDate){
-            //     whereCondition.endDate =  {[Op.and] : {
-            //         [Op.gte] : startDate,
-            //         [Op.lte] : endDate
-            //     }}
-            // }
-
             // berdasarkan <= && >= versi 2, udh ga jebol tapi, range sama dengan ya tidak terpakai, yg terpakai lebih besar dankecil
                 // ini kemnugkinan paling logiss nya, kemungkina besar utk tidka error dan ini yg akan di pakai
             if (req.query?.startDate){
                 whereCondition.startDate =  {
-                    [Op.gt] : startDate,
+                    [Op.gte] : startDate,
                 }
             }
 
             if (req.query?.endDate){
                 whereCondition.endDate =  {
-                    [Op.lt] : endDate
+                    [Op.lte] : endDate
                 }
             }
 
@@ -120,25 +66,11 @@ module.exports = {
                             }
                         ]
                     },
+                    {
+                        model : Review
+                    }
                     // pencarian berdasarkan userId
                 ],
-                // tinggal dibuat condition dari default dan tambahan
-                // where : {
-                //     userId : id,
-                //     [Op.or] : [
-                //         {
-                //             startDate: {
-                //                 [Op.between]: [startDate, endDate]
-                //             }
-                //         }, {
-                //             endDate: {
-                //                 [Op.between]: [startDate, endDate]
-                //             }
-                //         }
-                //     ],
-                //     status : status 
-                // },
-
                 where : whereCondition,
                 // sort by invoice, dan endDate
                 order : [
@@ -185,6 +117,36 @@ module.exports = {
                 code : 200
             })
         } catch (err) {
+            return res.status(500).json({
+                message : err.toString(),
+                code : 500
+            })
+        }
+    },
+    addReview : async(req,res) => {
+        console.log(req.body);
+        const {reservationId , comment} = req.body
+        try {
+            const result = await sequelize.transaction(async(t) => {
+                const review = await Review.create(
+                    {
+                        comment,
+                        reservationId
+                    },
+                    {transaction: t}
+                )
+
+                return {
+                    review
+                }
+            })
+
+            return res.status(200).json({
+                result : result,
+                code : 200,
+                message : "succses add review"
+            })
+        } catch(err) {
             return res.status(500).json({
                 message : err.toString(),
                 code : 500

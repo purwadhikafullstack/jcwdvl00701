@@ -52,16 +52,16 @@ function Booking() {
 
     const bulan = ["Jan", "Feb", "Mar", "Apr" ,"Mei" , "Jun" , "Jul" , "Agus" , "Sept" , "Okt", "Nov", "Des"]
     const searchBulan = (bln) => {
-        const angka = [1,2,3,4,5,6,7,8,9,10,11,12] 
+        const angka = ["01","02","03","04","05","06","07","08","09","10","11","12"] 
         let bulanNow = ""
             for (let i = 0; i < bln.length; i++) {
-            if(startDate2[1] == angka[i + 1]){
-                return bulanNow += bln[i + 1]
+            if(startDate2[1] == angka[i]){
+                return bulanNow += bln[i]
             }
         }
     }
     let resultBulan = searchBulan(bulan)
-    // console.log(resultBulan);
+    console.log(resultBulan);
   let birthDate2 = birthdate.split("T")
 
   const btnHandlerPayment = (id) => {
@@ -111,36 +111,23 @@ function Booking() {
           borderBottom="1px"
           borderColor="gray.200"
         >
-          <Button
-            borderRadius="0px"
-            bg="white"
-            border="1px"
-            borderColor="gray.200"
-            my="auto"
-            _hover={{
-              background: "black",
-              color: "white",
-            }}
-          >
-            <i className="fa-solid fa-caret-left"></i>
-          </Button>
           <Box>
             <Text fontWeight="semibold" fontSize="16px">
-              Rp. 625.000,00
+              {/* Rp. 625.000,00 */}
+              {totalPrice}
             </Text>
             <Text
               fontWeight="regular"
               fontSize="12px"
               color="rgba(175, 175, 175, 1)"
             >
-              12-16 Nov | 1 Guest
+              {/* 12-16 Nov | 1 Guest */}
+              {startDate2[2]} - {endDate2[2]} {resultBulan} | {dataBooking?.guestCount} Guest
             </Text>
           </Box>
-          <Link to="/payment">
-            <Button variant="primary" w="135px">
-              Pay
-            </Button>
-          </Link>
+          <Button variant="primary" w="135px" onClick={() => btnHandlerPayment(dataBooking?.id)}>
+            Pay
+          </Button>
         </Flex>
         <Container maxW="1140px">
           <Flex
@@ -150,23 +137,6 @@ function Booking() {
             mx="auto"
             display={{ ss: "none", sm: "none", sl: "flex" }}
           >
-            <Button
-              position="relative"
-              borderRadius="0px"
-              border="1px"
-              borderColor="gray.200"
-              bg="white"
-              h="40px"
-              me="20px"
-              _hover={{
-                background: "black",
-                color: "white",
-                borderColor: "black",
-              }}
-            >
-              <i className="fa-solid fa-caret-left"></i>
-            </Button>
-
             <Text fontWeight="900" fontSize="36px" color="black" px="5px">
               Confirm Booking
             </Text>
@@ -193,7 +163,7 @@ function Booking() {
                     Chek-in
                   </Text>
                   <Text fontWeight="regular" fontSize="14px" w="130px">
-                    {startDate2[2]} {resultBulan} {startDate2[0]}
+                    {startDate2[2]} {resultBulan} {startDate2[0]} (14:00-22:00)
                   </Text>
                 </Flex>
                 <Flex
@@ -208,7 +178,7 @@ function Booking() {
                     Chek-out
                   </Text>
                   <Text fontWeight="regular" fontSize="14px" w="130px">
-                    {endDate2[2]} {resultBulan} {endDate2[0]}
+                    {endDate2[2]} {resultBulan} {endDate2[0]} (00:00-12:00)
                   </Text>
                 </Flex>
                 <Text

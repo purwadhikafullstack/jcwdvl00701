@@ -17,22 +17,24 @@ import {
 import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { authFirebase } from "../Config/firebase";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut , getAuth } from "firebase/auth";
 import { useSelector } from "react-redux";
 
 import { useDisclosure } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect , useState} from "react";
+import axios from "axios"
 
 function NavbarMobileTenant() {
   const location = useLocation().pathname;
   const pathLocation = location.split("/");
   const history = useHistory();
   const auth = authFirebase;
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
+  const { id, ProfilePic ,ProfileName,firebaseProviderId} = useSelector((state) => state.user);
+  // console.log(firebaseProviderId);
 
-  const { id, ProfilePic ,ProfileName} = useSelector((state) => state.user);
+  console.log(id, ProfilePic);
 
   const logout = () => {
     signOut(auth)
@@ -44,6 +46,10 @@ function NavbarMobileTenant() {
   const switchToTenant = () => {
     history.push("/tenant/complete-register");
   };
+
+  const bookingHistory = () => {
+    history.push("/booking-history")
+  }
 
   const menuItemContents = [
     {
@@ -82,7 +88,7 @@ function NavbarMobileTenant() {
       text: "Price",
     },
     {
-      url: "/",
+      url: "/complete-user",
       icon: <i class="fa-solid fa-door-open"></i>,
       text: "Switch to User",
     },
@@ -151,6 +157,7 @@ function NavbarMobileTenant() {
                     signOut(auth)
                       .then(() => alert("signed out"))
                       .catch((error) => alert(error));
+                    history.push("/tenant/login")
                   }}
                 >
                   <Flex
@@ -196,15 +203,13 @@ function NavbarMobileTenant() {
               <Flex  w="100%" mx="auto" justifyContent="space-between">
               <Spacer />
               <Flex fontWeight="bold" fontSize="18px" my="auto" mr="20px">
-                <Link>
+                <Link to="/">
                   <Text>Search</Text>
                 </Link>
-                <Link to="booking-history">
-                  <Text mx="50px">Room</Text>
-                </Link>
+                  <Text mx="50px" onClick={bookingHistory} cursor="pointer">Room</Text>
                   <Menu>
                     {
-                      auth ?
+                      id ?
                       <MenuButton fontWeight="bold" fontSize="18px" my="auto">
                         {ProfileName}
                       </MenuButton>
@@ -218,7 +223,12 @@ function NavbarMobileTenant() {
                         Profile
                       </MenuItem>
                       <MenuDivider />
-                      <MenuItem onClick={switchToTenant}>Switch To Tenant</MenuItem>
+                      {
+                      firebaseProviderId === "password" ?
+                        <MenuItem onClick={switchToTenant}>Switch To Tenant</MenuItem>
+                        :
+                        null
+                      }
                       <MenuDivider />
                       <MenuItem onClick={logout}>Logout</MenuItem>
                       <MenuDivider />

@@ -449,7 +449,7 @@ function PropertyDetail(props) {
                 w="100%"
                 variant="primary"
                 my={2}
-                onClick={btnHandlerReservation}
+                onClick={onOpen}
               >
                 Reserve
               </Button>
@@ -458,7 +458,7 @@ function PropertyDetail(props) {
                 w="100%"
                 variant="primary"
                 my={2}
-                onClick={btnHandlerReservation}
+                onClick={onOpen}
                 disabled={true}
               >
                 Reserve

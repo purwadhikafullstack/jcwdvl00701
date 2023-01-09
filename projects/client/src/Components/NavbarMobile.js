@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 
 function NavbarMobile() {
   const [isLargerThan576] = useMediaQuery("(min-width: 576px)");
-  const {id , ProfilePic, ProfileName} = useSelector(state => state.user)
+  const {id , ProfilePic, ProfileName, firebaseProviderId} = useSelector(state => state.user)
   const auth = authFirebase
   const history = useHistory()
 
@@ -33,6 +33,14 @@ function NavbarMobile() {
   const switchToTenant = () => {
     history.push("/tenant/complete-register")
   }
+
+  const bookingHistory = () => {
+    history.push("/booking-history")
+  }
+
+  const search = () => {
+    history.push("/")
+  }
   return id ?
   <Box
       bg="white"
@@ -44,20 +52,20 @@ function NavbarMobile() {
       display={{ ss: "inline", sm: "inline", sl: "none" }}
     >
       <Flex justifyContent="space-around" py="5px">
-        <Box fontSize="22px" textAlign="center" color="black">
+        <Box fontSize="22px" textAlign="center" color="black" onClick={search} cursor="pointer">
           <i className="fa-solid fa-magnifying-glass-location"></i>
-          <Text fontWeight="regular" fontSize="12px">
+          <Text fontWeight="regular" fontSize="12px" onClick={search}>
             Search
           </Text>
         </Box>
-        <Link to="/booking-history">
-          <Box fontSize="22px" textAlign="center" color="black">
+        
+          <Box fontSize="22px" textAlign="center" color="black"  onClick={bookingHistory} cursor="pointer">
             <i className="fa-solid fa-bed"></i>
-            <Text fontWeight="regular" fontSize="12px">
+            <Text fontWeight="regular" fontSize="12px"  onClick={bookingHistory}>
               Room
             </Text>
           </Box>
-        </Link>
+        
         <Box fontSize="22px" textAlign="center" color="black">
             <Menu>
               <MenuButton fontWeight="regular">
@@ -81,7 +89,12 @@ function NavbarMobile() {
                 <MenuList>
                   <MenuItem fontSize="14px" onClick={() => history.push("/profile")}>Profile</MenuItem>
                   <MenuDivider/>
-                  <MenuItem onClick={switchToTenant} fontSize="14px">Switch To Tenant</MenuItem>
+                  {
+                    firebaseProviderId === "password" ?
+                      <MenuItem onClick={switchToTenant} fontSize="14px">Switch To Tenant</MenuItem>
+                      :
+                      null
+                    }
                   <MenuDivider/>
                   <MenuItem onClick={logout} fontSize="14px">Logout</MenuItem>
                 <MenuDivider/>

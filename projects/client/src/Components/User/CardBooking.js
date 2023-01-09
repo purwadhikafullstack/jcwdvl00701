@@ -68,13 +68,14 @@ function CardBooking (props) {
     // console.log(startDate2);
     let endDate2 = endDate.split("T")[0].split("-")
 
-    const bulan = ["Jan", "Feb", "Mar", "Apr" ,"Mei" , "Jun" , "Jul" , "Agus" , "Sept" , "Okt", "Nov", "Des"]
+   const bulan = ["Jan", "Feb", "Mar", "Apr" ,"Mei" , "Jun" , "Jul" , "Agus" , "Sept" , "Okt", "Nov", "Des"]
     const searchBulan = (bln) => {
-        const angka = [1,2,3,4,5,6,7,8,9,10,11,12] 
+        const angka = ["01","02","03","04","05","06","07","08","09","10","11","12"] 
         let bulanNow = ""
             for (let i = 0; i < bln.length; i++) {
-            if(startDate2[1] == angka[i + 1]){
-                return bulanNow += bln[i + 1]
+                // console.log(angka[i]);
+            if(startDate2[1] == angka[i]){
+                return bulanNow += bln[i]
             }
         }
     }
@@ -113,6 +114,31 @@ function CardBooking (props) {
     }
     return (
         <Box bg="primary" w="100%" p="20px" color="white">
+            <Box bg={"white"} mb="5px" display={{sl : "none"}} h="70px">
+                <Flex>
+                    <Box boxSize="50px" mt="2px" ms="1px">
+                        <Image 
+                        src={process.env.REACT_APP_API_BASE_URL + User?.Profile?.profilePic} 
+                        alt="foto profile" 
+                        overflow="hidden"
+                        objectFit="cover"
+                        />
+                    </Box>
+                    <Box ms="15px" mt="5px">
+                        <Text fontWeight="semibold" fontSize="22px" color={"black"}>
+                            {User?.Profile?.name}
+                        </Text>
+                        <Text
+                            fontWeight="regular"
+                            fontSize="14px"
+                            color="rgba(175, 175, 175, 1)"
+                        >
+                            {User?.Profile?.birthdate.split("T")[0]}
+                        </Text>
+                    </Box>
+                </Flex>
+
+            </Box>
         <Container maxW="1140px" px={{ sm: "0px", sl: "15px" }}>
             <Flex
             direction={{ ss: "column", sm: "column", sl: "row" }}
@@ -301,30 +327,6 @@ function CardBooking (props) {
             </Box>
             </Flex>
         </Container>
-        {/* utk modal sebelum pay
-        <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
-            <ModalOverlay />
-            <ModalContent borderRadius={0}>
-            <ModalHeader>Are you sure to pay room ?</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody pb={6}></ModalBody>
-
-            <ModalFooter>
-                <Button
-                onClick={btnHandlerUpload}
-                borderRadius={0}
-                colorScheme="red"
-                mr={3}
-                >
-                pay
-                </Button>
-                <Button borderRadius={0} onClick={onClose}>
-                Cancel
-                </Button>
-            </ModalFooter>
-            </ModalContent>
-        </Modal> */}
-
         {/* utk modal canceled*/}
         <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />

@@ -31,6 +31,7 @@ import auth_types from "../../Redux/Reducers/Types/userTypes";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import Footer from "../../Components/Footer";
 
 function LoginTenant() {
       // for toggling password visibility
@@ -78,9 +79,10 @@ function LoginTenant() {
       }
     })
   return (
-    <Layout>
+    // <Layout>
+    <>
       <Container maxW="2x1" px="0px">
-        <Flex flexDirection="column" bg="black">
+        <Flex flexDirection="column" bg="black"  >
           {/* flex container utk dekstop */}
           <Flex>
             {/* utk image dekstop */}
@@ -107,8 +109,8 @@ function LoginTenant() {
             </Box>
 
             {/* Form */}
-            <Box w="50em">
-              <Flex justifyContent="center" alignItems="center" my="3em">
+            <Box w="50em" border={"1px"}>
+              <Flex justifyContent="center" alignItems="center" my="3em" mb={"80vh"}>
                 <Box width="360px" height="297px">
                   <Flex
                     flexDirection="column"
@@ -186,16 +188,6 @@ function LoginTenant() {
                         </Text>
                       </Flex>
                       <hr />
-                      {/* <Button variant="secondary" mt="20px">
-                        <Flex justifyContent="flex-start">
-                          <Image src={google} mr="5px"></Image>
-                          <Text>Login With Google</Text>
-                        </Flex>
-                      </Button>
-                      <Button variant="secondary" mt="20px">
-                        <Image src={facebook}></Image>
-                        <Text>Login With Facebook</Text>
-                      </Button> */}
                       <Flex
                         justifyContent="center"
                         border="1px"
@@ -233,7 +225,13 @@ function LoginTenant() {
           </Flex>
         </Flex>
       </Container>
-    </Layout>
+      <Footer 
+        // ss={"13em"}
+        // sm={"14em"}
+        // sl={"15em"}
+        />
+    </>
+    // </Layout>
   );
 }
 

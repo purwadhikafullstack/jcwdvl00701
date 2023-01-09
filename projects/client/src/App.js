@@ -31,6 +31,7 @@ import Price from "./Pages/Tenant/price";
 import Dashboard from "./Pages/Tenant/dashboard";
 import ProfileTenant from "./Pages/Tenant/profileTenant";
 import CompleteFormTenant from "./Pages/Tenant/completeFormTenant";
+import CompleteFormUser from "./Pages/User/completeFromUser";
 import { authFirebase } from "./Config/firebase";
 import {
   getAuth,
@@ -49,11 +50,9 @@ function App() {
   const [firebaseProvider, setFirebaseProvider] = useState("");
   const [userId, setUserId] = useState("");
 
-  const { id, name, email, UserRoles, Tenant } = useSelector(
+  const { id, email, UserRoles, Tenant } = useSelector(
     (state) => state.user
   );
-  // console.log(UserRoles);
-  // console.log(Tenant);
 
   let history = useHistory();
   const dispatch = useDispatch();
@@ -65,12 +64,13 @@ function App() {
     onAuthStateChanged(auth, (user) => {
       // console.log("onAuthStateChanged :", user);
       if (user) {
+        // console.log(user);
         setUserLogin(user);
         setUserId(user.uid);
         setFirebaseProvider(user.providerData[0].providerId);
         setEmailVerified(user.emailVerified);
         alert("ada yg login");
-
+        history.push("/");
         // kondisi jika sudah terverifikasi
         if (user.emailVerified) {
           alert("your account has been verified");
@@ -183,6 +183,7 @@ function App() {
         <Route component={BookingHistory} path="/booking-history" />
         <Route component={Booking} path="/booking/:id" />
         <Route component={Payment} path="/payment/:id" />
+        <Route component={CompleteFormUser} path="/complete-user" />
         <Route component={Home} path="/" />
       </Switch>
     </BrowserRouter>
