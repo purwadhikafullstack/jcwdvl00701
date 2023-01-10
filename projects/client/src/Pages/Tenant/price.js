@@ -474,6 +474,8 @@ function DeleteSpecialPriceForm(props) {
 }
 
 function FilterSpecialPrice(props) {
+  const startDate = props.startDate ? props.startDate.toISOString().substring(0,10) : props.startDate
+  const endDate = props.endDate ? props.endDate.toISOString().substring(0,10) : props.endDate
   return <>
     <Flex w="100%">
       <Box w="50%" mr={2}>
@@ -481,6 +483,7 @@ function FilterSpecialPrice(props) {
         <Input
           size="md" type="date"
           onChange={props.handleChangeStartDate}
+          defaultValue={startDate}
         />
       </Box>
       <Box w="50%">
@@ -489,6 +492,7 @@ function FilterSpecialPrice(props) {
           size="md" type="date"
           onChange={props.handleChangeEndDate}
           min={new Date(props.startDate).toISOString().split('T')[0]}
+          defaultValue={endDate}
         />
       </Box>
     </Flex>
@@ -508,7 +512,7 @@ function FilterSpecialPrice(props) {
 }
 
 function SpecialPrice(props) {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const user = props.user
 
   const properties = props.properties
@@ -522,7 +526,7 @@ function SpecialPrice(props) {
   const [page, setPage] = useState(0)
 
   const fetchSpecialPrices = useCallback(async () => {
-    // setIsLoading(true)
+    setIsLoading(true)
     const url = `${process.env.REACT_APP_API_BASE_URL}/specialprice/all`
     const params = {uid: user.id, page: page}
 
@@ -534,7 +538,7 @@ function SpecialPrice(props) {
 
     setSpecialPrices(response.data.result.specialPrices)
     setTotalPage(response.data.result.totalPage)
-    // setIsLoading(false)
+    setIsLoading(false)
   }, [endDate, selectedPropertyId, startDate, user.id, page])
 
   useEffect(() => {
@@ -968,6 +972,8 @@ function DeleteRoomUnavailabilityForm(props) {
 }
 
 function FilterRoomUnavailability(props) {
+  const startDate = props.startDate ? props.startDate.toISOString().substring(0,10) : props.startDate
+  const endDate = props.endDate ? props.endDate.toISOString().substring(0,10) : props.endDate
   return <>
     <Flex w="100%">
       <Box w="50%" mr={2}>
@@ -975,6 +981,7 @@ function FilterRoomUnavailability(props) {
         <Input
           size="md" type="date"
           onChange={props.handleChangeStartDate}
+          defaultValue={startDate}
         />
       </Box>
       <Box w="50%">
@@ -983,6 +990,7 @@ function FilterRoomUnavailability(props) {
           size="md" type="date"
           onChange={props.handleChangeEndDate}
           min={new Date(props.startDate).toISOString().split('T')[0]}
+          defaultValue={endDate}
         />
       </Box>
     </Flex>
@@ -1002,7 +1010,7 @@ function FilterRoomUnavailability(props) {
 }
 
 function RoomAvailability(props) {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const user = props.user
 
   const properties = props.properties
@@ -1016,7 +1024,7 @@ function RoomAvailability(props) {
   const [page, setPage] = useState(0)
 
   const fetchRoomUnavailability = useCallback(async () => {
-    // setIsLoading(true)
+    setIsLoading(true)
     const url = `${process.env.REACT_APP_API_BASE_URL}/roomunavailalbility/all`
     const params = {uid: user.id}
 
@@ -1028,7 +1036,7 @@ function RoomAvailability(props) {
 
     setRoomUnavailabilities(response.data.result.roomUnavailabilities)
     setTotalPage(response.data.result.totalPage)
-    // setIsLoading(false)
+    setIsLoading(false)
   }, [endDate, selectedPropertyId, startDate, user.id, page])
 
 
