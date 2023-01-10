@@ -8,7 +8,15 @@ import {
   Input,
   FormControl,
   Button,
-  Tooltip,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
   HStack,
   IconButton,
   Modal,
@@ -108,11 +116,13 @@ function Report() {
     return dataReport?.map((val, index) => {
       return (
         <Flex
+          key={index}
           maxW="1140px"
           borderBottom="1px"
           borderColor="gray.200"
           pt="20px"
           pb="10px"
+          ps="10px"
         >
           <Text
             mx="20px"
@@ -164,7 +174,7 @@ function Report() {
               currency: "IDR",
             }).format(val.finalPrice)}
           </Text>
-          <Center
+          <Box
             display={{ ss: "flex", sl: "none" }}
             me="10px"
             fontSize="14px"
@@ -187,7 +197,7 @@ function Report() {
             >
               <i className="fa-solid fa-circle-info"></i>
             </Box>
-          </Center>
+          </Box>
         </Flex>
       );
     });
@@ -204,6 +214,7 @@ function Report() {
         setRows(res.data.totalRows);
         setDataReport(res.data.result.rows);
         setTotalSales(res.data.totalSales);
+        onDetailClose();
       })
       .catch((err) => {
         console.error(err);
@@ -435,63 +446,46 @@ function Report() {
             <ModalHeader>Detail Order</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <Box
-                border="1px"
-                borderColor="gray.200"
-                bg="white"
-                mt="10px"
-                maxWidth="500px"
-                boxShadow={{
-                  ss: "none",
-                  sm: "md",
-                  sl: "md",
-                }}
-              >
-                <Flex>
-                  <Box w="50%">
-                    <Box p="10px">
-                      <Text fontWeight="Bold" fontSize="14px" pb="5px">
-                        <i
-                          className="fa-solid fa-building"
-                          style={{ marginRight: "9px" }}
-                        ></i>
-                        : oooo
-                      </Text>
-                      <Text fontWeight="reguler" fontSize="14px" pb="5px">
-                        <i
-                          style={{ fontSize: "11px" }}
-                          className="fa-solid fa-bed"
-                        ></i>{" "}
-                        : ttt
-                      </Text>
-                      <Text fontWeight="reguler" fontSize="14px" pb="5px">
-                        <i className="fa-solid fa-circle-user"></i> :777
-                      </Text>
-                      <Text
-                        fontWeight="reguler"
-                        fontSize="12px"
-                        pb="10px"
-                        color="rgba(175, 175, 175, 1)"
-                        borderColor="gray.200"
-                      >
-                        <i className="fa-solid fa-calendar-days"></i> : ttt
-                      </Text>
-                    </Box>
-                  </Box>
-                </Flex>
-                <Flex>
-                  <Box w="50%" px="10px">
-                    <Text fontWeight="Bold" fontSize="14px">
-                      ttt
-                    </Text>
-                  </Box>
-                </Flex>
-              </Box>
+              <TableContainer mb="20px">
+                <Table variant="simple">
+                  <Tbody>
+                    <Tr>
+                      <Td fontWeight="bold">Property</Td>
+                      <Td>: {detailData?.Room?.Property?.name}</Td>
+                    </Tr>
+                    <Tr>
+                      <Td fontWeight="bold">User</Td>
+                      <Td>: {detailData?.User?.Profile?.name}</Td>
+                    </Tr>
+                    <Tr>
+                      <Td fontWeight="bold">Room</Td>
+                      <Td>: {detailData?.Room?.name}</Td>
+                    </Tr>
+                    <Tr>
+                      <Td fontWeight="bold">Start Date</Td>
+                      <Td>: {detailData?.startDate?.slice(0, 10)}</Td>
+                    </Tr>
+                    <Tr>
+                      <Td fontWeight="bold">End Date</Td>
+                      <Td>: {detailData?.endDate?.slice(0, 10)}</Td>
+                    </Tr>
+                    <Tr>
+                      <Td fontWeight="bold">Income</Td>
+                      <Td>
+                        :
+                        {new Intl.NumberFormat("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                        }).format(detailData?.finalPrice)}
+                      </Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+              </TableContainer>
             </ModalBody>
-            <ModalFooter></ModalFooter>
           </ModalContent>
         </Modal>
-        {/* //////////// */}
+
         <Modal
           closeOnOverlayClick={false}
           isOpen={isFilterOpen}
@@ -509,8 +503,8 @@ function Report() {
                 borderRadius={0}
                 onClick={(e) => selectHandler(e, "finalPrice")}
               >
-                <option value="ASC">highest income</option>
-                <option value="DESC">lowest income</option>
+                <option value="DESC">highest income</option>
+                <option value="ASC">lowest income</option>
               </Select>
               <Select
                 placeholder="short by date"

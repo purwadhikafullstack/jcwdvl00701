@@ -19,12 +19,13 @@ import {
   ModalBody,
   ModalFooter,
   Textarea,
+  Alert,
 } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/react";
 import { useState } from "react";
+import axios from "axios";
 
 function CardBookingHistory(props) {
-  // console.log(props.dataBooking);
   const {
     id,
     startDate,
@@ -36,9 +37,12 @@ function CardBookingHistory(props) {
     finalPrice,
     Room,
     User,
-  } = props.dataBooking;
+    Review,
+    randomNumber,
+  } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [inputReview, setInputReview] = useState("");
+  const [msg, setMsg] = useState("");
 
   let strStatus;
   let color;
@@ -83,11 +87,25 @@ function CardBookingHistory(props) {
     "Des",
   ];
   const searchBulan = (bln) => {
-    const angka = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    const angka = [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+    ];
     let bulanNow = "";
     for (let i = 0; i < bln.length; i++) {
-      if (startDate2[1] == angka[i + 1]) {
-        return (bulanNow += bln[i + 1]);
+      // console.log(angka[i]);
+      if (startDate2[1] == angka[i]) {
+        return (bulanNow += bln[i]);
       }
     }
   };
@@ -100,6 +118,24 @@ function CardBookingHistory(props) {
     if (field === "review") {
       setInputReview(value);
     }
+  };
+
+  const btnHandlerReview = () => {
+    console.log("btn reservation :", id);
+    axios
+      .post(`${process.env.REACT_APP_API_BASE_URL}/history/add-review`, {
+        comment: inputReview,
+        reservationId: id,
+      })
+      .then((res) => {
+        console.log(res.data.result);
+        setMsg(res.data.message);
+        randomNumber(Math.random());
+        onClose();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
   return (
     <Box border="1px" borderColor="gray.200">
@@ -145,28 +181,49 @@ function CardBookingHistory(props) {
       </Flex>
       {status === 6 ? (
         <Box>
-          <Flex>
-            <Button
-              variant="primary"
-              w="50%"
-              height="30px"
-              fontWeight="Bold"
-              fontSize="15px"
-              onClick={onOpen}
-            >
-              Add Review
-            </Button>
-            <Box bg="rgba(12, 211, 140, 1)" w="50%">
+          {/* <Flex> */}
+          {Review ? (
+            <Box bg="rgba(12, 211, 140, 1)" w="100%">
               <Center
                 color="white"
-                height="100%"
+                height="30px"
                 fontWeight="Bold"
                 fontSize="15px"
               >
                 Finished
               </Center>
             </Box>
-          </Flex>
+          ) : (
+            <Flex>
+              <Button
+                variant="primary"
+                w="50%"
+                height="30px"
+                fontWeight="Bold"
+                fontSize="15px"
+                onClick={onOpen}
+              >
+                Add Review
+              </Button>
+              <Box bg="rgba(12, 211, 140, 1)" w="50%">
+                <Center
+                  color="white"
+                  height="100%"
+                  fontWeight="Bold"
+                  fontSize="15px"
+                >
+                  Finished
+                </Center>
+              </Box>
+            </Flex>
+          )}
+          {/* </Flex> */}
+          {msg ? (
+            <Alert status="info" color="green" text="center">
+              <i class="fa-solid fa-check"></i>
+              <Text ms="10px">{msg}</Text>
+            </Alert>
+          ) : null}
         </Box>
       ) : (
         <Box>
@@ -193,10 +250,9 @@ function CardBookingHistory(props) {
           <ModalBody pb={6}>
             <Textarea onChange={(e) => inputHandlerReview(e, "review")} />
           </ModalBody>
-
           <ModalFooter>
             <Button
-              // onClick={btnCanceled}
+              onClick={btnHandlerReview}
               borderRadius={0}
               colorScheme="green"
               mr={3}

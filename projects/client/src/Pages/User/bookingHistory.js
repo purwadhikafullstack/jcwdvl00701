@@ -11,18 +11,18 @@ import {
   FormControl,
   Select,
   Spacer,
+  Spinner,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import Layout from "../../Components/Layout";
 import NavbarTuru from "../../Components/NavbarTuru";
 import Footer from "../../Components/Footer";
-import DatePicker from "react-datepicker";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import CardBookingHistory from "../../Components/User/CardBookingHistory";
 import CardBooking from "../../Components/User/CardBooking";
 import ReactPaginate from "react-paginate";
-
+import Loading from "../../Components/Loading";
 // import Footer from '../Components/Footer';
 
 function BookingHistory() {
@@ -36,26 +36,25 @@ function BookingHistory() {
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [randomNumber, setRandomNumber] = useState(0);
+  const [loading, setLoading] = useState(true);
+  console.log(dataBooking);
   console.log(rows);
 
-  let date = new Date();
-  // console.log(date.toISOString().split("T")[0]);
-  date = date.toISOString().split("T")[0];
-  // console.log(date);
   // console.log(id);
-  // console.log(inputStartDate);
-  // console.log(inputEndDate);
+  console.log(inputStartDate);
+  console.log(inputEndDate);
   // console.log(status);
 
   useEffect(() => {
+    setLoading(true);
     const fetchDataBooking = async () => {
       try {
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/history/get-history?userId=${id}&limit=${limit}&page=${page}&startDate=${inputStartDate}&endDate=${inputEndDate}&status=${status}`
         );
 
-        console.log((await response)?.data);
-        console.log((await response)?.data.bookingHistory.rows);
+        // console.log((await response)?.data);
+        // console.log((await response)?.data.bookingHistory.rows);
         // console.log((await response)?.data.result.rows);
         setDataBooking((await response)?.data?.bookingHistory?.rows);
         setPage((await response)?.data?.page);
@@ -66,6 +65,7 @@ function BookingHistory() {
       }
     };
     fetchDataBooking();
+    setLoading(false);
   }, [inputStartDate, inputEndDate, status, id, page, randomNumber]);
 
   const handleChange = (e, field) => {
@@ -84,18 +84,109 @@ function BookingHistory() {
 
   function renderHistory() {
     return dataBooking.map((val) => {
+      console.log(val);
       if (val.status === 6) {
-        return <CardBookingHistory dataBooking={val} />;
+        return (
+          <CardBookingHistory
+            id={val.id}
+            startDate={val?.startDate}
+            endDate={val?.endDate}
+            status={val?.status}
+            guestCount={val?.guestCount}
+            finalPrice={val?.finalPrice}
+            userId={val?.userId}
+            roomId={val?.roomId}
+            Room={val?.Room}
+            User={val?.User}
+            randomNumber={setRandomNumber}
+            Review={val?.Review}
+          />
+        );
       } else if (val.status == 5) {
-        return <CardBookingHistory dataBooking={val} />;
+        return (
+          <CardBookingHistory
+            id={val.id}
+            startDate={val?.startDate}
+            endDate={val?.endDate}
+            status={val?.status}
+            guestCount={val?.guestCount}
+            finalPrice={val?.finalPrice}
+            userId={val?.userId}
+            roomId={val?.roomId}
+            Room={val?.Room}
+            User={val?.User}
+            randomNumber={setRandomNumber}
+            Review={val?.Review}
+          />
+        );
       } else if (val.status === 4) {
-        return <CardBookingHistory dataBooking={val} />;
+        return (
+          <CardBookingHistory
+            id={val.id}
+            startDate={val?.startDate}
+            endDate={val?.endDate}
+            status={val?.status}
+            guestCount={val?.guestCount}
+            finalPrice={val?.finalPrice}
+            userId={val?.userId}
+            roomId={val?.roomId}
+            Room={val?.Room}
+            User={val?.User}
+            randomNumber={setRandomNumber}
+            Review={val?.Review}
+          />
+        );
       } else if (val.status === 3) {
-        return <CardBookingHistory dataBooking={val} />;
+        return (
+          <CardBookingHistory
+            id={val.id}
+            startDate={val?.startDate}
+            endDate={val?.endDate}
+            status={val?.status}
+            guestCount={val?.guestCount}
+            finalPrice={val?.finalPrice}
+            userId={val?.userId}
+            roomId={val?.roomId}
+            Room={val?.Room}
+            User={val?.User}
+            randomNumber={setRandomNumber}
+            Review={val?.Review}
+          />
+        );
       } else if (val.status === 2) {
-        return <CardBookingHistory dataBooking={val} />;
+        return (
+          <CardBookingHistory
+            id={val.id}
+            startDate={val?.startDate}
+            endDate={val?.endDate}
+            status={val?.status}
+            guestCount={val?.guestCount}
+            finalPrice={val?.finalPrice}
+            userId={val?.userId}
+            roomId={val?.roomId}
+            Room={val?.Room}
+            User={val?.User}
+            randomNumber={setRandomNumber}
+            Review={val?.Review}
+          />
+        );
       } else if (val.status === 1) {
-        return <CardBookingHistory dataBooking={val} />;
+        return (
+          <CardBookingHistory
+            id={val.id}
+            startDate={val?.startDate}
+            endDate={val?.endDate}
+            status={val?.status}
+            guestCount={val?.guestCount}
+            finalPrice={val?.finalPrice}
+            userId={val?.userId}
+            roomId={val?.roomId}
+            Room={val?.Room}
+            User={val?.User}
+            randomNumber={setRandomNumber}
+            Review={val?.Review}
+          />
+        );
       }
     });
   }
@@ -134,21 +225,6 @@ function BookingHistory() {
             randomNumber={setRandomNumber}
           />
         );
-      } else if (val.status === 2) {
-        return (
-          <CardBooking
-            id={val.id}
-            startDate={val?.startDate}
-            endDate={val?.endDate}
-            status={val?.status}
-            guestCount={val?.guestCount}
-            userId={val?.userId}
-            roomId={val?.roomId}
-            Room={val?.Room}
-            User={val?.User}
-            randomNumber={setRandomNumber}
-          />
-        );
       }
     });
   }
@@ -157,41 +233,12 @@ function BookingHistory() {
     setPage(selected);
   };
 
-  return (
-    // <Layout>
+  return loading ? (
+    <Loading />
+  ) : (
     <Box>
       <NavbarTuru />
-      <Box
-        w="100%"
-        h="90px"
-        mt={{ ss: "0px", sm: "0px", sl: "80px" }}
-        mb={{ ss: "68em", sm: "66em", sl: "1700px" }}
-      >
-        <Box
-          bg="white"
-          w="100%"
-          p="20px"
-          display={{ ss: "flex", sm: "flex", sl: "none" }}
-        >
-          <Flex>
-            <Box boxSize="50px">
-              <Image src={"https://bit.ly/dan-abramov"} alt="Dan Abramov" />
-            </Box>
-            <Box ms="10px">
-              <Text fontWeight="semibold" fontSize="22px">
-                Kratos
-              </Text>
-              <Text
-                fontWeight="regular"
-                fontSize="14px"
-                color="rgba(175, 175, 175, 1)"
-              >
-                28 November 1820
-              </Text>
-            </Box>
-          </Flex>
-        </Box>
-
+      <Box w="100%" h="90px" mt={{ ss: "0px", sm: "0px", sl: "80px" }}>
         {renderBooking()}
         <Box bg="white" w="100%" py="30px" px="20px">
           <Container maxW="1140px" px={{ sm: "0px", sl: "15px" }}>
@@ -200,7 +247,6 @@ function BookingHistory() {
                 <Text ms="18px">Start Date</Text>
                 <Input
                   placeholder="Select Date and Time"
-                  defaultValue={date}
                   size="md"
                   type="date"
                   border={"none"}
@@ -213,7 +259,6 @@ function BookingHistory() {
                 <Input
                   placeholder="Select Date and Time"
                   size="md"
-                  defaultValue={date}
                   type="date"
                   border={"none"}
                   onChange={(e) => handleChange(e, "endDate")}
@@ -288,9 +333,7 @@ function BookingHistory() {
         {/* di simpan footer di box yg bukan terakhir berhasil */}
         <Footer />
       </Box>
-      <Footer />
     </Box>
-    // </Layout>
   );
 }
 
