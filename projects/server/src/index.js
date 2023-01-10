@@ -4,7 +4,7 @@ const cors = require("cors");
 const { join, dirname } = require("path");
 const { sequelize } = require("./models"); // uncomment to use sequelize default utility
 const { env } = require("./config");
-const { userRouters, roomRouters, specialPriceRouters, propertyRouters, tenantRouters } = require("./routes");
+const { userRouters, roomRouters, specialPriceRouters, propertyRouters, tenantRouters, roomUnavailabilityRouters } = require("./routes");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -33,6 +33,7 @@ app.use("/api/specialprice", specialPriceRouters)
 app.use("/api/property", propertyRouters)
 app.use("/api/room", roomRouters);
 app.use("/api/tenant" , tenantRouters)
+app.use("/api/roomunavailalbility", roomUnavailabilityRouters)
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);

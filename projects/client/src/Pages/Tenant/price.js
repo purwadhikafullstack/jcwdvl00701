@@ -91,8 +91,6 @@ function PageModalContent(props) {
 
 function AddSpecialPriceForm(props) {
 
-  const history = props.history
-
   const [selectedPropeties, setSelectedProperties] = useState([])
   const [selectedRooms, setSelectedRooms] = useState([])
 
@@ -510,12 +508,8 @@ function FilterSpecialPrice(props) {
 }
 
 function SpecialPrice(props) {
+  const [isLoading, setIsLoading] = useState(false)
   const user = props.user
-
-  const [checkedItems, setCheckedItems] = React.useState([false, false]);
-
-  const allChecked = checkedItems.every(Boolean);
-  const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
 
   const properties = props.properties
 
@@ -528,6 +522,7 @@ function SpecialPrice(props) {
   const [page, setPage] = useState(0)
 
   const fetchSpecialPrices = useCallback(async () => {
+    // setIsLoading(true)
     const url = `${process.env.REACT_APP_API_BASE_URL}/specialprice/all`
     const params = {uid: user.id, page: page}
 
@@ -539,6 +534,7 @@ function SpecialPrice(props) {
 
     setSpecialPrices(response.data.result.specialPrices)
     setTotalPage(response.data.result.totalPage)
+    // setIsLoading(false)
   }, [endDate, selectedPropertyId, startDate, user.id, page])
 
   useEffect(() => {
@@ -550,7 +546,7 @@ function SpecialPrice(props) {
 
   const {isOpen: isOpenFilter, onToggle: onToggleFilter} = useDisclosure()
 
-  if (!user) return (
+  if (isLoading) return (
     <Flex justifyContent={'center'} my={5}>
       <Spinner
         thickness='4px'
@@ -734,7 +730,15 @@ function AddRoomUnavailabilityForm(props) {
         selectedRooms: Yup.array().min(1),
       }),
       onSubmit: async (values) => {
-        console.log(values)
+        const url = `${process.env.REACT_APP_API_BASE_URL}/roomunavailalbility/add`
+        try {
+          const response = await axios.post(url, values)
+          alert('success add room unavailalbility')
+          props.fetchRoomUnavailability()
+          props.disclosure.onClose()
+        } catch (err) {
+          alert(ERROR_MESSAGE)
+        }
       }
     }
   )
@@ -843,15 +847,25 @@ function UpdateRoomUnavailabilityForm(props) {
   const formik = useFormik({
       enableReinitialize: true,
       initialValues: {
-        startDate: new Date(props.specialPrice.startDate),
-        endDate: new Date(props.specialPrice.endDate),
+        startDate: new Date(props.roomUnavailability.startDate),
+        endDate: new Date(props.roomUnavailability.endDate),
       },
       validationSchema: Yup.object().shape({
         startDate: Yup.string().required(),
         endDate: Yup.string().required(),
       }),
       onSubmit: async (values) => {
-        console.log('test')
+        values.id = props.roomUnavailability.id
+        const url = `${process.env.REACT_APP_API_BASE_URL}/roomunavailalbility/update`
+        try {
+
+          const response = await axios.post(url, values)
+          alert('success update room unavailalbility')
+          props.fetchRoomUnavailability()
+          props.disclosure.onClose()
+        } catch (err) {
+          alert(ERROR_MESSAGE)
+        }
       }
     }
   )
@@ -862,10 +876,10 @@ function UpdateRoomUnavailabilityForm(props) {
     <>
       <ModalBody>
         <Heading as={'h1'} size={'md'} mt={5} mb={3}>
-          {props.specialPrice.Room.name}
+          {props.roomUnavailability.Room.name}
         </Heading>
         <Heading as={'h2'} size={'sm'} mb={5}>
-          {props.specialPrice.Room.Property.name}
+          {props.roomUnavailability.Room.Property.name}
         </Heading>
 
         <Flex w="100%" my={5}>
@@ -915,29 +929,35 @@ function DeleteRoomUnavailabilityForm(props) {
   return (
     <>
       <ModalBody>
-        <Text mb={3}>Proceed to delete special price for:</Text>
+        <Text mb={3}>Proceed to delete room unavailability for:</Text>
         <Table>
           <Tbody>
             <Tr>
               <Th>Room Name</Th>
-              <Td>{props.specialPrice.Room.name}</Td>
+              <Td>{props.roomUnavailability.Room.name}</Td>
             </Tr>
             <Tr>
               <Th>Property Name</Th>
-              <Td>{props.specialPrice.Room.Property.name}</Td>
+              <Td>{props.roomUnavailability.Room.Property.name}</Td>
             </Tr>
             <Tr>
               <Th>Duration</Th>
-              <Td>{new Date(props.specialPrice.startDate).toLocaleDateString('id')} - {new Date(props.specialPrice.endDate).toLocaleDateString('id')}</Td>
+              <Td>{new Date(props.roomUnavailability.startDate).toLocaleDateString('id')} - {new Date(props.roomUnavailability.endDate).toLocaleDateString('id')}</Td>
             </Tr>
           </Tbody>
         </Table>
       </ModalBody>
       <ModalFooter>
         <Button colorScheme={'red'} leftIcon={<i className="fa-solid fa-trash"></i>}
-                onClick={() => {
-                  console.log(props.specialPrice.id)
-                  props.disclosure.onClose()
+                onClick={async () => {
+                  const url = `${process.env.REACT_APP_API_BASE_URL}/roomunavailalbility/delete`
+                  try {
+                    const result = await axios.post(url, {id: props.roomUnavailability.id})
+                    props.fetchRoomUnavailability()
+                    props.disclosure.onClose()
+                  } catch (err) {
+                    alert(ERROR_MESSAGE)
+                  }
                 }}
         >
           Delete
@@ -962,6 +982,7 @@ function FilterRoomUnavailability(props) {
         <Input
           size="md" type="date"
           onChange={props.handleChangeEndDate}
+          min={new Date(props.startDate).toISOString().split('T')[0]}
         />
       </Box>
     </Flex>
@@ -981,7 +1002,9 @@ function FilterRoomUnavailability(props) {
 }
 
 function RoomAvailability(props) {
+  const [isLoading, setIsLoading] = useState(false)
   const user = props.user
+
   const properties = props.properties
 
   const [startDate, setStartDate] = useState(null);
@@ -989,8 +1012,12 @@ function RoomAvailability(props) {
   const [selectedPropertyId, setSelectedPropertyId] = useState(null)
   const [roomUnavailabilities, setRoomUnavailabilities] = useState([])
 
+  const [totalPage, setTotalPage] = useState(1)
+  const [page, setPage] = useState(0)
+
   const fetchRoomUnavailability = useCallback(async () => {
-    const url = `${process.env.REACT_APP_API_BASE_URL}/specialprice/all`
+    // setIsLoading(true)
+    const url = `${process.env.REACT_APP_API_BASE_URL}/roomunavailalbility/all`
     const params = {uid: user.id}
 
     if (selectedPropertyId) params.propertyId = selectedPropertyId
@@ -999,8 +1026,10 @@ function RoomAvailability(props) {
 
     const response = await axios.get(url, {params: params})
 
-    setRoomUnavailabilities(response.data.result)
-  }, [endDate, selectedPropertyId, startDate, user.id])
+    setRoomUnavailabilities(response.data.result.roomUnavailabilities)
+    setTotalPage(response.data.result.totalPage)
+    // setIsLoading(false)
+  }, [endDate, selectedPropertyId, startDate, user.id, page])
 
 
   useEffect(() => {
@@ -1010,14 +1039,9 @@ function RoomAvailability(props) {
   const {isOpen, onOpen, onClose} = useDisclosure()
   const [modalContent, setModalContent] = React.useState(null)
 
-  const [checkedItems, setCheckedItems] = React.useState([false, false]);
-
-  const allChecked = checkedItems.every(Boolean);
-  const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
-
   const {isOpen: isOpenFilter, onToggle: onToggleFilter} = useDisclosure()
 
-  if (!roomUnavailabilities.length) return (
+  if (isLoading) return (
     <Flex justifyContent={'center'} my={5}>
       <Spinner
         thickness='4px'
@@ -1038,7 +1062,10 @@ function RoomAvailability(props) {
                     return {value: property.id, label: property.name}
                   })
                   setModalContent(
-                    <AddRoomUnavailabilityForm propertyList={propertyList} disclosure={{isOpen, onOpen, onClose}}/>
+                    <AddRoomUnavailabilityForm propertyList={propertyList}
+                                               disclosure={{isOpen, onOpen, onClose}}
+                                               fetchRoomUnavailability={fetchRoomUnavailability}
+                    />
                   )
                   onOpen()
                 }}
@@ -1054,6 +1081,8 @@ function RoomAvailability(props) {
 
       <Collapse in={isOpenFilter} animateOpacity style={{overflow: 'visible'}}>
         <FilterRoomUnavailability
+          startDate={startDate}
+          endDate={endDate}
           handleChangeStartDate={(item) => setStartDate(item.target.valueAsDate)}
           handleChangeEndDate={(item) => setEndDate(item.target.valueAsDate)}
           options={properties}
@@ -1079,8 +1108,10 @@ function RoomAvailability(props) {
                   <Tr key={`roomUnavalailability-${roomUnavailability.id}`}>
                     <Td onClick={() => {
                       setModalContent(
-                        <UpdateRoomUnavailabilityForm specialPrice={roomUnavailability}
-                                                      disclosure={{isOpen, onOpen, onClose}}/>
+                        <UpdateRoomUnavailabilityForm roomUnavailability={roomUnavailability}
+                                                      disclosure={{isOpen, onOpen, onClose}}
+                                                      fetchRoomUnavailability={fetchRoomUnavailability}
+                        />
                       )
                       onOpen()
                     }} cursor={'pointer'} display={'flex'}>
@@ -1102,16 +1133,18 @@ function RoomAvailability(props) {
                     </Td>
                     <Td>
                       <Text fontSize="12px" fontWeight="reguler">
-                        Starts : {new Date(roomUnavailability.startDate).toISOString().split('T')[0]}<br/>
-                        Ends&emsp;: {new Date(roomUnavailability.endDate).toISOString().split('T')[0]}
+                        Starts : {new Date(roomUnavailability.startDate).toLocaleDateString('id')}<br/>
+                        Ends&emsp;: {new Date(roomUnavailability.endDate).toLocaleDateString('id')}
                       </Text>
                     </Td>
                     <Td>
                       <Button colorScheme={'red'} size={'sm'} onClick={() => {
                         onOpen()
                         setModalContent(
-                          <DeleteRoomUnavailabilityForm specialPrice={roomUnavailability}
-                                                        disclosure={{isOpen, onOpen, onClose}}/>
+                          <DeleteRoomUnavailabilityForm roomUnavailability={roomUnavailability}
+                                                        disclosure={{isOpen, onOpen, onClose}}
+                                                        fetchRoomUnavailability={fetchRoomUnavailability}
+                          />
                         )
                       }}>
                         <i className="fa-solid fa-trash"/>
@@ -1140,8 +1173,8 @@ function RoomAvailability(props) {
             }}
           ></i>
         }
-        pageCount={5}
-        onPageChange={(page) => console.log(page)}
+        pageCount={totalPage}
+        onPageChange={(page) => setPage(page.selected)}
         activeClassName={"item active "}
         breakClassName={"item break-me "}
         breakLabel={"..."}

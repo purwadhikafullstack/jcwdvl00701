@@ -1,4 +1,4 @@
-const {sequelize, SpecialPrice, Property, Room, Tenant, User} = require('../models')
+const {sequelize, SpecialPrice, RoomUnavailability, Property, Room, Tenant, User} = require('../models')
 const {Op} = require("sequelize");
 
 const wrapper = async (req, res, func) => {
@@ -20,14 +20,14 @@ const wrapper = async (req, res, func) => {
 module.exports = {
   add: async (req, res) => {
     return await wrapper(req, res, async () => {
-      const {type, amount, startDate, endDate, selectedRooms} = req.body
+      const {startDate, endDate, selectedRooms} = req.body
       const normalizedStartDate = new Date(new Date(startDate).toDateString())
       const normalizedEndDate = new Date(new Date(endDate).toDateString())
 
       const result = await sequelize.transaction(async (t) => {
         for (roomId of selectedRooms) {
-          await SpecialPrice.create({
-            type: type, discount: amount, startDate: normalizedStartDate, endDate: normalizedEndDate, roomId: roomId
+          await RoomUnavailability.create({
+            startDate: normalizedStartDate, endDate: normalizedEndDate, roomId: roomId
           }, {transaction: t})
         }
       })
@@ -36,7 +36,7 @@ module.exports = {
       // const result = {type: type, discount: amount, startDate: startDate, endDate: endDate, roomId: roomId}
       return {
         result: result,
-        message: 'success add special price'
+        message: 'success add room unavailability'
       }
     })
   },
@@ -76,8 +76,9 @@ module.exports = {
       const propertyId = req.query.propertyId
       let wherePropertyCondition = {}
       if (propertyId) wherePropertyCondition.id = propertyId
+      console.log(propertyId)
 
-      const specialPrices = await SpecialPrice.findAll({
+      const roomUnavailabilities = await RoomUnavailability.findAll({
         include: [{
           model: Room,
           required: true,
@@ -106,7 +107,7 @@ module.exports = {
         limit: limit
       })
 
-      const totalRows = await SpecialPrice.count({
+      const totalRows = await RoomUnavailability.count({
         include: [{
           model: Room,
           required: true,
@@ -131,7 +132,7 @@ module.exports = {
       const totalPage = Math.ceil(totalRows / limit)
 
       return {
-        result: {specialPrices, page, limit, totalRows, totalPage},
+        result: {roomUnavailabilities, page, limit, totalRows, totalPage},
         message: 'success get special prices'
       }
     })
@@ -140,7 +141,7 @@ module.exports = {
   get: async (req, res) => {
     return await wrapper(req, res, async () => {
       const {id} = req.query
-      const result = await SpecialPrice.findOne({
+      const result = await RoomUnavailability.findOne({
         where: {id: id},
         include: [{
           model: Room,
@@ -162,7 +163,7 @@ module.exports = {
 
       return {
         result: result,
-        message: 'success get special price'
+        message: 'success get Room Unavailability'
       }
     })
   },
@@ -174,7 +175,7 @@ module.exports = {
       const normalizedEndDate = new Date(new Date(endDate).toDateString())
       try {
         await sequelize.transaction(async (t) => {
-          await SpecialPrice.update(
+          await RoomUnavailability.update(
             {type: type, discount: amount, startDate: normalizedStartDate, endDate: normalizedEndDate},
             {where: {id: id}},
             {transaction: t}
@@ -184,7 +185,7 @@ module.exports = {
         throw err
       }
 
-      const result = await SpecialPrice.findOne({
+      const result = await RoomUnavailability.findOne({
         where: {id: id},
         include: [{
           model: Room,
@@ -214,7 +215,7 @@ module.exports = {
   delete: async (req, res) => {
     return await wrapper(req, res, async () => {
       const id = req.body.id
-      const result = await SpecialPrice.findOne({
+      const result = await RoomUnavailability.findOne({
         where: {id: id},
         include: [{
           model: Room,
@@ -235,14 +236,14 @@ module.exports = {
       })
 
       await sequelize.transaction(async (t) => {
-        await SpecialPrice.destroy({
+        await RoomUnavailability.destroy({
           where: {id: id}
         }, {transaction: t})
       })
 
       return {
         result: result,
-        message: 'success delete special price'
+        message: 'success delete room unavailability'
       }
     })
   },
