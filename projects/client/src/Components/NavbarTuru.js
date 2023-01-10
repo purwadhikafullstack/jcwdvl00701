@@ -116,7 +116,16 @@ function NavbarMobileTenant() {
         <Container maxW="1140px">
           <Flex justifyContent="space-between">
             <Image src={turuIcon} mr="1em" width="50px" height="50px"></Image>
-            <Button colorScheme="blue" onClick={onMobileOpen}>
+            <Button
+              _hover={{ bg: "primary" }}
+              borderRadius="0px"
+              bg="white"
+              _active={{
+                bg: "white",
+              }}
+              onClick={onMobileOpen}
+              fontSize="18px"
+            >
               <i className="fa-solid fa-bars"></i>
             </Button>
 

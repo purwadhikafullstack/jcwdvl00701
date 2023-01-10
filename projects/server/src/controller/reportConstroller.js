@@ -144,6 +144,14 @@ module.exports = {
       const tenantId = req.params.tenantId;
       const search = req.query.search_query || "";
       const filter = req.query.filter;
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 5;
+
+      console.log(req.query.page);
+      console.log(req.query.limit);
+      const finalPrice = req.query.final_price || "ASC";
+      const time = req.query.time || "ASC";
+      const offset = limit * page;
       const statusFinished = 6;
       let propertyFilter = "";
       let userFilter = "";
@@ -169,7 +177,7 @@ module.exports = {
           [Op.lt]: endDate,
         };
       }
-      const SalsesReport = await Reservation.findAll({
+      const salsesReport = await Reservation.findAndCountAll({
         include: [
           {
             model: Room,
@@ -202,10 +210,60 @@ module.exports = {
             ],
           },
         ],
+        order: [
+          ["finalPrice", `${finalPrice}`],
+          ["startDate", `${time}`],
+        ],
+        offset,
+        limit,
         where: whereCondition,
       });
+      const totalRows = salsesReport.count;
+      const totalPage = Math.ceil(totalRows / limit);
+
+      const totalSales = await Reservation.findAll({
+        attributes: ["finalPrice"],
+        include: [
+          {
+            model: Room,
+            required: true,
+
+            include: [
+              {
+                model: Property,
+                required: true,
+                where: {
+                  tenantId,
+                  name: { [Op.like]: "%" + propertyFilter + "%" },
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: ["id"],
+            required: true,
+            include: [
+              {
+                model: Profile,
+                attributes: ["name"],
+                where: {
+                  name: { [Op.like]: "%" + userFilter + "%" },
+                },
+                required: true,
+              },
+            ],
+          },
+        ],
+      });
+
       res.status(200).json({
-        result: SalsesReport,
+        result: salsesReport,
+        page,
+        limit,
+        totalRows,
+        totalPage,
+        totalSales,
         code: 200,
       });
     } catch (err) {

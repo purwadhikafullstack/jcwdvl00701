@@ -4,18 +4,13 @@ import {
   Flex,
   Text,
   Select,
-  Tr,
-  Th,
-  Td,
-  Tfoot,
-  Table,
-  TableContainer,
-  Thead,
-  Tbody,
+  Center,
   Input,
   FormControl,
   Button,
   Tooltip,
+  HStack,
+  IconButton,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -23,8 +18,9 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Center,
 } from "@chakra-ui/react";
+import ReactPaginate from "react-paginate";
+import "../../Style/pagination.css";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Layout from "../../Components/Layout";
@@ -32,17 +28,35 @@ import { useSelector } from "react-redux";
 import Loading from "../../Components/Loading";
 import { useDisclosure } from "@chakra-ui/react";
 function Report() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [inputStartDate, setInputStartDate] = useState("");
   const [inputEndDate, setInputEndDate] = useState("");
   const [dataReport, setDataReport] = useState([]);
   const [filter, setFilter] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [limit, setLimit] = useState(5);
+  const [pages, setPages] = useState(0);
+  const [rows, setRows] = useState(0);
+  const [page, setPage] = useState(0);
+  const [finalPrice, setFinalPrice] = useState("");
+  const [time, setTime] = useState("");
+  const [detailData, setDetailData] = useState({});
+  const [totalSales, setTotalSales] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { TenantId } = useSelector((state) => state.user);
   console.log(TenantId);
   let date = new Date();
   // console.log(date.toISOString().split("T")[0]);
+  const {
+    isOpen: isFilterOpen,
+    onOpen: onFilterOpen,
+    onClose: onFilterClose,
+  } = useDisclosure();
+  const {
+    isOpen: isDetailOpen,
+    onOpen: onDetailOpen,
+    onClose: onDetailClose,
+  } = useDisclosure();
+
   date = date.toISOString().split("T")[0];
   const handleChange = (e, field) => {
     console.log(field);
@@ -65,31 +79,98 @@ function Report() {
     }, 2000);
   }
 
-  const totalSales = () => {
+  function selectHandler(event, field) {
+    const { value } = event.target;
+    if (field === "finalPrice") {
+      setFinalPrice(value);
+    } else if (field === "time") {
+      setTime(value);
+    }
+  }
+  function detail(event) {
+    setDetailData(event);
+    onDetailOpen();
+  }
+
+  const countTotalSales = () => {
     let total = 0;
-    dataReport?.forEach((val) => {
+    totalSales?.forEach((val) => {
       total += val.finalPrice;
     });
     return total;
   };
 
+  const changePage = ({ selected }) => {
+    setPage(selected);
+  };
+
   function renderTable() {
     return dataReport?.map((val, index) => {
       return (
-        <Tr key={index}>
-          <Td px="2px">{index + 1}</Td>
-          <Td px="2px">
-            {filter === "Property"
-              ? val.Room.Property.name
-              : val.User.Profile.name}
-          </Td>
-          <Td px="2px">
+        <Flex
+          maxW="1140px"
+          borderBottom="1px"
+          borderColor="gray.200"
+          pt="20px"
+          pb="10px"
+        >
+          <Text
+            mx="20px"
+            fontSize="14px"
+            fontWeight="reguler"
+            w={filter === "User" ? "130px" : "210px"}
+          >
+            {filter === "User" ? val.User.Profile.name : val.Room.Property.name}
+          </Text>
+          <Text
+            display={{ ss: "none", sl: "flex" }}
+            me="20px"
+            fontSize="14px"
+            fontWeight="reguler"
+            w={filter === "User" ? "210px" : "130px"}
+          >
+            {filter === "User" ? val.Room.Property.name : val.User.Profile.name}
+          </Text>
+          <Text
+            display={{ ss: "none", sl: "flex" }}
+            me="20px"
+            fontSize="14px"
+            fontWeight="reguler"
+            w="150px"
+          >
+            {val.Room.name}
+          </Text>
+          <Text
+            display={{ ss: "none", sl: "flex" }}
+            me="20px"
+            fontSize="14px"
+            fontWeight="reguler"
+            w="120px"
+          >
+            {val.startDate.slice(0, 10)}
+          </Text>
+          <Text
+            display={{ ss: "none", sl: "flex" }}
+            me="20px"
+            fontSize="14px"
+            fontWeight="reguler"
+            w="120px"
+          >
+            {val.endDate.slice(0, 10)}
+          </Text>
+          <Text me="20px" fontSize="14px" fontWeight="reguler" w="180px">
             {new Intl.NumberFormat("id-ID", {
               style: "currency",
               currency: "IDR",
             }).format(val.finalPrice)}
-          </Td>
-          <Td px="2px">
+          </Text>
+          <Center
+            display={{ ss: "flex", sl: "none" }}
+            me="10px"
+            fontSize="14px"
+            fontWeight="reguler"
+            w="120px"
+          >
             <Box
               color="black"
               as="button"
@@ -99,38 +180,40 @@ function Report() {
               transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
               _hover={{
                 bg: "black",
+                color: "white",
               }}
               bg="primary"
-              onClick={onOpen}
+              onClick={() => detail(val)}
             >
               <i className="fa-solid fa-circle-info"></i>
             </Box>
-          </Td>
-        </Tr>
+          </Center>
+        </Flex>
       );
     });
   }
-
+  async function fetchReport() {
+    await axios
+      .get(
+        `${process.env.REACT_APP_API_BASE_URL}/report/get/sales-report/${TenantId}?startDate=${inputStartDate}&endDate=${inputEndDate}&filter=${filter}&search_query=${keyword}&page=${page}&limit=${limit}&time=${time}&final_price=${finalPrice}`
+      )
+      .then((res) => {
+        console.log(res.data);
+        setPage(res.data.page);
+        setPages(res.data.totalPage);
+        setRows(res.data.totalRows);
+        setDataReport(res.data.result.rows);
+        setTotalSales(res.data.totalSales);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
   useEffect(() => {
-    async function fetchReport() {
-      setIsLoading(true);
-      await axios
-        .get(
-          `${process.env.REACT_APP_API_BASE_URL}/report/get/sales-report/${TenantId}?startDate=${inputStartDate}&endDate=${inputEndDate}&filter=${filter}&search_query=${keyword}`
-        )
-        .then((res) => {
-          console.log(res.data.result);
-          setDataReport(res.data.result);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          console.error(err);
-        });
-    }
     fetchReport();
+
     console.log(dataReport);
-  }, [inputStartDate, inputEndDate, keyword]);
+  }, [inputStartDate, inputEndDate, keyword, page]);
   return (
     <Layout>
       <Box mt="80px">
@@ -143,13 +226,15 @@ function Report() {
               {new Intl.NumberFormat("id-ID", {
                 style: "currency",
                 currency: "IDR",
-              }).format(totalSales())}
+              }).format(countTotalSales())}
             </Text>
             <Text fontSize="13px" fontWeight="reguler">
               Income
               {inputStartDate
-                ? ` from ${inputStartDate} to ${inputEndDate}`
-                : " all time"}
+                ? ` from ${inputStartDate} to ${inputEndDate}, `
+                : " all time, "}
+              from
+              {rows > 1 ? ` ${rows} orders` : ` ${rows} order`}
             </Text>
           </Box>
 
@@ -179,16 +264,32 @@ function Report() {
             </FormControl>
           </Flex>
           <FormControl>
-            <Select
-              my="20px"
-              placeholder={filter ? "reset filter" : "filter by"}
-              borderRadius={0}
-              borderColor="rgba(175, 175, 175, 1)"
-              onChange={(e) => handleChange(e, "filter")}
-            >
-              <option value="Property">Property</option>
-              <option value="User">User</option>
-            </Select>
+            <HStack>
+              <Select
+                my="20px"
+                placeholder={filter ? "reset filter" : "filter by"}
+                borderRadius={0}
+                borderColor="rgba(175, 175, 175, 1)"
+                onChange={(e) => handleChange(e, "filter")}
+              >
+                <option value="Property">Property</option>
+                <option value="User">User</option>
+              </Select>
+              <IconButton
+                onClick={onFilterOpen}
+                color="rgba(175, 175, 175, 1)"
+                aria-label="toggle filters"
+                icon={<i className="fa-solid fa-filter" />}
+                backgroundColor="white"
+                border="1px"
+                borderRadius={0}
+                m={2}
+                _hover={{
+                  bg: "black",
+                  color: "white",
+                }}
+              />
+            </HStack>
             {filter ? (
               <>
                 <Input
@@ -199,34 +300,239 @@ function Report() {
                   }
                   borderRadius="0"
                   borderColor="rgba(175, 175, 175, 1)"
+                  mb="20px"
                 />
               </>
             ) : null}
           </FormControl>
 
-          <TableContainer fontSize="12px" color="black" mb="30px">
-            <Table variant="simple">
-              <Thead bg="rgba(217, 217, 217, 1)">
-                <Tr>
-                  <Th px="2px">No.</Th>
-                  <Th px="2px">
-                    {filter === "Property" ? "PROPERTY" : "USER NAME"}
-                  </Th>
-                  <Th px="2px"> INCOME</Th>
-                  <Th px="2px"> DETAIL</Th>
-                </Tr>
-              </Thead>
-              {isLoading ? <Loading /> : <Tbody>{renderTable()}</Tbody>}
-            </Table>
-          </TableContainer>
+          <Flex
+            maxW="1140px"
+            borderBottom="1px"
+            borderColor="gray.200"
+            pt="20px"
+            pb="10px"
+          >
+            <Text
+              mx="20px"
+              fontSize="16px"
+              fontWeight="bold"
+              w={filter === "User" ? "130px" : "210px"}
+            >
+              {filter === "User" ? "user" : "property"}
+            </Text>
+            <Text
+              display={{ ss: "none", sl: "flex" }}
+              me="20px"
+              fontSize="16px"
+              fontWeight="bold"
+              w={filter === "User" ? "210px" : "130px"}
+            >
+              {filter === "User" ? "property" : "user"}
+            </Text>
+            <Text
+              display={{ ss: "none", sl: "flex" }}
+              me="20px"
+              fontSize="16px"
+              fontWeight="bold"
+              w="150px"
+            >
+              Room
+            </Text>
+            <Text
+              display={{ ss: "none", sl: "flex" }}
+              me="20px"
+              fontSize="16px"
+              fontWeight="bold"
+              w="120px"
+            >
+              Start Date
+            </Text>
+            <Text
+              display={{ ss: "none", sl: "flex" }}
+              me="20px"
+              fontSize="16px"
+              fontWeight="bold"
+              w="120px"
+            >
+              End Date
+            </Text>
+            <Text me="20px" fontSize="16px" fontWeight="bold" w="180px">
+              Income
+            </Text>
+            <Text
+              display={{ ss: "flex", sl: "none" }}
+              me="10px"
+              fontSize="16px"
+              fontWeight="bold"
+              w="120px"
+            >
+              Detail
+            </Text>
+          </Flex>
+          {renderTable()}
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              padding: 20,
+              boxSizing: "border-box",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <ReactPaginate
+              previousLabel={
+                <i
+                  className=" fa-solid fa-chevron-left"
+                  style={{
+                    fontSize: 18,
+                    height: 40,
+                    width: 40,
+                    position: "absolute",
+                    left: "11px",
+                    top: "11px",
+                  }}
+                ></i>
+              }
+              nextLabel={
+                <i
+                  className=" fa-solid fa-chevron-right"
+                  style={{
+                    fontSize: 18,
+                    height: 40,
+                    width: 40,
+                    position: "absolute",
+                    left: "11px",
+                    top: "11px",
+                  }}
+                ></i>
+              }
+              pageCount={pages}
+              onPageChange={changePage}
+              activeClassName={"item active "}
+              breakClassName={"item break-me "}
+              breakLabel={"..."}
+              containerClassName={"pagination"}
+              disabledClassName={"disabled-page"}
+              marginPagesDisplayed={2}
+              nextClassName={"item next "}
+              pageClassName={"item pagination-page "}
+              pageRangeDisplayed={2}
+              previousClassName={"item previous"}
+            />
+          </div>
         </Container>
-        <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+        <Modal
+          closeOnOverlayClick={false}
+          isOpen={isDetailOpen}
+          onClose={onDetailClose}
+        >
           <ModalOverlay />
           <ModalContent borderRadius={0}>
             <ModalHeader>Detail Order</ModalHeader>
             <ModalCloseButton />
-            <ModalBody>Are you sure you want to reject this order?</ModalBody>
+            <ModalBody>
+              <Box
+                border="1px"
+                borderColor="gray.200"
+                bg="white"
+                mt="10px"
+                maxWidth="500px"
+                boxShadow={{
+                  ss: "none",
+                  sm: "md",
+                  sl: "md",
+                }}
+              >
+                <Flex>
+                  <Box w="50%">
+                    <Box p="10px">
+                      <Text fontWeight="Bold" fontSize="14px" pb="5px">
+                        <i
+                          className="fa-solid fa-building"
+                          style={{ marginRight: "9px" }}
+                        ></i>
+                        : oooo
+                      </Text>
+                      <Text fontWeight="reguler" fontSize="14px" pb="5px">
+                        <i
+                          style={{ fontSize: "11px" }}
+                          className="fa-solid fa-bed"
+                        ></i>{" "}
+                        : ttt
+                      </Text>
+                      <Text fontWeight="reguler" fontSize="14px" pb="5px">
+                        <i className="fa-solid fa-circle-user"></i> :777
+                      </Text>
+                      <Text
+                        fontWeight="reguler"
+                        fontSize="12px"
+                        pb="10px"
+                        color="rgba(175, 175, 175, 1)"
+                        borderColor="gray.200"
+                      >
+                        <i className="fa-solid fa-calendar-days"></i> : ttt
+                      </Text>
+                    </Box>
+                  </Box>
+                </Flex>
+                <Flex>
+                  <Box w="50%" px="10px">
+                    <Text fontWeight="Bold" fontSize="14px">
+                      ttt
+                    </Text>
+                  </Box>
+                </Flex>
+              </Box>
+            </ModalBody>
             <ModalFooter></ModalFooter>
+          </ModalContent>
+        </Modal>
+        {/* //////////// */}
+        <Modal
+          closeOnOverlayClick={false}
+          isOpen={isFilterOpen}
+          onClose={onFilterClose}
+        >
+          <ModalOverlay />
+          <ModalContent borderRadius={0}>
+            <ModalHeader> Short by:</ModalHeader>
+            <ModalCloseButton />
+
+            <ModalBody pb={6} name="time">
+              <Select
+                mb="20px"
+                placeholder="short by Income"
+                borderRadius={0}
+                onClick={(e) => selectHandler(e, "finalPrice")}
+              >
+                <option value="ASC">highest income</option>
+                <option value="DESC">lowest income</option>
+              </Select>
+              <Select
+                placeholder="short by date"
+                borderRadius={0}
+                onClick={(e) => selectHandler(e, "time")}
+              >
+                <option value="DESC">Newest </option>
+                <option value="ASC">Latest</option>
+              </Select>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                onClick={fetchReport}
+                variant="primary"
+                borderRadius={0}
+                colorScheme="red"
+                mr={0}
+                w="100%"
+              >
+                Apply
+              </Button>
+            </ModalFooter>
           </ModalContent>
         </Modal>
       </Box>
