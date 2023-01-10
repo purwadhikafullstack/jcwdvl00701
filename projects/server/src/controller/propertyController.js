@@ -139,7 +139,6 @@ module.exports = {
     const offset = limit * page;
     const tenantId = req.params.tenantId;
 
-    console.log(search);
     try {
       const result = await Property.findAndCountAll({
         where: {
@@ -156,6 +155,7 @@ module.exports = {
       });
       const totalRows = result.count;
       const totalPage = Math.ceil(totalRows / limit);
+
       res.send({
         result,
         page,

@@ -31,8 +31,10 @@ import auth_types from "../../Redux/Reducers/Types/userTypes";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import Footer from "../../Components/Footer";
 
 function LoginTenant() {
+    const [wrongPass , setWrongPass] = useState("")
       // for toggling password visibility
     const [showPassword, setShowPassword] = useState(false)
     const handleClick = () => {
@@ -57,6 +59,17 @@ function LoginTenant() {
         const {email, password} = values
 
         const userCredential = await signInWithEmailAndPassword(authFirebase, email, password)
+          .catch(function(error){
+            //handle error
+            var errorCode = error.code
+            var errorMessage = error.errorMessage
+            if (errorCode === "auth/wrong-password") {
+                setWrongPass("Wrong Password")
+            } else {
+                alert(errorMessage)
+            }
+            console.log(error);
+          })
             const user = userCredential.user
 
             // utk get data ke back-end dan di simpan di redux
@@ -71,14 +84,17 @@ function LoginTenant() {
                     history.push("/tenant/dashboard")
                 } else {
                   alert("your account is not Tenant")
+                  authFirebase.signOut()
+                  history.push("/login")
                 }                
             }
       }
     })
   return (
-    <Layout>
+    // <Layout>
+    <>
       <Container maxW="2x1" px="0px">
-        <Flex flexDirection="column" bg="black">
+        <Flex flexDirection="column" bg="black"  >
           {/* flex container utk dekstop */}
           <Flex>
             {/* utk image dekstop */}
@@ -105,8 +121,8 @@ function LoginTenant() {
             </Box>
 
             {/* Form */}
-            <Box w="50em">
-              <Flex justifyContent="center" alignItems="center" my="3em">
+            <Box w="50em" border={"1px"}>
+              <Flex justifyContent="center" alignItems="center" my="3em" mb={"80vh"}>
                 <Box width="360px" height="297px">
                   <Flex
                     flexDirection="column"
@@ -167,6 +183,16 @@ function LoginTenant() {
                                 <Text ms="10px">{formik.errors.password}</Text>
                             </Alert>
                           ) : null}
+
+                          {
+                            wrongPass ? 
+                            <Alert status="error" color="red" text="center">
+                                <i className="fa-solid fa-circle-exclamation"></i>
+                                <Text ms="10px">{wrongPass}</Text>
+                            </Alert>
+                            :
+                            null
+                            }
                         </FormControl>
                         <Button variant="primary" mb="12px" onClick={formik.handleSubmit}>
                           Login
@@ -184,16 +210,6 @@ function LoginTenant() {
                         </Text>
                       </Flex>
                       <hr />
-                      {/* <Button variant="secondary" mt="20px">
-                        <Flex justifyContent="flex-start">
-                          <Image src={google} mr="5px"></Image>
-                          <Text>Login With Google</Text>
-                        </Flex>
-                      </Button>
-                      <Button variant="secondary" mt="20px">
-                        <Image src={facebook}></Image>
-                        <Text>Login With Facebook</Text>
-                      </Button> */}
                       <Flex
                         justifyContent="center"
                         border="1px"
@@ -231,7 +247,13 @@ function LoginTenant() {
           </Flex>
         </Flex>
       </Container>
-    </Layout>
+      <Footer 
+        // ss={"13em"}
+        // sm={"14em"}
+        // sl={"15em"}
+        />
+    </>
+    // </Layout>
   );
 }
 

@@ -16,6 +16,7 @@ import {
   ModalFooter,
   Button,
   Select,
+  Center,
 } from "@chakra-ui/react";
 import CardPropertyTenant from "../../Components/Tenant/CardPropertyTenant";
 import { Link } from "react-router-dom";
@@ -29,7 +30,7 @@ import { useSelector } from "react-redux";
 
 function PropertyListTenant() {
   const [propertyData, setPropertyData] = useState([]);
-  
+
   const [randomNumber, setRandomNumber] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [alfabet, setAlfabet] = useState("");
@@ -41,14 +42,20 @@ function PropertyListTenant() {
   const [rows, setRows] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const {tenantId, firebaseProviderId,  is_verified} = useSelector(state => state.user)
-  console.log(tenantId);
+  const { TenantId, firebaseProviderId, emailVerified } = useSelector(
+    (state) => state.user
+  );
+  console.log(TenantId);
 
   // reender data property
   function renderPropertyList() {
-    return propertyData.map((val) => {
+    return propertyData.map((val, idx) => {
       return (
-        <CardPropertyTenant propertyData={val} randomNumber={setRandomNumber} />
+        <CardPropertyTenant
+          key={idx}
+          propertyData={val}
+          randomNumber={setRandomNumber}
+        />
       );
     });
   }
@@ -77,7 +84,7 @@ function PropertyListTenant() {
 
   async function fetchProperty() {
     await axios(
-      `${process.env.REACT_APP_API_BASE_URL}/property/get/${tenantId}?search_query=${keyword}&alfabet=${alfabet}&time=${time}&page=${page}&limit=${limit}`
+      `${process.env.REACT_APP_API_BASE_URL}/property/get/${TenantId}?search_query=${keyword}&alfabet=${alfabet}&time=${time}&page=${page}&limit=${limit}`
     )
       .then((res) => {
         console.log("GET DATA");
@@ -94,17 +101,57 @@ function PropertyListTenant() {
   }
   useEffect(() => {
     fetchProperty();
-  }, [randomNumber, keyword, page, tenantId]);
+  }, [randomNumber, keyword, page, TenantId]);
   return (
     <Layout>
-      <Box mt="80px">
-        <Container maxW="1140px">
+      <Box
+        bg={{
+          ss: "white",
+
+          sl: "rgba(240, 239, 239, 1)",
+        }}
+        mt="70px"
+      >
+        <Container
+          px="20px"
+          maxW="1140px"
+          backgroundSize="cover"
+          backgroundImage="/Assets/tenant-branda.png"
+          h="133px"
+          display={{ ss: "none", sl: "flex" }}
+        >
+          <Center>
+            <Text
+              me="10px"
+              fontSize="32px"
+              fontWeight="bold"
+              display={{ ss: "none", sl: "flex" }}
+            >
+              <i className="fa-solid fa-building" />
+            </Text>
+            <Text
+              fontSize="32px"
+              fontWeight="bold"
+              display={{ ss: "none", sl: "flex" }}
+            >
+              {rows > 1 ? `${rows} Properties` : `${rows}property`}
+            </Text>
+          </Center>
+        </Container>
+        <Container bg="white" maxW="1140px">
           <Flex mb="20px" justifyContent="space-between">
-            <Text fontSize="20px" fontWeight="bold">
+            <Text
+              pt="20px"
+              fontSize="20px"
+              fontWeight="bold"
+              display={{ ss: "flex", sl: "none" }}
+            >
               {rows > 1 ? `${rows} Properties` : `${rows} property`}
             </Text>
             <Link to="/tenant/add-property">
-              <Box
+              <Center
+                mt="20px"
+                display={{ ss: "flex", sl: "none" }}
                 as="button"
                 h="40px"
                 w="40px"
@@ -116,8 +163,8 @@ function PropertyListTenant() {
                 }}
                 bg="primary"
               >
-                <i className="fa-solid fa-plus"></i>
-              </Box>
+                <i className=" fa-solid fa-plus"></i>
+              </Center>
             </Link>
           </Flex>
           <FormControl pb="20px">
@@ -143,8 +190,55 @@ function PropertyListTenant() {
                   color: "white",
                 }}
               />
+              <Link to="/tenant/add-property">
+                <Button
+                  display={{ ss: "none", sl: "flex" }}
+                  h="40px"
+                  w="150px"
+                  borderRadius={0}
+                  fontSize="16px"
+                  transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
+                  _hover={{
+                    bg: "black",
+                    color: "white",
+                  }}
+                  bg="primary"
+                >
+                  Add Property
+                </Button>
+              </Link>
             </HStack>
           </FormControl>
+        </Container>
+        <Container bg="white" maxW="1140px" mt={{ ss: "0px", sl: "20px" }}>
+          <Flex
+            maxW="1140px"
+            borderBottom="1px"
+            borderColor="gray.200"
+            pt="20px"
+            pb="10px"
+            display={{ ss: "none", sl: "flex" }}
+          >
+            <Text me="20px" fontSize="16px" fontWeight="bold" w="90px">
+              Photo
+            </Text>
+            <Text me="20px" fontSize="16px" fontWeight="bold" w="300px">
+              Name Property
+            </Text>
+            <Text me="20px" fontSize="16px" fontWeight="bold" w="280px">
+              Category
+            </Text>
+            <Text me="20px" fontSize="16px" fontWeight="bold" w="80px">
+              Room
+            </Text>
+            <Text me="20px" fontSize="16px" fontWeight="bold" w="110px">
+              Modified
+            </Text>
+            <Text me="10px" fontSize="16px" fontWeight="bold" w="120px">
+              Action
+            </Text>
+          </Flex>
+
           {/* card property */}
           {renderPropertyList()}
           <div
@@ -161,7 +255,7 @@ function PropertyListTenant() {
             <ReactPaginate
               previousLabel={
                 <i
-                  className="fa-solid fa-chevron-left"
+                  className=" fa-solid fa-chevron-left"
                   style={{
                     fontSize: 18,
                     height: 40,
@@ -174,7 +268,7 @@ function PropertyListTenant() {
               }
               nextLabel={
                 <i
-                  className="fa-solid fa-chevron-right"
+                  className=" fa-solid fa-chevron-right"
                   style={{
                     fontSize: 18,
                     height: 40,

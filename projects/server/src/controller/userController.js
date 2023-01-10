@@ -8,7 +8,6 @@ module.exports = {
         name,
         email,
         phoneNumber,
-        birthdate,
         firebaseProviderId,
       } = req.body;
 
@@ -209,35 +208,83 @@ module.exports = {
     }
   },
 
-  userRedux: async (req, res) => {
+  userRedux : async (req, res) => {
+        try {
+            console.log(req.query.id);
+            // const email = req.query.email
+            const id = req.query.id // userId
+            const globalState= await User.findOne({
+                include : [
+                {
+                  model : Profile,
+                  attributes : ["name" , "profilePic"]
+                },
+                {
+                    model: UserRole,
+                    attributes : ["roleId"],
+                },
+                {
+                    model : Tenant,
+                    attributes : ["id", "name"],
+                }           
+            ],
+                where : {
+                    id
+                }
+            })
+            // console.log(globalState);
+            return res.status(200).json({
+                globalState
+            })
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({
+                message : "your email not registered"
+            })
+        }
+  },
+  // add user jika dari tenant mau jadi user
+  completeDataUser : async(req,res) => {
     try {
-      console.log(req.query.id);
-      // const email = req.query.email
-      const id = req.query.id // userId
-      const globalState = await User.findOne({
-        include: [
+      console.log(req.body);
+      const {name, phoneNumber , userId} = req.body
+      // tambahakan data ke profile
+      const result = await sequelize.transaction(async(t) => {
+        const completeDataUser = await Profile.create(
           {
-            model: UserRole,
-            attributes: ["roleId"],
+            name,
+            phoneNumber,
+            gender : "Male",
+            userId
           },
+          {transaction : t}
+        )
+          // tambhakan UserRole yg user [1]
+        const addRoleUser = await UserRole.create(
           {
-            model: Tenant,
-            attributes: ["id"],
-          }
-        ],
-        where: {
-          id
+            userId,
+            roleId : 1
+          },
+          {transaction: t}
+        );
+
+        return {
+          name,
+          userId,
+          roleId : addRoleUser.roleId
         }
       })
-      // console.log(globalState);
+
       return res.status(200).json({
-        globalState
+        result : result,
+        message: "now your account can be accsess to be user",
+        code: 200
       })
-    } catch (err) {
-      console.log(err);
+    } catch(err) {
       return res.status(500).json({
-        message: "your email not registered"
+        message : err.toString(),
+        code : 500
       })
     }
-  },
+  }
 };

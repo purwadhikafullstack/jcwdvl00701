@@ -11,7 +11,8 @@ import {
   Button,
   Text,
   Container,
-  FormHelperText
+  FormHelperText,
+  Alert
 } from "@chakra-ui/react";
 import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory } from "react-router-dom";
@@ -24,6 +25,7 @@ import { authFirebase } from "../Config/firebase";
 
 function ForgotPassword() {
   const history = useHistory()
+  const [info , setInfo] = useState("")
 
   // utk cek email validation pakai formik
   //consfigure yup
@@ -43,8 +45,10 @@ function ForgotPassword() {
       const auth = getAuth()
       sendPasswordResetEmail(auth, email)
       .then(() => {
-        alert("please check your email for reset password")
-        history.push("/login")
+        setInfo("please check your email for reset password")
+        setTimeout(() => {
+          history.push("/login")
+        }, 3000)
       })
       .catch((err) => {
         console.error(err)
@@ -54,6 +58,17 @@ function ForgotPassword() {
 
   return (
     <>
+      {
+        info ?
+          (
+          <Alert status="success" color="green" text="center">
+              <i class="fa-solid fa-check"></i>
+              <Text ms="10px">{info}</Text>
+          </Alert>
+          )
+          :
+          null
+      }
       <Container maxW="1140px">
         <Flex justifyContent="center" alignItems="center" h="700px">
           <Box width="360px" height="297px">
