@@ -28,6 +28,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import Layout from "../../Components/Layout";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import Loading from "../../Components/Loading";
 
 function Topbar(props) {
   return (
@@ -62,7 +63,7 @@ function PropertyDetail(props) {
   const [endDate, setEndDate] = useState(null);
   const [idRoom, setIdRoom] = useState(roomButton[0]?.id); // untuk menyimpan roomId
   const [finalCountPrice, setFinalCountPrice] = useState(0);
-  const { id } = useSelector((state) => state.user);
+  const { id, UserRoles } = useSelector((state) => state.user);
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   let history = useHistory();
@@ -70,8 +71,9 @@ function PropertyDetail(props) {
   // const [totalHarga, setTotalHarga] = useState(0)
   // console.log("start", start);
   // console.log("end ",end);
-
+  console.log(typeof id);
   // menyimpan tanggal-tanggal yang di pilih
+
   let datesRanges = [];
   const datepickerOnChange = (dates) => {
     const [start, end] = dates;
@@ -113,56 +115,63 @@ function PropertyDetail(props) {
   // untuk menghitung total harga
   let totalPrice = 0;
   const countFinalPrice = () => {
-    const found = datesRanges.map((element, i) => {
-      if (
-        element >=
-          new Date(roomData.SpecialPrices[0].startDate)
-            .toISOString()
-            .split("T")[0] &&
-        element <=
-          new Date(roomData.SpecialPrices[0].endDate)
-            .toISOString()
-            .split("T")[0]
-      ) {
-        console.log(i);
-        console.log(element);
-        console.log(
-          new Date(roomData.SpecialPrices[0].startDate)
-            .toISOString()
-            .split("T")[0]
-        );
-        console.log(
-          new Date(roomData.SpecialPrices[0].endDate)
-            .toISOString()
-            .split("T")[0]
-        );
-        console.log(roomData.SpecialPrices[0].discount);
-        let finalPrice = 0;
-        if (roomData.SpecialPrices[0].type === "nominal") {
-          console.log(roomData.SpecialPrices[0].type);
-          finalPrice = roomData.SpecialPrices[0].discount;
-        } else if (roomData.SpecialPrices[0].type === "persen") {
-          console.log(roomData.SpecialPrices[0].type);
-          finalPrice =
-            roomData.defaultPrice +
-            roomData.defaultPrice * (roomData.SpecialPrices[0].discount / 100);
-        }
+    const found = datesRanges.map((datesRange, i) => {
+      if (roomData.SpecialPrices[0]?.discount) {
+        roomData.SpecialPrices.map((SpecialPric, i2) => {
+          if (
+            datesRange >=
+              new Date(SpecialPric.startDate).toISOString().split("T")[0] &&
+            datesRange <=
+              new Date(SpecialPric.endDate).toISOString().split("T")[0]
+          ) {
+            console.log("tess111");
+            let finalPrice = 0;
+            if (SpecialPric.type === "nominal") {
+              finalPrice = SpecialPric.discount;
+            } else if (SpecialPric.type === "persen") {
+              finalPrice =
+                roomData.defaultPrice +
+                roomData.defaultPrice * (SpecialPric.discount / 100);
+            }
 
-        totalPrice = totalPrice + finalPrice;
+            totalPrice = totalPrice + finalPrice - roomData.defaultPrice;
+            return totalPrice;
+          }
+        });
+        totalPrice = totalPrice + roomData.defaultPrice;
+        console.log("tes222  ");
+        console.log(totalPrice);
+        return totalPrice;
+        // if (
+        //   element >=
+        //     new Date(roomData?.SpecialPrices[0].startDate)
+        //       .toISOString()
+        //       .split("T")[0] &&
+        //   element <=
+        //     new Date(roomData?.SpecialPrices[0].endDate)
+        //       .toISOString()
+        //       .split("T")[0]
+        // ) {
+        //   let finalPrice = 0;
+        //   if (roomData?.SpecialPrices[0].type === "nominal") {
+        //     finalPrice = roomData?.SpecialPrices[0].discount;
+        //   } else if (roomData?.SpecialPrices[0].type === "persen") {
+        //     finalPrice =
+        //       roomData.defaultPrice +
+        //       roomData.defaultPrice *
+        //         (roomData?.SpecialPrices[0].discount / 100);
+        //   }
+
+        //   totalPrice = totalPrice + finalPrice;
+        //   return totalPrice;
+        // } else {
+        //   totalPrice = totalPrice + roomData.defaultPrice;
+        //   return totalPrice;
+        // }
+      } else {
+        totalPrice = totalPrice + roomData.defaultPrice;
         return totalPrice;
       }
-      console.log(i);
-      console.log(element);
-      console.log(
-        new Date(roomData.SpecialPrices[0].startDate)
-          .toISOString()
-          .split("T")[0]
-      );
-      console.log(
-        new Date(roomData.SpecialPrices[0].endDate).toISOString().split("T")[0]
-      );
-      totalPrice = totalPrice + roomData.defaultPrice;
-      return totalPrice;
     });
 
     console.log(found);
@@ -172,7 +181,7 @@ function PropertyDetail(props) {
     return totalPrice;
   };
 
-  const idProperty = 4;
+  const idProperty = 3;
   // const idProperty = props.match.params.propertyId;
 
   function Reviews(props) {
@@ -385,7 +394,7 @@ function PropertyDetail(props) {
           setTenantData(res.data.results.Tenant);
 
           setPic(res.data.results.pic);
-          console.log(res.data.results.Tenant);
+          console.log(res.data.results.Tenant.User.id);
         })
         .catch((err) => {
           console.error(err.message);
@@ -401,6 +410,123 @@ function PropertyDetail(props) {
 
   // let joinTime = tenantData.createdAt.split("T");
 
+  // if (id === tenantData?.User?.id) {
+  //   return history.push("/");
+  // } else {
+  //   return (
+  //     <Layout>
+  //       <div>
+  //         <Topbar />
+  //         <Container maxW="container.lg">
+  //           {/* ////////////////////////////// */}
+  //           <Box>
+  //             <Box my={3}>
+  //               <Text fontWeight="bold" fontSize="xl" mb={1}>
+  //                 {propertyName}
+  //               </Text>
+
+  //               <Text fontSize="sm" color="grey">
+  //                 {category}
+  //               </Text>
+  //             </Box>
+
+  //             <Image
+  //               overflow="hiden"
+  //               objectFit="cover"
+  //               width="100%"
+  //               height="210px"
+  //               src={process.env.REACT_APP_API_BASE_URL + pic}
+  //             />
+  //           </Box>
+  //           <Box my={8}>
+  //             <Text>{desProperty}</Text>
+
+  //             <Flex align="center" my={8}>
+  //               {renderRoomButton()}
+  //             </Flex>
+  //             {renderCalendar()}
+  //           </Box>
+
+  //           <Box>
+  //             <Text fontWeight="bold" fontSize="lg" mb={2}>
+  //               Total:
+  //               {new Intl.NumberFormat("id-ID", {
+  //                 style: "currency",
+  //                 currency: "IDR",
+  //               }).format(finalCountPrice)}
+  //             </Text>
+  //             {UserRoles.includes(1) ? (
+  //               <Button
+  //                 w="100%"
+  //                 variant="primary"
+  //                 my={2}
+  //                 onClick={btnHandlerReservation}
+  //                 disabled={finalCountPrice ? false : true}
+  //               >
+  //                 Reserve
+  //               </Button>
+  //             ) : null}
+  //           </Box>
+  //           <Flex border="3px solid lightgrey" p={5}>
+  //             <Image
+  //               src={"tenantData.User.Profile.profilePic"}
+  //               width="50px"
+  //               height="50px"
+  //               me="10px"
+  //               overflow="hiden"
+  //               objectFit="cover"
+  //             />
+  //             <Box>
+  //               <Text fontWeight="bold" fontSize="md">
+  //                 {tenantData.name}
+  //               </Text>
+  //               <Text fontSize="md" color="grey">
+  //                 Joined since {tenantData.createdAt}
+  //               </Text>
+  //             </Box>
+  //           </Flex>
+  //           <Box my={3}>
+  //             <Text fontWeight="bold" fontSize="xl" mb={1}>
+  //               <i className="fa-solid fa-star" /> Review
+  //             </Text>
+  //           </Box>
+  //           {renderReview()}
+  //           <Button
+  //             w="100%"
+  //             variant="secondary"
+  //             my={2}
+  //             onClick={() => fetchReview("show")}
+  //           >
+  //             Show All
+  //           </Button>
+  //         </Container>
+  //       </div>
+  //       {/* utk modal sebelum reserve */}
+  //       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+  //         <ModalOverlay />
+  //         <ModalContent borderRadius={0}>
+  //           <ModalHeader>Are you sure to reserved ?</ModalHeader>
+  //           <ModalCloseButton />
+  //           <ModalBody pb={6}></ModalBody>
+
+  //           <ModalFooter>
+  //             <Button
+  //               onClick={btnHandlerReservation}
+  //               borderRadius={0}
+  //               colorScheme="red"
+  //               mr={3}
+  //             >
+  //               Reserve
+  //             </Button>
+  //             <Button borderRadius={0} onClick={onClose}>
+  //               Cancel
+  //             </Button>
+  //           </ModalFooter>
+  //         </ModalContent>
+  //       </Modal>
+  //     </Layout>
+  //   );
+  // }
   return (
     <Layout>
       <div>
@@ -443,27 +569,18 @@ function PropertyDetail(props) {
                 currency: "IDR",
               }).format(finalCountPrice)}
             </Text>
-
-            {finalCountPrice ? (
+            {UserRoles.includes(1) ? (
               <Button
                 w="100%"
                 variant="primary"
                 my={2}
-                onClick={onOpen}
+                onClick={btnHandlerReservation}
+                disabled={finalCountPrice ? false : true}
+                display={id === tenantData?.User?.id ? "none" : "inline-block"}
               >
                 Reserve
               </Button>
-            ) : (
-              <Button
-                w="100%"
-                variant="primary"
-                my={2}
-                onClick={onOpen}
-                disabled={true}
-              >
-                Reserve
-              </Button>
-            )}
+            ) : null}
           </Box>
           <Flex border="3px solid lightgrey" p={5}>
             <Image

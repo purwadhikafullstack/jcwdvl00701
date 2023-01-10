@@ -93,17 +93,17 @@ function CardBooking(props) {
             <Box p="10px">
               <Text fontWeight="Bold" fontSize="14px" pb="5px">
                 <i
-                  class="fa-solid fa-building"
+                  className="fa-solid fa-building"
                   style={{ marginRight: "9px" }}
                 ></i>
                 : {props.name}
               </Text>
               <Text fontWeight="reguler" fontSize="14px" pb="5px">
-                <i style={{ fontSize: "11px" }} class="fa-solid fa-bed"></i> :{" "}
-                {props.roomName}
+                <i style={{ fontSize: "11px" }} className="fa-solid fa-bed"></i>{" "}
+                : {props.roomName}
               </Text>
               <Text fontWeight="reguler" fontSize="14px" pb="5px">
-                <i class="fa-solid fa-circle-user"></i> : {props.user}
+                <i className="fa-solid fa-circle-user"></i> : {props.user}
               </Text>
               <Text
                 fontWeight="reguler"
@@ -112,8 +112,8 @@ function CardBooking(props) {
                 color="rgba(175, 175, 175, 1)"
                 borderColor="gray.200"
               >
-                <i class="fa-solid fa-calendar-days"></i> : {start[0]}-{end[0]}{" "}
-                Nov | {props.guest_count}
+                <i className="fa-solid fa-calendar-days"></i> : {start[0]}-
+                {end[0]} Nov | {props.guest_count}
                 Guest
               </Text>
             </Box>
@@ -235,7 +235,7 @@ function CardBooking(props) {
               bg="grey"
               onClick={onPicOpen}
             >
-              <i class="fa-solid fa-file-invoice"></i>
+              <i className="fa-solid fa-file-invoice"></i>
             </Box>
           </Flex>
         </>

@@ -41,6 +41,7 @@ import Footer from "../../Components/Footer";
 function LoginUser() {
     const history = useHistory()
     const dispatch = useDispatch()
+    const [wrongPass , setWrongPass] = useState("")
     // for toggling password visibility
     const [showPassword, setShowPassword] = useState(false)
     const handleClick = () => {
@@ -113,6 +114,17 @@ function LoginUser() {
             const {email, password} = values
 
             const userCredential = await signInWithEmailAndPassword(authFirebase, email, password)
+                .catch(function(error){
+                    // handle error
+                    var errorCode = error.code;
+                    var errorMessage = error.errorMessage
+                    if (errorCode === "auth/wrong-password") {
+                        setWrongPass("Wrong Password")
+                    } else {
+                        alert(errorMessage)
+                    }
+                    console.log(error);
+                })
             console.log(userCredential);
             const user = userCredential.user
 
@@ -222,6 +234,16 @@ function LoginUser() {
                                                         <Alert status="error" color="red" text="center">
                                                             <i className="fa-solid fa-circle-exclamation"></i>
                                                             <Text ms="10px">{formik.errors.password}</Text>
+                                                        </Alert>
+                                                        :
+                                                        null
+                                                    }
+
+                                                    {
+                                                        wrongPass ? 
+                                                        <Alert status="error" color="red" text="center">
+                                                            <i className="fa-solid fa-circle-exclamation"></i>
+                                                            <Text ms="10px">{wrongPass}</Text>
                                                         </Alert>
                                                         :
                                                         null

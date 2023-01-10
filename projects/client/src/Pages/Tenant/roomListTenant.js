@@ -22,25 +22,25 @@ import Layout from "../../Components/Layout";
 import CardRoomTenant from "../../Components/Tenant/CardRoomTenant";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios"
-import ReactPaginate from "react-paginate"
+import axios from "axios";
+import ReactPaginate from "react-paginate";
 import { useSelector } from "react-redux";
 import "../../Style/pagination.css";
 
 function RoomListTenant() {
-  const [room, setRoom] = useState([])
-  const [dropdown, setDropdown] = useState([])
-  const [keyWord, setKeyWord] = useState("")
+  const [room, setRoom] = useState([]);
+  const [dropdown, setDropdown] = useState([]);
+  const [keyWord, setKeyWord] = useState("");
 
-  const [page , setPage] = useState(0)
-  const [limit , setLimit] = useState(5)
-  const [pages, setPages] = useState(0)
-  const [rows , setRows] = useState(0)
-  const [alfabet, setAlfabet] = useState("")
-  const [time, setTime] = useState("")
-  const [price, setPrice] = useState("")
-  const [propertyId , setPropertyId] = useState("")
-  const {isOpen , onOpen , onClose} = useDisclosure()
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(5);
+  const [pages, setPages] = useState(0);
+  const [rows, setRows] = useState(0);
+  const [alfabet, setAlfabet] = useState("");
+  const [time, setTime] = useState("");
+  const [price, setPrice] = useState("");
+  const [propertyId, setPropertyId] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [randomNumber, setRandomNumber] = useState(0);
 
   const {TenantId, firebaseProviderId} = useSelector(state => state.user)
@@ -60,29 +60,29 @@ function RoomListTenant() {
     if (field == "alfabet"){
       setAlfabet(value)
       setPage(0);
-    } else if (field == "time"){
-      setTime(value)
+    } else if (field == "time") {
+      setTime(value);
       setPage(0);
-    } else if (field == "price"){
-      setPrice(value)
+    } else if (field == "price") {
+      setPrice(value);
       setPage(0);
-    } else if(field == "propertyId"){
-      setPropertyId(value)
+    } else if (field == "propertyId") {
+      setPropertyId(value);
       setPage(0);
     }
-  }
+  };
 
   //get property berdasarkan tenant id ==> yg di simpan di dropdown
     //buat id nya dari global store ==> tenant 
     const fetchProperty = () => {
         axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/${TenantId}?searchQuery=${keyWord}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`)
         .then((res) => {
-            setRoom(res.data.roomProperty.rows)
-            setPage(res.data.page)
-            setRows(res.data.totalRows)
-            setPages(res.data.totalPage)
+          setRoom(res.data.roomProperty.rows);
+          setPage(res.data.page);
+          setRows(res.data.totalRows);
+          setPages(res.data.totalPage);
 
-            onClose()
+          onClose();
         })
         .catch((err) => {
           console.error(err)
@@ -90,46 +90,53 @@ function RoomListTenant() {
   }
   
   useEffect(() => {
-    fetchProperty()
-    roomData()
-    fetchDataDropdown()
-    optionDropdown()
-  },[keyWord, page , time, alfabet, price, propertyId, TenantId, randomNumber])
+    fetchProperty();
+    roomData();
+    fetchDataDropdown();
+    optionDropdown();
+  }, [keyWord, page, time, alfabet, price, propertyId, TenantId, randomNumber]);
 
   // get data room, yg akan di loop utk di render
   const roomData = () => {
     return room.map((val, index) => {
       // console.log(val);
-      return <CardRoomTenant 
-      roomData = {val}
-      setRandomNumber = {setRandomNumber}
-      />
-    })
-  }
+      return (
+        <CardRoomTenant
+          key={index}
+          roomData={val}
+          setRandomNumber={setRandomNumber}
+        />
+      );
+    });
+  };
 
   const fetchDataDropdown = () => {
-    axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
-    .then((res) => {
-      // console.log(res.data.dropdown);
-      setDropdown(res.data.dropdown)
-
-    })
-    .catch((err) => {
-      console.error(err)
-    })
-  }
+    axios
+      .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
+      .then((res) => {
+        // console.log(res.data.dropdown);
+        setDropdown(res.data.dropdown);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   // loop utk dropdown
   const optionDropdown = () => {
     return dropdown.map((val) => {
       // console.log(val);
-      return <option value={val.id}>{val.name}</option>
-    })
-  }
+      return (
+        <option key={val.id} value={val.id}>
+          {val.name}
+        </option>
+      );
+    });
+  };
 
   const changePage = ({ selected }) => {
-      setPage(selected);
-    };
+    setPage(selected);
+  };
 
   return (
     <Layout>
@@ -152,7 +159,7 @@ function RoomListTenant() {
                 }}
                 bg="primary"
               >
-                <i class="fa-solid fa-plus"></i>
+                <i className=" fa-solid fa-plus"></i>
               </Box>
             </Link>
           </Flex>
@@ -161,7 +168,7 @@ function RoomListTenant() {
             placeholder="Select Property"
             borderRadius={0}
             borderColor="rgba(175, 175, 175, 1)"
-            onChange={(e) => inputHandler(e , "propertyId")}
+            onChange={(e) => inputHandler(e, "propertyId")}
           >
             {/* render dropdown */}
             {optionDropdown()}
@@ -207,15 +214,15 @@ function RoomListTenant() {
             <ReactPaginate
               previousLabel={
                 <i
-                  class="fa-solid fa-chevron-left"
-                  style={{ fontSize: 18}}
+                  className=" fa-solid fa-chevron-left"
+                  style={{ fontSize: 18 }}
                 ></i>
               }
               nextLabel={
                 <i
-                  class="fa-solid fa-chevron-right"
+                  className=" fa-solid fa-chevron-right"
                   style={{
-                    fontSize: 18
+                    fontSize: 18,
                   }}
                 ></i>
               }
@@ -235,7 +242,7 @@ function RoomListTenant() {
           </div>
         </Container>
       </Box>
-       {/* moddal */}
+      {/* moddal */}
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent borderRadius={0}>
@@ -245,7 +252,7 @@ function RoomListTenant() {
             <Select
               placeholder="short by name"
               borderRadius={0}
-              onChange={(e) => inputHandler(e , "alfabet")}
+              onChange={(e) => inputHandler(e, "alfabet")}
             >
               <option value="ASC">name: A-Z</option>
               <option value="DESC">name: Z-A</option>
@@ -260,7 +267,6 @@ function RoomListTenant() {
               <option value="DESC">Newest </option>
               <option value="ASC">Latest</option>
             </Select>
-
           </ModalBody>
           <ModalBody pb={6} name="price">
             <Select
@@ -289,7 +295,5 @@ function RoomListTenant() {
     </Layout>
   );
 }
-
-
 
 export default RoomListTenant;

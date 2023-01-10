@@ -20,41 +20,40 @@ import {
   ModalBody,
   ModalFooter,
   Spinner,
-  HStack
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
-
+import Loading from "../../Components/Loading";
 import Layout from "../../Components/Layout";
 import { Link, useHistory, useParams } from "react-router-dom";
 import bookingImage from "../../Assets/image/booking.png";
-import axios from "axios"
+import axios from "axios";
 import { useDisclosure } from "@chakra-ui/react";
 
 function Payment() {
-  const [dataPayment, setDataPayment] = useState({})
-  const [dataTenant , setDataTenant] = useState({})
-  const [dataProperty, setDataProperty] = useState({})
-  const [startDate, setStartDate] = useState("")
-  const [endDate, setEndDate] = useState("")
-  const {id} = useParams()
-  const inputFileRef = useRef(null)
-  const [fileSizeMsg, setFileSizeMsg] = useState("")
+  const [dataPayment, setDataPayment] = useState({});
+  const [dataTenant, setDataTenant] = useState({});
+  const [dataProperty, setDataProperty] = useState({});
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const { id } = useParams();
+  const inputFileRef = useRef(null);
+  const [fileSizeMsg, setFileSizeMsg] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
-  const [prove, setProve] = useState(false)
-  const [err, setErr] = useState(false)
+  const [prove, setProve] = useState(false);
+  const [err, setErr] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  let history = useHistory()
-  const [loading, setLoading] = useState(true)
-  
+  let history = useHistory();
+  const [loading, setLoading] = useState(true);
+
   const handleFile = (event) => {
     if (event.target.files[0].size / 1024 > 1024) {
       setFileSizeMsg("File size is greater than maximum limit");
-      setProve(false)
-      setErr(true)
+      setProve(false);
+      setErr(true);
     } else {
       setSelectedFile(event.target.files[0]);
-      setProve(true)
-      setErr(false)
+      setProve(true);
+      setErr(false);
     }
   };
 
@@ -78,80 +77,77 @@ function Payment() {
   let resultBulan = searchBulan(bulan)
   console.log(resultBulan);
 
-  let price = dataPayment?.finalPrice
+  let price = dataPayment?.finalPrice;
   const priceRupiah = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-  }).format(price)
+  }).format(price);
 
-  let tax = price/ 10
+  let tax = price / 10;
   const taxRupiah = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-  }).format(tax)
+  }).format(tax);
 
-  let finalPrice = price + tax
+  let finalPrice = price + tax;
   // console.log(finalPrice);
 
   const finalPriceRupiah = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-  }).format(finalPrice)
-
+  }).format(finalPrice);
 
   useEffect(() => {
-    setLoading(true)
-    const fetchDataPayment = async() => {
-    try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/payment/get-payment` , {
-          // params nya reservation id
-          params: {
-            id : id
+    setLoading(true);
+    const fetchDataPayment = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/payment/get-payment`,
+          {
+            // params nya reservation id
+            params: {
+              id: id,
+            },
           }
-        })
-  
-        // console.log(response?.data?.result)
-        setDataPayment(response?.data?.result)
-        setDataTenant(response?.data?.result.User.Tenant)
-        setDataProperty(response?.data?.result.Room.Property)
-        setStartDate(response?.data?.result.startDate)
-        setEndDate(response?.data?.result.endDate)
-      } catch (err) {
-        console.error(err.message)
-      }
-    }
+        );
 
-    fetchDataPayment()
-    setLoading(false)
-  }, [id])
+        // console.log(response?.data?.result)
+        setDataPayment(response?.data?.result);
+        setDataTenant(response?.data?.result.User.Tenant);
+        setDataProperty(response?.data?.result.Room.Property);
+        setStartDate(response?.data?.result.startDate);
+        setEndDate(response?.data?.result.endDate);
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
+
+    fetchDataPayment();
+    setLoading(false);
+  }, [id]);
 
   const btnHandlerUpload = async () => {
     try {
-      const formData = new FormData()
+      const formData = new FormData();
 
-    formData.append("image", selectedFile)
-    formData.append("reservationId", id)
-    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/payment/add-payment`, formData)
-    console.log(response.data);
-    onClose()
-    history.push("/booking-history")
+      formData.append("image", selectedFile);
+      formData.append("reservationId", id);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/payment/add-payment`,
+        formData
+      );
+      console.log(response.data);
+      onClose();
+      history.push("/booking-history");
     } catch (err) {
-      console.error(err.message)
+      console.error(err.message);
     }
-  }
+  };
 
-  return loading ?
-  <Flex justifyContent="center" mt="24%">
-      <Spinner
-        thickness='4px'
-        speed='0.65s'
-        emptyColor='gray.200'
-        color='yellow.500'
-        size='xl'
-      />
-    </Flex>
-  :
-  <Layout>
+  return loading ? (
+    <Loading/>
+  ) : (
+    <Layout>
       <Box
         mb={{ ss: "60px", sm: "60px", sl: "0px" }}
         mt={{ ss: "0px", sm: "0px", sl: "80px" }}
@@ -189,7 +185,8 @@ function Payment() {
                   color="rgba(175, 175, 175, 1)"
                   px="10px"
                 >
-                  {sDate2[2]}-{eDate2[2]} {resultBulan} | {dataPayment?.guestCount} Guest
+                  {sDate2[2]}-{eDate2[2]} {resultBulan} |{" "}
+                  {dataPayment?.guestCount} Guest
                 </Text>
                 <Flex bg="white" border="1px" borderColor="gray.200">
                   <Box p="10px">
@@ -216,7 +213,9 @@ function Payment() {
                     color="rgba(17, 17, 17, 0.6)"
                   >
                     <ListItem>
-                      transfer money according to the total price to {dataTenant?.Bank?.name} with account number: {dataTenant?.bankAccountNumber}
+                      transfer money according to the total price to{" "}
+                      {dataTenant?.Bank?.name} with account number:{" "}
+                      {dataTenant?.bankAccountNumber}
                     </ListItem>
                     <ListItem>save your proof of payment</ListItem>
                     <ListItem>
@@ -224,63 +223,65 @@ function Payment() {
                     </ListItem>
                   </OrderedList>
                 </Box>
-                <Flex direction={"column"} justifyContent="center" alignItems={"center"}>
-                  <FormControl>
-                    <FormHelperText ms="22px">Max size : 1MB</FormHelperText>
-                    <Flex direction={"column"} alignItems={"center"} >
-                      <Input
-                      type="file"
-                      accept="image/png, image/jpg"
-                      ref={inputFileRef}
-                      onChange={handleFile}
-                      display={"none"}
-                      />
-                      <Button mx="20px" variant="secondary" w="305px" onClick={() => inputFileRef.current.click()}>
-                        <Text fontWeight="regular" fontSize="14px">
-                          upload image
-                        </Text>
-                      </Button>
+                <FormControl>
+                  <Input
+                    type="file"
+                    accept="image/png, image/jpg"
+                    ref={inputFileRef}
+                    onChange={handleFile}
+                    display={"none"}
+                  />
+                  <FormHelperText ms="22px">Max size : 1MB</FormHelperText>
+                  <Button
+                    mx="20px"
+                    variant="secondary"
+                    w="305px"
+                    onClick={() => inputFileRef.current.click()}
+                  >
+                    <Text fontWeight="regular" fontSize="14px">
+                      upload image
+                    </Text>
+                  </Button>
+                  {err ? (
+                    <Alert status="error" color="red" text="center">
+                      <i className="fa-solid fa-circle-exclamation"></i>
+                      <Text ms="10px">{fileSizeMsg}</Text>
+                    </Alert>
+                  ) : null}
 
-                    </Flex>
-                        {err ? 
-                          (
-                            <Alert status="error" color="red" text="center">
-                              <i className="fa-solid fa-circle-exclamation"></i>
-                              <Text ms="10px">{fileSizeMsg}</Text>
-                            </Alert>
-                          ) 
-                          : 
-                          null
-                        }
+                  {prove ? (
+                    <Alert status="info" color="green" text="center">
+                      <i className="fa-solid fa-check"></i>
+                      <Text ms="10px">image uploaded</Text>
+                    </Alert>
+                  ) : null}
+                </FormControl>
 
-                          {prove ? 
-                          (
-                            <Alert status="info" color="green" text="center">
-                              <i class="fa-solid fa-check"></i>
-                              <Text ms="10px">image uploaded</Text>
-                            </Alert>
-                          )
-                          :
-                          null
-                      }
-                      </FormControl>
-                    
-
-                  {
-                    selectedFile ? 
-                  <Button mx="20px" mt="20px" variant="secondary" w="305px" onClick={onOpen}>
-                      <Text fontWeight="regular" fontSize="14px">
-                        upload payment proof
-                      </Text>
-                    </Button>
-                    :
-                    <Button mx="20px" mt="20px" variant="secondary" w="305px" disabled="true">
-                      <Text fontWeight="regular" fontSize="14px">
-                        upload payment proof
-                      </Text>
-                    </Button>
-                  }
-                </Flex>
+                {selectedFile ? (
+                  <Button
+                    mx="20px"
+                    mt="20px"
+                    variant="secondary"
+                    w="305px"
+                    onClick={onOpen}
+                  >
+                    <Text fontWeight="regular" fontSize="14px">
+                      upload payment proof
+                    </Text>
+                  </Button>
+                ) : (
+                  <Button
+                    mx="20px"
+                    mt="20px"
+                    variant="secondary"
+                    w="305px"
+                    disabled="true"
+                  >
+                    <Text fontWeight="regular" fontSize="14px">
+                      upload payment proof
+                    </Text>
+                  </Button>
+                )}
                 <Text fontWeight="Bold" fontSize="18px" p="20px" pb="5px">
                   Price Details
                 </Text>
@@ -340,7 +341,7 @@ function Payment() {
                 h="618px"
                 overflow="hiden"
                 objectFit="cover"
-                src={ process.env.REACT_APP_API_BASE_URL + dataProperty?.pic}
+                src={process.env.REACT_APP_API_BASE_URL + dataProperty?.pic}
               ></Image>
             </Box>
           </Flex>
@@ -370,6 +371,7 @@ function Payment() {
         </ModalContent>
       </Modal>
     </Layout>
+  );
 }
 
 export default Payment;

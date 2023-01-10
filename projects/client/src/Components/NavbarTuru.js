@@ -13,6 +13,13 @@ import {
   MenuDivider,
   Avatar,
   Button,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
 } from "@chakra-ui/react";
 import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory, useLocation } from "react-router-dom";
@@ -29,12 +36,19 @@ function NavbarMobileTenant() {
   const pathLocation = location.split("/");
   const history = useHistory();
   const auth = authFirebase;
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef();
-  const { id, ProfilePic ,ProfileName,firebaseProviderId} = useSelector((state) => state.user);
-  // console.log(firebaseProviderId);
 
-  console.log(id, ProfilePic);
+  const btnRef = React.useRef();
+  const {
+    isOpen: isDestopOpen,
+    onOpen: onDestopOpen,
+    onClose: onDestopClose,
+  } = useDisclosure();
+  const {
+    isOpen: isMobileOpen,
+    onOpen: onMobileOpen,
+    onClose: onMobileClose,
+  } = useDisclosure();
+  const { id, ProfilePic ,ProfileName,firebaseProviderId} = useSelector((state) => state.user);
 
   const logout = () => {
     signOut(auth)
@@ -108,7 +122,92 @@ function NavbarMobileTenant() {
         <Container maxW="1140px">
           <Flex justifyContent="space-between">
             <Image src={turuIcon} mr="1em" width="50px" height="50px"></Image>
-            <Menu>
+            <Button
+              _hover={{ bg: "primary" }}
+              borderRadius="0px"
+              bg="white"
+              _active={{
+                bg: "white",
+              }}
+              onClick={onMobileOpen}
+              fontSize="18px"
+            >
+              <i className="fa-solid fa-bars"></i>
+            </Button>
+
+            <Drawer
+              placement="top"
+              onClose={onMobileClose}
+              isOpen={isMobileOpen}
+            >
+              <DrawerOverlay />
+              <DrawerContent>
+                <DrawerHeader borderBottomWidth="1px">
+                  <Image
+                    src={turuIcon}
+                    mr="1em"
+                    width="50px"
+                    height="50px"
+                  ></Image>
+                  <DrawerCloseButton />
+                </DrawerHeader>
+                <DrawerBody>
+                  {menuItemContents.map((content) => {
+                    return (
+                      <Box
+                        my="10px"
+                        key={`tenant-menu-${content.text.toLowerCase()}`}
+                        _hover={{ bg: "white" }}
+                        onClick={() => history.push(content.url)}
+                      >
+                        <Flex
+                          bg={"#fbe946"}
+                          w="100%"
+                          h={"44px"}
+                          justifyContent={"center"}
+                          alignItems={"center"}
+                          _hover={{
+                            bg: "black",
+                            color: "white",
+                            transition: "0.3s",
+                          }}
+                        >
+                          {content.icon}&nbsp;<strong>{content.text}</strong>
+                        </Flex>
+                      </Box>
+                    );
+                  })}
+                  <Box
+                    my="10px"
+                    key={`tenant-menu-signout`}
+                    _hover={{ bg: "white" }}
+                    onClick={() => {
+                      signOut(auth)
+                        .then(() => alert("signed out"))
+                        .catch((error) => alert(error));
+                      history.push("/tenant/login")
+                    }}
+                  >
+                    <Flex
+                      bg={"#fbe946"}
+                      w="100%"
+                      h={"44px"}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      _hover={{
+                        bg: "black",
+                        color: "white",
+                        transition: "0.3s",
+                      }}
+                    >
+                      <strong>Sign Out</strong>
+                    </Flex>
+                  </Box>
+                </DrawerBody>
+              </DrawerContent>
+            </Drawer>
+
+            {/* <Menu>
               <MenuButton
                 _hover={{ bg: "white" }}
                 _active={{
@@ -172,7 +271,7 @@ function NavbarMobileTenant() {
                   </Flex>
                 </MenuItem>
               </MenuList>
-            </Menu>
+            </Menu> */}
           </Flex>
         </Container>
       </Box>

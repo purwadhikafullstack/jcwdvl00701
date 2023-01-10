@@ -1,50 +1,63 @@
-import { Box, Flex, Button, Text, Image, Container,Spinner,HStack,VStack} from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Button,
+  Text,
+  Image,
+  Container,
+  Spinner,
+  HStack,
+  VStack,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import Layout from "../../Components/Layout";
 import bookingImage from "../../Assets/image/booking.png";
 import NavbarDestop from "../../Components/NavbarDestop";
-import axios from "axios"
+import axios from "axios";
 import { useParams } from "react-router-dom";
+import Loading from "../../Components/Loading";
 
 function Booking() {
   // akan menerima 1 id params utk get data, dari page detail/id
-  const {id} = useParams()
+  const { id } = useParams();
   console.log(id);
   const [dataBooking, setDataBooking] = useState({});
-  const [dataRoom, setDataRoom] = useState({})
-  const [startDate, setStartDate] = useState("")
-  const [endDate, setEndDate] = useState("")
-  const [loading, setLoading] = useState(true)
-  const [dataProfile, setDataProfile] = useState({})
-  const [birthdate , setBirthdate] = useState("")
-  let history = useHistory()
-  console.log(dataRoom?.Property?.pic);
+  const [dataRoom, setDataRoom] = useState({});
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [dataProfile, setDataProfile] = useState({});
+  const [birthdate, setBirthdate] = useState("");
+  let history = useHistory();
 
   useEffect(() => {
-    setLoading(true)
-      const fetchDataBooking = async () => {
-        try {
-          const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/reservation/get-reservation`, {
-            params : {
-              id : id
-            }
-          })
-          // console.log((await response)?.data.result);
-          setDataBooking((await response)?.data.result)
-          setDataRoom((await response)?.data.result.Room)
-          setStartDate((await response)?.data.result.startDate)
-          setEndDate((await response)?.data.result.endDate)
-          setDataProfile((await response)?.data.result.User.Profile)
-          setBirthdate((await response)?.data.result.User.Profile.birthdate)
-  
-        } catch (err) {
-          console.error(err.data.message)
-        }
+    setLoading(true);
+    const fetchDataBooking = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/reservation/get-reservation`,
+          {
+            // masih nembak sampai page mas imam beres
+            params: {
+              id: id,
+            },
+          }
+        );
+        // console.log((await response)?.data.result);
+        setDataBooking((await response)?.data.result);
+        setDataRoom((await response)?.data.result.Room);
+        setStartDate((await response)?.data.result.startDate);
+        setEndDate((await response)?.data.result.endDate);
+        setDataProfile((await response)?.data.result.User.Profile);
+        setBirthdate((await response)?.data.result.User.Profile.birthdate);
+      } catch (err) {
+        console.error(err.data.message);
       }
-    fetchDataBooking()
-    setLoading(false)
-  }, [])
+    };
+    fetchDataBooking();
+    setLoading(false);
+  }, []);
 
   let startDate2 = startDate.split("T")[0].split("-")
     // console.log(startDate2);
@@ -66,38 +79,30 @@ function Booking() {
 
   const btnHandlerPayment = (id) => {
     console.log(id);
-    history.push(`/payment/${id}`)
-  }
+    history.push(`/payment/${id}`);
+  };
 
-  let dataPrice = dataBooking?.finalPrice
+  let dataPrice = dataBooking?.finalPrice;
   const price = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-  }).format(dataPrice)
+  }).format(dataPrice);
 
-  let dataTax = (dataBooking?.finalPrice / 10)
+  let dataTax = dataBooking?.finalPrice / 10;
   const tax = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-  }).format(dataTax)
+  }).format(dataTax);
 
-  let dataTotalPrice = dataPrice + dataTax
+  let dataTotalPrice = dataPrice + dataTax;
   const totalPrice = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-  }).format(dataTotalPrice)
+  }).format(dataTotalPrice);
 
-    return loading ?
-    <Flex justifyContent="center" mt="24%">
-      <Spinner
-        thickness='4px'
-        speed='0.65s'
-        emptyColor='gray.200'
-        color='yellow.500'
-        size='xl'
-      />
-    </Flex>
-    : 
+  return loading ? (
+    <Loading/>
+  ) : (
     <Layout>
       <Box
         mb={{ ss: "60px", sm: "60px", sl: "0px" }}
@@ -217,7 +222,10 @@ function Booking() {
                 <Flex>
                   <Box boxSize="45px">
                     <Image
-                      src={process.env.REACT_APP_API_BASE_URL + dataProfile?.profilePic}
+                      src={
+                        process.env.REACT_APP_API_BASE_URL +
+                        dataProfile?.profilePic
+                      }
                       alt="Picture profile"
                     />
                   </Box>
@@ -305,14 +313,16 @@ function Booking() {
                 h="618px"
                 overflow="hiden"
                 objectFit="cover"
-                src={process.env.REACT_APP_API_BASE_URL +  dataRoom?.Property?.pic}
+                src={
+                  process.env.REACT_APP_API_BASE_URL + dataRoom?.Property?.pic
+                }
               ></Image>
             </Box>
           </Flex>
         </Container>
       </Box>
     </Layout>
+  );
 }
-
 
 export default Booking;

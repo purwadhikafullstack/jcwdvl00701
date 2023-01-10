@@ -22,8 +22,7 @@ import axios from "axios"
 import CardBookingHistory from "../../Components/User/CardBookingHistory";
 import CardBooking from "../../Components/User/CardBooking";
 import ReactPaginate from "react-paginate"
-import { addDays, subDays } from "date-fns";
-
+import Loading from "../../Components/Loading";
 // import Footer from '../Components/Footer';
 
 function BookingHistory() {
@@ -236,17 +235,9 @@ function BookingHistory() {
     };
 
   return loading ?
-     <Flex justifyContent="center" mt="24%">
-      <Spinner
-        thickness='4px'
-        speed='0.65s'
-        emptyColor='gray.200'
-        color='yellow.500'
-        size='xl'
-      />
-    </Flex>
+    <Loading/>
     :
-     <Box>
+    <Box>
       <NavbarTuru/>
       <Box
         w="100%"

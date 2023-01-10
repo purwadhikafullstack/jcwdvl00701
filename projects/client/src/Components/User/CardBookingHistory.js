@@ -26,13 +26,10 @@ import { useState } from "react";
 import axios from "axios"
 
 function CardBookingHistory(props) {
-    // console.log(props.dataBooking);
     const {id , startDate , endDate , status , guestCount , userId , roomId , finalPrice, Room , User, Review , randomNumber} = props
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [inputReview, setInputReview] = useState("")
     const [msg , setMsg] = useState("")
-    // console.log(Review);
-    // console.log(finalPrice);
 
     let strStatus
     let color

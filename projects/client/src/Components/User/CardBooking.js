@@ -28,15 +28,13 @@ import { useDisclosure } from "@chakra-ui/react";
 import axios from "axios"
 
 function CardBooking (props) {
-    // console.log(props.dataBooking);
-    // console.log(props);
-    // console.log(randomNumber);
     const {id , startDate , endDate , status , guestCount , userId , roomId , finalPrice, Room , User, randomNumber} = props
     const [fileSizeMsg, setFileSizeMsg] = useState("")
     const [selectedFile, setSelectedFile] = useState(null);
     const [prove, setProve] = useState(false)
     const [err, setErr] = useState(false)
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen : isPaymentOpen, onOpen : onPaymentOpen, onClose : onPaymentClose } = useDisclosure();
+    const { isOpen : isCancelOpen, onOpen : onCancelOpen, onClose : onCancelClose } = useDisclosure();
     let history = useHistory()
     const inputFileRef = useRef(null)
 
@@ -91,7 +89,7 @@ function CardBooking (props) {
         const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/payment/add-payment`, formData)
         console.log(response.data);
         randomNumber(Math.random())
-        onClose()
+        onPaymentClose()
         history.push("/booking-history")
         } catch (err) {
             console.error(err.message)
@@ -106,7 +104,7 @@ function CardBooking (props) {
         .then((res) => {
             alert(res.data.message)
             randomNumber(Math.random())
-            onClose()
+            onCancelClose()
         })
         .catch((err) => {
             console.error(err.message)
@@ -283,7 +281,7 @@ function CardBooking (props) {
                             
                             {
                             selectedFile ? 
-                                <Button variant="secondary" w="100%" mt="10px" _hover={{bg:"black", color : "white"}} onClick={btnHandlerUpload}>
+                                <Button variant="secondary" w="100%" mt="10px" _hover={{bg:"black", color : "white"}} onClick={onPaymentOpen}>
                                     <Text fontWeight="regular" fontSize="14px">
                                     upload payment proof
                                     </Text>
@@ -320,15 +318,39 @@ function CardBooking (props) {
                             }
                     </Flex>
                 :
-                    <Button variant="secondary" w="100%" mt="10px" bg="red.500" _hover={{bg:"red.700"}} onClick={onOpen}>
+                    <Button variant="secondary" w="100%" mt="10px" bg="red.500" _hover={{bg:"red.700"}} onClick={onCancelOpen}>
                     cancel
                     </Button>
                 }
             </Box>
             </Flex>
         </Container>
+        {/* utk modal payment*/}
+        <Modal closeOnOverlayClick={false} isOpen={isPaymentOpen} onClose={onPaymentClose}>
+            <ModalOverlay />
+            <ModalContent borderRadius={0}>
+            <ModalHeader>Are you sure to pay room?</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}></ModalBody>
+
+            <ModalFooter>
+                <Button
+                // onClick={btnCanceled}
+                onClick={btnHandlerUpload}
+                borderRadius={0}
+                colorScheme="red"
+                mr={3}
+                >
+                Pay
+                </Button>
+                <Button borderRadius={0} onClick={onPaymentClose}>
+                Cancel
+                </Button>
+            </ModalFooter>
+            </ModalContent>
+        </Modal>
         {/* utk modal canceled*/}
-        <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+        <Modal closeOnOverlayClick={false} isOpen={isCancelOpen} onClose={onCancelClose}>
             <ModalOverlay />
             <ModalContent borderRadius={0}>
             <ModalHeader>Are you sure to canceled room ?</ModalHeader>
@@ -344,7 +366,7 @@ function CardBooking (props) {
                 >
                 cancel
                 </Button>
-                <Button borderRadius={0} onClick={onClose}>
+                <Button borderRadius={0} onClick={onCancelClose}>
                 back
                 </Button>
             </ModalFooter>

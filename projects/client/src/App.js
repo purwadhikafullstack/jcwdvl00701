@@ -18,7 +18,6 @@ import ChangePassword from "./Pages/changePassword";
 import VerifyAccount from "./Pages/verifyAccount";
 import Home from "./Pages/User/Home";
 import Profile from "./Pages/User/profile";
-
 import PropertyListTenant from "./Pages/Tenant/propertyListTenant";
 import RoomListTenant from "./Pages/Tenant/roomListTenant";
 import EditProperty from "./Pages/Tenant/editProperty";
@@ -39,16 +38,21 @@ import {
   sendEmailVerification,
   signOut,
 } from "firebase/auth";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import auth_types from "./Redux/Reducers/Types/userTypes";
+import UserRoute from "./Components/User/UserRoute";
+import TenantRoute from "./Components/Tenant/TenantRoute";
+import Loading from "./Components/Loading";
+import NotFound from "./Pages/notFound";
 
 function App() {
   const [emailVerified, setEmailVerified] = useState("");
   const [userLogin, setUserLogin] = useState({});
   const [firebaseProvider, setFirebaseProvider] = useState("");
   const [userId, setUserId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const { id, email, UserRoles, Tenant } = useSelector(
     (state) => state.user
@@ -63,17 +67,18 @@ function App() {
     //pengecekan user ada yg login atau tidak
     onAuthStateChanged(auth, (user) => {
       // console.log("onAuthStateChanged :", user);
+
       if (user) {
         // console.log(user);
         setUserLogin(user);
         setUserId(user.uid);
         setFirebaseProvider(user.providerData[0].providerId);
         setEmailVerified(user.emailVerified);
-        alert("ada yg login");
+        console.log("ada yg login");
         history.push("/");
         // kondisi jika sudah terverifikasi
         if (user.emailVerified) {
-          alert("your account has been verified");
+          console.log("your account has been verified");
         } else {
           // kirim email jika belum terverfikasi
           sendEmailVerification(user)
@@ -83,10 +88,10 @@ function App() {
             .catch((err) => {
               console.error(err);
             });
-          alert("Your account has not been verified");
+          console.log("Your account has not been verified");
         }
       } else {
-        alert("tidak ada yg login");
+        console.log("tidak ada yg login");
         // jika tidak ada akan di logout
         auth.signOut();
         history.push("/login");
@@ -95,6 +100,7 @@ function App() {
     //get data dan dimasukan ke redux
     // utk get data ke back-end dan di simpan di redux
     const getDataGlobal = () => {
+      setIsLoading(true);
       axios
         .get(`${process.env.REACT_APP_API_BASE_URL}/user/redux-user`, {
           params: {
@@ -106,7 +112,7 @@ function App() {
           // console.log("data get2 :", res.data.results.UserRoles);
           // console.log("data get3 :", res.data.results.Tenant.id);
           if (res.data.globalState === null) {
-            alert("loading...");
+            console.log("loading...");
           } else {
             res.data.globalState.UserRoles = res.data.globalState.UserRoles.map(
               (val) => {
@@ -136,57 +142,84 @@ function App() {
               },
             });
           }
+          setIsLoading(false);
         })
         .catch((err) => {
           // alert("please registered your account in form register")
           console.error(err.message);
+          setIsLoading(false);
         });
     };
     getDataGlobal();
   }, [userId]);
 
-  return (
-    <BrowserRouter>
-      <Switch>
-        {/* page tenant */}
-        <Route component={RegisterTenant} path="/tenant/register" />
-        <Route component={LoginTenant} path="/tenant/login" />
-        <Route component={PropertyListTenant} path="/tenant/property" />
-        <Route component={RoomListTenant} path="/tenant/room" />
-        <Route
-          component={EditProperty}
-          path="/tenant/edit-property/:propertyId"
-        />
-        <Route component={AddProperty} path="/tenant/add-property" />
-        <Route component={EditRoom} path="/tenant/edit-room/:id" />
-        <Route component={AddRoom} path="/tenant/add-room" />
-        <Route component={Report} path="/tenant/report" />
-        <Route component={Order} path="/tenant/order" />
-        <Route component={Price} path="/tenant/price" />
-        <Route component={Dashboard} path="/tenant/dashboard" />
-        <Route component={ProfileTenant} path="/tenant/profile" />
-        <Route
-          component={CompleteFormTenant}
-          path="/tenant/complete-register"
-        />
+  return isLoading ? (
+    <Loading />
+  ) : (
+    <>
+      <BrowserRouter>
+        <Switch>
+          {/* page tenant */}
+          <TenantRoute
+            component={RegisterTenant}
+            path="/tenant/register"
+            exact
+          />
+          <TenantRoute component={LoginTenant} path="/tenant/login" exact />
+          <TenantRoute
+            component={PropertyListTenant}
+            path="/tenant/property"
+            exact
+          />
+          <TenantRoute component={RoomListTenant} path="/tenant/room" exact />
+          <TenantRoute
+            component={EditProperty}
+            path="/tenant/edit-property/:propertyId"
+            exact
+          />
+          <TenantRoute
+            component={AddProperty}
+            path="/tenant/add-property"
+            exact
+          />
+          <TenantRoute
+            component={EditRoom}
+            path="/tenant/edit-room/:id"
+            exact
+          />
+          <TenantRoute component={AddRoom} path="/tenant/add-room" exact />
+          <TenantRoute component={Report} path="/tenant/report" exact />
+          <TenantRoute component={Order} path="/tenant/order" exact />
+          <TenantRoute component={Price} path="/tenant/price" exact />
+          <TenantRoute component={Dashboard} path="/tenant/dashboard" exact />
+          <TenantRoute component={ProfileTenant} path="/tenant/profile" exact />
+          <Route
+            component={CompleteFormTenant}
+            path="/tenant/complete-register"
+            exact
+          />
 
-        {/* page user */}
-        <Route component={PropertyList} path="/list" />
-        <Route component={PropertyDetail} path="/detail/:id" />
-        <Route component={Profile} path="/profile" />
-        <Route component={VerifyAccount} path="/verify-account" />
-        <Route component={ChangePassword} path="/settings/password" />
-        <Route component={ResetPassword} path="/reset-password" />
-        <Route component={ForgotPassword} path="/forgot-password" />
-        <Route component={RegisterUser} path="/register" />
-        <Route component={LoginUser} path="/login" />
-        <Route component={BookingHistory} path="/booking-history" />
-        <Route component={Booking} path="/booking/:id" />
-        <Route component={Payment} path="/payment/:id" />
-        <Route component={CompleteFormUser} path="/complete-user" />
-        <Route component={Home} path="/" />
-      </Switch>
-    </BrowserRouter>
+          {/* page user */}
+
+          <UserRoute component={Profile} path="/profile" exact />
+          <UserRoute component={VerifyAccount} path="/verify-account" exact />
+          <UserRoute component={BookingHistory} path="/booking-history" exact />
+          <UserRoute component={Booking} path="/booking/:id" exact />
+          <UserRoute component={Payment} path="/payment/:id" exact />
+          <UserRoute component={ResetPassword} path="/reset-password" exact />
+
+          <Route component={RegisterUser} path="/register" exact />
+          <Route component={ChangePassword} path="/settings/password" exact />
+          <Route component={LoginUser} path="/login" exact />
+          <Route component={ForgotPassword} path="/forgot-password" exact />
+          <Route component={PropertyList} path="/list" exact />
+          <Route component={PropertyDetail} path="/detail/:id" exact />
+          <Route component={CompleteFormUser} path="/complete-user" exact />
+          <Route component={Home} path="/" exact />
+          <Route component={NotFound} path="*" />
+        </Switch>
+      </BrowserRouter>
+    </>
   );
 }
 
