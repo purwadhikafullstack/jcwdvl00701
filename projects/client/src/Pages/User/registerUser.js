@@ -51,13 +51,14 @@ function RegisterUser() {
 
     const _handleRegister = async (credential, payload={}) => {
         const user = credential.user
+        console.log(user);
         const providerId = credential.providerId ? credential.providerId : 'password'
         if (!providerId.toLowerCase().includes('google')) {
             await sendEmailVerification(user)
         }
         
         const registerUrl = `${process.env.REACT_APP_API_BASE_URL}/user/register`
-
+        console.log(payload);
         payload = Object.keys(payload).length === 0 ? {
             id: user.uid,
             name: user.displayName,
@@ -69,8 +70,9 @@ function RegisterUser() {
             firebaseProviderId: providerId,
             ...payload
         }
-
+        console.log(payload);
         const response = await axios.post(registerUrl, payload)
+        console.log(response.data);
 
         dispatch({
             type: auth_types.Register,
@@ -112,8 +114,11 @@ function RegisterUser() {
         }),
         validateOnChange: false,
         onSubmit: async (values) => {
+            console.log(values);
             const {name, email, phoneNumber, password} = values
+            console.log(name);
             const credential = await createUserWithEmailAndPassword(authFirebase, email, password)
+            console.log(credential);
 
             await _handleRegister(credential, {name: name, email: email, phoneNumber: phoneNumber})
         }

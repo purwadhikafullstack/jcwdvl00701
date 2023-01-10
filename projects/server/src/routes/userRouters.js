@@ -16,6 +16,7 @@ routers.post("/profilePic", fileUploader({
     prefix: "POST",
 }).single("image"), userController.updateUserProfilePic)
 routers.get("/redux-user", userController.userRedux)
+routers.post("/complete-user", userController.completeDataUser)
 
 
 module.exports = routers

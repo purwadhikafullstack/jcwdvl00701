@@ -27,68 +27,54 @@ import YupPassword from "yup-password";
 import "yup-phone";
 import axios from "axios"
 import Footer from "../../Components/Footer";
+import loginImage from "../../Assets/image/loginImage.png";
 
-function CompleteFormTenant() {
+function CompleteFormUser() {
+    const {UserRoles, id} = useSelector(state => state.user)
+    const history = useHistory()
+    // const dispatch = useDispatch()
+    console.log(UserRoles[0]);
+    console.log(id);
 
-    const {id, UserRoles} = useSelector( state => state.user)
-    const [selectedFile, setSelectedFile] = useState(null)
-    const inputFileRef = useRef(null)
-    const [fileSizeMsg, setFileSizeMsg] = useState("");
-    let history = useHistory()
-
-    // console.log(UserRoles);
-    if(UserRoles.includes(2)){
-        history.push("/tenant/dashboard")
-    }
-
-    const handleFile = (event) => {
-        if (event.target.files[0].size / 1024 > 1024) {
-            setFileSizeMsg("File size is greater than maximum limit");
-        } else {
-            setSelectedFile(event.target.files[0]);
-            formik.setFieldValue("idCardPic", event.target.files[0]);
-        }
-    };
-
+    if(UserRoles.includes(1)){
+        history.push("/")
+    } 
+    
     // formik initialization
     const formik = useFormik({
         initialValues: {
-            nameLapak : "",
-            phoneNumber : "",
-            idCardPic : selectedFile
+            name : "",
+            phoneNumber : ""
         },
-        validationSchema: Yup.object().shape({
-            nameLapak : Yup.string().required("name lapak can't be empty"),
-            phoneNumber: Yup.string().phone("ID").required("phone number can't be empty"),
-            idCardPic : Yup.string("input your idCard").required("id card can't be empty")
+        validationSchema : Yup.object().shape({
+            name : Yup.string().required("name can't be empty"),
+            phoneNumber : Yup.string().phone("ID").required("phone number can't be empty")
         }),
         validateOnChange : false,
         onSubmit : async (values) => {
-            console.log(values)
-            const {nameLapak, phoneNumber, idCardPic} = values
+            console.log(values);
+            const {name, phoneNumber} = values
+            // data yg akan di post ada 3, name, phoneNumber dan userId(dari redux), 
 
-            const formData = new FormData()
-
-            formData.append("name", nameLapak)
-            formData.append("phoneNumber" , phoneNumber)
-            formData.append("idCardPic" , idCardPic)
-            formData.append("userId" , id)
-
-            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/complete-register`, formData)
+            axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/complete-user`, {
+                name ,
+                phoneNumber,
+                userId : id
+            })
             .then((res) => {
                 console.log(res.data);
                 alert(res.data.message)
                 history.push("/")
             })
             .catch((err) => {
-                console.error(err.data.message)
+                console.error(err)
             })
         }
     })
     return (
         <>
         <Container maxW="2x1" px="0px">
-            <Flex flexDirection="column" bg="black">
+            <Flex flexDirection="column">
             {/* flex container utk dekstop */}
             <Flex>
                 {/* utk image dekstop */}
@@ -105,7 +91,7 @@ function CompleteFormTenant() {
                         md: "block",
                         lg: "block",
                     }}
-                    src={registerTenant}
+                    src={loginImage}
                     width="900px"
                     height="1080px"
                     objectFit="cover"
@@ -137,8 +123,8 @@ function CompleteFormTenant() {
                         width="59px"
                         height="58px"
                         />
-                        <Heading as="h1" size="md" m="10px" color="white">
-                        Complete Tenant Profile
+                        <Heading as="h1" size="md" m="10px">
+                        Complete User Profile
                         </Heading>
                         <Flex w="194px" h="37px" justifyContent="center">
                         <Text
@@ -147,9 +133,8 @@ function CompleteFormTenant() {
                             fontWeight="300"
                             textAlign="center"
                             mr="5px"
-                            color="white"
                         >
-                            Fill your data for tenant profile
+                            Fill your data for to be user
                         </Text>
                         </Flex>
                     </Flex>
@@ -159,16 +144,16 @@ function CompleteFormTenant() {
                             <FormControl id="name" pb="12px">
                             <Input
                                 type="text"
-                                placeholder="Name a lapak"
+                                placeholder="Name User"
                                 borderRadius="0"
                                 bg="white"
-                                onChange={(e) => formik.setFieldValue("nameLapak", e.target.value)}
+                                onChange={(e) => formik.setFieldValue("name", e.target.value)}
                             />
 
-                            {formik.errors.nameLapak ? (
+                            {formik.errors.name ? (
                                 <Alert status="error" color="red" text="center">
                                     <i className="fa-solid fa-circle-exclamation"></i>
-                                    <Text ms="10px">{formik.errors.nameLapak}</Text>
+                                    <Text ms="10px">{formik.errors.name}</Text>
                                 </Alert>
                                 ) : null}
                             </FormControl>
@@ -188,7 +173,7 @@ function CompleteFormTenant() {
                                 </Alert>
                                 ) : null}
                             </FormControl>
-                            <FormControl id="idCardPic" pb="12px">
+                            {/* <FormControl id="idCardPic" pb="12px">
                             <Input
                                 type="file"
                                 placeholder="Upload Id Card "
@@ -226,7 +211,7 @@ function CompleteFormTenant() {
                                 :
                                 null
                             }
-                            </FormControl>
+                            </FormControl> */}
                             <Button variant="primary" mb="12px" onClick={formik.handleSubmit}>
                             complete data
                             </Button>
@@ -245,7 +230,7 @@ function CompleteFormTenant() {
         // sl={"15em"}
         />
         </>
-    );
+    )
 }
 
-export default CompleteFormTenant;
+export default CompleteFormUser
