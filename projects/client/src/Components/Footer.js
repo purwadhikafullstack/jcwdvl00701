@@ -10,7 +10,7 @@ function Footer(props) {
   const { ss, sm, sl } = props;
   const location = useLocation().pathname;
   const pathLocation = location.split("/");
-  // console.log(props);
+  
   return (
     <Box
       mt={{ ss: ss, sm: sm, sl: sl, md: "0" }}

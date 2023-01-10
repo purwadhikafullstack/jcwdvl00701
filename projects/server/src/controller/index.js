@@ -6,6 +6,7 @@ const productController = require("./productController");
 const reportController = require("./reportConstroller");
 const reservationController = require("./reservationController")
 const paymentController = require("./paymentController")
+const historyController = require("./historyController")
 
 module.exports = {
   userController,
@@ -15,5 +16,6 @@ module.exports = {
   productController,
   reportController,
   reservationController,
-  paymentController
+  paymentController,
+  historyController
 };

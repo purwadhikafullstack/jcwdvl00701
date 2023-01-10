@@ -22,10 +22,9 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
-
+import Loading from "../../Components/Loading";
 import Layout from "../../Components/Layout";
 import { Link, useHistory, useParams } from "react-router-dom";
-import NavbarDestop from "../../Components/NavbarDestop";
 import bookingImage from "../../Assets/image/booking.png";
 import axios from "axios";
 import { useDisclosure } from "@chakra-ui/react";
@@ -58,36 +57,25 @@ function Payment() {
     }
   };
 
-  const sDate = startDate.split("T");
-  const sDate2 = sDate[0].split("-");
-
-  const eDate = endDate.split("T");
-  const eDate2 = eDate[0].split("-");
-
-  const bulan = [
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ];
+  const sDate = startDate.split("T")
+  const sDate2 = sDate[0].split("-")
+  
+  const eDate = endDate.split("T")
+  const eDate2 = eDate[0].split("-")
+  
+  const bulan = ["Januari", "Februari", "Maret", "April" ,"Mei" , "Juni" , "Juli" , "Agustus" , "September" , "Oktober", "November", "Desember"]
   const searchBulan = (bln) => {
-    const angka = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-    let bulanNow = "";
+    const angka = ["01","02","03","04","05","06","07","08","09","10","11","12"]
+    let bulanNow = ""
     for (let i = 0; i < bln.length; i++) {
-      if (sDate2[1] == angka[i + 1]) {
-        return (bulanNow += bln[i + 1]);
+      if(sDate2[1] == angka[i]){
+
+        return bulanNow += bln[i]
       }
     }
-  };
-  let resultBulan = searchBulan(bulan);
+  }
+  let resultBulan = searchBulan(bulan)
+  console.log(resultBulan);
 
   let price = dataPayment?.finalPrice;
   const priceRupiah = new Intl.NumberFormat("id-ID", {
@@ -157,46 +145,18 @@ function Payment() {
   };
 
   return loading ? (
-    <Flex justifyContent="center" mt="24%">
-      <Spinner
-        thickness="4px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="yellow.500"
-        size="xl"
-      />
-    </Flex>
+    <Loading/>
   ) : (
     <Layout>
       <Box
         mb={{ ss: "60px", sm: "60px", sl: "0px" }}
         mt={{ ss: "0px", sm: "0px", sl: "80px" }}
       >
-        <NavbarDestop />
         <Container
           maxW="1140px"
           display={{ ss: "none", sm: "none", sl: "flex" }}
         >
           <Flex mt="40px" mb="10px" w="100%" mx="auto">
-            <Link to="/booking">
-              <Button
-                position="relative"
-                borderRadius="0px"
-                border="1px"
-                borderColor="gray.200"
-                bg="white"
-                h="40px"
-                me="20px"
-                _hover={{
-                  background: "black",
-                  color: "white",
-                  borderColor: "black",
-                }}
-              >
-                <i className="fa-solid fa-caret-left"></i>
-              </Button>
-            </Link>
-
             <Text fontWeight="900" fontSize="36px" color="black" px="5px">
               Payment
             </Text>
@@ -229,23 +189,6 @@ function Payment() {
                   {dataPayment?.guestCount} Guest
                 </Text>
                 <Flex bg="white" border="1px" borderColor="gray.200">
-                  <Link to="/booking">
-                    <Button
-                      display={{ ss: "inline", sm: "inline", sl: "none" }}
-                      borderRadius="0px"
-                      borderRight="1px"
-                      borderColor="gray.200"
-                      bg="white"
-                      h="100%"
-                      _hover={{
-                        background: "black",
-                        color: "white",
-                        borderColor: "black",
-                      }}
-                    >
-                      <i className="fa-solid fa-caret-left"></i>
-                    </Button>
-                  </Link>
                   <Box p="10px">
                     <Text
                       fontWeight="regular"

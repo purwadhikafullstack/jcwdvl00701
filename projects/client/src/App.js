@@ -30,6 +30,7 @@ import Price from "./Pages/Tenant/price";
 import Dashboard from "./Pages/Tenant/dashboard";
 import ProfileTenant from "./Pages/Tenant/profileTenant";
 import CompleteFormTenant from "./Pages/Tenant/completeFormTenant";
+import CompleteFormUser from "./Pages/User/completeFromUser";
 import { authFirebase } from "./Config/firebase";
 import {
   getAuth,
@@ -53,11 +54,9 @@ function App() {
   const [userId, setUserId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { id, name, email, UserRoles, Tenant } = useSelector(
+  const { id, email, UserRoles, Tenant } = useSelector(
     (state) => state.user
   );
-  // console.log(UserRoles);
-  // console.log(Tenant);
 
   let history = useHistory();
   const dispatch = useDispatch();
@@ -70,12 +69,13 @@ function App() {
       // console.log("onAuthStateChanged :", user);
 
       if (user) {
+        // console.log(user);
         setUserLogin(user);
         setUserId(user.uid);
         setFirebaseProvider(user.providerData[0].providerId);
         setEmailVerified(user.emailVerified);
         console.log("ada yg login");
-
+        history.push("/");
         // kondisi jika sudah terverifikasi
         if (user.emailVerified) {
           console.log("your account has been verified");
@@ -214,6 +214,7 @@ function App() {
           <Route component={ForgotPassword} path="/forgot-password" exact />
           <Route component={PropertyList} path="/list" exact />
           <Route component={PropertyDetail} path="/detail/:id" exact />
+          <Route component={CompleteFormUser} path="/complete-user" exact />
           <Route component={Home} path="/" exact />
           <Route component={NotFound} path="*" />
         </Switch>
