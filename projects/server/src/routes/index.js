@@ -6,6 +6,7 @@ const productRoutrs = require("./productRouters");
 const reportRouters = require("./reportRouters");
 const reservationRouters = require("./reservationRouters")
 const paymentRouters = require("./paymentRouters")
+const historyRouters = require("./historyRouters")
 module.exports = {
   userRouters,
   roomRouters,
@@ -15,5 +16,6 @@ module.exports = {
   reportRouters,
   tenantRouters,
   reservationRouters,
-  paymentRouters
+  paymentRouters,
+  historyRouters
 };

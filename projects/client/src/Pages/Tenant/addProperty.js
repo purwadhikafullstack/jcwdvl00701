@@ -92,7 +92,7 @@ function AddProperty() {
       formData.append("pic", pic);
       formData.append("categoryId", categoryId);
       formData.append("rules", rules);
-      formData.append("tenantId", tenantId);
+      formData.append("tenantId", TenantId);
 
       console.log("berhasil masuk formik");
 

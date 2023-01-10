@@ -18,7 +18,6 @@ import ChangePassword from "./Pages/changePassword";
 import VerifyAccount from "./Pages/verifyAccount";
 import Home from "./Pages/User/Home";
 import Profile from "./Pages/User/profile";
-import { Spinner } from "@chakra-ui/react";
 import PropertyListTenant from "./Pages/Tenant/propertyListTenant";
 import RoomListTenant from "./Pages/Tenant/roomListTenant";
 import EditProperty from "./Pages/Tenant/editProperty";
@@ -31,6 +30,7 @@ import Price from "./Pages/Tenant/price";
 import Dashboard from "./Pages/Tenant/dashboard";
 import ProfileTenant from "./Pages/Tenant/profileTenant";
 import CompleteFormTenant from "./Pages/Tenant/completeFormTenant";
+import CompleteFormUser from "./Pages/User/completeFromUser";
 import { authFirebase } from "./Config/firebase";
 import {
   getAuth,
@@ -42,7 +42,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import auth_types from "./Redux/Reducers/Types/userTypes";
-
+import UserRoute from "./Components/User/UserRoute";
 import TenantRoute from "./Components/Tenant/TenantRoute";
 import Loading from "./Components/Loading";
 import NotFound from "./Pages/notFound";
@@ -54,11 +54,7 @@ function App() {
   const [userId, setUserId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { id, name, email, UserRoles, Tenant } = useSelector(
-    (state) => state.user
-  );
-  // console.log(UserRoles);
-  // console.log(Tenant);
+  const { id, email, UserRoles, Tenant } = useSelector((state) => state.user);
 
   let history = useHistory();
   const dispatch = useDispatch();
@@ -71,12 +67,13 @@ function App() {
       // console.log("onAuthStateChanged :", user);
 
       if (user) {
+        // console.log(user);
         setUserLogin(user);
         setUserId(user.uid);
         setFirebaseProvider(user.providerData[0].providerId);
         setEmailVerified(user.emailVerified);
         console.log("ada yg login");
-
+        history.push("/");
         // kondisi jika sudah terverifikasi
         if (user.emailVerified) {
           console.log("your account has been verified");
@@ -161,40 +158,61 @@ function App() {
       <BrowserRouter>
         <Switch>
           {/* page tenant */}
-          <TenantRoute component={RegisterTenant} path="/tenant/register" />
-          <TenantRoute component={LoginTenant} path="/tenant/login" />
-          <TenantRoute component={PropertyListTenant} path="/tenant/property" />
-          <TenantRoute component={RoomListTenant} path="/tenant/room" />
+          <TenantRoute
+            component={RegisterTenant}
+            path="/tenant/register"
+            exact
+          />
+          <TenantRoute component={LoginTenant} path="/tenant/login" exact />
+          <TenantRoute
+            component={PropertyListTenant}
+            path="/tenant/property"
+            exact
+          />
+          <TenantRoute component={RoomListTenant} path="/tenant/room" exact />
           <TenantRoute
             component={EditProperty}
             path="/tenant/edit-property/:propertyId"
+            exact
           />
-          <TenantRoute component={AddProperty} path="/tenant/add-property" />
-          <TenantRoute component={EditRoom} path="/tenant/edit-room/:id" />
-          <TenantRoute component={AddRoom} path="/tenant/add-room" />
-          <TenantRoute component={Report} path="/tenant/report" />
-          <TenantRoute component={Order} path="/tenant/order" />
-          <TenantRoute component={Price} path="/tenant/price" />
-          <TenantRoute component={Dashboard} path="/tenant/dashboard" />
-          <TenantRoute component={ProfileTenant} path="/tenant/profile" />
+          <TenantRoute
+            component={AddProperty}
+            path="/tenant/add-property"
+            exact
+          />
+          <TenantRoute
+            component={EditRoom}
+            path="/tenant/edit-room/:id"
+            exact
+          />
+          <TenantRoute component={AddRoom} path="/tenant/add-room" exact />
+          <TenantRoute component={Report} path="/tenant/report" exact />
+          <TenantRoute component={Order} path="/tenant/order" exact />
+          <TenantRoute component={Price} path="/tenant/price" exact />
+          <TenantRoute component={Dashboard} path="/tenant/dashboard" exact />
+          <TenantRoute component={ProfileTenant} path="/tenant/profile" exact />
           <Route
             component={CompleteFormTenant}
             path="/tenant/complete-register"
+            exact
           />
 
           {/* page user */}
-          <Route component={PropertyList} path="/list" />
-          <Route component={PropertyDetail} path="/detail/:id" />
-          <Route component={Profile} path="/profile" />
-          <Route component={VerifyAccount} path="/verify-account" />
-          <Route component={ChangePassword} path="/settings/password" />
-          <Route component={ResetPassword} path="/reset-password" />
-          <Route component={ForgotPassword} path="/forgot-password" />
-          <Route component={RegisterUser} path="/register" />
+
+          <UserRoute component={Profile} path="/profile" exact />
+          <UserRoute component={VerifyAccount} path="/verify-account" exact />
+          <UserRoute component={BookingHistory} path="/booking-history" exact />
+          <UserRoute component={Booking} path="/booking/:id" exact />
+          <UserRoute component={Payment} path="/payment/:id" exact />
+          <UserRoute component={ResetPassword} path="/reset-password" exact />
+
+          <Route component={RegisterUser} path="/register" exact />
+          <Route component={ChangePassword} path="/settings/password" exact />
           <Route component={LoginUser} path="/login" exact />
-          <Route component={BookingHistory} path="/booking-history" />
-          <Route component={Booking} path="/booking/:id" />
-          <Route component={Payment} path="/payment/:id" />
+          <Route component={ForgotPassword} path="/forgot-password" exact />
+          <Route component={PropertyList} path="/list" exact />
+          <Route component={PropertyDetail} path="/detail/:id" exact />
+          <Route component={CompleteFormUser} path="/complete-user" exact />
           <Route component={Home} path="/" exact />
           <Route component={NotFound} path="*" />
         </Switch>

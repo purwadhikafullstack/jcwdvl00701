@@ -24,11 +24,12 @@ import {
 import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { authFirebase } from "../Config/firebase";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut, getAuth } from "firebase/auth";
 import { useSelector } from "react-redux";
 
 import { useDisclosure } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 function NavbarMobileTenant() {
   const location = useLocation().pathname;
@@ -47,16 +48,23 @@ function NavbarMobileTenant() {
     onOpen: onMobileOpen,
     onClose: onMobileClose,
   } = useDisclosure();
-  const { id, ProfilePic } = useSelector((state) => state.user);
+  const { id, ProfilePic, ProfileName, firebaseProviderId } = useSelector(
+    (state) => state.user
+  );
 
   const logout = () => {
     signOut(auth)
       .then(() => alert("signed out"))
       .catch((error) => alert(error));
+    history.push("/login");
   };
 
   const switchToTenant = () => {
     history.push("/tenant/complete-register");
+  };
+
+  const bookingHistory = () => {
+    history.push("/booking-history");
   };
 
   const menuItemContents = [
@@ -96,8 +104,8 @@ function NavbarMobileTenant() {
       text: "Price",
     },
     {
-      url: "/",
-      icon: <i className="fa-solid fa-door-open"></i>,
+      url: "/complete-user",
+      icon: <i class="fa-solid fa-door-open"></i>,
       text: "Switch to User",
     },
   ];
@@ -179,6 +187,7 @@ function NavbarMobileTenant() {
                       signOut(auth)
                         .then(() => alert("signed out"))
                         .catch((error) => alert(error));
+                      history.push("/tenant/login");
                     }}
                   >
                     <Flex
@@ -249,6 +258,7 @@ function NavbarMobileTenant() {
                     signOut(auth)
                       .then(() => alert("signed out"))
                       .catch((error) => alert(error));
+                    history.push("/tenant/login")
                   }}
                 >
                   <Flex
@@ -289,44 +299,61 @@ function NavbarMobileTenant() {
               width="58px"
               height="58px"
             />
-            <Spacer />
-            <Flex fontWeight="bold" fontSize="18px" my="auto" mr="20px">
-              <Link>
-                <Text>Search</Text>
-              </Link>
-              <Link to="booking-history">
-                <Text mx="50px">Room</Text>
-              </Link>
-
-              <Menu>
-                <MenuButton fontWeight="bold" fontSize="18px" my="auto">
-                  Account
-                </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={() => history.push("/profile")}>
-                    Profile
-                  </MenuItem>
-                  <MenuDivider />
-                  <MenuItem onClick={switchToTenant}>Switch To Tenant</MenuItem>
-                  <MenuDivider />
-                  {id ? (
-                    <MenuItem onClick={logout}>Logout</MenuItem>
-                  ) : (
-                    <MenuItem onClick={() => history.push("/login")}>
-                      Login
-                    </MenuItem>
-                  )}
-                  <MenuDivider />
-                </MenuList>
-              </Menu>
-            </Flex>
-            <Avatar
-              size="md"
-              objectFit={"cover"}
-              overflow="hidden"
-              my="auto"
-              src={process.env.REACT_APP_API_BASE_URL + ProfilePic}
-            />
+            {id ? (
+              <Flex w="100%" mx="auto" justifyContent="space-between">
+                <Spacer />
+                <Flex fontWeight="bold" fontSize="18px" my="auto" mr="20px">
+                  <Link to="/">
+                    <Text>Search</Text>
+                  </Link>
+                  <Text mx="50px" onClick={bookingHistory} cursor="pointer">
+                    Room
+                  </Text>
+                  <Menu>
+                    {id ? (
+                      <MenuButton fontWeight="bold" fontSize="18px" my="auto">
+                        {ProfileName}
+                      </MenuButton>
+                    ) : (
+                      <MenuButton fontWeight="bold" fontSize="18px" my="auto">
+                        Account
+                      </MenuButton>
+                    )}
+                    <MenuList>
+                      <MenuItem onClick={() => history.push("/profile")}>
+                        Profile
+                      </MenuItem>
+                      <MenuDivider />
+                      {firebaseProviderId === "password" ? (
+                        <MenuItem onClick={switchToTenant}>
+                          Switch To Tenant
+                        </MenuItem>
+                      ) : null}
+                      <MenuDivider />
+                      <MenuItem onClick={logout}>Logout</MenuItem>
+                      <MenuDivider />
+                    </MenuList>
+                  </Menu>
+                </Flex>
+                <Avatar
+                  size="md"
+                  objectFit={"cover"}
+                  overflow="hidden"
+                  my="auto"
+                  src={process.env.REACT_APP_API_BASE_URL + ProfilePic}
+                />
+              </Flex>
+            ) : (
+              <Button
+                onClick={() => history.push("/login")}
+                variant="secondary"
+                height="58px"
+                w="170px"
+                mt={"10px"}
+              >
+                Login
+              </Button>
+            )}
           </Flex>
         </Container>
       </Box>

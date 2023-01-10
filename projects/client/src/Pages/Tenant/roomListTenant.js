@@ -44,17 +44,22 @@ function RoomListTenant() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [randomNumber, setRandomNumber] = useState(0);
 
-  const { TenantId, firebaseProviderId } = useSelector((state) => state.user);
-  console.log(TenantId);
+  const {TenantId, firebaseProviderId} = useSelector(state => state.user)
+  // console.log(TenantId);
+
+  const inputHandlerKeyword = (e) => {
+    const {value} = e.target
+    const getData = setTimeout(() => {
+        setKeyWord(value)
+        setPage(0);
+      return clearTimeout(getData)
+    }, 2000)
+  }
 
   const inputHandler = (e, field) => {
-    const { value } = e.target;
-
-    if (field == "keyword") {
-      setKeyWord(value);
-      setPage(0);
-    } else if (field == "alfabet") {
-      setAlfabet(value);
+    const {value} = e.target
+    if (field == "alfabet"){
+      setAlfabet(value)
       setPage(0);
     } else if (field == "time") {
       setTime(value);
@@ -69,14 +74,9 @@ function RoomListTenant() {
   };
 
   //get property berdasarkan tenant id ==> yg di simpan di dropdown
-  //buat id nya dari global store ==> tenant
-  const fetchProperty = () => {
-    // debounce
-    const getData = setTimeout(() => {
-      axios
-        .get(
-          `${process.env.REACT_APP_API_BASE_URL}/room/room-property/${TenantId}?searchQuery=${keyWord}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`
-        )
+    //buat id nya dari global store ==> tenant 
+    const fetchProperty = () => {
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/${TenantId}?searchQuery=${keyWord}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`)
         .then((res) => {
           setRoom(res.data.roomProperty.rows);
           setPage(res.data.page);
@@ -86,13 +86,10 @@ function RoomListTenant() {
           onClose();
         })
         .catch((err) => {
-          console.error(err);
-        });
-
-      return clearTimeout(getData);
-    }, 1000);
-  };
-
+          console.error(err)
+        })
+  }
+  
   useEffect(() => {
     fetchProperty();
     roomData();
@@ -222,7 +219,7 @@ function RoomListTenant() {
                 placeholder="Search Room"
                 borderRadius="0"
                 borderColor="rgba(175, 175, 175, 1)"
-                onChange={(e) => inputHandler(e, "keyword")}
+                onChange={inputHandlerKeyword}
               />
               <IconButton
                 onClick={onOpen}
