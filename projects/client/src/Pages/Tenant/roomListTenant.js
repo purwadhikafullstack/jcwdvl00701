@@ -44,22 +44,22 @@ function RoomListTenant() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [randomNumber, setRandomNumber] = useState(0);
 
-  const {TenantId, firebaseProviderId} = useSelector(state => state.user)
+  const { TenantId, firebaseProviderId } = useSelector((state) => state.user);
   // console.log(TenantId);
 
   const inputHandlerKeyword = (e) => {
-    const {value} = e.target
+    const { value } = e.target;
     const getData = setTimeout(() => {
-        setKeyWord(value)
-        setPage(0);
-      return clearTimeout(getData)
-    }, 2000)
-  }
+      setKeyWord(value);
+      setPage(0);
+      return clearTimeout(getData);
+    }, 2000);
+  };
 
   const inputHandler = (e, field) => {
-    const {value} = e.target
-    if (field == "alfabet"){
-      setAlfabet(value)
+    const { value } = e.target;
+    if (field == "alfabet") {
+      setAlfabet(value);
       setPage(0);
     } else if (field == "time") {
       setTime(value);
@@ -74,22 +74,25 @@ function RoomListTenant() {
   };
 
   //get property berdasarkan tenant id ==> yg di simpan di dropdown
-    //buat id nya dari global store ==> tenant 
-    const fetchProperty = () => {
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/${TenantId}?searchQuery=${keyWord}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`)
-        .then((res) => {
-          setRoom(res.data.roomProperty.rows);
-          setPage(res.data.page);
-          setRows(res.data.totalRows);
-          setPages(res.data.totalPage);
+  //buat id nya dari global store ==> tenant
+  const fetchProperty = () => {
+    axios
+      .get(
+        `${process.env.REACT_APP_API_BASE_URL}/room/room-property/${TenantId}?searchQuery=${keyWord}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`
+      )
+      .then((res) => {
+        setRoom(res.data.roomProperty.rows);
+        setPage(res.data.page);
+        setRows(res.data.totalRows);
+        setPages(res.data.totalPage);
 
-          onClose();
-        })
-        .catch((err) => {
-          console.error(err)
-        })
-  }
-  
+        onClose();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   useEffect(() => {
     fetchProperty();
     roomData();
@@ -113,7 +116,9 @@ function RoomListTenant() {
 
   const fetchDataDropdown = () => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
+      .get(
+        `${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`
+      )
       .then((res) => {
         // console.log(res.data.dropdown);
         setDropdown(res.data.dropdown);
@@ -372,6 +377,7 @@ function RoomListTenant() {
               borderRadius={0}
               colorScheme="red"
               mr={0}
+              w="100%"
             >
               Apply
             </Button>

@@ -21,17 +21,6 @@ module.exports = {
       const price = req.query.price || "ASC";
       const tenantId = req.params.tenantId;
 
-      console.log("page");
-      console.log(page);
-      console.log("limit");
-      console.log(limit);
-      console.log("search");
-      console.log(search);
-      console.log("time");
-      console.log(time);
-      console.log("price");
-      console.log(price);
-
       const whereCondition = {
         name: { [Op.like]: "%" + search + "%" },
       };
@@ -61,7 +50,7 @@ module.exports = {
               {
                 model: Property,
                 attributes: ["id", "name", "pic"],
-                required: false,
+                required: true,
                 where: {
                   tenantId,
                 },
@@ -147,8 +136,6 @@ module.exports = {
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 5;
 
-      console.log(req.query.page);
-      console.log(req.query.limit);
       const finalPrice = req.query.final_price || "ASC";
       const time = req.query.time || "ASC";
       const offset = limit * page;

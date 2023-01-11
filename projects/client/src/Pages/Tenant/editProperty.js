@@ -182,13 +182,29 @@ function EditProperty(props) {
             alt="Room image"
             id="imgpreview"
             width="100%"
-            height="210px"
+            height={{ ss: "210px", sm: "210px", sl: "650px" }}
             me="10px"
             mt="5px"
             mb="20px"
             overflow="hiden"
             objectFit="cover"
           />
+          <FormControl my="20px">
+            <FormHelperText>Max size: 1MB</FormHelperText>
+            <Button
+              variant="secondary"
+              w="100%"
+              onClick={() => inputFileRef.current.click()}
+            >
+              Edit Photo
+            </Button>
+            {fileSizeMsg ? (
+              <Alert status="error" color="red" text="center">
+                <i className="fa-solid fa-circle-exclamation"></i>
+                <Text ms="10px">{fileSizeMsg}</Text>
+              </Alert>
+            ) : null}
+          </FormControl>
           <FormControl mt="20px" id="name">
             <Input
               type="text"
@@ -268,22 +284,7 @@ function EditProperty(props) {
               // hidden="hidden"
             />
           </FormControl>
-          <FormControl my="20px">
-            <FormHelperText>Max size: 1MB</FormHelperText>
-            <Button
-              variant="secondary"
-              w="100%"
-              onClick={() => inputFileRef.current.click()}
-            >
-              Add Photo
-            </Button>
-            {fileSizeMsg ? (
-              <Alert status="error" color="red" text="center">
-                <i className="fa-solid fa-circle-exclamation"></i>
-                <Text ms="10px">{fileSizeMsg}</Text>
-              </Alert>
-            ) : null}
-          </FormControl>
+
           <Button
             variant="primary"
             w="100%"

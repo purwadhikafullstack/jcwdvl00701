@@ -177,7 +177,7 @@ function EditRoom() {
             src={process.env.REACT_APP_API_BASE_URL + property?.pic}
             alt="Room image"
             width="100%"
-            height="210px"
+            height={{ ss: "210px", sm: "210px", sl: "650px" }}
             me="10px"
             mt="5px"
             mb="20px"

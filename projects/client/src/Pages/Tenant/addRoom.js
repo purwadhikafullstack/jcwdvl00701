@@ -28,16 +28,18 @@ import * as Yup from "yup";
 import YupPassword from "yup-password";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
+import { useSelector } from "react-redux";
 function AddRoom() {
   // state
   const [dropdown, setDropdown] = useState([]);
   const history = useHistory();
-
+  const { TenantId } = useSelector((state) => state.user);
   useEffect(() => {
     const fetchDataDropdown = () => {
       axios
-        .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
+        .get(
+          `${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`
+        )
         .then((res) => {
           // console.log(res.data.dropdown);
           setDropdown(res.data.dropdown);

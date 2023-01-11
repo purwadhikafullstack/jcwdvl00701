@@ -188,9 +188,9 @@ function CardPropertyTenant(props) {
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent borderRadius={0}>
-          <ModalHeader>
-            Are you sure you want to delete this property?
-          </ModalHeader>
+          <ModalHeader> Delete property</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>Are you sure you want to delete this property?</ModalBody>
           <ModalCloseButton />
 
           <ModalFooter>
