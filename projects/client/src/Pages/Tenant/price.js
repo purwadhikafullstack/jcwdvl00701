@@ -43,7 +43,7 @@ import {
   InputLeftAddon,
   InputRightAddon,
   Spinner,
-  Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Fade, Collapse,
+  Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Fade, Collapse, Center, IconButton,
 } from "@chakra-ui/react";
 import {
   AsyncCreatableSelect,
@@ -333,15 +333,14 @@ function UpdateSpecialPriceForm(props) {
           {props.specialPrice.Room.Property.name}
         </Heading>
 
-        <Box my={5}>
+        <Flex my={5} overflow={'hidden'} justifyContent={'center'} alignItems={'center'}>
           <Image
             objectFit="cover"
             w={'100%'}
-            maxW={{base: "100%", sm: "50%"}}
-            src={props.specialPrice.Room.picture || Image2}
+            maxH={'150px'}
+            src={props.specialPrice.Room.Property.pic ? process.env.REACT_APP_API_BASE_URL + props.specialPrice.Room.Property.pic : "/Assets/add_photo.png"}
           />
-        </Box>
-
+        </Flex>
 
         <Flex w="100%" my={5}>
           <Box w="50%" mr={2}>
@@ -474,8 +473,8 @@ function DeleteSpecialPriceForm(props) {
 }
 
 function FilterSpecialPrice(props) {
-  const startDate = props.startDate ? props.startDate.toISOString().substring(0,10) : props.startDate
-  const endDate = props.endDate ? props.endDate.toISOString().substring(0,10) : props.endDate
+  const startDate = props.startDate ? props.startDate.toISOString().substring(0, 10) : props.startDate
+  const endDate = props.endDate ? props.endDate.toISOString().substring(0, 10) : props.endDate
   return <>
     <Flex w="100%">
       <Box w="50%" mr={2}>
@@ -512,7 +511,6 @@ function FilterSpecialPrice(props) {
 }
 
 function SpecialPrice(props) {
-  const [isLoading, setIsLoading] = useState(true)
   const user = props.user
 
   const properties = props.properties
@@ -526,7 +524,6 @@ function SpecialPrice(props) {
   const [page, setPage] = useState(0)
 
   const fetchSpecialPrices = useCallback(async () => {
-    setIsLoading(true)
     const url = `${process.env.REACT_APP_API_BASE_URL}/specialprice/all`
     const params = {uid: user.id, page: page}
 
@@ -538,7 +535,6 @@ function SpecialPrice(props) {
 
     setSpecialPrices(response.data.result.specialPrices)
     setTotalPage(response.data.result.totalPage)
-    setIsLoading(false)
   }, [endDate, selectedPropertyId, startDate, user.id, page])
 
   useEffect(() => {
@@ -549,18 +545,6 @@ function SpecialPrice(props) {
   const [modalContent, setModalContent] = React.useState(null)
 
   const {isOpen: isOpenFilter, onToggle: onToggleFilter} = useDisclosure()
-
-  if (isLoading) return (
-    <Flex justifyContent={'center'} my={5}>
-      <Spinner
-        thickness='4px'
-        speed='0.65s'
-        emptyColor='gray.200'
-        color='blue.500'
-        size='xl'
-      />
-    </Flex>
-  )
 
   return (
     <Box mt="20px">
@@ -593,6 +577,7 @@ function SpecialPrice(props) {
         <FilterSpecialPrice
           startDate={startDate}
           endDate={endDate}
+          selectedChoice={selectedPropertyId}
           handleChangeStartDate={(item) => setStartDate(item.target.valueAsDate)}
           handleChangeEndDate={(item) => setEndDate(item.target.valueAsDate)}
           options={properties}
@@ -628,13 +613,17 @@ function SpecialPrice(props) {
                       )
                       onOpen()
                     }} cursor={'pointer'} display={'flex'}>
-                      <Box w="40px" h="30px" my={'auto'} mr={2} overflow="hiden">
+                      <Flex w="40px" h="30px" my={'auto'} mr={2} overflow="hidden"
+                            alignItems={'center'} justifyContent={'center'}>
                         <Image
                           h={'100%'}
-                          objectFit="cover" src={Image1}
-                          alt="room picture"
+                          src={specialPrice.Room.Property.pic ? process.env.REACT_APP_API_BASE_URL + specialPrice.Room.Property.pic : "/Assets/add_photo.png"}
+                          alt={specialPrice.Room.Property.name}
+                          width={{ ss: "90px", sm: "70px", sl: "70px" }}
+                          height={{ ss: "60px", sm: "47px", sl: "47px" }}
+                          objectFit="cover"
                         />
-                      </Box>
+                      </Flex>
                       <Box>
                         <Text fontWeight="bold" fontSize={'sm'}>
                           {specialPrice.Room.Property.name} - {specialPrice.Room.name}
@@ -886,6 +875,15 @@ function UpdateRoomUnavailabilityForm(props) {
           {props.roomUnavailability.Room.Property.name}
         </Heading>
 
+        <Flex my={5} overflow={'hidden'} justifyContent={'center'} alignItems={'center'}>
+          <Image
+            objectFit="cover"
+            w={'100%'}
+            maxH={'150px'}
+            src={props.roomUnavailability.Room.Property.pic ? process.env.REACT_APP_API_BASE_URL + props.roomUnavailability.Room.Property.pic : "/Assets/add_photo.png"}
+          />
+        </Flex>
+
         <Flex w="100%" my={5}>
           <Box w="50%" mr={2}>
             <Text>Start Date</Text>
@@ -972,8 +970,8 @@ function DeleteRoomUnavailabilityForm(props) {
 }
 
 function FilterRoomUnavailability(props) {
-  const startDate = props.startDate ? props.startDate.toISOString().substring(0,10) : props.startDate
-  const endDate = props.endDate ? props.endDate.toISOString().substring(0,10) : props.endDate
+  const startDate = props.startDate ? props.startDate.toISOString().substring(0, 10) : props.startDate
+  const endDate = props.endDate ? props.endDate.toISOString().substring(0, 10) : props.endDate
   return <>
     <Flex w="100%">
       <Box w="50%" mr={2}>
@@ -1010,7 +1008,6 @@ function FilterRoomUnavailability(props) {
 }
 
 function RoomAvailability(props) {
-  const [isLoading, setIsLoading] = useState(true)
   const user = props.user
 
   const properties = props.properties
@@ -1024,7 +1021,6 @@ function RoomAvailability(props) {
   const [page, setPage] = useState(0)
 
   const fetchRoomUnavailability = useCallback(async () => {
-    setIsLoading(true)
     const url = `${process.env.REACT_APP_API_BASE_URL}/roomunavailalbility/all`
     const params = {uid: user.id}
 
@@ -1036,7 +1032,6 @@ function RoomAvailability(props) {
 
     setRoomUnavailabilities(response.data.result.roomUnavailabilities)
     setTotalPage(response.data.result.totalPage)
-    setIsLoading(false)
   }, [endDate, selectedPropertyId, startDate, user.id, page])
 
 
@@ -1048,18 +1043,6 @@ function RoomAvailability(props) {
   const [modalContent, setModalContent] = React.useState(null)
 
   const {isOpen: isOpenFilter, onToggle: onToggleFilter} = useDisclosure()
-
-  if (isLoading) return (
-    <Flex justifyContent={'center'} my={5}>
-      <Spinner
-        thickness='4px'
-        speed='0.65s'
-        emptyColor='gray.200'
-        color='blue.500'
-        size='xl'
-      />
-    </Flex>
-  )
 
   return (
     <Box mt="20px">
@@ -1123,13 +1106,17 @@ function RoomAvailability(props) {
                       )
                       onOpen()
                     }} cursor={'pointer'} display={'flex'}>
-                      <Box w="40px" h="30px" my={'auto'} mr={2} overflow="hiden">
+                      <Flex w="40px" h="30px" my={'auto'} mr={2} overflow="hidden"
+                            alignItems={'center'} justifyContent={'center'}>
                         <Image
                           h={'100%'}
-                          objectFit="cover" src={Image1}
-                          alt="room picture"
+                          src={roomUnavailability.Room.Property.pic ? process.env.REACT_APP_API_BASE_URL + roomUnavailability.Room.Property.pic : "/Assets/add_photo.png"}
+                          alt={roomUnavailability.Room.Property.name}
+                          width={{ ss: "90px", sm: "70px", sl: "70px" }}
+                          height={{ ss: "60px", sm: "47px", sl: "47px" }}
+                          objectFit="cover"
                         />
-                      </Box>
+                      </Flex>
                       <Box>
                         <Text fontWeight="bold" fontSize="sm">
                           {roomUnavailability.Room.Property.name} - {roomUnavailability.Room.name}
@@ -1223,13 +1210,54 @@ function Price() {
 
   return (
     <Layout>
-      <Box mt="80px">
-        <Container maxW="1140px">
-          <Text fontSize="20px" fontWeight="bold" mb="30px">
-            Special Price / Room Unavailability
-          </Text>
+      <Box bg={{
+        ss: "white",
 
-          <Tabs>
+        sl: "rgba(240, 239, 239, 1)",
+      }}
+           mt="70px">
+        <Container
+          px="20px"
+          maxW="1140px"
+          backgroundSize="cover"
+          backgroundImage="/Assets/price.png"
+          h="133px"
+          display={{ss: "none", sl: "flex"}}
+        >
+          <Center>
+            <Text
+              me="10px"
+              fontSize="32px"
+              fontWeight="bold"
+              display={{ss: "none", sl: "flex"}}
+            >
+              <i className="fa-solid fa-cash-register"/>
+            </Text>
+            <Text
+              fontSize="32px"
+              fontWeight="bold"
+              display={{ss: "none", sl: "flex"}}
+            >
+              Special Price / Room Unavailability
+            </Text>
+          </Center>
+        </Container>
+
+        <Container bg="white" maxW="1140px">
+          <Flex justifyContent="space-between">
+            <Text
+              pt="20px"
+              fontSize="20px"
+              fontWeight="bold"
+              display={{ ss: "flex", sl: "none" }}
+            >
+              Special Price / Room Unavailability
+            </Text>
+          </Flex>
+        </Container>
+
+        <Container bg="white" maxW="1140px">
+          <Tabs pt={"20px"}>
             <TabList>
               <Tab
                 fontSize="14px"
