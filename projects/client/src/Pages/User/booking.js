@@ -62,19 +62,44 @@ function Booking() {
     setLoading(false);
   }, []);
 
-  let startDate2 = startDate.split("T")[0].split("-")
-    console.log(startDate2);
-  let endDate2 = endDate.split("T")[0].split("-")
+  let startDate2 = startDate.split("T")[0].split("-");
+  // console.log(startDate2);
+  let endDate2 = endDate.split("T")[0].split("-");
 
-    const bulan = ["Jan", "Feb", "Mar", "Apr" ,"Mei" , "Jun" , "Jul" , "Agus" , "Sept" , "Okt", "Nov", "Des"]
-    const searchBulan = (bln) => {
-        const angka = ["01","02","03","04","05","06","07","08","09","10","11","12"] 
-        let bulanNow = ""
-            for (let i = 0; i < bln.length; i++) {
-            if(startDate2[1] == angka[i]){
-                return bulanNow += bln[i]
-            }
-        }
+  const bulan = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Agus",
+    "Sept",
+    "Okt",
+    "Nov",
+    "Des",
+  ];
+  const searchBulan = (bln) => {
+    const angka = [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+    ];
+    let bulanNow = "";
+    for (let i = 0; i < bln.length; i++) {
+      if (startDate2[1] == angka[i]) {
+        return (bulanNow += bln[i]);
+      }
     }
     let resultBulan = searchBulan(bulan)
     console.log(resultBulan);
@@ -112,7 +137,7 @@ function Booking() {
   }).format(dataTotalPrice);
 
   return loading ? (
-    <Loading/>
+    <Loading />
   ) : (
     <Layout>
       <Box
@@ -138,10 +163,15 @@ function Booking() {
               color="rgba(175, 175, 175, 1)"
             >
               {/* 12-16 Nov | 1 Guest */}
-              {startDate2[2]} - {endDate2[2]} {resultBulan} | {dataBooking?.guestCount} Guest
+              {startDate2[2]} - {endDate2[2]} {resultBulan} |{" "}
+              {dataBooking?.guestCount} Guest
             </Text>
           </Box>
-          <Button variant="primary" w="135px" onClick={() => btnHandlerPayment(dataBooking?.id)}>
+          <Button
+            variant="primary"
+            w="135px"
+            onClick={() => btnHandlerPayment(dataBooking?.id)}
+          >
             Pay
           </Button>
         </Flex>
@@ -334,6 +364,7 @@ function Booking() {
       </Box>
     </Layout>
   );
+}
 }
 
 export default Booking;

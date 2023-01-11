@@ -27,7 +27,7 @@ function AddProperty() {
   const [category, setCategory] = useState([]);
   const [fileSizeMsg, setFileSizeMsg] = useState("");
   let history = useHistory();
-  const {TenantId, firebaseProviderId} = useSelector(state => state.user)
+  const { TenantId, firebaseProviderId } = useSelector((state) => state.user);
   console.log(TenantId);
 
   const handleFile = (event) => {
@@ -148,7 +148,7 @@ function AddProperty() {
               id="imgpreview"
               alt="Room image"
               width="100%"
-              height="210px"
+              height={{ ss: "210px", sm: "210px", sl: "650px" }}
               me="10px"
               mt="20px"
               overflow="hiden"
@@ -158,6 +158,22 @@ function AddProperty() {
               <Alert status="error" color="red" text="center">
                 <i className="fa-solid fa-circle-exclamation"></i>
                 <Text ms="10px">picture cannot be empty</Text>
+              </Alert>
+            ) : null}
+          </FormControl>
+          <FormControl mt="20px">
+            <FormHelperText>Max size: 1MB</FormHelperText>
+            <Button
+              variant="secondary"
+              w="100%"
+              onClick={() => inputFileRef.current.click()}
+            >
+              Add Photo
+            </Button>
+            {fileSizeMsg ? (
+              <Alert status="error" color="red" text="center">
+                <i className="fa-solid fa-circle-exclamation"></i>
+                <Text ms="10px">{fileSizeMsg}</Text>
               </Alert>
             ) : null}
           </FormControl>
@@ -241,22 +257,6 @@ function AddProperty() {
 
               // hidden="hidden"
             />
-          </FormControl>
-          <FormControl mt="20px">
-            <FormHelperText>Max size: 1MB</FormHelperText>
-            <Button
-              variant="secondary"
-              w="100%"
-              onClick={() => inputFileRef.current.click()}
-            >
-              Add Photo
-            </Button>
-            {fileSizeMsg ? (
-              <Alert status="error" color="red" text="center">
-                <i className="fa-solid fa-circle-exclamation"></i>
-                <Text ms="10px">{fileSizeMsg}</Text>
-              </Alert>
-            ) : null}
           </FormControl>
 
           <Button

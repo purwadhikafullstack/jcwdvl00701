@@ -107,7 +107,7 @@ function PropertyListTenant() {
       <Box
         bg={{
           ss: "white",
-          sm: "rgba(240, 239, 239, 1)",
+
           sl: "rgba(240, 239, 239, 1)",
         }}
         mt="70px"
@@ -118,21 +118,21 @@ function PropertyListTenant() {
           backgroundSize="cover"
           backgroundImage="/Assets/tenant-branda.png"
           h="133px"
-          display={{ ss: "none", sm: "none", sl: "flex" }}
+          display={{ ss: "none", sl: "flex" }}
         >
           <Center>
             <Text
               me="10px"
               fontSize="32px"
               fontWeight="bold"
-              display={{ ss: "none", sm: "flex", sl: "flex" }}
+              display={{ ss: "none", sl: "flex" }}
             >
-              <i className=" fa-solid fa-clipboard-list"></i>
+              <i className="fa-solid fa-building" />
             </Text>
             <Text
               fontSize="32px"
               fontWeight="bold"
-              display={{ ss: "none", sm: "flex", sl: "flex" }}
+              display={{ ss: "none", sl: "flex" }}
             >
               {rows > 1 ? `${rows} Properties` : `${rows}property`}
             </Text>
@@ -144,14 +144,14 @@ function PropertyListTenant() {
               pt="20px"
               fontSize="20px"
               fontWeight="bold"
-              display={{ ss: "flex", sm: "none", sl: "none" }}
+              display={{ ss: "flex", sl: "none" }}
             >
-              {rows > 1 ? `${rows} Properties` : `${rows}property`}
+              {rows > 1 ? `${rows} Properties` : `${rows} property`}
             </Text>
             <Link to="/tenant/add-property">
               <Center
                 mt="20px"
-                display={{ ss: "flex", sm: "none", sl: "none" }}
+                display={{ ss: "flex", sl: "none" }}
                 as="button"
                 h="40px"
                 w="40px"
@@ -192,7 +192,7 @@ function PropertyListTenant() {
               />
               <Link to="/tenant/add-property">
                 <Button
-                  display={{ ss: "none", sm: "flex", sl: "flex" }}
+                  display={{ ss: "none", sl: "flex" }}
                   h="40px"
                   w="150px"
                   borderRadius={0}
@@ -210,35 +210,35 @@ function PropertyListTenant() {
             </HStack>
           </FormControl>
         </Container>
-        <Container
-          bg="white"
-          maxW="1140px"
-          mt={{ ss: "0px", sm: "20px", sl: "20px" }}
-        >
+        <Container bg="white" maxW="1140px" mt={{ ss: "0px", sl: "20px" }}>
           <Flex
             maxW="1140px"
             borderBottom="1px"
             borderColor="gray.200"
             pt="20px"
             pb="10px"
-            display={{ ss: "none", sm: "none", sl: "flex" }}
+            display={{ ss: "none", sl: "flex" }}
           >
-            <Text me="20px" w="90px">
+            <Text me="20px" fontSize="16px" fontWeight="bold" w="90px">
               Photo
             </Text>
-            <Text me="20px" w="280px">
+            <Text me="20px" fontSize="16px" fontWeight="bold" w="300px">
               Name Property
             </Text>
-            <Text me="20px" w="200px">
+            <Text me="20px" fontSize="16px" fontWeight="bold" w="280px">
               Category
             </Text>
-            <Text me="20px" w="80px">
+            <Text me="20px" fontSize="16px" fontWeight="bold" w="80px">
               Room
             </Text>
-            <Text me="20px" w="110px">
-              Last Modified
+            <Text me="20px" fontSize="16px" fontWeight="bold" w="110px">
+              Modified
+            </Text>
+            <Text me="10px" fontSize="16px" fontWeight="bold" w="120px">
+              Action
             </Text>
           </Flex>
+
           {/* card property */}
           {renderPropertyList()}
           <div
