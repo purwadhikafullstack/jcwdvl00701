@@ -512,7 +512,6 @@ function FilterSpecialPrice(props) {
 }
 
 function SpecialPrice(props) {
-  const [isLoading, setIsLoading] = useState(true)
   const user = props.user
 
   const properties = props.properties
@@ -526,7 +525,6 @@ function SpecialPrice(props) {
   const [page, setPage] = useState(0)
 
   const fetchSpecialPrices = useCallback(async () => {
-    setIsLoading(true)
     const url = `${process.env.REACT_APP_API_BASE_URL}/specialprice/all`
     const params = {uid: user.id, page: page}
 
@@ -538,7 +536,6 @@ function SpecialPrice(props) {
 
     setSpecialPrices(response.data.result.specialPrices)
     setTotalPage(response.data.result.totalPage)
-    setIsLoading(false)
   }, [endDate, selectedPropertyId, startDate, user.id, page])
 
   useEffect(() => {
@@ -549,18 +546,6 @@ function SpecialPrice(props) {
   const [modalContent, setModalContent] = React.useState(null)
 
   const {isOpen: isOpenFilter, onToggle: onToggleFilter} = useDisclosure()
-
-  if (isLoading) return (
-    <Flex justifyContent={'center'} my={5}>
-      <Spinner
-        thickness='4px'
-        speed='0.65s'
-        emptyColor='gray.200'
-        color='blue.500'
-        size='xl'
-      />
-    </Flex>
-  )
 
   return (
     <Box mt="20px">
@@ -593,6 +578,7 @@ function SpecialPrice(props) {
         <FilterSpecialPrice
           startDate={startDate}
           endDate={endDate}
+          selectedChoice={selectedPropertyId}
           handleChangeStartDate={(item) => setStartDate(item.target.valueAsDate)}
           handleChangeEndDate={(item) => setEndDate(item.target.valueAsDate)}
           options={properties}
@@ -1010,7 +996,6 @@ function FilterRoomUnavailability(props) {
 }
 
 function RoomAvailability(props) {
-  const [isLoading, setIsLoading] = useState(true)
   const user = props.user
 
   const properties = props.properties
@@ -1024,7 +1009,6 @@ function RoomAvailability(props) {
   const [page, setPage] = useState(0)
 
   const fetchRoomUnavailability = useCallback(async () => {
-    setIsLoading(true)
     const url = `${process.env.REACT_APP_API_BASE_URL}/roomunavailalbility/all`
     const params = {uid: user.id}
 
@@ -1036,7 +1020,6 @@ function RoomAvailability(props) {
 
     setRoomUnavailabilities(response.data.result.roomUnavailabilities)
     setTotalPage(response.data.result.totalPage)
-    setIsLoading(false)
   }, [endDate, selectedPropertyId, startDate, user.id, page])
 
 
@@ -1048,19 +1031,7 @@ function RoomAvailability(props) {
   const [modalContent, setModalContent] = React.useState(null)
 
   const {isOpen: isOpenFilter, onToggle: onToggleFilter} = useDisclosure()
-
-  if (isLoading) return (
-    <Flex justifyContent={'center'} my={5}>
-      <Spinner
-        thickness='4px'
-        speed='0.65s'
-        emptyColor='gray.200'
-        color='blue.500'
-        size='xl'
-      />
-    </Flex>
-  )
-
+  
   return (
     <Box mt="20px">
       <Flex justifyContent={'space-between'} my={5}>
