@@ -5,6 +5,7 @@ import NavbarDestop from "./NavbarDestop";
 function Layout({ children }) {
   return (
     <>
+      {/* <NavbarDestop/> */}
       <NavbarTuru />
       {children}
       <Footer />

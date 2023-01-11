@@ -12,7 +12,14 @@ import {
   Checkbox,
   Textarea,
   Select,
-  Alert
+  Alert,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  InputLeftElement,
+  InputGroup
 } from "@chakra-ui/react";
 import { Link, useHistory } from "react-router-dom";
 import Layout from "../../Components/Layout";
@@ -24,28 +31,11 @@ import { useEffect, useState } from "react";
 
 function AddRoom() {
   // state
-  const [property, setProperty] = useState([])
   const [dropdown, setDropdown] = useState([])
   const history = useHistory()
 
   useEffect(() => {
-    const fetchDataAll = () => {
-    axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/1`)
-    .then((res) => {
-      console.log(res.data.roomProperty);
-      setProperty(res.data.roomProperty)
-
-    })
-    .catch((err) => {
-      console.error(err)
-    })
-  }
-  fetchDataAll()
-  fetchDataDropdown()
-  optionDropdown()
-  }, [])
-
-  const fetchDataDropdown = () => {
+    const fetchDataDropdown = () => {
     axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
     .then((res) => {
       // console.log(res.data.dropdown);
@@ -56,6 +46,9 @@ function AddRoom() {
       console.error(err)
     })
   }
+  fetchDataDropdown()
+  optionDropdown()
+  }, [])
 
   // loop utk dropdown
   const optionDropdown = () => {
@@ -173,13 +166,18 @@ function AddRoom() {
               ) : null}
           </FormControl>
           <FormControl pb="20px">
-            <Input type="number"
-            placeholder="Price" 
-            borderRadius="0" 
-            onChange={(e) => {
-              formik.setFieldValue("price", e.target.value)
-            }}
-            />
+            <InputGroup>
+              <InputLeftElement>
+                <Text>Rp.</Text>
+              </InputLeftElement>
+              <Input type="number"
+              placeholder="Price" 
+              borderRadius="0" 
+              onChange={(e) => {
+                formik.setFieldValue("price", e.target.value)
+              }}
+              />
+            </InputGroup>
             {formik.errors.price ? (
                 <Alert status="error" color="red" text="center">
                     <i className="fa-solid fa-circle-exclamation"></i>

@@ -22,6 +22,7 @@ const Tenant = require("../models/tenant")(sequelize);
 const Category = require("../models/category")(sequelize);
 const Bank = require("../models/bank")(sequelize);
 const RoomUnavailability = require("../models/roomunavailability")(sequelize);
+const Profile = require("../models/profile")(sequelize);
 
 // User.hasMany(Verification)
 // Verification.belongsTo(User)
@@ -56,6 +57,9 @@ SpecialPrice.belongsTo(Room);
 Room.hasMany(RoomUnavailability);
 RoomUnavailability.belongsTo(Room);
 
+Tenant.hasOne(User);
+User.belongsTo(Tenant);
+
 module.exports = {
   sequelize,
   User,
@@ -69,4 +73,6 @@ module.exports = {
   Tenant,
   Category,
   Bank,
+  RoomUnavailability,
+  Profile,
 };

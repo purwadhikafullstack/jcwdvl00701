@@ -1,7 +1,10 @@
 import { Box, Container, SimpleGrid, Text, Flex } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Layout from "../../Components/Layout";
 import { useSelector } from "react-redux";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { authFirebase } from "../../Config/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 function ButtonDashboard(props) {
   return (
@@ -33,8 +36,11 @@ function ButtonDashboard(props) {
 }
 
 function Dashboard() {
-    const {tenantId, firebaseProviderId,  is_verified} = useSelector(state => state.user)
-  console.log(tenantId);;
+  const history = useHistory();
+  const [userId, setUserId] = useState("");
+  const { TenantId, UserRoles } = useSelector((state) => state.user);
+  console.log(UserRoles);
+
   return (
     <Layout>
       <Box mt="90px" mb="30px">

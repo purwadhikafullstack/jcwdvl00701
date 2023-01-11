@@ -1,34 +1,139 @@
-import { Box, Flex, Button, Text, Image, Container } from "@chakra-ui/react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import {
+  Box,
+  Flex,
+  Button,
+  Text,
+  Image,
+  Container,
+  Spinner,
+  HStack,
+  VStack,
+} from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Link, useHistory } from "react-router-dom";
 import Layout from "../../Components/Layout";
-
 import bookingImage from "../../Assets/image/booking.png";
-
 import NavbarDestop from "../../Components/NavbarDestop";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import Loading from "../../Components/Loading";
 
 function Booking() {
-  const bookingUser = [
-    {
-      pic: "Image1",
-      name: "Apartment in Jakarta",
-      guest_count: 1,
-      start_date: 18,
-      end_date: 19,
-      price: 800000,
-      satatus: "ongoing",
-      roomName: "room 2",
-    },
-  ];
+  // akan menerima 1 id params utk get data, dari page detail/id
+  const { id } = useParams();
+  console.log(id);
+  const [dataBooking, setDataBooking] = useState({});
+  const [dataRoom, setDataRoom] = useState({});
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [dataProfile, setDataProfile] = useState({});
+  const [birthdate, setBirthdate] = useState("");
+  let history = useHistory();
 
-  const [booking, setBooking] = useState(bookingUser);
-  return (
+  useEffect(() => {
+    setLoading(true);
+    const fetchDataBooking = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/reservation/get-reservation`,
+          {
+            // masih nembak sampai page mas imam beres
+            params: {
+              id: id,
+            },
+          }
+        );
+        // console.log((await response)?.data.result);
+        setDataBooking((await response)?.data.result);
+        setDataRoom((await response)?.data.result.Room);
+        setStartDate((await response)?.data.result.startDate);
+        setEndDate((await response)?.data.result.endDate);
+        setDataProfile((await response)?.data.result.User.Profile);
+        setBirthdate((await response)?.data.result.User.Profile.birthdate);
+      } catch (err) {
+        console.error(err.data.message);
+      }
+    };
+    fetchDataBooking();
+    setLoading(false);
+  }, []);
+
+  let startDate2 = startDate.split("T")[0].split("-");
+  // console.log(startDate2);
+  let endDate2 = endDate.split("T")[0].split("-");
+
+  const bulan = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Agus",
+    "Sept",
+    "Okt",
+    "Nov",
+    "Des",
+  ];
+  const searchBulan = (bln) => {
+    const angka = [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+    ];
+    let bulanNow = "";
+    for (let i = 0; i < bln.length; i++) {
+      if (startDate2[1] == angka[i]) {
+        return (bulanNow += bln[i]);
+      }
+    }
+  };
+  let resultBulan = searchBulan(bulan);
+  console.log(resultBulan);
+  let birthDate2 = birthdate.split("T");
+
+  const btnHandlerPayment = (id) => {
+    console.log(id);
+    history.push(`/payment/${id}`);
+  };
+
+  let dataPrice = dataBooking?.finalPrice;
+  const price = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(dataPrice);
+
+  let dataTax = dataBooking?.finalPrice / 10;
+  const tax = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(dataTax);
+
+  let dataTotalPrice = dataPrice + dataTax;
+  const totalPrice = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(dataTotalPrice);
+
+  return loading ? (
+    <Loading />
+  ) : (
     <Layout>
       <Box
         mb={{ ss: "60px", sm: "60px", sl: "0px" }}
         mt={{ ss: "0px", sm: "0px", sl: "80px" }}
       >
-        <NavbarDestop />
         <Flex
           display={{ ss: "flex", sm: "flex", sl: "none" }}
           px="20px"
@@ -37,36 +142,28 @@ function Booking() {
           borderBottom="1px"
           borderColor="gray.200"
         >
-          <Button
-            borderRadius="0px"
-            bg="white"
-            border="1px"
-            borderColor="gray.200"
-            my="auto"
-            _hover={{
-              background: "black",
-              color: "white",
-            }}
-          >
-            <i className="fa-solid fa-caret-left"></i>
-          </Button>
           <Box>
             <Text fontWeight="semibold" fontSize="16px">
-              Rp. 625.000,00
+              {/* Rp. 625.000,00 */}
+              {totalPrice}
             </Text>
             <Text
               fontWeight="regular"
               fontSize="12px"
               color="rgba(175, 175, 175, 1)"
             >
-              12-16 Nov | 1 Guest
+              {/* 12-16 Nov | 1 Guest */}
+              {startDate2[2]} - {endDate2[2]} {resultBulan} |{" "}
+              {dataBooking?.guestCount} Guest
             </Text>
           </Box>
-          <Link to="/payment">
-            <Button variant="primary" w="135px">
-              Pay
-            </Button>
-          </Link>
+          <Button
+            variant="primary"
+            w="135px"
+            onClick={() => btnHandlerPayment(dataBooking?.id)}
+          >
+            Pay
+          </Button>
         </Flex>
         <Container maxW="1140px">
           <Flex
@@ -76,23 +173,6 @@ function Booking() {
             mx="auto"
             display={{ ss: "none", sm: "none", sl: "flex" }}
           >
-            <Button
-              position="relative"
-              borderRadius="0px"
-              border="1px"
-              borderColor="gray.200"
-              bg="white"
-              h="40px"
-              me="20px"
-              _hover={{
-                background: "black",
-                color: "white",
-                borderColor: "black",
-              }}
-            >
-              <i className="fa-solid fa-caret-left"></i>
-            </Button>
-
             <Text fontWeight="900" fontSize="36px" color="black" px="5px">
               Confirm Booking
             </Text>
@@ -109,7 +189,8 @@ function Booking() {
                   </Box>
                   <Box>
                     <Text fontWeight="bold" fontSize="18px">
-                      {booking[0].name}
+                      {/* name property */}
+                      {dataRoom?.Property?.name}
                     </Text>
                   </Box>
                 </Flex>
@@ -118,7 +199,7 @@ function Booking() {
                     Chek-in
                   </Text>
                   <Text fontWeight="regular" fontSize="14px" w="130px">
-                    Sun, {booking[0].start_date} Nov 2022 (14:00-22:00)
+                    {startDate2[2]} {resultBulan} {startDate2[0]} (14:00-22:00)
                   </Text>
                 </Flex>
                 <Flex
@@ -133,7 +214,7 @@ function Booking() {
                     Chek-out
                   </Text>
                   <Text fontWeight="regular" fontSize="14px" w="130px">
-                    Sun, {booking[0].end_date} Nov 2022 (00:00-12:00)
+                    {endDate2[2]} {resultBulan} {endDate2[0]} (00:00-12:00)
                   </Text>
                 </Flex>
                 <Text
@@ -144,7 +225,8 @@ function Booking() {
                   px="10px"
                   pt="10px"
                 >
-                  (1x) {booking[0].roomName}
+                  {/* name room */}
+                  (1x) {dataRoom?.name}
                 </Text>
                 <Text
                   fontWeight="regular"
@@ -154,7 +236,8 @@ function Booking() {
                   px="10px"
                   pb="20px"
                 >
-                  {booking[0].guest_count} Guests
+                  {/* jumlah tamu */}
+                  {dataRoom?.capacity} Guests
                 </Text>
               </Box>
               <Text fontWeight="Bold" fontSize="18px" p="20px" pb="5px">
@@ -170,20 +253,25 @@ function Booking() {
                 <Flex>
                   <Box boxSize="45px">
                     <Image
-                      src={"https://bit.ly/dan-abramov"}
+                      src={
+                        process.env.REACT_APP_API_BASE_URL +
+                        dataProfile?.profilePic
+                      }
                       alt="Picture profile"
                     />
                   </Box>
                   <Box ms="10px">
                     <Text fontWeight="bold" fontSize="16px">
-                      Kratos
+                      {/* name user */}
+                      {dataProfile?.name}
                     </Text>
                     <Text
                       fontWeight="regular"
                       fontSize="16px"
                       color="rgba(175, 175, 175, 1)"
                     >
-                      28 November 1820
+                      {/* ulang tahun user */}
+                      {birthDate2[0]}
                     </Text>
                   </Box>
                 </Flex>
@@ -207,7 +295,8 @@ function Booking() {
                   </Box>
                   <Box>
                     <Text fontWeight="Bold" fontSize="14px">
-                      Rp.625.000,00
+                      {/* total harga dari defaultPrice + taxes */}
+                      {totalPrice}
                     </Text>
                   </Box>
                 </Flex>
@@ -219,7 +308,8 @@ function Booking() {
                   </Box>
                   <Box>
                     <Text fontWeight="reguler" fontSize="12px">
-                      Rp.300.000,00
+                      {/* di isi final price*/}
+                      {price}
                     </Text>
                   </Box>
                 </Flex>
@@ -231,21 +321,21 @@ function Booking() {
                   </Box>
                   <Box>
                     <Text fontWeight="reguler" fontSize="12px">
-                      Rp.25.000,00
+                      {/* task persen dari fial price */}
+                      {tax}
                     </Text>
                   </Box>
                 </Flex>
               </Box>
 
-              <Link to="/payment">
-                <Button
-                  display={{ ss: "none", sm: "none", sl: "inline" }}
-                  variant="primary"
-                  w="100%"
-                >
-                  Pay
-                </Button>
-              </Link>
+              <Button
+                display={{ ss: "none", sm: "none", sl: "inline" }}
+                variant="primary"
+                w="100%"
+                onClick={() => btnHandlerPayment(dataBooking?.id)}
+              >
+                Pay
+              </Button>
             </Box>
 
             <Box ms="20px" display={{ ss: "none", sm: "none", sl: "inline" }}>
@@ -254,7 +344,9 @@ function Booking() {
                 h="618px"
                 overflow="hiden"
                 objectFit="cover"
-                src={bookingImage}
+                src={
+                  process.env.REACT_APP_API_BASE_URL + dataRoom?.Property?.pic
+                }
               ></Image>
             </Box>
           </Flex>
