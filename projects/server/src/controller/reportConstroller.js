@@ -8,6 +8,7 @@ const {
 } = require("../models");
 const { Op } = require("sequelize");
 const sequelize = require("sequelize");
+const cron = require("node-cron");
 module.exports = {
   getOrder: async (req, res) => {
     try {
@@ -136,20 +137,59 @@ module.exports = {
       });
     }
   },
-
   getSalesReport: async (req, res) => {
     try {
+      const startDate = req.query.startDate;
+      const endDate = req.query.endDate;
       const tenantId = req.params.tenantId;
+      const search = req.query.search_query || "";
+      const filter = req.query.filter;
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 5;
+
+      console.log(req.query.page);
+      console.log(req.query.limit);
+      const finalPrice = req.query.final_price || "ASC";
+      const time = req.query.time || "ASC";
+      const offset = limit * page;
       const statusFinished = 6;
-      const SalsesReport = await Reservation.findAll({
+      let propertyFilter = "";
+      let userFilter = "";
+
+      if (filter == "Property") {
+        propertyFilter = search;
+      } else if (filter == "User") {
+        userFilter = search;
+      }
+
+      const whereCondition = {
+        status: statusFinished,
+      };
+
+      if (req.query?.startDate) {
+        whereCondition.startDate = {
+          [Op.gt]: startDate,
+        };
+      }
+
+      if (req.query?.endDate) {
+        whereCondition.endDate = {
+          [Op.lt]: endDate,
+        };
+      }
+      const salsesReport = await Reservation.findAndCountAll({
         include: [
           {
             model: Room,
+            required: true,
+
             include: [
               {
                 model: Property,
+                required: true,
                 where: {
                   tenantId,
+                  name: { [Op.like]: "%" + propertyFilter + "%" },
                 },
               },
             ],
@@ -157,24 +197,73 @@ module.exports = {
           {
             model: User,
             attributes: ["id"],
-            required: false,
+            required: true,
             include: [
               {
                 model: Profile,
                 attributes: ["name"],
-                required: false,
+                where: {
+                  name: { [Op.like]: "%" + userFilter + "%" },
+                },
+                required: true,
               },
             ],
           },
         ],
+        order: [
+          ["finalPrice", `${finalPrice}`],
+          ["startDate", `${time}`],
+        ],
+        offset,
+        limit,
+        where: whereCondition,
+      });
+      const totalRows = salsesReport.count;
+      const totalPage = Math.ceil(totalRows / limit);
 
-        attributes: [
-          sequelize.fn("SUM", sequelize.col("finalPrice")),
-          "totalSales",
+      const totalSales = await Reservation.findAll({
+        attributes: ["finalPrice"],
+        include: [
+          {
+            model: Room,
+            required: true,
+
+            include: [
+              {
+                model: Property,
+                required: true,
+                where: {
+                  tenantId,
+                  name: { [Op.like]: "%" + propertyFilter + "%" },
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: ["id"],
+            required: true,
+            include: [
+              {
+                model: Profile,
+                attributes: ["name"],
+                where: {
+                  name: { [Op.like]: "%" + userFilter + "%" },
+                },
+                required: true,
+              },
+            ],
+          },
         ],
       });
+
       res.status(200).json({
-        result: SalsesReport,
+        result: salsesReport,
+        page,
+        limit,
+        totalRows,
+        totalPage,
+        totalSales,
         code: 200,
       });
     } catch (err) {
@@ -185,3 +274,41 @@ module.exports = {
     }
   },
 };
+
+cron.schedule("0 10 * * *", () => {
+  const TODAY_START = new Date().setHours(0, 0, 0, 0);
+  const NOW = new Date();
+  Reservation.update(
+    {
+      status: 4,
+    },
+    {
+      where: {
+        startDate: {
+          [Op.gte]: TODAY_START,
+          [Op.lte]: NOW,
+        },
+        status: 3,
+      },
+    }
+  );
+});
+
+cron.schedule("0 12 * * *", () => {
+  const TODAY_START = new Date().setHours(0, 0, 0, 0);
+  const NOW = new Date();
+  Reservation.update(
+    {
+      status: 6,
+    },
+    {
+      where: {
+        endDate: {
+          [Op.gte]: TODAY_START,
+          [Op.lte]: NOW,
+        },
+        status: 4,
+      },
+    }
+  );
+});

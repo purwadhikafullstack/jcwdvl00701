@@ -54,9 +54,7 @@ function App() {
   const [userId, setUserId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { id, email, UserRoles, Tenant } = useSelector(
-    (state) => state.user
-  );
+  const { id, email, UserRoles, Tenant } = useSelector((state) => state.user);
 
   let history = useHistory();
   const dispatch = useDispatch();

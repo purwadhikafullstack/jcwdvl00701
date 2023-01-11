@@ -24,12 +24,12 @@ import {
 import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { authFirebase } from "../Config/firebase";
-import { onAuthStateChanged, signOut , getAuth } from "firebase/auth";
+import { onAuthStateChanged, signOut, getAuth } from "firebase/auth";
 import { useSelector } from "react-redux";
 
 import { useDisclosure } from "@chakra-ui/react";
-import React, { useEffect , useState} from "react";
-import axios from "axios"
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 function NavbarMobileTenant() {
   const location = useLocation().pathname;
@@ -48,13 +48,15 @@ function NavbarMobileTenant() {
     onOpen: onMobileOpen,
     onClose: onMobileClose,
   } = useDisclosure();
-  const { id, ProfilePic ,ProfileName,firebaseProviderId} = useSelector((state) => state.user);
+  const { id, ProfilePic, ProfileName, firebaseProviderId } = useSelector(
+    (state) => state.user
+  );
 
   const logout = () => {
     signOut(auth)
       .then(() => alert("signed out"))
       .catch((error) => alert(error));
-    history.push("/login")
+    history.push("/login");
   };
 
   const switchToTenant = () => {
@@ -62,8 +64,8 @@ function NavbarMobileTenant() {
   };
 
   const bookingHistory = () => {
-    history.push("/booking-history")
-  }
+    history.push("/booking-history");
+  };
 
   const menuItemContents = [
     {
@@ -185,7 +187,7 @@ function NavbarMobileTenant() {
                       signOut(auth)
                         .then(() => alert("signed out"))
                         .catch((error) => alert(error));
-                      history.push("/tenant/login")
+                      history.push("/tenant/login");
                     }}
                   >
                     <Flex
@@ -296,57 +298,62 @@ function NavbarMobileTenant() {
               alt="turu-icon"
               width="58px"
               height="58px"
-              />
-            {
-              id ?
-              <Flex  w="100%" mx="auto" justifyContent="space-between">
-              <Spacer />
-              <Flex fontWeight="bold" fontSize="18px" my="auto" mr="20px">
-                <Link to="/">
-                  <Text>Search</Text>
-                </Link>
-                  <Text mx="50px" onClick={bookingHistory} cursor="pointer">Room</Text>
+            />
+            {id ? (
+              <Flex w="100%" mx="auto" justifyContent="space-between">
+                <Spacer />
+                <Flex fontWeight="bold" fontSize="18px" my="auto" mr="20px">
+                  <Link to="/">
+                    <Text>Search</Text>
+                  </Link>
+                  <Text mx="50px" onClick={bookingHistory} cursor="pointer">
+                    Room
+                  </Text>
                   <Menu>
-                    {
-                      id ?
+                    {id ? (
                       <MenuButton fontWeight="bold" fontSize="18px" my="auto">
                         {ProfileName}
                       </MenuButton>
-                      :
+                    ) : (
                       <MenuButton fontWeight="bold" fontSize="18px" my="auto">
                         Account
                       </MenuButton>
-                    }
+                    )}
                     <MenuList>
                       <MenuItem onClick={() => history.push("/profile")}>
                         Profile
                       </MenuItem>
                       <MenuDivider />
-                      {
-                      firebaseProviderId === "password" ?
-                        <MenuItem onClick={switchToTenant}>Switch To Tenant</MenuItem>
-                        :
-                        null
-                      }
+                      {firebaseProviderId === "password" ? (
+                        <MenuItem onClick={switchToTenant}>
+                          Switch To Tenant
+                        </MenuItem>
+                      ) : null}
                       <MenuDivider />
                       <MenuItem onClick={logout}>Logout</MenuItem>
                       <MenuDivider />
                     </MenuList>
                   </Menu>
-              </Flex>
+                </Flex>
                 <Avatar
-                    size="md"
-                    objectFit={"cover"}
-                    overflow="hidden"
-                    my="auto"
-                    src={process.env.REACT_APP_API_BASE_URL + ProfilePic}
-                  />
-            </Flex>
-            :
-            <Button onClick={() => history.push("/login")} variant="secondary" height="58px" w="170px" mt={"10px"}>
-              Login
-            </Button>
-          }
+                  size="md"
+                  objectFit={"cover"}
+                  overflow="hidden"
+                  my="auto"
+                  src={process.env.REACT_APP_API_BASE_URL + ProfilePic}
+                />
+              </Flex>
+            ) : (
+              <Button
+                onClick={() => history.push("/login")}
+                variant="secondary"
+                height="58px"
+                w="170px"
+                mt={"10px"}
+              >
+                Login
+              </Button>
+            )}
           </Flex>
         </Container>
       </Box>
