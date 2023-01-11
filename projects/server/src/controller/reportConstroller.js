@@ -8,6 +8,7 @@ const {
 } = require("../models");
 const { Op } = require("sequelize");
 const sequelize = require("sequelize");
+const transporter = require('../middleware/nodemailer')
 const cron = require("node-cron");
 module.exports = {
   getOrder: async (req, res) => {
@@ -60,7 +61,7 @@ module.exports = {
             include: [
               {
                 model: Property,
-                attributes: ["id", "name", "pic"],
+                attributes: ["id", "name", "pic", "description" , "rules"],
                 required: false,
                 where: {
                   tenantId,
@@ -74,7 +75,7 @@ module.exports = {
           },
           {
             model: User,
-            attributes: ["id"],
+            attributes: ["id","email"],
             required: false,
             include: [
               {
@@ -273,6 +274,57 @@ module.exports = {
       });
     }
   },
+  // endpoint utk kirim email, bentuk post
+  emailOrder : async(req,res) => {
+    try {
+      console.log(req.body);
+      const {property, room, checkIn, checkOut, guest, name , totalPrice, email, address , rules} = req.body
+
+      let mail = {
+        from : "Admin <turujcwdvl00701@gmail.com>",
+        to : `${email}`,
+        subject : "Information Room",
+        html : `
+        <h1>yth ${name}</h1>
+        <h2>Thankyou for reservation at ${property}</h2>
+        <h3><b>Your Reservation Detail</b></h3>
+        <p>Name Room : ${room}</p>
+        <p>Guest : ${guest}</p>
+        <p>Check in : ${checkIn}</p>
+        <p>Check out : ${checkOut}</p>
+        <p>Total Price : ${totalPrice}</p>
+        <p>Address : ${address}</p>
+        <p>Rules : ${rules}</p>
+        
+        <p>thank you for use our service</p>
+        <p>PT.Turu Jaya Abadi</p>
+        `
+      }
+
+      transporter.sendMail(mail, (errMail , resMail) => {
+        if(errMail){
+          console.log(errMail);
+          return res.status(500).send({
+            message : "email failed",
+            success : false,
+            err : errMail
+          })
+        }
+
+        return res.status(200).json({
+          message : "email success , check your email",
+          success : true,
+          code : 200
+        })
+      })
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message : "email failed",
+        code : 500
+      })
+    }
+  }
 };
 
 cron.schedule("0 10 * * *", () => {

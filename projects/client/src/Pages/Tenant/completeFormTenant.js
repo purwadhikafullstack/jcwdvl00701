@@ -78,7 +78,7 @@ function CompleteFormTenant() {
             .then((res) => {
                 console.log(res.data);
                 alert(res.data.message)
-                history.push("/")
+                history.push("/tenant/dashboard")
             })
             .catch((err) => {
                 console.error(err.data.message)
