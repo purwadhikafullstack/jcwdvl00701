@@ -1,4 +1,4 @@
-const { sequelize, User, Profile, UserRole , Tenant} = require("../models");
+const {sequelize, User, Profile, UserRole, Tenant} = require("../models");
 
 module.exports = {
   addUser: async (req, res) => {
@@ -18,7 +18,7 @@ module.exports = {
             firebaseProviderId: firebaseProviderId,
             email: email,
           },
-          { transaction: t }
+          {transaction: t}
         );
 
         const profile = await Profile.create(
@@ -28,7 +28,7 @@ module.exports = {
             gender: "Male",
             userId: id,
           },
-          { transaction: t }
+          {transaction: t}
         );
 
         const userProfile = await UserRole.create(
@@ -36,7 +36,7 @@ module.exports = {
             userId: id,
             roleId: 1,
           },
-          { transaction: t }
+          {transaction: t}
         );
 
         return {
@@ -165,7 +165,7 @@ module.exports = {
 
     try {
       await User.update(req.body, {
-        where: { id },
+        where: {id},
         returning: true,
         plain: true,
       });
@@ -187,16 +187,16 @@ module.exports = {
 
   updateUserProfilePic: async (req, res) => {
     const id = req.body.id;
-    const { filename } = req.file;
+    const {filename} = req.file;
     const fileUrl = `/profile_pic/${filename}`;
 
     try {
       await User.update(
-        { profilePic: fileUrl },
-        { where: { id }, returning: true, plain: true }
+        {profilePic: fileUrl},
+        {where: {id}, returning: true, plain: true}
       );
       return res.status(200).send({
-        result: { profilePic: fileUrl },
+        result: {profilePic: fileUrl},
         message: "success update profile picture",
         code: 200,
       });

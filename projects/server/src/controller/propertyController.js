@@ -1,17 +1,33 @@
-const { db, dbquery } = require("../database");
-const { Property, Tenant, User, Room, Category } = require("../lib/sequelize");
+const {db, dbquery} = require("../database");
+const {sequelize, Property, Room, Tenant, User, Category} = require('../models')
 const fs = require("fs");
-const { Op } = require("sequelize");
+const {Op} = require("sequelize");
+
+const wrapper = async (req, res, func) => {
+  try {
+    const {result, message} = await func()
+    return res.status(200).json({
+      result: result,
+      message: message,
+      code: 200
+    })
+  } catch (err) {
+    return res.status(500).json({
+      message: err.toString(),
+      code: 500
+    })
+  }
+}
 
 module.exports = {
   addProperty: async (req, res) => {
     try {
       console.log(req.body);
       console.log("uploader foto " + req.file);
-      const { name, description, pic, tenantId, categoryId, rules } = req.body;
+      const {name, description, pic, tenantId, categoryId, rules} = req.body;
 
       const filePath = "property";
-      const { filename } = req.file;
+      const {filename} = req.file;
 
       const neWProperty = await Property.create({
         name,
@@ -33,14 +49,15 @@ module.exports = {
       });
     }
   },
+
   editProperty: async (req, res) => {
     console.log(req.body);
-    const { id, old_img, description, rules, categoryId, name, pic } = req.body;
+    const {id, old_img, description, rules, categoryId, name, pic} = req.body;
     const filePath = "property";
     console.log(req.body);
     let editData = {};
     if (req.file?.filename) {
-      const { filename } = req.file;
+      const {filename} = req.file;
       console.log(filename);
 
       if (old_img != undefined) {
@@ -73,9 +90,9 @@ module.exports = {
 
     try {
       await Property.update(
-        { ...editData },
+        {...editData},
         {
-          where: { id },
+          where: {id},
         }
       );
     } catch (err) {
@@ -91,6 +108,28 @@ module.exports = {
     });
   },
 
+  getAll: async (req, res) => {
+    return await wrapper(req, res, async () => {
+      const {uid} = req.query
+      const result = await Property.findAll({
+        include: [{
+          model: Tenant,
+          required: true,
+          include: [{
+            model: User,
+            required: true,
+            where: {id: uid}
+          }]
+        }]
+      })
+
+      return {
+        result: result,
+        message: 'success get property'
+      }
+    })
+  },
+
   getPropertyFilter: async (req, res) => {
     const page = parseInt(req.query.page) || 0;
     const limit = parseInt(req.query.limit) || 10;
@@ -104,7 +143,7 @@ module.exports = {
       const result = await Property.findAndCountAll({
         where: {
           tenantId,
-          name: { [Op.like]: "%" + search + "%" },
+          name: {[Op.like]: "%" + search + "%"},
         },
 
         order: [
@@ -151,7 +190,7 @@ module.exports = {
   },
 
   deleteProperty: async (req, res) => {
-    const { id, old_img } = req.body;
+    const {id, old_img} = req.body;
 
     await Property.destroy({
       include: [
