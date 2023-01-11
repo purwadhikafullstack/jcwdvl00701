@@ -112,6 +112,11 @@ module.exports = {
             required: true,
             attributes: ["location"],
           },
+          {
+            model: Tenant,
+            required: false,
+            attributes: ["bankAccountNumber"],
+          },
         ],
         order: [
           ["name", `${alfabet}`],

@@ -148,24 +148,26 @@ function PropertyListTenant() {
             >
               {rows > 1 ? `${rows} Properties` : `${rows} property`}
             </Text>
-            <Link to="/tenant/add-property">
-              <Center
-                mt="20px"
-                display={{ ss: "flex", sl: "none" }}
-                as="button"
-                h="40px"
-                w="40px"
-                fontSize="20px"
-                transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
-                _hover={{
-                  bg: "black",
-                  color: "white",
-                }}
-                bg="primary"
-              >
-                <i className=" fa-solid fa-plus"></i>
-              </Center>
-            </Link>
+            {propertyData[0]?.Tenant.bankAccountNumber ? (
+              <Link to="/tenant/add-property">
+                <Center
+                  mt="20px"
+                  display={{ ss: "flex", sl: "none" }}
+                  as="button"
+                  h="40px"
+                  w="40px"
+                  fontSize="20px"
+                  transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
+                  _hover={{
+                    bg: "black",
+                    color: "white",
+                  }}
+                  bg="primary"
+                >
+                  <i className=" fa-solid fa-plus"></i>
+                </Center>
+              </Link>
+            ) : null}
           </Flex>
           <FormControl pb="20px">
             <HStack>
@@ -190,109 +192,127 @@ function PropertyListTenant() {
                   color: "white",
                 }}
               />
-              <Link to="/tenant/add-property">
-                <Button
-                  display={{ ss: "none", sl: "flex" }}
-                  h="40px"
-                  w="150px"
-                  borderRadius={0}
-                  fontSize="16px"
-                  transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
-                  _hover={{
-                    bg: "black",
-                    color: "white",
-                  }}
-                  bg="primary"
-                >
-                  Add Property
-                </Button>
-              </Link>
+              {propertyData[0]?.Tenant.bankAccountNumber ? (
+                <Link to="/tenant/add-property">
+                  <Button
+                    display={{ ss: "none", sl: "flex" }}
+                    h="40px"
+                    w="150px"
+                    borderRadius={0}
+                    fontSize="16px"
+                    transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
+                    _hover={{
+                      bg: "black",
+                      color: "white",
+                    }}
+                    bg="primary"
+                  >
+                    Add Property
+                  </Button>
+                </Link>
+              ) : null}
             </HStack>
           </FormControl>
         </Container>
         <Container bg="white" maxW="1140px" mt={{ ss: "0px", sl: "20px" }}>
-          <Flex
-            maxW="1140px"
-            borderBottom="1px"
-            borderColor="gray.200"
-            pt="20px"
-            pb="10px"
-            display={{ ss: "none", sl: "flex" }}
-          >
-            <Text me="20px" fontSize="16px" fontWeight="bold" w="90px">
-              Photo
-            </Text>
-            <Text me="20px" fontSize="16px" fontWeight="bold" w="300px">
-              Name Property
-            </Text>
-            <Text me="20px" fontSize="16px" fontWeight="bold" w="280px">
-              Category
-            </Text>
-            <Text me="20px" fontSize="16px" fontWeight="bold" w="80px">
-              Room
-            </Text>
-            <Text me="20px" fontSize="16px" fontWeight="bold" w="110px">
-              Modified
-            </Text>
-            <Text me="10px" fontSize="16px" fontWeight="bold" w="120px">
-              Action
-            </Text>
-          </Flex>
+          {propertyData[0]?.Tenant.bankAccountNumber ? (
+            <>
+              <Flex
+                maxW="1140px"
+                borderBottom="1px"
+                borderColor="gray.200"
+                pt="20px"
+                pb="10px"
+                display={{ ss: "none", sl: "flex" }}
+              >
+                <Text me="20px" fontSize="16px" fontWeight="bold" w="90px">
+                  Photo
+                </Text>
+                <Text me="20px" fontSize="16px" fontWeight="bold" w="320px">
+                  Name Property
+                </Text>
+                <Text me="20px" fontSize="16px" fontWeight="bold" w="320px">
+                  Category
+                </Text>
 
-          {/* card property */}
-          {renderPropertyList()}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              padding: 20,
-              boxSizing: "border-box",
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <ReactPaginate
-              previousLabel={
-                <i
-                  className=" fa-solid fa-chevron-left"
-                  style={{
-                    fontSize: 18,
-                    height: 40,
-                    width: 40,
-                    position: "absolute",
-                    left: "11px",
-                    top: "11px",
-                  }}
-                ></i>
-              }
-              nextLabel={
-                <i
-                  className=" fa-solid fa-chevron-right"
-                  style={{
-                    fontSize: 18,
-                    height: 40,
-                    width: 40,
-                    position: "absolute",
-                    left: "11px",
-                    top: "11px",
-                  }}
-                ></i>
-              }
-              pageCount={pages}
-              onPageChange={changePage}
-              activeClassName={"item active "}
-              breakClassName={"item break-me "}
-              breakLabel={"..."}
-              containerClassName={"pagination"}
-              disabledClassName={"disabled-page"}
-              marginPagesDisplayed={2}
-              nextClassName={"item next "}
-              pageClassName={"item pagination-page "}
-              pageRangeDisplayed={2}
-              previousClassName={"item previous"}
-            />
-          </div>
+                <Text me="20px" fontSize="16px" fontWeight="bold" w="130px">
+                  Modified
+                </Text>
+                <Text me="10px" fontSize="16px" fontWeight="bold" w="120px">
+                  Action
+                </Text>
+              </Flex>
+              {/* card property */}
+              {renderPropertyList()}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  padding: 20,
+                  boxSizing: "border-box",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <ReactPaginate
+                  previousLabel={
+                    <i
+                      className=" fa-solid fa-chevron-left"
+                      style={{
+                        fontSize: 18,
+                        height: 40,
+                        width: 40,
+                        position: "absolute",
+                        left: "11px",
+                        top: "11px",
+                      }}
+                    ></i>
+                  }
+                  nextLabel={
+                    <i
+                      className=" fa-solid fa-chevron-right"
+                      style={{
+                        fontSize: 18,
+                        height: 40,
+                        width: 40,
+                        position: "absolute",
+                        left: "11px",
+                        top: "11px",
+                      }}
+                    ></i>
+                  }
+                  pageCount={pages}
+                  onPageChange={changePage}
+                  activeClassName={"item active "}
+                  breakClassName={"item break-me "}
+                  breakLabel={"..."}
+                  containerClassName={"pagination"}
+                  disabledClassName={"disabled-page"}
+                  marginPagesDisplayed={2}
+                  nextClassName={"item next "}
+                  pageClassName={"item pagination-page "}
+                  pageRangeDisplayed={2}
+                  previousClassName={"item previous"}
+                />
+              </div>
+            </>
+          ) : (
+            <Center flexDirection="column" minHeight="50vh">
+              {rows === 0 && propertyData[0]?.Tenant.bankAccountNumber ? (
+                <Box>you do not have any properties</Box>
+              ) : (
+                <>
+                  <Text textAlign="center" fontSize="20px" mb="20px">
+                    Please add your bank account number first
+                  </Text>
+                  <Link to="/tenant/profile">
+                    <Button variant="primary"> profile</Button>
+                  </Link>
+                </>
+              )}
+            </Center>
+          )}
         </Container>
       </Box>
       {/* moddal */}
