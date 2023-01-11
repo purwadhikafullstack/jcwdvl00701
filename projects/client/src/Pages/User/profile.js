@@ -245,8 +245,6 @@ function Profile() {
 
     if (!userId) return
 
-
-
     return (
         <Container maxW='container.sm' p={0}>
             <Container maxW='1140px'>

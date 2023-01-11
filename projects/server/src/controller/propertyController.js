@@ -1,7 +1,30 @@
 const { db, dbquery } = require("../database");
-const { Property, Tenant, User, Room, Category } = require("../models");
+const {
+  sequelize,
+  Property,
+  Room,
+  Tenant,
+  User,
+  Category,
+} = require("../models");
 const fs = require("fs");
 const { Op } = require("sequelize");
+
+const wrapper = async (req, res, func) => {
+  try {
+    const { result, message } = await func();
+    return res.status(200).json({
+      result: result,
+      message: message,
+      code: 200,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: err.toString(),
+      code: 500,
+    });
+  }
+};
 
 module.exports = {
   addProperty: async (req, res) => {
@@ -33,6 +56,7 @@ module.exports = {
       });
     }
   },
+
   editProperty: async (req, res) => {
     console.log(req.body);
     const { id, old_img, description, rules, categoryId, name, pic } = req.body;
@@ -88,6 +112,32 @@ module.exports = {
     return res.status(200).json({
       message: "success edit data property",
       results: editData,
+    });
+  },
+
+  getAll: async (req, res) => {
+    return await wrapper(req, res, async () => {
+      const { uid } = req.query;
+      const result = await Property.findAll({
+        include: [
+          {
+            model: Tenant,
+            required: true,
+            include: [
+              {
+                model: User,
+                required: true,
+                where: { id: uid },
+              },
+            ],
+          },
+        ],
+      });
+
+      return {
+        result: result,
+        message: "success get property",
+      };
     });
   },
 

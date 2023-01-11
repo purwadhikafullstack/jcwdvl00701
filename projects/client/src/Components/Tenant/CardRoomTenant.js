@@ -52,13 +52,12 @@ function CardRoomTenant(props) {
   };
 
   const deleteBtnHandler = () => {
-    alert("berhasil");
     axios
       .post(`${process.env.REACT_APP_API_BASE_URL}/room/delete-room`, {
         id,
       })
       .then((res) => {
-        alert(res.data.message);
+        // alert(res.data.message);
         props.setRandomNumber(Math.random());
 
         onClose();
@@ -223,7 +222,7 @@ function CardRoomTenant(props) {
           <ModalBody>Are you sure you want to delete this room?</ModalBody>
           <ModalCloseButton />
           <ModalCloseButton />
-          <ModalBody pb={6}></ModalBody>
+          <ModalBody pb={6}>are you sure want delete this room?</ModalBody>
 
           <ModalFooter>
             <Button

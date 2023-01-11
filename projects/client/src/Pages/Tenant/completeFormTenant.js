@@ -121,20 +121,36 @@ function CompleteFormTenant() {
               </Flex>
             </Box>
 
-            {/* Form */}
-            <Box w="50em">
-              <Flex justifyContent="center" alignItems="center" my="12em">
-                <Box width="360px" height="297px">
-                  <Flex
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    pt={{
-                      ss: "5px",
-                      sm: "5px",
-                      sl: "5px",
-                      md: "19px",
-                      lg: "19px",
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/complete-register`, formData)
+            .then((res) => {
+                console.log(res.data);
+                alert(res.data.message)
+                history.push("/tenant/dashboard")
+            })
+            .catch((err) => {
+                console.error(err.data.message)
+            })
+        }
+    })
+    return (
+        <>
+        <Container maxW="2x1" px="0px">
+            <Flex flexDirection="column" bg="black">
+            {/* flex container utk dekstop */}
+            <Flex>
+                {/* utk image dekstop */}
+                <Box
+                width="900px"
+                display={{ ss: "none", sm: "none", md: "block" }}
+                >
+                <Flex>
+                    <Image
+                    display={{
+                        ss: "none",
+                        sm: "none",
+                        sl: "none",
+                        md: "block",
+                        lg: "block",
                     }}
                     pb="10px"
                   >

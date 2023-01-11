@@ -33,7 +33,7 @@ function AddRoom() {
   // state
   const [dropdown, setDropdown] = useState([]);
   const history = useHistory();
-  const { TenantId } = useSelector((state) => state.user);
+
   useEffect(() => {
     const fetchDataDropdown = () => {
       axios
@@ -117,6 +117,12 @@ function AddRoom() {
     <Layout>
       <Box mt="80px">
         <Container mt="100px" maxW="1140px">
+          {information ? (
+            <Alert status="info" color="green" text="center">
+              <i className="fa-solid fa-check"></i>
+              <Text ms="10px">{information}</Text>
+            </Alert>
+          ) : null}
           <Flex mb="10px" w="100%" mx="auto">
             <Link to="/tenant/room">
               <Button

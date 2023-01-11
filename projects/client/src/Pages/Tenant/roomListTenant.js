@@ -369,7 +369,7 @@ function RoomListTenant() {
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent borderRadius={0}>
-          <ModalHeader>Shory by:</ModalHeader>
+          <ModalHeader>Short by:</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} name="alfabet">
             <Select
@@ -409,7 +409,7 @@ function RoomListTenant() {
               borderRadius={0}
               colorScheme="red"
               mr={0}
-              w="100%"
+              width="100%"
             >
               Apply
             </Button>
