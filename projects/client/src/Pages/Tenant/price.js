@@ -43,7 +43,7 @@ import {
   InputLeftAddon,
   InputRightAddon,
   Spinner,
-  Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Fade, Collapse,
+  Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Fade, Collapse, Center, IconButton,
 } from "@chakra-ui/react";
 import {
   AsyncCreatableSelect,
@@ -474,8 +474,8 @@ function DeleteSpecialPriceForm(props) {
 }
 
 function FilterSpecialPrice(props) {
-  const startDate = props.startDate ? props.startDate.toISOString().substring(0,10) : props.startDate
-  const endDate = props.endDate ? props.endDate.toISOString().substring(0,10) : props.endDate
+  const startDate = props.startDate ? props.startDate.toISOString().substring(0, 10) : props.startDate
+  const endDate = props.endDate ? props.endDate.toISOString().substring(0, 10) : props.endDate
   return <>
     <Flex w="100%">
       <Box w="50%" mr={2}>
@@ -958,8 +958,8 @@ function DeleteRoomUnavailabilityForm(props) {
 }
 
 function FilterRoomUnavailability(props) {
-  const startDate = props.startDate ? props.startDate.toISOString().substring(0,10) : props.startDate
-  const endDate = props.endDate ? props.endDate.toISOString().substring(0,10) : props.endDate
+  const startDate = props.startDate ? props.startDate.toISOString().substring(0, 10) : props.startDate
+  const endDate = props.endDate ? props.endDate.toISOString().substring(0, 10) : props.endDate
   return <>
     <Flex w="100%">
       <Box w="50%" mr={2}>
@@ -1031,7 +1031,7 @@ function RoomAvailability(props) {
   const [modalContent, setModalContent] = React.useState(null)
 
   const {isOpen: isOpenFilter, onToggle: onToggleFilter} = useDisclosure()
-  
+
   return (
     <Box mt="20px">
       <Flex justifyContent={'space-between'} my={5}>
@@ -1194,13 +1194,54 @@ function Price() {
 
   return (
     <Layout>
-      <Box mt="80px">
-        <Container maxW="1140px">
-          <Text fontSize="20px" fontWeight="bold" mb="30px">
-            Special Price / Room Unavailability
-          </Text>
+      <Box bg={{
+        ss: "white",
 
-          <Tabs>
+        sl: "rgba(240, 239, 239, 1)",
+      }}
+           mt="70px">
+        <Container
+          px="20px"
+          maxW="1140px"
+          backgroundSize="cover"
+          backgroundImage="/Assets/price.png"
+          h="133px"
+          display={{ss: "none", sl: "flex"}}
+        >
+          <Center>
+            <Text
+              me="10px"
+              fontSize="32px"
+              fontWeight="bold"
+              display={{ss: "none", sl: "flex"}}
+            >
+              <i className="fa-solid fa-cash-register"/>
+            </Text>
+            <Text
+              fontSize="32px"
+              fontWeight="bold"
+              display={{ss: "none", sl: "flex"}}
+            >
+              Special Price / Room Unavailability
+            </Text>
+          </Center>
+        </Container>
+
+        <Container bg="white" maxW="1140px">
+          <Flex justifyContent="space-between">
+            <Text
+              pt="20px"
+              fontSize="20px"
+              fontWeight="bold"
+              display={{ ss: "flex", sl: "none" }}
+            >
+              Special Price / Room Unavailability
+            </Text>
+          </Flex>
+        </Container>
+
+        <Container bg="white" maxW="1140px">
+          <Tabs pt={"20px"}>
             <TabList>
               <Tab
                 fontSize="14px"
