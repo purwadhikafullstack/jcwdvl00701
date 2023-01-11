@@ -333,15 +333,14 @@ function UpdateSpecialPriceForm(props) {
           {props.specialPrice.Room.Property.name}
         </Heading>
 
-        <Box my={5}>
+        <Flex my={5} overflow={'hidden'} justifyContent={'center'} alignItems={'center'}>
           <Image
             objectFit="cover"
             w={'100%'}
-            maxW={{base: "100%", sm: "50%"}}
-            src={props.specialPrice.Room.picture || Image2}
+            maxH={'150px'}
+            src={props.specialPrice.Room.Property.pic ? process.env.REACT_APP_API_BASE_URL + props.specialPrice.Room.Property.pic : "/Assets/add_photo.png"}
           />
-        </Box>
-
+        </Flex>
 
         <Flex w="100%" my={5}>
           <Box w="50%" mr={2}>
@@ -614,13 +613,17 @@ function SpecialPrice(props) {
                       )
                       onOpen()
                     }} cursor={'pointer'} display={'flex'}>
-                      <Box w="40px" h="30px" my={'auto'} mr={2} overflow="hiden">
+                      <Flex w="40px" h="30px" my={'auto'} mr={2} overflow="hidden"
+                            alignItems={'center'} justifyContent={'center'}>
                         <Image
                           h={'100%'}
-                          objectFit="cover" src={Image1}
-                          alt="room picture"
+                          src={specialPrice.Room.Property.pic ? process.env.REACT_APP_API_BASE_URL + specialPrice.Room.Property.pic : "/Assets/add_photo.png"}
+                          alt={specialPrice.Room.Property.name}
+                          width={{ ss: "90px", sm: "70px", sl: "70px" }}
+                          height={{ ss: "60px", sm: "47px", sl: "47px" }}
+                          objectFit="cover"
                         />
-                      </Box>
+                      </Flex>
                       <Box>
                         <Text fontWeight="bold" fontSize={'sm'}>
                           {specialPrice.Room.Property.name} - {specialPrice.Room.name}
@@ -872,6 +875,15 @@ function UpdateRoomUnavailabilityForm(props) {
           {props.roomUnavailability.Room.Property.name}
         </Heading>
 
+        <Flex my={5} overflow={'hidden'} justifyContent={'center'} alignItems={'center'}>
+          <Image
+            objectFit="cover"
+            w={'100%'}
+            maxH={'150px'}
+            src={props.roomUnavailability.Room.Property.pic ? process.env.REACT_APP_API_BASE_URL + props.roomUnavailability.Room.Property.pic : "/Assets/add_photo.png"}
+          />
+        </Flex>
+
         <Flex w="100%" my={5}>
           <Box w="50%" mr={2}>
             <Text>Start Date</Text>
@@ -1094,13 +1106,17 @@ function RoomAvailability(props) {
                       )
                       onOpen()
                     }} cursor={'pointer'} display={'flex'}>
-                      <Box w="40px" h="30px" my={'auto'} mr={2} overflow="hiden">
+                      <Flex w="40px" h="30px" my={'auto'} mr={2} overflow="hidden"
+                            alignItems={'center'} justifyContent={'center'}>
                         <Image
                           h={'100%'}
-                          objectFit="cover" src={Image1}
-                          alt="room picture"
+                          src={roomUnavailability.Room.Property.pic ? process.env.REACT_APP_API_BASE_URL + roomUnavailability.Room.Property.pic : "/Assets/add_photo.png"}
+                          alt={roomUnavailability.Room.Property.name}
+                          width={{ ss: "90px", sm: "70px", sl: "70px" }}
+                          height={{ ss: "60px", sm: "47px", sl: "47px" }}
+                          objectFit="cover"
                         />
-                      </Box>
+                      </Flex>
                       <Box>
                         <Text fontWeight="bold" fontSize="sm">
                           {roomUnavailability.Room.Property.name} - {roomUnavailability.Room.name}
