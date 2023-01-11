@@ -133,7 +133,7 @@ function CardPropertyTenant(props) {
           </HStack>
           <HStack me="20px" w="280px">
             <Text fontSize="14px" fontWeight="reguler">
-              {props.propertyData.name}
+              {props.propertyData.Category.location}
             </Text>
           </HStack>
           <HStack me="20px" w="80px">

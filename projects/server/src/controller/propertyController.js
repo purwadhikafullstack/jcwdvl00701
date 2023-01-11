@@ -1,5 +1,5 @@
 const { db, dbquery } = require("../database");
-const { Property, Tenant, User, Room, Category } = require("../lib/sequelize");
+const { Property, Tenant, User, Room, Category } = require("../models");
 const fs = require("fs");
 const { Op } = require("sequelize");
 
@@ -86,7 +86,7 @@ module.exports = {
     }
 
     return res.status(200).json({
-      message: "success edit data property1111",
+      message: "success edit data property",
       results: editData,
     });
   },
@@ -106,7 +106,13 @@ module.exports = {
           tenantId,
           name: { [Op.like]: "%" + search + "%" },
         },
-
+        include: [
+          {
+            model: Category,
+            required: true,
+            attributes: ["location"],
+          },
+        ],
         order: [
           ["name", `${alfabet}`],
           ["updatedAt", `${time}`],

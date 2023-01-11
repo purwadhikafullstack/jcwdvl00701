@@ -87,7 +87,7 @@ function PropertyListTenant() {
       `${process.env.REACT_APP_API_BASE_URL}/property/get/${TenantId}?search_query=${keyword}&alfabet=${alfabet}&time=${time}&page=${page}&limit=${limit}`
     )
       .then((res) => {
-        console.log("GET DATA");
+        console.log(res.data);
 
         setPage(res.data.page);
         setPages(res.data.totalPage);
