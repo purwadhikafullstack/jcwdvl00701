@@ -20,7 +20,6 @@ module.exports = (sequelize) => {
     },
     phoneNumber: {
       type: DataTypes.STRING,
-      unique: true
     },
     gender: {
       type: DataTypes.STRING,
