@@ -7,6 +7,8 @@ const reportController = require("./reportConstroller");
 const reservationController = require("./reservationController")
 const paymentController = require("./paymentController")
 const historyController = require("./historyController")
+const roomUnavailabilityController = require("./roomUnavailabilityController")
+const specialPriceController = require("./specialPriceController")
 
 module.exports = {
   userController,
@@ -17,5 +19,7 @@ module.exports = {
   reportController,
   reservationController,
   paymentController,
-  historyController
+  historyController,
+  roomUnavailabilityController,
+  specialPriceController,
 };
