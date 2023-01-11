@@ -24,7 +24,6 @@ module.exports = (sequelize) => {
     },
     firebaseProviderId: {
       type: DataTypes.STRING,
-      unique: true
     },
     email: {
       type: DataTypes.STRING,
