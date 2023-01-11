@@ -286,6 +286,7 @@ function RoomListTenant() {
               borderRadius={0}
               colorScheme="red"
               mr={0}
+              width="100%"
             >
               Apply
             </Button>

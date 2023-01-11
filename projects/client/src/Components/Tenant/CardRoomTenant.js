@@ -122,9 +122,11 @@ const deleteBtnHandler = () => {
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent borderRadius={0}>
-          <ModalHeader>Create your account</ModalHeader>
+          <ModalHeader>Delete Room</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6}></ModalBody>
+          <ModalBody pb={6}>
+            are you sure want delete this room?
+          </ModalBody>
 
           <ModalFooter>
             <Button

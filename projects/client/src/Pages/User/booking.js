@@ -8,6 +8,7 @@ import {
   Spinner,
   HStack,
   VStack,
+  Alert
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
@@ -29,6 +30,8 @@ function Booking() {
   const [loading, setLoading] = useState(true);
   const [dataProfile, setDataProfile] = useState({});
   const [birthdate, setBirthdate] = useState("");
+  const [err, setErr] = useState("")
+  // console.log(birthdate);
   let history = useHistory();
 
   useEffect(() => {
@@ -44,13 +47,13 @@ function Booking() {
             },
           }
         );
-        // console.log((await response)?.data.result);
+        console.log((await response)?.data.result);
         setDataBooking((await response)?.data.result);
         setDataRoom((await response)?.data.result.Room);
         setStartDate((await response)?.data.result.startDate);
         setEndDate((await response)?.data.result.endDate);
         setDataProfile((await response)?.data.result.User.Profile);
-        setBirthdate((await response)?.data.result.User.Profile.birthdate);
+        setBirthdate((await response)?.data.result.User?.Profile?.birthdate);
       } catch (err) {
         console.error(err.data.message);
       }
@@ -60,7 +63,7 @@ function Booking() {
   }, []);
 
   let startDate2 = startDate.split("T")[0].split("-")
-    // console.log(startDate2);
+    console.log(startDate2);
   let endDate2 = endDate.split("T")[0].split("-")
 
     const bulan = ["Jan", "Feb", "Mar", "Apr" ,"Mei" , "Jun" , "Jul" , "Agus" , "Sept" , "Okt", "Nov", "Des"]
@@ -75,7 +78,15 @@ function Booking() {
     }
     let resultBulan = searchBulan(bulan)
     console.log(resultBulan);
-  let birthDate2 = birthdate.split("T")
+
+    if(birthdate){
+      var birthDate2 = birthdate.split("T")
+    } else {
+      alert("You must enter your date of birth ")
+      // setErr("You must enter your date of birth ")
+        history.push("/profile")
+
+    }
 
   const btnHandlerPayment = (id) => {
     console.log(id);

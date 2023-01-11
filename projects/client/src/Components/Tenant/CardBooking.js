@@ -23,8 +23,12 @@ import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 
 function CardBooking(props) {
+  console.log(props);
+  // console.log(props.name);
   const start = props.start_date.split("T");
   const end = props.end_date.split("T");
+  // console.log(start[0]);
+  // console.log(end[0]);
   let history = useHistory();
   const [status, setStatus] = useState(null);
   const {
@@ -58,6 +62,22 @@ function CardBooking(props) {
         onAcceptClose();
         onRejectClose();
         props.randomNumber(Math.random());
+        // akan menyimpan endpoint utk kirim email (data yg dikirim akan di buat fleksibel )
+        if(status == 3){
+          axios.post(`${process.env.REACT_APP_API_BASE_URL}/report/email-order`, {
+            property : props.name,
+            room : props.roomName,
+            checkIn : start[0],
+            checkOut : end[0],
+            guest : props.guest_count,
+            name: props.user,
+            totalPrice : props.price,
+            email : props.email,
+            address : props.address,
+            rules : props.rules
+          })
+        }
+        
       })
       .catch((err) => {
         console.error(err.message);

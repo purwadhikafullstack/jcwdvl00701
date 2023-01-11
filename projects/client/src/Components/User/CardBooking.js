@@ -80,6 +80,11 @@ function CardBooking (props) {
     let resultBulan = searchBulan(bulan)
     // console.log(resultBulan);
 
+    if(User?.Profile?.birthdate === null){
+        alert("You must enter your date of birth ")
+        history.push("/profile")
+    }
+
     const btnHandlerUpload = async () => {
         try {
             const formData = new FormData()
@@ -219,8 +224,6 @@ function CardBooking (props) {
                 </Text>
                 <Text fontWeight="regular" fontSize="14px" w="130px">
                     {/* Sun, {val.start_date} Nov 2022 (14:00-22:00) */}
-                    {/* {startDate?.split("T")[0]} */}
-
                     {startDate2[2]} {resultBulan} {startDate2[0]} (14:00-22:00)
                 </Text>
                 </Flex>
@@ -237,7 +240,6 @@ function CardBooking (props) {
                 </Text>
                 <Text fontWeight="regular" fontSize="14px" w="130px">
                     {/* Sun, {val.end_date} Nov 2022 (00:00-12:00) */}
-                    {/* {endDate?.split("T")[0]} */}
                     {endDate2[2]} {resultBulan} {endDate2[0]} (00:00-12:00)
                 </Text>
                 </Flex>

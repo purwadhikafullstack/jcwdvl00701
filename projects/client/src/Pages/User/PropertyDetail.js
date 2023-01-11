@@ -574,7 +574,7 @@ function PropertyDetail(props) {
                 w="100%"
                 variant="primary"
                 my={2}
-                onClick={btnHandlerReservation}
+                onClick={onOpen}
                 disabled={finalCountPrice ? false : true}
                 display={id === tenantData?.User?.id ? "none" : "inline-block"}
               >
