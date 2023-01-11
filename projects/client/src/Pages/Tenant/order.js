@@ -79,7 +79,11 @@ function Order() {
 
   const optionDropdown = () => {
     return dropdown.map((val) => {
-      return <option value={val.id}>{val.name}</option>;
+      return (
+        <option key={val.id} value={val.id}>
+          {val.name}
+        </option>
+      );
     });
   };
 

@@ -62,7 +62,11 @@ function EditProperty(props) {
 
   function renderCategory() {
     return category.map((val) => {
-      return <option value={val.id}>{val.location}</option>;
+      return (
+        <option key={val.id} value={val.id}>
+          {val.location}
+        </option>
+      );
     });
   }
 
