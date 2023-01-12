@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useHistory } from "react-router-dom";
+import React, {useEffect, useState, useRef, useCallback} from "react";
+import {useHistory} from "react-router-dom";
 import {
   Box,
   Button,
@@ -26,13 +26,16 @@ import {
   useDisclosure,
   Input,
   HStack,
-  useNumberInput,
+  FormControl,
+  useNumberInput, Select, FormLabel,
 } from "@chakra-ui/react";
 import Footer from "../../Components/Footer";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import axios, * as others from "axios";
+import {useSelector} from "react-redux";
+import ReactPaginate from "react-paginate";
 
 function useOnClickOutside(ref, handler) {
   useEffect(
@@ -83,7 +86,7 @@ function StepperInput(props) {
       <Button rounded="full" {...dec}>
         -
       </Button>
-      <Input style={{ width: "80px" }} textAlign="center" {...input} />
+      <Input style={{width: "80px"}} textAlign="center" {...input} />
       <Button rounded="full" {...inc}>
         +
       </Button>
@@ -92,10 +95,10 @@ function StepperInput(props) {
 }
 
 function SearchBox(props) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
 
   const toggleIsOpen = () => {
-    setIsOpen((current) => !current);
+    setIsSearchBarOpen((current) => !current);
   };
 
   const [isGuestInputOpen, setIsGuestInputOpen] = useState(false);
@@ -109,6 +112,10 @@ function SearchBox(props) {
 
   const ref = useRef();
   useOnClickOutside(ref, () => setIsGuestInputOpen(false));
+
+  const {isOpen, onOpen, onClose} = useDisclosure()
+  const [priceOrder, setPriceOrder] = useState(props.priceOrder)
+  const [nameOrder, setNameOrder] = useState(props.nameOrder)
 
   return (
     <Box backgroundColor="white">
@@ -128,9 +135,10 @@ function SearchBox(props) {
           </Box>
           <IconButton
             aria-label="toggle filters"
-            icon={<i className="fa-solid fa-filter" />}
+            icon={<i className="fa-solid fa-filter"/>}
             backgroundColor="gray.200"
             m={2}
+            onClick={onOpen}
           />
         </Flex>
       </Box>
@@ -142,7 +150,7 @@ function SearchBox(props) {
         top={0}
         zIndex={1}
         backgroundColor="blackAlpha.700"
-        display={isOpen ? "block" : "none"}
+        display={isSearchBarOpen ? "block" : "none"}
         onClick={toggleIsOpen}
       ></Box>
 
@@ -154,13 +162,10 @@ function SearchBox(props) {
         position="absolute"
         top={0}
         zIndex={2}
-        display={isOpen ? "block" : "none"}
+        display={isSearchBarOpen ? "block" : "none"}
       >
-        <Flex justify="space-between" align="center">
-          <Image src="/Assets/logoTuru.png" alt="turu" />
-          <Button m={2} leftIcon={<i className="fa-regular fa-circle-user" />}>
-            Login
-          </Button>
+        <Flex justify="space-between" align="start">
+          <Image src="/Assets/logoTuru.png" alt="turu"/>
         </Flex>
 
         <Flex direction="column">
@@ -212,20 +217,68 @@ function SearchBox(props) {
                 <Text fontWeight="bold">Visitors</Text>
                 <Text fontSize="sm">number of visitor</Text>
               </Box>
-              <StepperInput />
+              <StepperInput/>
             </Flex>
           </Box>
           <Box w="100%" backgroundColor="white" my={2}>
             <Button
               variant="primary"
               w="100%"
-              leftIcon={<i className="fa-solid fa-magnifying-glass" />}
+              leftIcon={<i className="fa-solid fa-magnifying-glass"/>}
             >
               Search Now
             </Button>
           </Box>
         </Flex>
       </Box>
+
+      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay/>
+        <ModalContent>
+          <ModalHeader>
+            <Text>Sort by</Text>
+            <ModalCloseButton/>
+          </ModalHeader>
+
+          <ModalBody>
+            <FormControl my={5}>
+              <FormLabel>Name</FormLabel>
+              <Select
+                onChange={(e) => setNameOrder(e.target.value)}
+                defaultValue={nameOrder}
+              >
+                <option value="ASC">A-Z</option>
+                <option value="DESC">Z-A</option>
+              </Select>
+            </FormControl>
+
+            <FormControl my={5}>
+              <FormLabel>Price</FormLabel>
+              <Select
+                onChange={(e) => setPriceOrder(e.target.value)}
+                defaultValue={priceOrder}
+              >
+                <option value="ASC">Low to High</option>
+                <option value="DESC">High to Low</option>
+              </Select>
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              onClick={() => {
+                props.setPriceOrder(priceOrder)
+                props.setNameOrder(nameOrder)
+                onClose()
+              }}
+              variant="primary"
+              w={'100%'}
+            >
+              Apply
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
@@ -239,21 +292,21 @@ function PropertyCard(props) {
 
   return (
     <Card
-      direction={{ base: "column", sm: "row" }}
+      direction={{base: "column", sm: "row"}}
       overflow="hidden"
       variant="outline"
       mb={4}
     >
       <Image
         objectFit="cover"
-        maxW={{ base: "100%", sm: "50%" }}
+        maxW={{base: "100%", sm: "50%"}}
         src={props.data.pic}
         alt={props.data.name}
       />
 
-      <Stack>
-        <CardBody style={{ color: "grey" }}>
-          <Heading size="md" style={{ color: "black" }}>
+      <Stack w={'100%'}>
+        <CardBody style={{color: "grey"}}>
+          <Heading size="md" style={{color: "black"}}>
             {props.data.name}
           </Heading>
 
@@ -261,54 +314,14 @@ function PropertyCard(props) {
             {props.data.address}
           </Text>
 
-          <div style={{ border: "1px dashed lightgrey" }}></div>
+          <div style={{border: "1px dashed lightgrey"}}></div>
 
           <Text py="2">{props.data.description}</Text>
         </CardBody>
 
         <CardFooter>
           <Stack w="100%">
-            <Center w="100%">
-              <Flex
-                justifyContent="space-between"
-                align="center"
-                maxW="85%"
-                w="100%"
-              >
-                <Stack mx={2}>
-                  <Center>
-                    <i className="fa-solid fa-wifi" />
-                  </Center>
-                  <Center>
-                    <Text>wifi</Text>
-                  </Center>
-                </Stack>
-                <Stack mx={2}>
-                  <Center>
-                    <i className="fa-solid fa-box-archive" />
-                  </Center>
-                  <Center>
-                    <Text>locker</Text>
-                  </Center>
-                </Stack>
-                <Stack mx={2}>
-                  <Center>
-                    <i className="fa-solid fa-utensils" />
-                  </Center>
-                  <Center>
-                    <Text>menu</Text>
-                  </Center>
-                </Stack>
-                <Stack mx={2}>
-                  <Center>
-                    <i className="fa-solid fa-couch" />
-                  </Center>
-                  <Center>
-                    <Text>sofa</Text>
-                  </Center>
-                </Stack>
-              </Flex>
-            </Center>
+
 
             <Button
               w="100%"
@@ -328,38 +341,81 @@ function PropertyCard(props) {
 }
 
 function PropertyList(props) {
+  const user = useSelector(state => state.user)
+
+  const [totalPage, setTotalPage] = useState(1)
+  const [page, setPage] = useState(0)
+
+  const [priceOrder, setPriceOrder] = useState('ASC')
+  const [nameOrder, setNameOrder] = useState('ASC')
+
   const [properties, setProperties] = useState([]);
+
+  const fetchProperties = useCallback(async () => {
+    const url = `${process.env.REACT_APP_API_BASE_URL}/property/search`
+    const params = {page, priceOrder, nameOrder}
+    const response = await axios.get(url, {params});
+
+    const results = []
+    response.data.result.properties.forEach(property => {
+      results.push({
+        pic: property.pic ? `${process.env.REACT_APP_API_BASE_URL}${property.pic}` : "/Assets/add_photo.png",
+        name: property.name,
+        address: property.Category.location,
+        description: property.description,
+        price: property.price
+      })
+    })
+    setProperties(results)
+    setTotalPage(response.data.result.totalPage)
+  }, [setProperties, page, user.id, priceOrder, nameOrder])
+
   useEffect(() => {
-    const dummy = {
-      pic:
-        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      name: "Living room Sofa",
-      description:
-        "This sofa is perfect for modern tropical spaces, baroque inspired spaces, earthy toned spaces and for people who love a chic design with a sprinkle of vintage design.",
-      address:
-        "Jl. Dr. Saharjo No.104, RT.2/RW.7, Menteng Atas, Kec. Tebet, Kota Jakarta Selatan",
-      price: "450.000",
-    };
-
-    setProperties([dummy, dummy, dummy, dummy, dummy, dummy, dummy, dummy]);
-
-    (async () => {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/greetings`
-      );
-      console.log(data?.message || "error");
-    })();
-  }, []);
+    if (user.id) fetchProperties()
+  }, [fetchProperties, user]);
 
   return (
     <div>
-      <SearchBox />
+      <SearchBox
+        fetchProperties={fetchProperties}
+        nameOrder={nameOrder} setNameOrder={setNameOrder}
+        priceOrder={priceOrder} setPriceOrder={setPriceOrder}
+      />
       <Container maxW="container.lg">
         {properties.map((property) => (
-          <PropertyCard data={property} />
+          <PropertyCard data={property}/>
         ))}
+
+        <ReactPaginate
+          previousLabel={
+            <i
+              className="fa-solid fa-chevron-left"
+              style={{fontSize: 18}}
+            ></i>
+          }
+          nextLabel={
+            <i
+              className="fa-solid fa-chevron-right"
+              style={{
+                fontSize: 18
+              }}
+            ></i>
+          }
+          pageCount={totalPage}
+          onPageChange={(page) => setPage(page.selected)}
+          activeClassName={"item active "}
+          breakClassName={"item break-me "}
+          breakLabel={"..."}
+          containerClassName={"pagination"}
+          disabledClassName={"disabled-page"}
+          marginPagesDisplayed={2}
+          nextClassName={"item next "}
+          pageClassName={"item pagination-page "}
+          pageRangeDisplayed={2}
+          previousClassName={"item previous"}
+        />
       </Container>
-      <Footer />
+      <Footer/>
     </div>
   );
 }

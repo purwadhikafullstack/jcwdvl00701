@@ -36,6 +36,12 @@ module.exports = (sequelize) => {
       categoryId: {
         type: DataTypes.INTEGER,
       },
+      price: {
+        type: DataTypes.VIRTUAL,
+        get: function () {
+          return this.Rooms?.reduce((lowestPrice, room) => room.activePrice < lowestPrice ? room.activePrice : lowestPrice, Infinity)
+        }
+      },
     },
     {
       sequelize,

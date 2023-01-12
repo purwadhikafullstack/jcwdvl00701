@@ -36,6 +36,29 @@ module.exports = (sequelize) => {
       type : DataTypes.INTEGER,
       allowNull : false,
     },
+    isActive : {
+      type: DataTypes.VIRTUAL,
+      get() {
+        return this.startDate <= new Date() && this.endDate >= new Date()
+      },
+      set() {
+        throw new Error('Cannot set derived attribute')
+      }
+    },
+    price : {
+      type: DataTypes.VIRTUAL,
+      get() {
+        const room = this.Room
+        if (room) {
+          return this.type === 'nominal' ? this.Room.get().defaultPrice - this.discount : this.Room.get().defaultPrice * (100 + this.discount) / 100
+        } else {
+          return 0
+        }
+      },
+      set() {
+        throw new Error('Cannot set derived attribute')
+      }
+    }
   }, {
     sequelize,
     modelName: 'SpecialPrice',
