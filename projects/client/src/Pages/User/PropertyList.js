@@ -197,28 +197,11 @@ function SearchBox(props) {
         zIndex={2}
         display={isSearchBarOpen ? "block" : "none"}
       >
-        <Flex justify="space-between" align="start">
+        <Flex justify="space-between" align="start" mb={3}>
           <Image src="/Assets/logoTuru.png" alt="turu"/>
         </Flex>
 
         <Flex direction="column">
-          <Flex w="100%" backgroundColor="white" py={3} px={6} my={2}>
-            <Box w="50%">
-              <Text color="gray.500">Check In</Text>
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-              />
-            </Box>
-            <Box w="50%">
-              <Text color="gray.500">Check Out</Text>
-              <DatePicker
-                selected={endDate}
-                onChange={(date) => setEndDate(date)}
-              />
-            </Box>
-          </Flex>
-
           <Box
             w="100%"
             backgroundColor="white"
@@ -227,7 +210,7 @@ function SearchBox(props) {
             my={2}
             onClick={toggleTsGuestInputOpen}
           >
-            <Text color="gray.500"  mb={3}>Guests</Text>
+            <Text color="gray.500" mb={3}>Guests</Text>
 
             <Text fontWeight="bold" display={!isGuestInputOpen ? "block" : "none"}>
               {visitor} Visitors
@@ -238,8 +221,10 @@ function SearchBox(props) {
                 <Text fontWeight="bold">Visitors</Text>
                 <Text fontSize="sm">number of visitor</Text>
               </Box>
-              <Box onClick={(e)=>{e.stopPropagation()}}>
-                <StepperInput state={visitor} setState={setVisitor} />
+              <Box onClick={(e) => {
+                e.stopPropagation()
+              }}>
+                <StepperInput state={visitor} setState={setVisitor}/>
               </Box>
             </Flex>
           </Box>
@@ -252,18 +237,22 @@ function SearchBox(props) {
             my={2}
             onClick={toggleTsLocationInputOpen}
           >
-            <Text color="gray.500"  mb={3}>Location</Text>
+            <Text color="gray.500" mb={3}>Location</Text>
 
             <Text fontWeight="bold" display={!isLocationInputOpen ? "block" : "none"}>
               {selectedLocations.map(loc => loc.label).join(', ') || 'No Locations Selected'}
             </Text>
 
             <Flex justify="space-between" mb={2} display={isLocationInputOpen ? "flex" : "none"}>
-              <Box onClick={(e)=>{e.stopPropagation()}} w={'100%'}>
+              <Box onClick={(e) => {
+                e.stopPropagation()
+              }} w={'100%'}>
                 <Select2
                   isMulti
                   name={'locations'}
-                  options={props.locations.map(location => {return {value: location.id, label: location.location}})}
+                  options={props.locations.map(location => {
+                    return {value: location.id, label: location.location}
+                  })}
                   onChange={choice => {
                     setSelectedLocations(choice)
                   }}
@@ -281,15 +270,18 @@ function SearchBox(props) {
             my={2}
             onClick={toggleTsPropNameInputOpen}
           >
-            <Text color="gray.500"  mb={3}>Property Name</Text>
+            <Text color="gray.500" mb={3}>Property Name</Text>
 
             <Text fontWeight="bold" display={!isPropNameInputOpen ? "block" : "none"}>
               {propertyNameQuery || 'Insert Property Name Here'}
             </Text>
 
             <Flex justify="space-between" mb={2} display={isPropNameInputOpen ? "flex" : "none"}>
-              <Box onClick={(e)=>{e.stopPropagation()}} w={'100%'}>
-                <Input type={"text"} onChange={(e) => setPropertyNameQuery(e.target.value)} defaultValue={propertyNameQuery}/>
+              <Box onClick={(e) => {
+                e.stopPropagation()
+              }} w={'100%'}>
+                <Input type={"text"} onChange={(e) => setPropertyNameQuery(e.target.value)}
+                       defaultValue={propertyNameQuery}/>
               </Box>
             </Flex>
           </Box>
@@ -370,6 +362,7 @@ function PropertyCard(props) {
     history.push("/detail/foo");
   };
 
+  const isDiscount = props.data.defaultPrice !== props.data.price
   return (
     <Card
       direction={{base: "column", sm: "row"}}
@@ -411,7 +404,15 @@ function PropertyCard(props) {
               Check Availability
             </Button>
             <Text as="b">
-              <Center>from Rp.{props.data.price},00/per night</Center>
+
+              {
+                isDiscount
+                  ? <>
+                    <Center as={'s'} fontSize={'sm'} color={"gray"}>from Rp.{props.data.defaultPrice},00/per night</Center>
+                    <Center color={'red'}>from Rp.{props.data.price},00/per night</Center>
+                  </>
+                  : <Center>from Rp.{props.data.price},00/per night</Center>
+              }
             </Text>
           </Stack>
         </CardFooter>
@@ -421,7 +422,7 @@ function PropertyCard(props) {
 }
 
 function PropertyList(props) {
-  const user = useSelector(state => state.user)
+  // const user = useSelector(state => state.user)
 
   const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
@@ -448,16 +449,17 @@ function PropertyList(props) {
         name: property.name,
         address: property.Category.location,
         description: property.description,
-        price: property.price
+        price: property.price,
+        defaultPrice: property.defaultPrice
       })
     })
     setProperties(results)
     setTotalPage(response.data.result.totalPage)
-  }, [setProperties, page, user.id, priceOrder, nameOrder, visitor, selectedLocations, propertyNameQuery])
+  }, [setProperties, page, priceOrder, nameOrder, visitor, selectedLocations, propertyNameQuery])
 
   useEffect(() => {
-    if (user.id) fetchProperties()
-  }, [fetchProperties, user]);
+    fetchProperties()
+  }, [fetchProperties]);
 
   const [locations, setLocations] = useState([]);
   const fetchLocations = useCallback(async () => {
@@ -467,8 +469,8 @@ function PropertyList(props) {
   }, [setLocations])
 
   useEffect(() => {
-    if (user.id) fetchLocations()
-  }, [fetchLocations, user])
+    fetchLocations()
+  }, [fetchLocations])
 
   return (
     <div>
