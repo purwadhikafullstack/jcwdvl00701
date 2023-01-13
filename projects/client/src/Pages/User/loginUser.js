@@ -86,10 +86,10 @@ function LoginUser() {
             }
         })
             .then((res) => {
-                dispatch({
-                    type: auth_types.Login,
-                    payload: res.data.result
-                })
+                // dispatch({
+                //     type: auth_types.Login,
+                //     payload: res.data.result
+                // })
                 history.push("/")
             })
             .catch((err) => {

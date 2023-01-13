@@ -31,7 +31,7 @@ function Booking() {
   const [dataProfile, setDataProfile] = useState({});
   const [birthdate, setBirthdate] = useState("");
   const [err, setErr] = useState("")
-  // console.log(birthdate);
+  console.log(birthdate);
   let history = useHistory();
 
   useEffect(() => {
@@ -101,16 +101,19 @@ function Booking() {
         return (bulanNow += bln[i]);
       }
     }
+  }
     let resultBulan = searchBulan(bulan)
     console.log(resultBulan);
 
-    if(birthdate){
+      // var birthDate2 = birthdate.split("T")
+    if(birthdate !== null){
       var birthDate2 = birthdate.split("T")
     } else {
       alert("You must enter your date of birth ")
       // setErr("You must enter your date of birth ")
+      setTimeout(() => {
         history.push("/profile")
-
+      }, 3000)
     }
 
   const btnHandlerPayment = (id) => {
@@ -144,6 +147,17 @@ function Booking() {
         mb={{ ss: "60px", sm: "60px", sl: "0px" }}
         mt={{ ss: "0px", sm: "0px", sl: "80px" }}
       >
+        {
+          err ?
+          (
+            <Alert status="error" color="red" text="center">
+                <i className="fa-solid fa-circle-exclamation"></i>
+                <Text ms="10px">{err}</Text>
+            </Alert>
+          )
+          :
+          null
+        }
         <Flex
           display={{ ss: "flex", sm: "flex", sl: "none" }}
           px="20px"
@@ -365,6 +379,6 @@ function Booking() {
     </Layout>
   );
 }
-}
+
 
 export default Booking;

@@ -207,8 +207,11 @@ module.exports = {
   // get property semua utk dropdown
   getPropertyDropdown: async (req, res) => {
     try {
+      const tenantId = req.params.tenantId
       //dibuat khsus utk dpt dropdown
-      const dropdown = await Property.findAll();
+      const dropdown = await Property.findAll({
+        where : {tenantId}
+      });
       res.status(200).send({
         dropdown,
       });

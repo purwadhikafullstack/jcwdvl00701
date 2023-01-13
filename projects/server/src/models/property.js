@@ -36,11 +36,15 @@ module.exports = (sequelize) => {
       categoryId: {
         type: DataTypes.INTEGER,
       },
+      deletedAt : {
+        type : DataTypes.DATE
+      }
     },
     {
+      paranoid : true,
       sequelize,
       modelName: "Property",
-    }
+    },
   );
   return Property;
 };

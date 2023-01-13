@@ -38,11 +38,15 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      deletedAt : {
+        type : DataTypes.DATE
+      }
     },
     {
+      paranoid : true,
       sequelize,
       modelName: "Room",
-    }
+    },
   );
   return Room;
 };

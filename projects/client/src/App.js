@@ -65,7 +65,6 @@ function App() {
     //pengecekan user ada yg login atau tidak
     onAuthStateChanged(auth, (user) => {
       // console.log("onAuthStateChanged :", user);
-
       if (user) {
         // console.log(user);
         setUserLogin(user);
@@ -73,7 +72,7 @@ function App() {
         setFirebaseProvider(user.providerData[0].providerId);
         setEmailVerified(user.emailVerified);
         console.log("ada yg login");
-        history.push("/");
+        // history.push("/");
         // kondisi jika sudah terverifikasi
         if (user.emailVerified) {
           console.log("your account has been verified");
@@ -81,7 +80,7 @@ function App() {
           // kirim email jika belum terverfikasi
           sendEmailVerification(user)
             .then(() => {
-              alert("check your email verification");
+              console.log("check your email verification");
             })
             .catch((err) => {
               console.error(err);
@@ -92,7 +91,7 @@ function App() {
         console.log("tidak ada yg login");
         // jika tidak ada akan di logout
         auth.signOut();
-        history.push("/login");
+        // history.push("/login");
       }
     });
     //get data dan dimasukan ke redux
@@ -149,7 +148,7 @@ function App() {
         });
     };
     getDataGlobal();
-  }, [userId]);
+  }, [userId, emailVerified]);
 
   return isLoading ? (
     <Loading />

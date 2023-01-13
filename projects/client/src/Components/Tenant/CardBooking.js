@@ -66,6 +66,7 @@ function CardBooking(props) {
         if(status == 3){
           axios.post(`${process.env.REACT_APP_API_BASE_URL}/report/email-order`, {
             property : props.name,
+            
             room : props.roomName,
             checkIn : start[0],
             checkOut : end[0],
@@ -75,6 +76,9 @@ function CardBooking(props) {
             email : props.email,
             address : props.address,
             rules : props.rules
+          })
+          .catch((err) => {
+            console.error(err)
           })
         }
         

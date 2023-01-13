@@ -44,6 +44,7 @@ function Payment() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   let history = useHistory();
   const [loading, setLoading] = useState(true);
+  console.log(dataTenant);
 
   const handleFile = (event) => {
     if (event.target.files[0].size / 1024 > 1024) {
@@ -113,7 +114,7 @@ function Payment() {
 
         // console.log(response?.data?.result)
         setDataPayment(response?.data?.result);
-        setDataTenant(response?.data?.result.User.Tenant);
+        setDataTenant(response?.data?.result.Room?.Property?.Tenant);
         setDataProperty(response?.data?.result.Room.Property);
         setStartDate(response?.data?.result.startDate);
         setEndDate(response?.data?.result.endDate);
@@ -359,7 +360,7 @@ function Payment() {
             <Button
               onClick={btnHandlerUpload}
               borderRadius={0}
-              colorScheme="red"
+              colorScheme="green"
               mr={3}
             >
               pay

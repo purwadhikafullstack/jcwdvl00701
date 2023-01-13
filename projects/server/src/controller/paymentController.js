@@ -13,26 +13,26 @@ module.exports = {
                 include : [
                     {
                         model : User, 
-                        attributes : ["id"],
-                        include : [
-                            {
-                                model : Tenant,
-                                attributes : ["id" , "name" , "bankAccountNumber", "bankId"],
-                                include : [
-                                    {
-                                        model : Bank,
-                                        attributes : ["name"]
-                                    }
-                                ]
-                            }
-                        ]
+                        attributes : ["id"]
                     },
                     {
                         model : Room,
                         include : [
                             {
                                 model : Property,
-                                attributes : ["name", "pic"]
+                                attributes : ["name", "pic"],
+                                include : [
+                                    {
+                                        model : Tenant,
+                                        attributes : ["id" , "name" , "bankAccountNumber", "bankId"],
+                                        include : [
+                                            {
+                                                model : Bank,
+                                                attributes : ["name"]
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         ]
                     }

@@ -210,21 +210,6 @@ function BookingHistory() {
             randomNumber={setRandomNumber}
           />
         );
-      } else if (val.status === 2) {
-        return (
-          <CardBooking
-            id={val.id}
-            startDate={val?.startDate}
-            endDate={val?.endDate}
-            status={val?.status}
-            guestCount={val?.guestCount}
-            userId={val?.userId}
-            roomId={val?.roomId}
-            Room={val?.Room}
-            User={val?.User}
-            randomNumber={setRandomNumber}
-          />
-        );
       }
     });
   }

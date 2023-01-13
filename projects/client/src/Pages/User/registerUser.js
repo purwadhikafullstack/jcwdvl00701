@@ -72,14 +72,8 @@ function RegisterUser() {
         }
         console.log(payload);
         const response = await axios.post(registerUrl, payload)
-        console.log(response.data);
-
-        dispatch({
-            type: auth_types.Register,
-            payload: response.data.result
-        })
-
         history.push("/")
+        console.log(await response.data);
     }
 
     const handleWithGoogle = async () => {

@@ -36,7 +36,10 @@ function NavbarMobileTenant() {
   const pathLocation = location.split("/");
   const history = useHistory();
   const auth = authFirebase;
-
+  const auth2 = getAuth()
+  const [verifikasi , setVerifikasi] = useState(false)
+  const [verifikasi2 , setVerifikasi2] = useState(true)
+  console.log(verifikasi2);
   const btnRef = React.useRef();
   const {
     isOpen: isDestopOpen,
@@ -48,13 +51,26 @@ function NavbarMobileTenant() {
     onOpen: onMobileOpen,
     onClose: onMobileClose,
   } = useDisclosure();
-  const { id, ProfilePic, ProfileName, firebaseProviderId } = useSelector(
+  const { id, ProfilePic, ProfileName, firebaseProviderId, emailVerified } = useSelector(
     (state) => state.user
   );
 
+  useEffect(() => {
+    onAuthStateChanged(auth2 , (user) => {
+      if(user) {
+        setVerifikasi(user.emailVerified)
+        if(!verifikasi){
+          setVerifikasi2(false)
+        } else {
+          setVerifikasi2(true)
+        }
+      }
+    })
+
+  }, [verifikasi , verifikasi2])
   const logout = () => {
     signOut(auth)
-      .then(() => alert("signed out"))
+      .then(() => console.log("signed out"))
       .catch((error) => alert(error));
     history.push("/login");
   };
@@ -185,7 +201,7 @@ function NavbarMobileTenant() {
                     _hover={{ bg: "white" }}
                     onClick={() => {
                       signOut(auth)
-                        .then(() => alert("signed out"))
+                        .then(() => console.log("signed out"))
                         .catch((error) => alert(error));
                       history.push("/tenant/login");
                     }}
@@ -299,6 +315,19 @@ function NavbarMobileTenant() {
               width="58px"
               height="58px"
             />
+            {
+              verifikasi ?
+              null
+              :
+              <Flex justifyContent={"flex-start"} my="auto" ms={"10px"}>
+                {
+                  verifikasi2 ?
+                  null
+                  :
+                  <Text>Your Email not verified, please check your Email </Text>
+                }
+              </Flex>
+            }
             {id ? (
               <Flex w="100%" mx="auto" justifyContent="space-between">
                 <Spacer />
@@ -311,13 +340,19 @@ function NavbarMobileTenant() {
                   </Text>
                   <Menu>
                     {id ? (
-                      <MenuButton fontWeight="bold" fontSize="18px" my="auto">
+                      <Box>
+                      <i class="fa-solid fa-caret-down"></i>
+                      <MenuButton fontWeight="bold" fontSize="18px" my="auto" ms={"8px"}>
                         {ProfileName}
                       </MenuButton>
+                      </Box>
                     ) : (
-                      <MenuButton fontWeight="bold" fontSize="18px" my="auto">
+                      <Box>
+                      <i class="fa-solid fa-caret-down"></i>
+                      <MenuButton fontWeight="bold" fontSize="18px" my="auto" ms={"3px"}>
                         Account
                       </MenuButton>
+                      </Box>
                     )}
                     <MenuList>
                       <MenuItem onClick={() => history.push("/profile")}>

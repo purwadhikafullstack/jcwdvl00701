@@ -30,11 +30,16 @@ import Footer from "../../Components/Footer";
 
 function CompleteFormTenant() {
 
-    const {id, UserRoles} = useSelector( state => state.user)
+    const {id, UserRoles, emailVerified} = useSelector( state => state.user)
     const [selectedFile, setSelectedFile] = useState(null)
     const inputFileRef = useRef(null)
     const [fileSizeMsg, setFileSizeMsg] = useState("");
     let history = useHistory()
+
+    if(!emailVerified){
+        alert("verified your account before to be Tenant")
+        history.push("/")
+    }
 
     // console.log(UserRoles);
     if(UserRoles.includes(2)){

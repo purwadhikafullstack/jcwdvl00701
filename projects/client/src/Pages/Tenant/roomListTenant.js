@@ -43,7 +43,7 @@ function RoomListTenant() {
   const [propertyId, setPropertyId] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [randomNumber, setRandomNumber] = useState(0);
-
+  console.log(rows);
   const {TenantId, firebaseProviderId} = useSelector(state => state.user)
   // console.log(TenantId);
 
@@ -78,6 +78,7 @@ function RoomListTenant() {
     const fetchProperty = () => {
         axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/${TenantId}?searchQuery=${keyWord}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`)
         .then((res) => {
+          console.log(res.data);
           setRoom(res.data.roomProperty.rows);
           setPage(res.data.page);
           setRows(res.data.totalRows);
@@ -113,7 +114,7 @@ function RoomListTenant() {
 
   const fetchDataDropdown = () => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
+      .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`)
       .then((res) => {
         // console.log(res.data.dropdown);
         setDropdown(res.data.dropdown);
@@ -171,7 +172,7 @@ function RoomListTenant() {
               fontWeight="bold"
               display={{ ss: "none", sl: "flex" }}
             >
-              {room.length > 1 ? `${room.length} Rooms` : `${room.length} Room`}
+              {rows > 1 ? `${rows} Rooms` : `${rows} Room`}
             </Text>
           </Center>
         </Container>
@@ -182,7 +183,7 @@ function RoomListTenant() {
               fontWeight="bold"
               display={{ ss: "flex", sl: "none" }}
             >
-              {room.length > 1 ? `${room.length} Rooms` : `${room.length} Room`}
+              {rows > 1 ? `${rows} Rooms` : `${rows} Room`}
             </Text>
             <Link to="/tenant/add-room">
               <Box
