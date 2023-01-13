@@ -85,6 +85,7 @@ function Order() {
 
   function renderOrder() {
     return order?.map((val, idx) => {
+      // console.log(val);
       return (
         <Box>
           <CardBooking
@@ -100,6 +101,9 @@ function Order() {
             guest_count={val.guestCount}
             price={val.finalPrice}
             paymentProof={val.Transaction?.paymentProof}
+            address = {val.Room?.Property?.description}
+            rules = {val.Room?.Property?.rules}
+            email = {val.User?.email}
             randomNumber={setRandomNumber}
           />
         </Box>

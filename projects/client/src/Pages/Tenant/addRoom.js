@@ -33,6 +33,7 @@ function AddRoom() {
   // state
   const [dropdown, setDropdown] = useState([])
   const history = useHistory()
+  const [information, setInformation] = useState("")
 
   useEffect(() => {
     const fetchDataDropdown = () => {
@@ -90,8 +91,11 @@ function AddRoom() {
         propertyId : parseInt(property)
       })
       .then((res) => {
-        alert(res.data.message)
-        history.push("/tenant/room")
+        // alert(res.data.message)
+        setInformation(res.data.message)
+        setTimeout(() => {
+          history.push("/tenant/room")
+        }, 3000)
       })
       .catch((err) => {
         console.error(err)
@@ -102,6 +106,15 @@ function AddRoom() {
     <Layout>
       <Box mt="80px">
         <Container mt="100px" maxW="1140px">
+          {
+            information ? 
+            (
+              <Alert status="info" color="green" text="center">
+                <i className="fa-solid fa-check"></i>
+                <Text ms="10px">{information}</Text>
+              </Alert>
+            ) : null
+          }
           <Flex mb="10px" w="100%" mx="auto">
             <Link to="/tenant/room">
               <Button

@@ -106,7 +106,7 @@ function App() {
           },
         })
         .then((res) => {
-          console.log("data get1 :", res.data.globalState);
+          // console.log("data get1 :", res.data.globalState);
           // console.log("data get2 :", res.data.results.UserRoles);
           // console.log("data get3 :", res.data.results.Tenant.id);
           if (res.data.globalState === null) {
@@ -124,7 +124,7 @@ function App() {
             if (res.data.globalState.Profile === null) {
               res.data.globalState.Profile = 0;
             }
-            console.log("data get2 :", res.data.globalState);
+            // console.log("data get2 :", res.data.globalState);
             dispatch({
               type: auth_types.Redux,
               payload: {
