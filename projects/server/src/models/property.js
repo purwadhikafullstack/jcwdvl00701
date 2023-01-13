@@ -42,6 +42,12 @@ module.exports = (sequelize) => {
           return this.Rooms?.reduce((lowestPrice, room) => room.activePrice < lowestPrice ? room.activePrice : lowestPrice, Infinity)
         }
       },
+      maxCapacity: {
+        type: DataTypes.VIRTUAL,
+        get: function () {
+          return this.Rooms?.reduce((highestCapacity, room) => room.capacity > highestCapacity ? room.capacity : highestCapacity, -Infinity)
+        }
+      }
     },
     {
       sequelize,

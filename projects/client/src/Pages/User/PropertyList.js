@@ -29,6 +29,12 @@ import {
   FormControl,
   useNumberInput, Select, FormLabel,
 } from "@chakra-ui/react";
+import {
+  AsyncCreatableSelect,
+  AsyncSelect,
+  CreatableSelect,
+  Select as Select2,
+} from "chakra-react-select";
 import Footer from "../../Components/Footer";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -74,19 +80,23 @@ function StepperInput(props) {
     getDecrementButtonProps,
   } = useNumberInput({
     min: 0,
-    defaultValue: 0,
+    defaultValue: props.state,
   });
 
   const inc = getIncrementButtonProps();
   const dec = getDecrementButtonProps();
   const input = getInputProps();
 
+  useEffect(() => {
+    props.setState(input.value)
+  }, [input.value])
+
   return (
     <HStack>
       <Button rounded="full" {...dec}>
         -
       </Button>
-      <Input style={{width: "80px"}} textAlign="center" {...input} />
+      <Input style={{width: "80px"}} textAlign="center" {...input}/>
       <Button rounded="full" {...inc}>
         +
       </Button>
@@ -102,20 +112,43 @@ function SearchBox(props) {
   };
 
   const [isGuestInputOpen, setIsGuestInputOpen] = useState(false);
-
   const toggleTsGuestInputOpen = () => {
     setIsGuestInputOpen((current) => !current);
+    setIsLocationInputOpen(false);
+    setIsPropNameInputOpen(false);
+  };
+
+  const [isLocationInputOpen, setIsLocationInputOpen] = useState(false);
+  const toggleTsLocationInputOpen = () => {
+    setIsGuestInputOpen(false);
+    setIsLocationInputOpen((current) => !current);
+    setIsPropNameInputOpen(false);
+  };
+
+  const [isPropNameInputOpen, setIsPropNameInputOpen] = useState(false);
+  const toggleTsPropNameInputOpen = () => {
+    setIsGuestInputOpen(false);
+    setIsLocationInputOpen(false);
+    setIsPropNameInputOpen((current) => !current);
   };
 
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
   const ref = useRef();
-  useOnClickOutside(ref, () => setIsGuestInputOpen(false));
+  useOnClickOutside(ref, () => {
+    setIsGuestInputOpen(false)
+    setIsLocationInputOpen(false)
+    setIsPropNameInputOpen(false);
+  });
 
   const {isOpen, onOpen, onClose} = useDisclosure()
   const [priceOrder, setPriceOrder] = useState(props.priceOrder)
   const [nameOrder, setNameOrder] = useState(props.nameOrder)
+
+  const [visitor, setVisitor] = useState(props.visitor)
+  const [selectedLocations, setSelectedLocations] = useState(props.selectedLocations)
+  const [propertyNameQuery, setPropertyNameQuery] = useState(props.propertyNameQuery)
 
   return (
     <Box backgroundColor="white">
@@ -192,11 +225,23 @@ function SearchBox(props) {
             py={3}
             px={6}
             my={2}
-            display={!isGuestInputOpen ? "block" : "none"}
             onClick={toggleTsGuestInputOpen}
           >
-            <Text color="gray.500">Guests</Text>
-            <Text fontWeight="bold">2 Visitors</Text>
+            <Text color="gray.500"  mb={3}>Guests</Text>
+
+            <Text fontWeight="bold" display={!isGuestInputOpen ? "block" : "none"}>
+              {visitor} Visitors
+            </Text>
+
+            <Flex justify="space-between" mb={2} display={isGuestInputOpen ? "flex" : "none"}>
+              <Box>
+                <Text fontWeight="bold">Visitors</Text>
+                <Text fontSize="sm">number of visitor</Text>
+              </Box>
+              <Box onClick={(e)=>{e.stopPropagation()}}>
+                <StepperInput state={visitor} setState={setVisitor} />
+              </Box>
+            </Flex>
           </Box>
 
           <Box
@@ -205,26 +250,61 @@ function SearchBox(props) {
             py={3}
             px={6}
             my={2}
-            display={isGuestInputOpen ? "block" : "none"}
-            ref={ref}
+            onClick={toggleTsLocationInputOpen}
           >
-            <Text color="gray.500" mb={3}>
-              Guests
+            <Text color="gray.500"  mb={3}>Location</Text>
+
+            <Text fontWeight="bold" display={!isLocationInputOpen ? "block" : "none"}>
+              {selectedLocations.map(loc => loc.label).join(', ') || 'No Locations Selected'}
             </Text>
 
-            <Flex justify="space-between" mb={2}>
-              <Box>
-                <Text fontWeight="bold">Visitors</Text>
-                <Text fontSize="sm">number of visitor</Text>
+            <Flex justify="space-between" mb={2} display={isLocationInputOpen ? "flex" : "none"}>
+              <Box onClick={(e)=>{e.stopPropagation()}} w={'100%'}>
+                <Select2
+                  isMulti
+                  name={'locations'}
+                  options={props.locations.map(location => {return {value: location.id, label: location.location}})}
+                  onChange={choice => {
+                    setSelectedLocations(choice)
+                  }}
+                  defaultValue={selectedLocations}
+                />
               </Box>
-              <StepperInput/>
             </Flex>
           </Box>
+
+          <Box
+            w="100%"
+            backgroundColor="white"
+            py={3}
+            px={6}
+            my={2}
+            onClick={toggleTsPropNameInputOpen}
+          >
+            <Text color="gray.500"  mb={3}>Property Name</Text>
+
+            <Text fontWeight="bold" display={!isPropNameInputOpen ? "block" : "none"}>
+              {propertyNameQuery || 'Insert Property Name Here'}
+            </Text>
+
+            <Flex justify="space-between" mb={2} display={isPropNameInputOpen ? "flex" : "none"}>
+              <Box onClick={(e)=>{e.stopPropagation()}} w={'100%'}>
+                <Input type={"text"} onChange={(e) => setPropertyNameQuery(e.target.value)} defaultValue={propertyNameQuery}/>
+              </Box>
+            </Flex>
+          </Box>
+
           <Box w="100%" backgroundColor="white" my={2}>
             <Button
               variant="primary"
               w="100%"
               leftIcon={<i className="fa-solid fa-magnifying-glass"/>}
+              onClick={() => {
+                props.setVisitor(visitor)
+                props.setSelectedLocations(selectedLocations)
+                props.setPropertyNameQuery(propertyNameQuery)
+                toggleIsOpen()
+              }}
             >
               Search Now
             </Button>
@@ -232,7 +312,7 @@ function SearchBox(props) {
         </Flex>
       </Box>
 
-      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+      <Modal closeOnOverlayClick={true} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay/>
         <ModalContent>
           <ModalHeader>
@@ -348,17 +428,22 @@ function PropertyList(props) {
 
   const [priceOrder, setPriceOrder] = useState('ASC')
   const [nameOrder, setNameOrder] = useState('ASC')
+  const [visitor, setVisitor] = useState(1)
+  const [selectedLocations, setSelectedLocations] = useState([])
+  const [propertyNameQuery, setPropertyNameQuery] = useState('')
 
   const [properties, setProperties] = useState([]);
 
   const fetchProperties = useCallback(async () => {
     const url = `${process.env.REACT_APP_API_BASE_URL}/property/search`
-    const params = {page, priceOrder, nameOrder}
+    const propLocation = selectedLocations.map(loc => loc.value)
+    const params = {page, priceOrder, nameOrder, visitor, propLocation, propName: propertyNameQuery}
     const response = await axios.get(url, {params});
 
     const results = []
     response.data.result.properties.forEach(property => {
       results.push({
+        id: property.id,
         pic: property.pic ? `${process.env.REACT_APP_API_BASE_URL}${property.pic}` : "/Assets/add_photo.png",
         name: property.name,
         address: property.Category.location,
@@ -368,22 +453,36 @@ function PropertyList(props) {
     })
     setProperties(results)
     setTotalPage(response.data.result.totalPage)
-  }, [setProperties, page, user.id, priceOrder, nameOrder])
+  }, [setProperties, page, user.id, priceOrder, nameOrder, visitor, selectedLocations, propertyNameQuery])
 
   useEffect(() => {
     if (user.id) fetchProperties()
   }, [fetchProperties, user]);
 
+  const [locations, setLocations] = useState([]);
+  const fetchLocations = useCallback(async () => {
+    const url = `${process.env.REACT_APP_API_BASE_URL}/property/seeders`
+    const response = await axios.get(url);
+    setLocations(response.data.results)
+  }, [setLocations])
+
+  useEffect(() => {
+    if (user.id) fetchLocations()
+  }, [fetchLocations, user])
+
   return (
     <div>
       <SearchBox
-        fetchProperties={fetchProperties}
+        fetchProperties={fetchProperties} locations={locations}
         nameOrder={nameOrder} setNameOrder={setNameOrder}
         priceOrder={priceOrder} setPriceOrder={setPriceOrder}
+        visitor={visitor} setVisitor={setVisitor}
+        selectedLocations={selectedLocations} setSelectedLocations={setSelectedLocations}
+        propertyNameQuery={propertyNameQuery} setPropertyNameQuery={setPropertyNameQuery}
       />
       <Container maxW="container.lg">
         {properties.map((property) => (
-          <PropertyCard data={property}/>
+          <PropertyCard key={`prop-${property.id}`} data={property}/>
         ))}
 
         <ReactPaginate

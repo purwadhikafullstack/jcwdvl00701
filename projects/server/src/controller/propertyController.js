@@ -111,6 +111,7 @@ module.exports = {
   getSearchResult: async (req, res) => {
     return await wrapper(req, res, async () => {
       const {priceOrder, nameOrder, propLocation, propName} = req.query
+      const propCapacity = req.query.visitor || 1
 
       const ITEM_PER_PAGE = 2
 
@@ -141,6 +142,8 @@ module.exports = {
         ],
         where: whereConditions
       })
+
+      result = result.filter(property => property.maxCapacity >= parseInt(propCapacity))
 
       const priceSortMultiplier = priceOrder === 'DESC' ? -1 : 1
       const nameSortMultiplier = nameOrder === 'DESC' ? -1 : 1
