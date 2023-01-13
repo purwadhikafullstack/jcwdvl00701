@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef, useCallback} from "react";
-import {useHistory} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import {
   Box,
   Button,
@@ -423,22 +423,27 @@ function PropertyCard(props) {
 
 function PropertyList(props) {
   // const user = useSelector(state => state.user)
+  const history = useHistory()
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  console.log(params)
 
   const [totalPage, setTotalPage] = useState(1)
-  const [page, setPage] = useState(0)
+  const [page, setPage] = useState(parseInt(params.get('page')) || 0)
 
-  const [priceOrder, setPriceOrder] = useState('ASC')
-  const [nameOrder, setNameOrder] = useState('ASC')
-  const [visitor, setVisitor] = useState(1)
-  const [selectedLocations, setSelectedLocations] = useState([])
-  const [propertyNameQuery, setPropertyNameQuery] = useState('')
+  const [priceOrder, setPriceOrder] = useState(params.get('priceOrder') || 'ASC')
+  const [nameOrder, setNameOrder] = useState(params.get('nameOrder') || 'ASC')
+  const [visitor, setVisitor] = useState(params.get('visitor') || 1)
+  const [selectedLocations, setSelectedLocations] = useState(params.get('selectedLocations') || [])
+  const [propName, setPropName] = useState(params.get('propName') || '')
 
   const [properties, setProperties] = useState([]);
 
   const fetchProperties = useCallback(async () => {
     const url = `${process.env.REACT_APP_API_BASE_URL}/property/search`
     const propLocation = selectedLocations.map(loc => loc.value)
-    const params = {page, priceOrder, nameOrder, visitor, propLocation, propName: propertyNameQuery}
+    const params = {page, priceOrder, nameOrder, visitor, propLocation, propName}
+
     const response = await axios.get(url, {params});
 
     const results = []
@@ -455,7 +460,17 @@ function PropertyList(props) {
     })
     setProperties(results)
     setTotalPage(response.data.result.totalPage)
-  }, [setProperties, page, priceOrder, nameOrder, visitor, selectedLocations, propertyNameQuery])
+
+    if (page > response.data.result.totalPage) {
+      setPage(response.data.result.page)
+      params.page = response.data.result.page
+    }
+
+    history.replace({
+      pathname: location.pathname,
+      search: new URLSearchParams(params).toString()
+    })
+  }, [setProperties, page, priceOrder, nameOrder, visitor, selectedLocations, propName])
 
   useEffect(() => {
     fetchProperties()
@@ -480,7 +495,7 @@ function PropertyList(props) {
         priceOrder={priceOrder} setPriceOrder={setPriceOrder}
         visitor={visitor} setVisitor={setVisitor}
         selectedLocations={selectedLocations} setSelectedLocations={setSelectedLocations}
-        propertyNameQuery={propertyNameQuery} setPropertyNameQuery={setPropertyNameQuery}
+        propertyNameQuery={propName} setPropertyNameQuery={setPropName}
       />
       <Container maxW="container.lg">
         {properties.map((property) => (
@@ -503,7 +518,10 @@ function PropertyList(props) {
             ></i>
           }
           pageCount={totalPage}
-          onPageChange={(page) => setPage(page.selected)}
+          onPageChange={(page) => {
+            setPage(page.selected)
+          }}
+          initialPage={page}
           activeClassName={"item active "}
           breakClassName={"item break-me "}
           breakLabel={"..."}
