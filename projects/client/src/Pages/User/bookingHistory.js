@@ -88,6 +88,7 @@ function BookingHistory() {
       if (val.status === 6) {
         return (
           <CardBookingHistory
+            key={val.id}
             id={val.id}
             startDate={val?.startDate}
             endDate={val?.endDate}
@@ -198,6 +199,7 @@ function BookingHistory() {
       if (val.status === 1) {
         return (
           <CardBooking
+            key={val.id}
             id={val.id}
             startDate={val?.startDate}
             endDate={val?.endDate}
@@ -302,13 +304,13 @@ function BookingHistory() {
               <ReactPaginate
                 previousLabel={
                   <i
-                    class="fa-solid fa-chevron-left"
+                    className="fa-solid fa-chevron-left"
                     style={{ fontSize: 18 }}
                   ></i>
                 }
                 nextLabel={
                   <i
-                    class="fa-solid fa-chevron-right"
+                    className="fa-solid fa-chevron-right"
                     style={{
                       fontSize: 18,
                     }}

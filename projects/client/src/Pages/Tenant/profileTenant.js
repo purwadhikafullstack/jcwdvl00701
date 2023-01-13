@@ -280,9 +280,7 @@ function Profile() {
             </Box>
           </Flex>
 
-          <Flex justifyContent="center">
-            <NavbarMobile />
-          </Flex>
+          <Flex justifyContent="center"></Flex>
         </Container>
       </Container>
     </Layout>
