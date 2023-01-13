@@ -147,8 +147,12 @@ function SearchBox(props) {
   const [nameOrder, setNameOrder] = useState(props.nameOrder)
 
   const [visitor, setVisitor] = useState(props.visitor)
-  const [selectedLocations, setSelectedLocations] = useState(props.selectedLocations)
+  const [selectedLocations, setSelectedLocations] = useState([])
   const [propertyNameQuery, setPropertyNameQuery] = useState(props.propertyNameQuery)
+
+  useEffect(() => {
+    setSelectedLocations(props.locations.filter(loc => props.selectedLocations.includes(loc.id)).map(loc => {return {value: loc.id, label: loc.location}}))
+  }, [props.locations])
 
   return (
     <Box backgroundColor="white">
@@ -256,7 +260,7 @@ function SearchBox(props) {
                   onChange={choice => {
                     setSelectedLocations(choice)
                   }}
-                  defaultValue={selectedLocations}
+                  value={selectedLocations}
                 />
               </Box>
             </Flex>
@@ -293,7 +297,7 @@ function SearchBox(props) {
               leftIcon={<i className="fa-solid fa-magnifying-glass"/>}
               onClick={() => {
                 props.setVisitor(visitor)
-                props.setSelectedLocations(selectedLocations)
+                props.setSelectedLocations(selectedLocations.map(loc => loc.value))
                 props.setPropertyNameQuery(propertyNameQuery)
                 toggleIsOpen()
               }}
@@ -426,7 +430,6 @@ function PropertyList(props) {
   const history = useHistory()
   const location = useLocation()
   const params = new URLSearchParams(location.search)
-  console.log(params)
 
   const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(parseInt(params.get('page')) || 0)
@@ -434,14 +437,14 @@ function PropertyList(props) {
   const [priceOrder, setPriceOrder] = useState(params.get('priceOrder') || 'ASC')
   const [nameOrder, setNameOrder] = useState(params.get('nameOrder') || 'ASC')
   const [visitor, setVisitor] = useState(params.get('visitor') || 1)
-  const [selectedLocations, setSelectedLocations] = useState(params.get('selectedLocations') || [])
+  const [selectedLocations, setSelectedLocations] = useState(params.getAll('propLocation').map(id => Number(id)) || [])
   const [propName, setPropName] = useState(params.get('propName') || '')
 
   const [properties, setProperties] = useState([]);
 
   const fetchProperties = useCallback(async () => {
     const url = `${process.env.REACT_APP_API_BASE_URL}/property/search`
-    const propLocation = selectedLocations.map(loc => loc.value)
+    const propLocation = selectedLocations
     const params = {page, priceOrder, nameOrder, visitor, propLocation, propName}
 
     const response = await axios.get(url, {params});
@@ -466,9 +469,11 @@ function PropertyList(props) {
       params.page = response.data.result.page
     }
 
+    const params2 = new URLSearchParams({page, priceOrder, nameOrder, visitor, propName})
+    selectedLocations.forEach(locId => params2.append('propLocation', locId))
     history.replace({
       pathname: location.pathname,
-      search: new URLSearchParams(params).toString()
+      search: params2.toString()
     })
   }, [setProperties, page, priceOrder, nameOrder, visitor, selectedLocations, propName])
 
