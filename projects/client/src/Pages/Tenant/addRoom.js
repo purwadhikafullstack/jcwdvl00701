@@ -33,6 +33,9 @@ function AddRoom() {
   // state
   const [dropdown, setDropdown] = useState([]);
   const history = useHistory();
+  const [information, setInformation] = useState("");
+
+  const { TenantId } = useSelector((state) => state.user);
 
   useEffect(() => {
     const fetchDataDropdown = () => {
@@ -55,11 +58,7 @@ function AddRoom() {
   // loop utk dropdown
   const optionDropdown = () => {
     return dropdown.map((val) => {
-      return (
-        <option key={val.id} value={val.id}>
-          {val.name}
-        </option>
-      );
+      return <option value={val.id}>{val.name}</option>;
     });
   };
 
@@ -105,8 +104,11 @@ function AddRoom() {
           propertyId: parseInt(property),
         })
         .then((res) => {
-          alert(res.data.message);
-          history.push("/tenant/room");
+          // alert(res.data.message)
+          setInformation(res.data.message);
+          setTimeout(() => {
+            history.push("/tenant/room");
+          }, 3000);
         })
         .catch((err) => {
           console.error(err);

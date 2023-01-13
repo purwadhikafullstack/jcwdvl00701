@@ -162,11 +162,6 @@ module.exports = {
             required: true,
             attributes: ["location"],
           },
-          {
-            model: Tenant,
-            required: false,
-            attributes: ["bankAccountNumber"],
-          },
         ],
         order: [
           ["name", `${alfabet}`],
@@ -177,13 +172,19 @@ module.exports = {
       });
       const totalRows = result.count;
       const totalPage = Math.ceil(totalRows / limit);
-
+      const tenantBank = await Tenant.findOne({
+        where: {
+          id: tenantId,
+        },
+        attributes: ["bankAccountNumber"],
+      });
       res.send({
         result,
         page,
         limit,
         totalRows,
         totalPage,
+        tenantBank,
       });
     } catch (err) {
       return res.status(500).json({

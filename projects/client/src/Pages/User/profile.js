@@ -206,7 +206,7 @@ function Profile() {
 
   const fetchData = useCallback(async () => {
     const response = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/user/getById`,
+      `${process.env.REACT_APP_API_BASE_URL}/user/get-By-Id`,
       { params: { id: userId } }
     );
 
@@ -482,4 +482,4 @@ function Profile() {
   );
 }
 
-export default Profile``;
+export default Profile;

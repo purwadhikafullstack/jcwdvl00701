@@ -5,11 +5,14 @@ const {
   Profile,
   Room,
   Transaction,
+  RoomUnavailability,
+  Tenant,
 } = require("../models");
 const { Op } = require("sequelize");
 const sequelize = require("sequelize");
 const transporter = require("../middleware/nodemailer");
 const cron = require("node-cron");
+const fs = require("fs");
 module.exports = {
   getOrder: async (req, res) => {
     try {
@@ -52,6 +55,12 @@ module.exports = {
                 model: Property,
                 attributes: ["id", "name", "pic", "description", "rules"],
                 required: false,
+                include: [
+                  {
+                    model: Tenant,
+                    required: false,
+                  },
+                ],
                 where: {
                   tenantId,
                 },
@@ -106,6 +115,8 @@ module.exports = {
     try {
       const id = req.params.id;
       const status = parseInt(req.query.status);
+      const { paymentProof } = req.body;
+      console.log(paymentProof);
       const result = await Reservation.update(
         {
           status,
@@ -116,6 +127,23 @@ module.exports = {
           },
         }
       );
+
+      if (status === 1) {
+        await Transaction.destroy({
+          where: {
+            paymentProof,
+          },
+        });
+
+        const path = `${__dirname}/../public/${paymentProof}`;
+        fs.unlink(path, (err) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+        });
+      }
+
       return res.status(200).json({
         message: "Berhasil update",
         result,
@@ -210,6 +238,7 @@ module.exports = {
       const totalPage = Math.ceil(totalRows / limit);
 
       const totalSales = await Reservation.findAll({
+        where: { status: statusFinished },
         attributes: ["finalPrice"],
         include: [
           {
@@ -265,6 +294,7 @@ module.exports = {
   emailOrder: async (req, res) => {
     try {
       console.log(req.body);
+
       const {
         property,
         room,
@@ -276,28 +306,63 @@ module.exports = {
         email,
         address,
         rules,
+        status,
+        phoneNumber,
       } = req.body;
+      console.log(checkIn);
+      let mail;
+      if (status === 3) {
+        mail = {
+          from: "Admin <turujcwdvl00701@gmail.com>",
+          to: `${email}`,
+          subject: "Information Room",
+          html: `
+          <h3>Dear ${name}</h3>
+          <h2>Thankyou for reservation at ${property}</h2>
+          <h3><b>Your Reservation Detail</b></h3>
+          <p>Name Room : ${room}</p>
+          <p>Guest : ${guest}</p>
+          <p>Check in : ${checkIn}</p>
+          <p>Check out : ${checkOut}</p>
+          <p>Total Price : ${totalPrice}</p>
+          <p>Address : ${address}</p>
+          <p>Rules : ${rules}</p>
+          
+          <p>thank you for use our service</p>
+          <p>PT.Turu Jaya Abadi</p>
+          `,
+        };
+      } else if (status === 5) {
+        mail = {
+          from: "Admin <turujcwdvl00701@gmail.com>",
+          to: `${email}`,
+          subject: "Cancellation of Room Reservation",
+          html: `
+          <h3>Dear ${name}</h3>
+          <p>I am writing to apologize for the cancellation of your room reservation. We understand that this may have caused inconvenience to you and we would like to offer our sincerest apologies.</p>
+          <p>The reason for the cancellation of your reservation was due to an operational error on our end. Despite our efforts to resolve the issue, we were unfortunately unable to fulfill your reservation for:</p>
+          <p>Check in : ${checkIn}</p>
+          <p>Check out : ${checkOut}</p>
+          <p>Name Room : ${room}</p>
+          <p>Guest : ${guest}</p>
+          <p>Total Price : ${totalPrice}</p>
+          <p>We would like to inform you that a full refund for your reservation will be processed as soon as possible. Please contact our customer service team at ${phoneNumber} for further assistance with the refund process.</p>
+          <p>Once again, we apologize for any inconvenience caused and we hope to have the opportunity to serve you again in the future.</p>
+          
+          <p>PT.Turu Jaya Abadi</p>
+          `,
+        };
+      }
 
-      let mail = {
-        from: "Admin <turujcwdvl00701@gmail.com>",
-        to: `${email}`,
-        subject: "Information Room",
-        html: `
-        <h1>yth ${name}</h1>
-        <h2>Thankyou for reservation at ${property}</h2>
-        <h3><b>Your Reservation Detail</b></h3>
-        <p>Name Room : ${room}</p>
-        <p>Guest : ${guest}</p>
-        <p>Check in : ${checkIn}</p>
-        <p>Check out : ${checkOut}</p>
-        <p>Total Price : ${totalPrice}</p>
-        <p>Address : ${address}</p>
-        <p>Rules : ${rules}</p>
-        
-        <p>thank you for use our service</p>
-        <p>PT.Turu Jaya Abadi</p>
-        `,
-      };
+      if (status === 5) {
+        await RoomUnavailability.destroy({
+          where: {
+            startDate: new Date(checkIn),
+            roomId,
+            type: 2,
+          },
+        });
+      }
 
       transporter.sendMail(mail, (errMail, resMail) => {
         if (errMail) {

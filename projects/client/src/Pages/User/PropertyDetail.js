@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import ReactDOM from "react-dom";
+import { useHistory, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -11,6 +12,7 @@ import {
   Text,
   Center,
   IconButton,
+  chakra,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -20,8 +22,9 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
-import { addDays } from "date-fns";
+import { addDays, subDays } from "date-fns";
 import { useDisclosure } from "@chakra-ui/react";
+
 import Layout from "../../Components/Layout";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -45,6 +48,11 @@ function PropertyDetail(props) {
   const [end, setEnd] = useState("");
   let history = useHistory();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  // const [totalHarga, setTotalHarga] = useState(0)
+  // console.log("start", start);
+  // console.log("end ",end);
+  console.log(typeof id);
+  // menyimpan tanggal-tanggal yang di pilih
 
   let datesRanges = [];
   const datepickerOnChange = (dates) => {
@@ -80,9 +88,11 @@ function PropertyDetail(props) {
     countFinalPrice(datesRanges);
     setStart(datesRanges[0]);
     setEnd(datesRanges[datesRanges.length - 1]);
+    console.log(datesRanges);
     return datesRanges;
   };
 
+  // untuk menghitung total harga
   let totalPrice = 0;
   const countFinalPrice = () => {
     const found = datesRanges.map((datesRange, i) => {
@@ -94,6 +104,7 @@ function PropertyDetail(props) {
             datesRange <=
               new Date(SpecialPric.endDate).toISOString().split("T")[0]
           ) {
+            console.log("tess111");
             let finalPrice = 0;
             if (SpecialPric.type === "nominal") {
               finalPrice = SpecialPric.discount;
@@ -102,26 +113,32 @@ function PropertyDetail(props) {
                 roomData.defaultPrice +
                 roomData.defaultPrice * (SpecialPric.discount / 100);
             }
+
             totalPrice = totalPrice + finalPrice - roomData.defaultPrice;
             return totalPrice;
           }
         });
         totalPrice = totalPrice + roomData.defaultPrice;
+        console.log("tes222  ");
+        console.log(totalPrice);
         return totalPrice;
       } else {
         totalPrice = totalPrice + roomData.defaultPrice;
         return totalPrice;
       }
     });
+
+    console.log(found);
+    console.log(totalPrice);
+
     setFinalCountPrice(totalPrice);
     return totalPrice;
   };
 
-  const idProperty = 3;
+  const idProperty = 1;
   // const idProperty = props.match.params.propertyId;
 
   function Reviews(props) {
-    let date = props.data.Review.createdAt.slice(0, 10);
     return (
       <Box mb="20px">
         <Box border="1px solid lightgrey" p={5}>
@@ -143,7 +160,7 @@ function PropertyDetail(props) {
                 {props.data.User.Profile.name}
               </Text>
               <Text fontSize="md" color="grey">
-                {date}
+                {props.data.Review.createdAt}
               </Text>
             </Box>
           </Flex>
@@ -155,17 +172,19 @@ function PropertyDetail(props) {
 
   function renderReview() {
     return reviewData.map((room) => {
-      return room.Reservations.map((val, idx) => {
-        return <Reviews key={idx} data={val} />;
+      return room.Reservations.map((val) => {
+        return <Reviews data={val} />;
       });
     });
   }
   function renderCalendar() {
     if (roomData?.defaultPrice) {
       const price = roomData?.defaultPrice;
+
       const renderDayContents = (day, date) => {
         let finalPrice = price;
 
+        // untuk menampilkan special price di kalender
         const found = roomData?.SpecialPrices.find((element) => {
           if (
             addDays(new Date(date), 1).toISOString().split("T")[0] >=
@@ -175,8 +194,10 @@ function PropertyDetail(props) {
           ) {
             return true;
           }
+
           return false;
         });
+
         if (found) {
           if (found.type === "nominal") {
             finalPrice = found.discount;
@@ -184,14 +205,18 @@ function PropertyDetail(props) {
             finalPrice = finalPrice + (finalPrice * found.discount) / 100;
           }
         }
+        // find icoockkan tanggalnya
         return (
           <Box>
             {date.getDate()}
+
             <br />
             <Text fontSize={12}>{Math.ceil(finalPrice / 1000) + "k"}</Text>
           </Box>
         );
       };
+
+      // untuk menampilkan ruangan yang tidak tersedia di kalendar
       const disabledDateRanges = roomData?.RoomUnavailabilities.map(
         (range) => ({
           start: new Date(range.startDate),
@@ -225,6 +250,7 @@ function PropertyDetail(props) {
           <Box backgroundColor="gray.200" p={3} mb={8}>
             <Text fontWeight="bold" fontSize="lg">
               {roomData?.capacity} Guest
+              {/* guest count ddapatnya dari state roomData*/}
             </Text>
           </Box>
         </Box>
@@ -318,13 +344,17 @@ function PropertyDetail(props) {
           setDesProperty(res.data.results.description);
           setCategory(res.data.results.Category.location);
           setRoomButton(res.data.results.Rooms);
+
           setTenantData(res.data.results.Tenant);
+
           setPic(res.data.results.pic);
+          console.log(res.data.results.Tenant.User.id);
         })
         .catch((err) => {
           console.error(err.message);
         });
     };
+
     fetchProperty();
     fetchReview();
     renderCalendar();
@@ -336,15 +366,18 @@ function PropertyDetail(props) {
     <Layout>
       <div>
         <Container maxW="container.lg">
+          {/* ////////////////////////////// */}
           <Box>
             <Box my={3}>
               <Text fontWeight="bold" fontSize="xl" mb={1}>
                 {propertyName}
               </Text>
+
               <Text fontSize="sm" color="grey">
                 {category}
               </Text>
             </Box>
+
             <Image
               overflow="hiden"
               objectFit="cover"
@@ -355,11 +388,13 @@ function PropertyDetail(props) {
           </Box>
           <Box my={8}>
             <Text>{desProperty}</Text>
+
             <Flex align="center" my={8}>
               {renderRoomButton()}
             </Flex>
             {renderCalendar()}
           </Box>
+
           <Box>
             <Text fontWeight="bold" fontSize="lg" mb={2}>
               Total:
@@ -415,7 +450,7 @@ function PropertyDetail(props) {
           </Button>
         </Container>
       </div>
-
+      {/* utk modal sebelum reserve */}
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent borderRadius={0}>
@@ -427,7 +462,7 @@ function PropertyDetail(props) {
             <Button
               onClick={btnHandlerReservation}
               borderRadius={0}
-              colorScheme="red"
+              colorScheme="green"
               mr={3}
             >
               Reserve

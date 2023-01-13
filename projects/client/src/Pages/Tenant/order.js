@@ -36,7 +36,7 @@ function Order() {
   const [keyword, setKeyword] = useState("");
   const [dropdown, setDropdown] = useState([]);
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(6);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [alfabet, setAlfabet] = useState("");
@@ -59,7 +59,7 @@ function Order() {
         setRows(res.data.totalRows);
         onClose();
 
-        console.log(res.data.totalRows);
+        console.log(res.data);
       })
       .catch((err) => {
         console.error(err.message);
@@ -107,10 +107,11 @@ function Order() {
             guest_count={val.guestCount}
             price={val.finalPrice}
             paymentProof={val.Transaction?.paymentProof}
-            address = {val.Room?.Property?.description}
-            rules = {val.Room?.Property?.rules}
-            email = {val.User?.email}
+            address={val.Room?.Property?.description}
+            rules={val.Room?.Property?.rules}
+            email={val.User?.email}
             randomNumber={setRandomNumber}
+            phoneNumber={val.room?.Property.Tenant.phoneNumber}
           />
         </Box>
       );

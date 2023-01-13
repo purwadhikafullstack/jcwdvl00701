@@ -30,7 +30,7 @@ import { useSelector } from "react-redux";
 
 function PropertyListTenant() {
   const [propertyData, setPropertyData] = useState([]);
-
+  const [bank, setBank] = useState("");
   const [randomNumber, setRandomNumber] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [alfabet, setAlfabet] = useState("");
@@ -87,20 +87,21 @@ function PropertyListTenant() {
       `${process.env.REACT_APP_API_BASE_URL}/property/get/${TenantId}?search_query=${keyword}&alfabet=${alfabet}&time=${time}&page=${page}&limit=${limit}`
     )
       .then((res) => {
-        console.log(res.data);
-
         setPage(res.data.page);
         setPages(res.data.totalPage);
         setRows(res.data.totalRows);
         setPropertyData(res.data.result.rows);
+        setBank(res.data.tenantBank.bankAccountNumber);
         onClose();
       })
       .catch((err) => {
         console.error(err.message);
       });
   }
+
   useEffect(() => {
     fetchProperty();
+    console.log(bank);
   }, [randomNumber, keyword, page, TenantId]);
   return (
     <Layout>
@@ -148,7 +149,7 @@ function PropertyListTenant() {
             >
               {rows > 1 ? `${rows} Properties` : `${rows} property`}
             </Text>
-            {propertyData[0]?.Tenant.bankAccountNumber ? (
+            {bank ? (
               <Link to="/tenant/add-property">
                 <Center
                   mt="20px"
@@ -192,7 +193,7 @@ function PropertyListTenant() {
                   color: "white",
                 }}
               />
-              {propertyData[0]?.Tenant.bankAccountNumber ? (
+              {bank ? (
                 <Link to="/tenant/add-property">
                   <Button
                     display={{ ss: "none", sl: "flex" }}
@@ -215,7 +216,23 @@ function PropertyListTenant() {
           </FormControl>
         </Container>
         <Container bg="white" maxW="1140px" mt={{ ss: "0px", sl: "20px" }}>
-          {propertyData[0]?.Tenant.bankAccountNumber ? (
+          {rows === 0 ? (
+            <Center flexDirection="column" minHeight="50vh">
+              <Text textAlign="center" fontSize="20px" mb="20px">
+                {bank
+                  ? "you do not have any properties"
+                  : "Please add your bank account number first"}
+              </Text>
+              {!bank ? (
+                <>
+                  {" "}
+                  <Link to="/tenant/profile">
+                    <Button variant="primary"> profile</Button>
+                  </Link>
+                </>
+              ) : null}
+            </Center>
+          ) : (
             <>
               <Flex
                 maxW="1140px"
@@ -297,21 +314,6 @@ function PropertyListTenant() {
                 />
               </div>
             </>
-          ) : (
-            <Center flexDirection="column" minHeight="50vh">
-              {rows === 0 && propertyData[0]?.Tenant.bankAccountNumber ? (
-                <Box>you do not have any properties</Box>
-              ) : (
-                <>
-                  <Text textAlign="center" fontSize="20px" mb="20px">
-                    Please add your bank account number first
-                  </Text>
-                  <Link to="/tenant/profile">
-                    <Button variant="primary"> profile</Button>
-                  </Link>
-                </>
-              )}
-            </Center>
           )}
         </Container>
       </Box>
