@@ -30,26 +30,6 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import Loading from "../../Components/Loading";
 
-function Topbar(props) {
-  return (
-    <Box>
-      <Box w="100%" p={4} boxShadow="lg">
-        <Flex justify="space-between" backgroundColor="gray.100" align="center">
-          <Box color="gray.600" w="100%" cursor="pointer">
-            <Text fontSize="lg" fontWeight="bold">
-              Rp. 600.000,00
-            </Text>
-            <Text fontSize="xs">12-16 Nov | 1 Tamu</Text>
-          </Box>
-          <Button variant="primary" w="70%">
-            Reserve
-          </Button>
-        </Flex>
-      </Box>
-    </Box>
-  );
-}
-
 function PropertyDetail(props) {
   const [roomButton, setRoomButton] = useState([]);
   const [reviewData, setReviewData] = useState([]);
@@ -142,32 +122,6 @@ function PropertyDetail(props) {
         console.log("tes222  ");
         console.log(totalPrice);
         return totalPrice;
-        // if (
-        //   element >=
-        //     new Date(roomData?.SpecialPrices[0].startDate)
-        //       .toISOString()
-        //       .split("T")[0] &&
-        //   element <=
-        //     new Date(roomData?.SpecialPrices[0].endDate)
-        //       .toISOString()
-        //       .split("T")[0]
-        // ) {
-        //   let finalPrice = 0;
-        //   if (roomData?.SpecialPrices[0].type === "nominal") {
-        //     finalPrice = roomData?.SpecialPrices[0].discount;
-        //   } else if (roomData?.SpecialPrices[0].type === "persen") {
-        //     finalPrice =
-        //       roomData.defaultPrice +
-        //       roomData.defaultPrice *
-        //         (roomData?.SpecialPrices[0].discount / 100);
-        //   }
-
-        //   totalPrice = totalPrice + finalPrice;
-        //   return totalPrice;
-        // } else {
-        //   totalPrice = totalPrice + roomData.defaultPrice;
-        //   return totalPrice;
-        // }
       } else {
         totalPrice = totalPrice + roomData.defaultPrice;
         return totalPrice;
@@ -181,8 +135,8 @@ function PropertyDetail(props) {
     return totalPrice;
   };
 
-  const idProperty = 3;
-  // const idProperty = props.match.params.propertyId;
+  // const idProperty = 3;
+  const idProperty = props.match.params.id;
 
   function Reviews(props) {
     return (
@@ -408,129 +362,9 @@ function PropertyDetail(props) {
     renderReview();
   }, [idRoom]);
 
-  // let joinTime = tenantData.createdAt.split("T");
-
-  // if (id === tenantData?.User?.id) {
-  //   return history.push("/");
-  // } else {
-  //   return (
-  //     <Layout>
-  //       <div>
-  //         <Topbar />
-  //         <Container maxW="container.lg">
-  //           {/* ////////////////////////////// */}
-  //           <Box>
-  //             <Box my={3}>
-  //               <Text fontWeight="bold" fontSize="xl" mb={1}>
-  //                 {propertyName}
-  //               </Text>
-
-  //               <Text fontSize="sm" color="grey">
-  //                 {category}
-  //               </Text>
-  //             </Box>
-
-  //             <Image
-  //               overflow="hiden"
-  //               objectFit="cover"
-  //               width="100%"
-  //               height="210px"
-  //               src={process.env.REACT_APP_API_BASE_URL + pic}
-  //             />
-  //           </Box>
-  //           <Box my={8}>
-  //             <Text>{desProperty}</Text>
-
-  //             <Flex align="center" my={8}>
-  //               {renderRoomButton()}
-  //             </Flex>
-  //             {renderCalendar()}
-  //           </Box>
-
-  //           <Box>
-  //             <Text fontWeight="bold" fontSize="lg" mb={2}>
-  //               Total:
-  //               {new Intl.NumberFormat("id-ID", {
-  //                 style: "currency",
-  //                 currency: "IDR",
-  //               }).format(finalCountPrice)}
-  //             </Text>
-  //             {UserRoles.includes(1) ? (
-  //               <Button
-  //                 w="100%"
-  //                 variant="primary"
-  //                 my={2}
-  //                 onClick={btnHandlerReservation}
-  //                 disabled={finalCountPrice ? false : true}
-  //               >
-  //                 Reserve
-  //               </Button>
-  //             ) : null}
-  //           </Box>
-  //           <Flex border="3px solid lightgrey" p={5}>
-  //             <Image
-  //               src={"tenantData.User.Profile.profilePic"}
-  //               width="50px"
-  //               height="50px"
-  //               me="10px"
-  //               overflow="hiden"
-  //               objectFit="cover"
-  //             />
-  //             <Box>
-  //               <Text fontWeight="bold" fontSize="md">
-  //                 {tenantData.name}
-  //               </Text>
-  //               <Text fontSize="md" color="grey">
-  //                 Joined since {tenantData.createdAt}
-  //               </Text>
-  //             </Box>
-  //           </Flex>
-  //           <Box my={3}>
-  //             <Text fontWeight="bold" fontSize="xl" mb={1}>
-  //               <i className="fa-solid fa-star" /> Review
-  //             </Text>
-  //           </Box>
-  //           {renderReview()}
-  //           <Button
-  //             w="100%"
-  //             variant="secondary"
-  //             my={2}
-  //             onClick={() => fetchReview("show")}
-  //           >
-  //             Show All
-  //           </Button>
-  //         </Container>
-  //       </div>
-  //       {/* utk modal sebelum reserve */}
-  //       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
-  //         <ModalOverlay />
-  //         <ModalContent borderRadius={0}>
-  //           <ModalHeader>Are you sure to reserved ?</ModalHeader>
-  //           <ModalCloseButton />
-  //           <ModalBody pb={6}></ModalBody>
-
-  //           <ModalFooter>
-  //             <Button
-  //               onClick={btnHandlerReservation}
-  //               borderRadius={0}
-  //               colorScheme="red"
-  //               mr={3}
-  //             >
-  //               Reserve
-  //             </Button>
-  //             <Button borderRadius={0} onClick={onClose}>
-  //               Cancel
-  //             </Button>
-  //           </ModalFooter>
-  //         </ModalContent>
-  //       </Modal>
-  //     </Layout>
-  //   );
-  // }
   return (
     <Layout>
       <div>
-        <Topbar />
         <Container maxW="container.lg">
           {/* ////////////////////////////// */}
           <Box>
@@ -628,7 +462,7 @@ function PropertyDetail(props) {
             <Button
               onClick={btnHandlerReservation}
               borderRadius={0}
-              colorScheme="red"
+              colorScheme="green"
               mr={3}
             >
               Reserve

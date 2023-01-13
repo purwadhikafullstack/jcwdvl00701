@@ -188,6 +188,7 @@ function CardRoomTenant(props) {
                   color: "white",
                 }}
                 bg="primary"
+                onClick={() => handleBtnEdit(id)}
               >
                 <i className="fa-solid fa-pen-to-square"></i>
               </Box>
@@ -216,11 +217,12 @@ function CardRoomTenant(props) {
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent borderRadius={0}>
-          <ModalHeader>Delete Room</ModalHeader>
+          <ModalHeader> Delete room</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6}>
-            are you sure want delete this room?
-          </ModalBody>
+          <ModalBody>Are you sure you want to delete this room?</ModalBody>
+          <ModalCloseButton />
+          <ModalCloseButton />
+          <ModalBody pb={6}>are you sure want delete this room?</ModalBody>
 
           <ModalFooter>
             <Button
