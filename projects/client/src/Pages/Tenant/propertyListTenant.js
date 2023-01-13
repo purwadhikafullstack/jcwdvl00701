@@ -92,6 +92,7 @@ function PropertyListTenant() {
         setRows(res.data.totalRows);
         setPropertyData(res.data.result.rows);
         setBank(res.data.tenantBank.bankAccountNumber);
+        console.log(res.data);
         onClose();
       })
       .catch((err) => {

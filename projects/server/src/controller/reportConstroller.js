@@ -308,8 +308,9 @@ module.exports = {
         rules,
         status,
         phoneNumber,
+        roomId,
       } = req.body;
-      console.log(checkIn);
+      console.log(status);
       let mail;
       if (status === 3) {
         mail = {

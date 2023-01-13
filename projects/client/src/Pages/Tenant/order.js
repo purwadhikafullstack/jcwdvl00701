@@ -112,6 +112,7 @@ function Order() {
             email={val.User?.email}
             randomNumber={setRandomNumber}
             phoneNumber={val.room?.Property.Tenant.phoneNumber}
+            roomId={val.RoomId}
           />
         </Box>
       );

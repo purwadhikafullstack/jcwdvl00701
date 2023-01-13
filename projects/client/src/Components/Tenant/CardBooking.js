@@ -83,6 +83,7 @@ function CardBooking(props) {
               rules: props.rules,
               status,
               phoneNumber: props.phoneNumber,
+              roomId: props.roomId,
             }
           );
         }
