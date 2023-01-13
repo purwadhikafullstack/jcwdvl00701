@@ -110,7 +110,7 @@ module.exports = {
 
   getSearchResult: async (req, res) => {
     return await wrapper(req, res, async () => {
-      const ITEM_PER_PAGE = 2
+      const ITEM_PER_PAGE = 5
 
       const {priceOrder, nameOrder, propLocation, propName} = req.query
       const propCapacity = req.query.visitor || 1
@@ -155,7 +155,6 @@ module.exports = {
       const totalRows = result.length
       const totalPage = Math.ceil(result.length / ITEM_PER_PAGE)
 
-      // const page = parseInt(req.query.page) || 0;
       const page = parseInt(req.query.page) < totalPage ? parseInt(req.query.page) || 0 : totalPage - 1;
       const limit = (page + 1) * ITEM_PER_PAGE;
       const offset = page * ITEM_PER_PAGE;

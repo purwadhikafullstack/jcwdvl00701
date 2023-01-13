@@ -181,8 +181,8 @@ function PropertyDetail(props) {
     return totalPrice;
   };
 
-  const idProperty = 3;
-  // const idProperty = props.match.params.propertyId;
+  // const idProperty = 3;
+  const idProperty = props.match.params.id;
 
   function Reviews(props) {
     return (

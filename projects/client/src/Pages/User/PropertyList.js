@@ -363,7 +363,7 @@ function PropertyCard(props) {
   const history = useHistory();
 
   const handleCheckAvailability = () => {
-    history.push("/detail/foo");
+    history.push(`/detail/${props.data.id}`);
   };
 
   const isDiscount = props.data.defaultPrice !== props.data.price
