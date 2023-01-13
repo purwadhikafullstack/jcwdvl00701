@@ -1,13 +1,37 @@
 const { db, dbquery } = require("../database");
-const { Property, Tenant, User, Room, Category } = require("../lib/sequelize");
+const {
+  sequelize,
+  Property,
+  Room,
+  Tenant,
+  User,
+  Category,
+  SpecialPrice,
+} = require("../models");
 const fs = require("fs");
 const { Op } = require("sequelize");
+
+const wrapper = async (req, res, func) => {
+  try {
+    const { result, message } = await func();
+    return res.status(200).json({
+      result: result,
+      message: message,
+      code: 200,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: err.toString(),
+      code: 500,
+    });
+  }
+};
 
 module.exports = {
   addProperty: async (req, res) => {
     try {
-      console.log(req.body);
-      console.log("uploader foto " + req.file);
+      // console.log(req.body);
+      // console.log("uploader foto " + req.file);
       const { name, description, pic, tenantId, categoryId, rules } = req.body;
 
       const filePath = "property";
@@ -27,25 +51,26 @@ module.exports = {
         results: neWProperty,
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return res.status(500).json({
         message: err,
       });
     }
   },
+
   editProperty: async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     const { id, old_img, description, rules, categoryId, name, pic } = req.body;
     const filePath = "property";
-    console.log(req.body);
+    // console.log(req.body);
     let editData = {};
     if (req.file?.filename) {
       const { filename } = req.file;
-      console.log(filename);
+      // console.log(filename);
 
       if (old_img != undefined) {
         const path = `${__dirname}/../public/${old_img}`;
-        console.log(path);
+        // console.log(path);
         //remove file di profile_images ==> jika ada
         fs.unlink(path, (err) => {
           if (err) {
@@ -86,8 +111,103 @@ module.exports = {
     }
 
     return res.status(200).json({
-      message: "success edit data property1111",
+      message: "success edit data property",
       results: editData,
+    });
+  },
+
+  getSearchResult: async (req, res) => {
+    return await wrapper(req, res, async () => {
+      const ITEM_PER_PAGE = 5;
+
+      const { priceOrder, nameOrder, propLocation, propName } = req.query;
+      const propCapacity = req.query.visitor || 1;
+
+      const whereConditions = [];
+      if (propLocation) whereConditions.push({ categoryId: propLocation });
+      if (propName)
+        whereConditions.push({ name: { [Op.like]: `%${propName}%` } });
+
+      let result = await Property.findAll({
+        include: [
+          {
+            model: Category,
+            required: true,
+          },
+          {
+            model: Room,
+            required: true,
+            include: [
+              {
+                model: SpecialPrice,
+                include: [
+                  {
+                    model: Room,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        where: whereConditions,
+      });
+
+      result = result.filter(
+        (property) => property.maxCapacity >= parseInt(propCapacity)
+      );
+
+      const priceSortMultiplier = priceOrder === "DESC" ? -1 : 1;
+      const nameSortMultiplier = nameOrder === "DESC" ? -1 : 1;
+
+      result.sort((a, b) => {
+        if (a.price < b.price) return -1 * priceSortMultiplier;
+        if (b.price < a.price) return 1 * priceSortMultiplier;
+
+        if (a.name < b.name) return -1 * nameSortMultiplier;
+        if (b.name < a.name) return 1 * nameSortMultiplier;
+      });
+
+      const totalRows = result.length;
+      const totalPage = Math.ceil(result.length / ITEM_PER_PAGE);
+
+      const page =
+        parseInt(req.query.page) < totalPage
+          ? parseInt(req.query.page) || 0
+          : totalPage - 1;
+      const limit = (page + 1) * ITEM_PER_PAGE;
+      const offset = page * ITEM_PER_PAGE;
+      result = result.slice(offset, limit);
+
+      return {
+        result: { properties: result, page, limit, totalRows, totalPage },
+        message: "success get properties",
+      };
+    });
+  },
+
+  getAll: async (req, res) => {
+    return await wrapper(req, res, async () => {
+      const { uid } = req.query;
+      const result = await Property.findAll({
+        include: [
+          {
+            model: Tenant,
+            required: true,
+            include: [
+              {
+                model: User,
+                required: true,
+                where: { id: uid },
+              },
+            ],
+          },
+        ],
+      });
+
+      return {
+        result: result,
+        message: "success get property",
+      };
     });
   },
 
@@ -106,7 +226,13 @@ module.exports = {
           tenantId,
           name: { [Op.like]: "%" + search + "%" },
         },
-
+        include: [
+          {
+            model: Category,
+            required: true,
+            attributes: ["location"],
+          },
+        ],
         order: [
           ["name", `${alfabet}`],
           ["updatedAt", `${time}`],
@@ -116,13 +242,19 @@ module.exports = {
       });
       const totalRows = result.count;
       const totalPage = Math.ceil(totalRows / limit);
-
+      const tenantBank = await Tenant.findOne({
+        where: {
+          id: tenantId,
+        },
+        attributes: ["bankAccountNumber"],
+      });
       res.send({
         result,
         page,
         limit,
         totalRows,
         totalPage,
+        tenantBank,
       });
     } catch (err) {
       return res.status(500).json({
@@ -140,7 +272,7 @@ module.exports = {
           id,
         },
       });
-      console.log(results);
+      // console.log(results);
       return res.send(results);
     } catch (err) {
       return res.status(500).json({
@@ -164,10 +296,10 @@ module.exports = {
       },
     });
 
-    console.log(old_img);
+    // console.log(old_img);
 
     const path = `${__dirname}/../public/${old_img}`;
-    console.log(path);
+    // console.log(path);
 
     fs.unlink(path, (err) => {
       if (err) {
@@ -187,7 +319,7 @@ module.exports = {
         results: seeders,
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return res.status(500).json({
         message: err,
       });

@@ -1,4 +1,4 @@
-const { sequelize, User, Profile, UserRole , Tenant} = require("../models");
+const {sequelize, User, Profile, UserRole, Tenant} = require("../models");
 
 module.exports = {
   addUser: async (req, res) => {
@@ -8,7 +8,6 @@ module.exports = {
         name,
         email,
         phoneNumber,
-        birthdate,
         firebaseProviderId,
       } = req.body;
 
@@ -19,7 +18,7 @@ module.exports = {
             firebaseProviderId: firebaseProviderId,
             email: email,
           },
-          { transaction: t }
+          {transaction: t}
         );
 
         const profile = await Profile.create(
@@ -29,7 +28,7 @@ module.exports = {
             gender: "Male",
             userId: id,
           },
-          { transaction: t }
+          {transaction: t}
         );
 
         const userProfile = await UserRole.create(
@@ -37,7 +36,7 @@ module.exports = {
             userId: id,
             roleId: 1,
           },
-          { transaction: t }
+          {transaction: t}
         );
 
         return {
@@ -166,7 +165,7 @@ module.exports = {
 
     try {
       await User.update(req.body, {
-        where: { id },
+        where: {id},
         returning: true,
         plain: true,
       });
@@ -188,16 +187,16 @@ module.exports = {
 
   updateUserProfilePic: async (req, res) => {
     const id = req.body.id;
-    const { filename } = req.file;
+    const {filename} = req.file;
     const fileUrl = `/profile_pic/${filename}`;
 
     try {
       await User.update(
-        { profilePic: fileUrl },
-        { where: { id }, returning: true, plain: true }
+        {profilePic: fileUrl},
+        {where: {id}, returning: true, plain: true}
       );
       return res.status(200).send({
-        result: { profilePic: fileUrl },
+        result: {profilePic: fileUrl},
         message: "success update profile picture",
         code: 200,
       });
@@ -217,12 +216,16 @@ module.exports = {
             const globalState= await User.findOne({
                 include : [
                 {
+                  model : Profile,
+                  attributes : ["name" , "profilePic"]
+                },
+                {
                     model: UserRole,
                     attributes : ["roleId"],
                 },
                 {
                     model : Tenant,
-                    attributes : ["id"],
+                    attributes : ["id", "name"],
                 }           
             ],
                 where : {
@@ -239,5 +242,49 @@ module.exports = {
                 message : "your email not registered"
             })
         }
+  },
+  // add user jika dari tenant mau jadi user
+  completeDataUser : async(req,res) => {
+    try {
+      console.log(req.body);
+      const {name, phoneNumber , userId} = req.body
+      // tambahakan data ke profile
+      const result = await sequelize.transaction(async(t) => {
+        const completeDataUser = await Profile.create(
+          {
+            name,
+            phoneNumber,
+            gender : "Male",
+            userId
+          },
+          {transaction : t}
+        )
+          // tambhakan UserRole yg user [1]
+        const addRoleUser = await UserRole.create(
+          {
+            userId,
+            roleId : 1
+          },
+          {transaction: t}
+        );
+
+        return {
+          name,
+          userId,
+          roleId : addRoleUser.roleId
+        }
+      })
+
+      return res.status(200).json({
+        result : result,
+        message: "now your account can be accsess to be user",
+        code: 200
+      })
+    } catch(err) {
+      return res.status(500).json({
+        message : err.toString(),
+        code : 500
+      })
+    }
   }
 };

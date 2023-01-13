@@ -207,8 +207,11 @@ module.exports = {
   // get property semua utk dropdown
   getPropertyDropdown: async (req, res) => {
     try {
+      const tenantId = req.params.tenantId;
       //dibuat khsus utk dpt dropdown
-      const dropdown = await Property.findAll();
+      const dropdown = await Property.findAll({
+        where: { tenantId },
+      });
       res.status(200).send({
         dropdown,
       });
@@ -217,6 +220,26 @@ module.exports = {
       res.status(500).json({
         message: err.toString(),
       });
+    }
+  },
+  getRoomForTenantPage : async (req,res) => {
+    try{
+      const room = await Room.findAll({
+        where: req.query,
+        include: [
+          {
+            model: Property,
+          }
+        ]
+      })
+      return res.status(200).send({
+        result: room,
+        code: 200
+      })
+    } catch (error) {
+      return res.status(500).json({
+        message : "you dont have room right now"
+      })
     }
   },
 };

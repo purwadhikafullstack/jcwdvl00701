@@ -1,7 +1,10 @@
 import { Box, Container, SimpleGrid, Text, Flex } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Layout from "../../Components/Layout";
 import { useSelector } from "react-redux";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { authFirebase } from "../../Config/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 function ButtonDashboard(props) {
   return (
@@ -33,8 +36,11 @@ function ButtonDashboard(props) {
 }
 
 function Dashboard() {
-    const {tenantId, firebaseProviderId,  is_verified} = useSelector(state => state.user)
-  console.log(tenantId);;
+  const history = useHistory();
+  const [userId, setUserId] = useState("");
+  const { TenantId, UserRoles } = useSelector((state) => state.user);
+  console.log(UserRoles);
+
   return (
     <Layout>
       <Box mt="90px" mb="30px">
@@ -42,42 +48,42 @@ function Dashboard() {
           <SimpleGrid columns={[2, null, 3]} spacing="20px">
             <Link to="/tenant/profile">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-circle-user"></i>}
+                icon={<i className="fa-solid fa-circle-user"></i>}
                 menu=" Edit your Profile"
                 bg="/Assets/profile.png"
               />
             </Link>
             <Link to="/tenant/order">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-clipboard-list"></i>}
+                icon={<i className="fa-solid fa-clipboard-list"></i>}
                 menu="See your order"
                 bg="/Assets/order.png"
               />
             </Link>
             <Link to="/tenant/property">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-building"></i>}
+                icon={<i className="fa-solid fa-building"></i>}
                 menu="Manage your property"
                 bg="/Assets/property.png"
               />
             </Link>
             <Link to="/tenant/room">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-bed"></i>}
+                icon={<i className="fa-solid fa-bed"></i>}
                 menu="Manage your room"
                 bg="/Assets/room.png"
               />
             </Link>
             <Link to="/tenant/report">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-chart-simple"></i>}
+                icon={<i className="fa-solid fa-chart-simple"></i>}
                 menu="Report"
                 bg="/Assets/report.png"
               />
             </Link>
             <Link to="/tenant/price">
               <ButtonDashboard
-                icon={<i class="fa-solid fa-cash-register"></i>}
+                icon={<i className="fa-solid fa-cash-register"></i>}
                 menu=" Set a special price"
                 bg="/Assets/price.png"
               />

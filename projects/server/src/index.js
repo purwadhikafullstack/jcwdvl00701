@@ -2,9 +2,21 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const { join, dirname } = require("path");
-const { sequelize } = require("./lib/sequelize");
-// const { sequelize } = require("./models"); // uncomment to use sequelize default utility
+const { sequelize } = require("./models"); // uncomment to use sequelize default utility
 const { env } = require("./config");
+const {
+  userRouters,
+  roomRouters,
+  propertyRouters,
+  tenantRouters,
+  productRoutrs,
+  reportRouters,
+  reservationRouters,
+  paymentRouters,
+  historyRouters,
+  roomUnavailabilityRouters,
+  specialPriceRouters
+} = require("./routes");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -21,23 +33,18 @@ app.use(express.json());
 app.use("/api", express.static(`${__dirname}/public`));
 
 app.use("/profile_pic", express.static(`${__dirname}/public/profile_pic`));
+app.use("/payment", express.static(`${__dirname}/public/payment`));
+app.use("/tenant", express.static(`${__dirname}/public/tenant`));
 
 //#region API ROUTES
 
 // ===========================
 // NOTE : Add your routes here
 // sequelize.sync({ alter: true });
-const {
-  userRouters,
-  roomRouters,
-  propertyRouters,
-  tenantRouters,
-  productRoutrs,
-  reportRouters,
-  reservationRouters
-} = require("./routes");
 
 app.use("/api/user", userRouters);
+app.use("/api/specialprice", specialPriceRouters)
+app.use("/api/property", propertyRouters)
 app.use("/api/room", roomRouters);
 app.use("/api/property", propertyRouters);
 app.use("/api/tenant", tenantRouters);
@@ -45,6 +52,10 @@ app.use("/api/product", productRoutrs);
 app.use("/api/report", reportRouters);
 app.use("/api/tenant" , tenantRouters)
 app.use("/api/reservation", reservationRouters)
+app.use("/api/payment", paymentRouters)
+app.use("/api/history" , historyRouters)
+app.use("/api/roomunavailalbility", roomUnavailabilityRouters)
+
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);

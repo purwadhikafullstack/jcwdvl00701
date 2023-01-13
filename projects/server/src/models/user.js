@@ -24,12 +24,11 @@ module.exports = (sequelize) => {
     },
     firebaseProviderId: {
       type: DataTypes.STRING,
-      unique: true
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      // unique: true
     },
   }, {
     sequelize,

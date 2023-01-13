@@ -1,98 +1,149 @@
-import { Box, Flex, Button, Text, Image, Container,Spinner,HStack,VStack} from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Button,
+  Text,
+  Image,
+  Container,
+  Spinner,
+  HStack,
+  VStack,
+  Alert
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import Layout from "../../Components/Layout";
 import bookingImage from "../../Assets/image/booking.png";
 import NavbarDestop from "../../Components/NavbarDestop";
-import axios from "axios"
+import axios from "axios";
 import { useParams } from "react-router-dom";
+import Loading from "../../Components/Loading";
 
 function Booking() {
   // akan menerima 1 id params utk get data, dari page detail/id
-  const {id} = useParams()
+  const { id } = useParams();
   console.log(id);
   const [dataBooking, setDataBooking] = useState({});
-  const [dataRoom, setDataRoom] = useState({})
-  const [startDate, setStartDate] = useState("")
-  const [endDate, setEndDate] = useState("")
-  const [loading, setLoading] = useState(true)
-  const [dataProfile, setDataProfile] = useState({})
-  const [birthdate , setBirthdate] = useState("")
-  let history = useHistory()
+  const [dataRoom, setDataRoom] = useState({});
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [dataProfile, setDataProfile] = useState({});
+  const [birthdate, setBirthdate] = useState("");
+  const [err, setErr] = useState("")
+  // console.log(birthdate);
+  let history = useHistory();
 
   useEffect(() => {
-    setLoading(true)
-      const fetchDataBooking = async () => {
-        try {
-          const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/reservation/get-reservation`, {
+    setLoading(true);
+    const fetchDataBooking = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/reservation/get-reservation`,
+          {
             // masih nembak sampai page mas imam beres
-            params : {
-              id : id
-            }
-          })
-          // console.log((await response)?.data.result);
-          setDataBooking((await response)?.data.result)
-          setDataRoom((await response)?.data.result.Room)
-          setStartDate((await response)?.data.result.startDate)
-          setEndDate((await response)?.data.result.endDate)
-          setDataProfile((await response)?.data.result.User.Profile)
-          setBirthdate((await response)?.data.result.User.Profile.birthdate)
-  
-        } catch (err) {
-          console.error(err.data.message)
-        }
+            params: {
+              id: id,
+            },
+          }
+        );
+        console.log((await response)?.data.result);
+        setDataBooking((await response)?.data.result);
+        setDataRoom((await response)?.data.result.Room);
+        setStartDate((await response)?.data.result.startDate);
+        setEndDate((await response)?.data.result.endDate);
+        setDataProfile((await response)?.data.result.User.Profile);
+        setBirthdate((await response)?.data.result.User?.Profile?.birthdate);
+      } catch (err) {
+        console.error(err.data.message);
       }
-    fetchDataBooking()
-    setLoading(false)
-  }, [])
+    };
+    fetchDataBooking();
+    setLoading(false);
+  }, []);
 
-  let sDate = startDate.split("T")
-  // console.log(sDate);
-  let eDate = endDate.split("T")
-  let bDate = birthdate.split("T")
+  let startDate2 = startDate.split("T")[0].split("-");
+  // console.log(startDate2);
+  let endDate2 = endDate.split("T")[0].split("-");
 
+  const bulan = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Agus",
+    "Sept",
+    "Okt",
+    "Nov",
+    "Des",
+  ];
+  const searchBulan = (bln) => {
+    const angka = [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+    ];
+    let bulanNow = "";
+    for (let i = 0; i < bln.length; i++) {
+      if (startDate2[1] == angka[i]) {
+        return (bulanNow += bln[i]);
+      }
+    }
+    let resultBulan = searchBulan(bulan)
+    console.log(resultBulan);
 
+    if(birthdate){
+      var birthDate2 = birthdate.split("T")
+    } else {
+      alert("You must enter your date of birth ")
+      // setErr("You must enter your date of birth ")
+        history.push("/profile")
+
+    }
 
   const btnHandlerPayment = (id) => {
     console.log(id);
-    history.push(`/payment/${id}`)
-  }
+    history.push(`/payment/${id}`);
+  };
 
-  let dataPrice = dataBooking?.finalPrice
+  let dataPrice = dataBooking?.finalPrice;
   const price = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-  }).format(dataPrice)
+  }).format(dataPrice);
 
-  let dataTax = (dataBooking?.finalPrice / 10)
+  let dataTax = dataBooking?.finalPrice / 10;
   const tax = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-  }).format(dataTax)
+  }).format(dataTax);
 
-  let dataTotalPrice = dataPrice + dataTax
+  let dataTotalPrice = dataPrice + dataTax;
   const totalPrice = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-  }).format(dataTotalPrice)
+  }).format(dataTotalPrice);
 
-    return loading ?
-    <Flex justifyContent="center" mt="21%">
-      <Spinner
-        thickness='4px'
-        speed='0.65s'
-        emptyColor='gray.200'
-        color='blue.500'
-        size='xl'
-      />
-    </Flex>
-    : 
+  return loading ? (
+    <Loading />
+  ) : (
     <Layout>
       <Box
         mb={{ ss: "60px", sm: "60px", sl: "0px" }}
         mt={{ ss: "0px", sm: "0px", sl: "80px" }}
       >
-        <NavbarDestop />
         <Flex
           display={{ ss: "flex", sm: "flex", sl: "none" }}
           px="20px"
@@ -101,36 +152,28 @@ function Booking() {
           borderBottom="1px"
           borderColor="gray.200"
         >
-          <Button
-            borderRadius="0px"
-            bg="white"
-            border="1px"
-            borderColor="gray.200"
-            my="auto"
-            _hover={{
-              background: "black",
-              color: "white",
-            }}
-          >
-            <i className="fa-solid fa-caret-left"></i>
-          </Button>
           <Box>
             <Text fontWeight="semibold" fontSize="16px">
-              Rp. 625.000,00
+              {/* Rp. 625.000,00 */}
+              {totalPrice}
             </Text>
             <Text
               fontWeight="regular"
               fontSize="12px"
               color="rgba(175, 175, 175, 1)"
             >
-              12-16 Nov | 1 Guest
+              {/* 12-16 Nov | 1 Guest */}
+              {startDate2[2]} - {endDate2[2]} {resultBulan} |{" "}
+              {dataBooking?.guestCount} Guest
             </Text>
           </Box>
-          <Link to="/payment">
-            <Button variant="primary" w="135px">
-              Pay
-            </Button>
-          </Link>
+          <Button
+            variant="primary"
+            w="135px"
+            onClick={() => btnHandlerPayment(dataBooking?.id)}
+          >
+            Pay
+          </Button>
         </Flex>
         <Container maxW="1140px">
           <Flex
@@ -140,23 +183,6 @@ function Booking() {
             mx="auto"
             display={{ ss: "none", sm: "none", sl: "flex" }}
           >
-            <Button
-              position="relative"
-              borderRadius="0px"
-              border="1px"
-              borderColor="gray.200"
-              bg="white"
-              h="40px"
-              me="20px"
-              _hover={{
-                background: "black",
-                color: "white",
-                borderColor: "black",
-              }}
-            >
-              <i className="fa-solid fa-caret-left"></i>
-            </Button>
-
             <Text fontWeight="900" fontSize="36px" color="black" px="5px">
               Confirm Booking
             </Text>
@@ -183,7 +209,7 @@ function Booking() {
                     Chek-in
                   </Text>
                   <Text fontWeight="regular" fontSize="14px" w="130px">
-                    {sDate[0]}
+                    {startDate2[2]} {resultBulan} {startDate2[0]} (14:00-22:00)
                   </Text>
                 </Flex>
                 <Flex
@@ -198,7 +224,7 @@ function Booking() {
                     Chek-out
                   </Text>
                   <Text fontWeight="regular" fontSize="14px" w="130px">
-                    {eDate[0]}
+                    {endDate2[2]} {resultBulan} {endDate2[0]} (00:00-12:00)
                   </Text>
                 </Flex>
                 <Text
@@ -237,7 +263,10 @@ function Booking() {
                 <Flex>
                   <Box boxSize="45px">
                     <Image
-                      src={process.env.REACT_APP_API_BASE_URL + dataProfile?.profilePic}
+                      src={
+                        process.env.REACT_APP_API_BASE_URL +
+                        dataProfile?.profilePic
+                      }
                       alt="Picture profile"
                     />
                   </Box>
@@ -252,7 +281,7 @@ function Booking() {
                       color="rgba(175, 175, 175, 1)"
                     >
                       {/* ulang tahun user */}
-                      {bDate[0]}
+                      {birthDate2[0]}
                     </Text>
                   </Box>
                 </Flex>
@@ -325,14 +354,17 @@ function Booking() {
                 h="618px"
                 overflow="hiden"
                 objectFit="cover"
-                src={process.env.REACT_APP_API_BASE_URL +  dataRoom?.Property?.pic}
+                src={
+                  process.env.REACT_APP_API_BASE_URL + dataRoom?.Property?.pic
+                }
               ></Image>
             </Box>
           </Flex>
         </Container>
       </Box>
     </Layout>
+  );
 }
-
+}
 
 export default Booking;

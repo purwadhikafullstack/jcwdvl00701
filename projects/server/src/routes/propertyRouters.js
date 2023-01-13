@@ -21,10 +21,11 @@ routers.patch(
   }).single("pic"),
   propertyController.editProperty
 );
-
 routers.get("/get/:tenantId", propertyController.getPropertyFilter);
 routers.get("/get/edit/:propertyId", propertyController.getOneProperty);
+routers.get('/search', propertyController.getSearchResult)
+routers.get('/all', propertyController.getAll)
 routers.post("/delete", propertyController.deleteProperty);
-
 routers.get("/seeders", propertyController.getSeeders);
+
 module.exports = routers;

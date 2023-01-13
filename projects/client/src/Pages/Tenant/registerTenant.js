@@ -1,4 +1,4 @@
-import React from "react";
+import { useRef, useState } from "react";
 import {
   Flex,
   Spacer,
@@ -13,7 +13,8 @@ import {
   Container,
   InputGroup,
   InputRightElement,
-  Alert
+  Alert,
+  FormHelperText,
 } from "@chakra-ui/react";
 import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
@@ -21,70 +22,108 @@ import facebook from "../../Assets/image/facebook.png";
 import registerTenant from "../../Assets/image/registerTenant.png";
 import Layout from "../../Components/Layout";
 import { Link, useHistory } from "react-router-dom";
-import {authFirebase} from "../../Config/firebase";
+import { authFirebase } from "../../Config/firebase";
 import axios from "axios";
-import {createUserWithEmailAndPassword, sendEmailVerification} from "firebase/auth"
-import {useFormik} from "formik";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import YupPassword from "yup-password";
 import "yup-phone";
+import Footer from "../../Components/Footer";
 
 function RegisterTenant() {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-  let history = useHistory()
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const inputFileRef = useRef(null);
+  const [fileSizeMsg, setFileSizeMsg] = useState("");
+  let history = useHistory();
 
-  const _handleRegister = async (credential, payload={}) => {
-
-    const user = credential.user
-    const provider = credential.providerId ? credential.providerId : "password"
-
-    const registerUrl = `${process.env.REACT_APP_API_BASE_URL}/tenant/register-tenant`
-    payload = {
-      id : user.uid,
-      firebaseProviderId : provider,
-      ...payload
+  const handleFile = (event) => {
+    if (event.target.files[0].size / 1024 > 1024) {
+      setFileSizeMsg("File size is greater than maximum limit");
+    } else {
+      setSelectedFile(event.target.files[0]);
+      formik.setFieldValue("idCardPic", event.target.files[0]);
     }
+  };
 
-    const response = await axios.post(registerUrl, payload)
+  const _handleRegister = async (credential, payload = {}) => {
+    const user = credential.user;
+    const provider = credential.providerId ? credential.providerId : "password";
 
-    history.push("/tenant/dasboard")
-  }
+    const registerUrl = `${process.env.REACT_APP_API_BASE_URL}/tenant/register-tenant`;
+    console.log("_handleregister", payload);
 
-  YupPassword(Yup)
-    const formik = useFormik({
-      initialValues: {
-        name: "",
-        email: "",
-        phoneNumber: "",
-        password: "",
-        confirmPassword: "",
-        idCard : ""
-      },
-      validationSchema: Yup.object().shape({
-        name : Yup.string().required("fill your name"),
-        email: Yup.string().required("your email is invalid").email("format yang dimasukan bukan email"),
-        phoneNumber: Yup.string().phone("ID").required(),
-        password: Yup.string().required("please fill in the password").min(8).minUppercase(1).minNumbers(1),
-        confirmPassword: Yup.string().required("please re-type your password")
-            .oneOf([Yup.ref('password'), null], 'Didn\'t match with password'),
-        idCard : Yup.number().required("please insert your id card")
+    let { name, email, phoneNumber, idCardPic } = payload;
+    const formData = new FormData();
+
+    formData.append("id", user.uid);
+    formData.append("firebaseProviderId", provider);
+    formData.append("email", email);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("idCardPic", idCardPic);
+    formData.append("name", name);
+
+    const response = await axios.post(registerUrl, formData);
+    console.log(response.data);
+
+    history.push("/tenant/dasboard");
+  };
+
+  YupPassword(Yup);
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      phoneNumber: "",
+      password: "",
+      confirmPassword: "",
+      idCardPic: selectedFile,
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required("fill your name"),
+      email: Yup.string()
+        .required("your email is invalid")
+        .email("format yang dimasukan bukan email"),
+      phoneNumber: Yup.string().phone("ID").required(),
+      password: Yup.string()
+        .required("please fill in the password")
+        .min(8)
+        .minUppercase(1)
+        .minNumbers(1),
+      confirmPassword: Yup.string()
+        .required("please re-type your password")
+        .oneOf([Yup.ref("password"), null], "Didn't match with password"),
+      idCardPic: Yup.string().required("please insert your id card"),
     }),
     validateOnChange: false,
-    onSubmit : async (values) => {
+    onSubmit: async (values) => {
       console.log(values);
 
-      const {name, email, phoneNumber, password, idCard} = values
+      const { name, email, phoneNumber, password, idCardPic } = values;
 
-      const credential = await createUserWithEmailAndPassword(authFirebase, email, password)
-      const user = credential.user
-      
+      const credential = await createUserWithEmailAndPassword(
+        authFirebase,
+        email,
+        password
+      );
+      const user = credential.user;
 
-      await _handleRegister(credential , {name : name, email : email, phoneNumber : parseInt(phoneNumber) , idCardPic : parseInt(idCard)})
-    }
-  })
+      await _handleRegister(credential, {
+        name: name,
+        email: email,
+        phoneNumber: phoneNumber,
+        idCardPic: idCardPic,
+      });
+    },
+  });
   return (
-    <Layout>
+    // <Layout>
+    <>
       <Container maxW="2x1" px="0px">
         <Flex flexDirection="column" bg="black">
           {/* flex container utk dekstop */}
@@ -114,7 +153,7 @@ function RegisterTenant() {
 
             {/* Form */}
             <Box w="50em" my="5em">
-              <Flex justifyContent="center" alignItems="center" my="3em">
+              <Flex justifyContent="center" alignItems="center" my="3em" mb={"80vh"}>
                 <Box width="360px" height="297px">
                   <Flex
                     flexDirection="column"
@@ -175,15 +214,15 @@ function RegisterTenant() {
                             borderRadius="0"
                             bg="white"
                             onChange={(e) =>
-                                formik.setFieldValue("name", e.target.value)
+                              formik.setFieldValue("name", e.target.value)
                             }
                           />
-                          {formik.errors.name? (
-                              <Alert status="error" color="red" text="center">
-                                  <i className="fa-solid fa-circle-exclamation"></i>
-                                  <Text ms="10px">{formik.errors.name}</Text>
-                              </Alert>
-                            ) : null}
+                          {formik.errors.name ? (
+                            <Alert status="error" color="red" text="center">
+                              <i className="fa-solid fa-circle-exclamation"></i>
+                              <Text ms="10px">{formik.errors.name}</Text>
+                            </Alert>
+                          ) : null}
                         </FormControl>
                         <FormControl id="email" pb="12px">
                           <Input
@@ -192,15 +231,15 @@ function RegisterTenant() {
                             borderRadius="0"
                             bg="white"
                             onChange={(e) =>
-                                formik.setFieldValue("email", e.target.value)
+                              formik.setFieldValue("email", e.target.value)
                             }
                           />
-                          {formik.errors.email? (
-                              <Alert status="error" color="red" text="center">
-                                  <i className="fa-solid fa-circle-exclamation"></i>
-                                  <Text ms="10px">{formik.errors.email}</Text>
-                              </Alert>
-                            ) : null}
+                          {formik.errors.email ? (
+                            <Alert status="error" color="red" text="center">
+                              <i className="fa-solid fa-circle-exclamation"></i>
+                              <Text ms="10px">{formik.errors.email}</Text>
+                            </Alert>
+                          ) : null}
                         </FormControl>
                         <FormControl id="phoneNumber" pb="12px">
                           <Input
@@ -209,90 +248,128 @@ function RegisterTenant() {
                             borderRadius="0"
                             bg="white"
                             onChange={(e) =>
-                                formik.setFieldValue("phoneNumber", e.target.value)
+                              formik.setFieldValue(
+                                "phoneNumber",
+                                e.target.value
+                              )
                             }
                           />
-                          {formik.errors.phoneNumber? (
-                              <Alert status="error" color="red" text="center">
-                                  <i className="fa-solid fa-circle-exclamation"></i>
-                                  <Text ms="10px">{formik.errors.phoneNumber}</Text>
-                              </Alert>
-                            ) : null}
+                          {formik.errors.phoneNumber ? (
+                            <Alert status="error" color="red" text="center">
+                              <i className="fa-solid fa-circle-exclamation"></i>
+                              <Text ms="10px">{formik.errors.phoneNumber}</Text>
+                            </Alert>
+                          ) : null}
                         </FormControl>
                         <FormControl id="password" pb="12px">
                           <InputGroup>
-                                <Input
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Password"
-                                    borderRadius="0"
-                                    bg="white"
-                                    onChange={(e) =>
-                                        formik.setFieldValue("password", e.target.value)
-                                    }
-                                />
-                                <InputRightElement>
-                                    <Button onClick={() => setShowPassword(current => !current)}>
-                                        {showPassword ? (
-                                            <i className="fa-sharp fa-solid fa-eye"></i>
-                                        ) : (
-                                            <i className="fa-solid fa-eye-slash"></i>
-                                        )}
-                                    </Button>
-                                </InputRightElement>
-                            </InputGroup>
-                            {formik.errors.password? (
-                              <Alert status="error" color="red" text="center">
-                                  <i className="fa-solid fa-circle-exclamation"></i>
-                                  <Text ms="10px">{formik.errors.password}</Text>
-                              </Alert>
-                            ) : null}
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Password"
+                              borderRadius="0"
+                              bg="white"
+                              onChange={(e) =>
+                                formik.setFieldValue("password", e.target.value)
+                              }
+                            />
+                            <InputRightElement>
+                              <Button
+                                onClick={() =>
+                                  setShowPassword((current) => !current)
+                                }
+                              >
+                                {showPassword ? (
+                                  <i className="fa-sharp fa-solid fa-eye"></i>
+                                ) : (
+                                  <i className="fa-solid fa-eye-slash"></i>
+                                )}
+                              </Button>
+                            </InputRightElement>
+                          </InputGroup>
+                          {formik.errors.password ? (
+                            <Alert status="error" color="red" text="center">
+                              <i className="fa-solid fa-circle-exclamation"></i>
+                              <Text ms="10px">{formik.errors.password}</Text>
+                            </Alert>
+                          ) : null}
                         </FormControl>
                         <FormControl id="confirmPassword" pb="12px">
                           <InputGroup>
-                                <Input
-                                    type={showConfirmPassword ? "text" : "password"}
-                                    placeholder="Confirm Password"
-                                    borderRadius="0"
-                                    bg="white"
-                                    onChange={(e) =>
-                                        formik.setFieldValue("confirmPassword",e.target.value)
-                                    }
-                                />
-                                <InputRightElement>
-                                    <Button
-                                        onClick={(e) => setShowConfirmPassword(current => !current)}
-                                    >
-                                        {showConfirmPassword ? (
-                                            <i className="fa-sharp fa-solid fa-eye"></i>
-                                        ) : (
-                                            <i className="fa-solid fa-eye-slash"></i>
-                                        )}
-                                    </Button>
-                                </InputRightElement>
-                            </InputGroup>
-                            {formik.errors.confirmPassword? (
-                              <Alert status="error" color="red" text="center">
-                                  <i className="fa-solid fa-circle-exclamation"></i>
-                                  <Text ms="10px">{formik.errors.confirmPassword}</Text>
-                              </Alert>
-                            ) : null}
+                            <Input
+                              type={showConfirmPassword ? "text" : "password"}
+                              placeholder="Confirm Password"
+                              borderRadius="0"
+                              bg="white"
+                              onChange={(e) =>
+                                formik.setFieldValue(
+                                  "confirmPassword",
+                                  e.target.value
+                                )
+                              }
+                            />
+                            <InputRightElement>
+                              <Button
+                                onClick={(e) =>
+                                  setShowConfirmPassword((current) => !current)
+                                }
+                              >
+                                {showConfirmPassword ? (
+                                  <i className="fa-sharp fa-solid fa-eye"></i>
+                                ) : (
+                                  <i className="fa-solid fa-eye-slash"></i>
+                                )}
+                              </Button>
+                            </InputRightElement>
+                          </InputGroup>
+                          {formik.errors.confirmPassword ? (
+                            <Alert status="error" color="red" text="center">
+                              <i className="fa-solid fa-circle-exclamation"></i>
+                              <Text ms="10px">
+                                {formik.errors.confirmPassword}
+                              </Text>
+                            </Alert>
+                          ) : null}
                         </FormControl>
                         <FormControl id="idCard" pb="12px">
                           <Input
-                            type="Text"
+                            type="file"
                             placeholder="Upload Id Card "
                             borderRadius="0"
                             bg="white"
-                            onChange={(e) => formik.setFieldValue("idCard", e.target.value)}
+                            // onChange={(e) => formik.setFieldValue("idCard", e.target.value)}
+                            onChange={handleFile}
+                            ref={inputFileRef}
+                            display="none"
+                            accept="image/*"
                           />
-                          {formik.errors.idCard? (
+                          <FormHelperText color="white">
+                            Max size: 1MB
+                          </FormHelperText>
+                          <Button
+                            variant="secondary"
+                            w="100%"
+                            onClick={() => inputFileRef.current.click()}
+                          >
+                            Input Id Card
+                          </Button>
+                          {formik.errors.idCardPic ? (
                             <Alert status="error" color="red" text="center">
-                                <i className="fa-solid fa-circle-exclamation"></i>
-                                <Text ms="10px">{formik.errors.idCard}</Text>
+                              <i className="fa-solid fa-circle-exclamation"></i>
+                              <Text ms="10px">{formik.errors.idCardPic}</Text>
                             </Alert>
-                            ) : null}
+                          ) : null}
+                          {selectedFile ? (
+                            <Alert status="info" color="green" text="center">
+                              <i className="fa-solid fa-check"></i>
+                              <Text ms="10px">Id Card uploaded</Text>
+                            </Alert>
+                          ) : null}
                         </FormControl>
-                        <Button variant="primary" mb="12px" onClick={formik.handleSubmit}>
+                        <Button
+                          variant="primary"
+                          mb="12px"
+                          onClick={formik.handleSubmit}
+                        >
                           Sign up
                         </Button>
                       </Flex>
@@ -316,7 +393,9 @@ function RegisterTenant() {
           </Flex>
         </Flex>
       </Container>
-    </Layout>
+      <Footer/>
+    </>
+    // </Layout>
   );
 }
 
