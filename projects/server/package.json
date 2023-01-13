@@ -9,6 +9,11 @@
   "scripts": {
     "start": "nodemon",
     "serve": "node .",
+    "seed": "NODE_ENV=production npx sequelize db:seed:all",
+    "deep-undo-seed": "NODE_ENV=production npx sequelize db:seed:undo:all",
+    "migrate": "NODE_ENV=production npx sequelize db:migrate",
+    "undo-migration": "NODE_ENV=production npx sequelize db:migrate:undo",
+    "deep-undo-migration": "NODE_ENV=production npx sequelize db:migrate:undo:all",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -17,11 +22,14 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
+    "memoizee": "^0.4.15",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^2.3.3",
     "nanoid": "^3.3.2",
     "nodemailer": "^6.8.0",
-    "sequelize": "^6.25.5"
+    "sequelize": "^6.25.5",
+    "sequelize-cli": "^6.5.2",
+    "node-cron": "^3.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
