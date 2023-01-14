@@ -364,7 +364,7 @@ function PropertyCard(props) {
     history.push(`/detail/${props.data.id}`);
   };
 
-  const isDiscount = props.data.defaultPrice !== props.data.price
+  const isDiscount = props.data.defaultPrice > props.data.price
   return (
     <Card
       direction={{base: "column", sm: "row"}}
@@ -406,7 +406,6 @@ function PropertyCard(props) {
               Check Availability
             </Button>
             <Text as="b">
-
               {
                 isDiscount
                   ? <>

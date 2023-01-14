@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {
   Box,
-  Button,
+  Button, Center,
   Container,
   Flex,
   Heading, HStack,
@@ -15,7 +15,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
 import StepperInput from "../../Components/User/StepperInput";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 import {Select as Select2} from "chakra-react-select";
 import axios from "axios";
 import {useHistory} from "react-router-dom";
@@ -110,11 +110,8 @@ function TopBar(props) {
       backgroundColor="blackAlpha.900"
       backgroundImage="/Assets/topbar_background.png"
     >
-      <Flex justify="space-between" align="center">
-        <Image src="/Assets/logoTuru.png" alt="turu" />
-        <Button m={2} leftIcon={<i className="fa-regular fa-circle-user" />}>
-          Login
-        </Button>
+      <Flex justify="space-between" align="left">
+        <Image src="/Assets/logoTuru.png" alt="turu"/>
       </Flex>
 
       <Heading
@@ -153,7 +150,8 @@ function TopBar(props) {
               e.stopPropagation()
             }}>
               <HStack>
-                <Button rounded='full' onClick={() => setVisitor(current => current - 1)} disabled={visitor <= 1}>-</Button>
+                <Button rounded='full' onClick={() => setVisitor(current => current - 1)}
+                        disabled={visitor <= 1}>-</Button>
                 <NumberInput style={{'width': '80px'}} textAlign='center' value={visitor} min={1}>
                   <NumberInputField textAlign={'center'}/>
                 </NumberInput>
@@ -224,7 +222,7 @@ function TopBar(props) {
           <Button
             variant="primary"
             w="100%"
-            leftIcon={<i className="fa-solid fa-magnifying-glass" />}
+            leftIcon={<i className="fa-solid fa-magnifying-glass"/>}
             onClick={() => {
               const params2 = new URLSearchParams({visitor, propName})
               selectedLocations.forEach(locId => params2.append('propLocation', locId.value))
@@ -243,33 +241,48 @@ function TopBar(props) {
 }
 
 function Thumbnail(props) {
+  const history = useHistory()
+  const property = props.properties
+
+  const isDiscount = property.defaultPrice > property.price
   return (
     <Box my={4} position={"relative"}>
-      <Box
-        backgroundColor={"#0CD38C"}
-        px={4}
-        py={2}
-        color={"white"}
-        position={"absolute"}
-      >
-        Save 25%
-      </Box>
-      <Image src={"/Assets/room1.png"} w={"100%"} objectFit="cover"></Image>
+      {
+        isDiscount
+          ? <Box
+            backgroundColor={"#0CD38C"}
+            px={4} py={2}
+            color={"white"} position={"absolute"}
+          >
+            Save {Math.round((1 - property.price/property.defaultPrice) * 100)} %
+          </Box>
+          : <></>
+      }
+
+
+      <Image
+        src={property.pic ? `${process.env.REACT_APP_API_BASE_URL}${property.pic}` : "/Assets/room1.png"}
+        maxH={'250px'}
+        w={"100%"} objectFit="cover"/>
+
       <Flex justify="space-between" align="center" mt={2}>
         <Box color="gray.600" w="100%" cursor="pointer">
           <Text fontSize="lg" fontWeight="bold">
-            Apartment in Jakarta
+            {property.name}
           </Text>
           <Flex align={"end"}>
-            <Text fontSize="sm" color={"gray"} mr={1}>
-              <strike>Rp.600.000,00</strike>
-            </Text>
-            <Text fontSize="sm" color={"red"}>
-              Rp.450.000
-            </Text>
+            {
+              isDiscount
+                ? <>
+                  <Text as={'s'} fontSize={'sm'} color={"gray"} mr={1}>Rp.{property.defaultPrice},00</Text>
+                  <Text color={'red'}>Rp.{property.price},00/per night</Text>
+                </>
+                : <Text>Rp.{property.price},00/per night</Text>
+            }
           </Flex>
         </Box>
-        <Button variant="primary" w="70%">
+
+        <Button variant="primary" w="70%" onClick={() => history.push(`/detail/${property.id}`)}>
           Reserve
         </Button>
       </Flex>
@@ -280,9 +293,6 @@ function Thumbnail(props) {
 function Home(props) {
 
   const global = useSelector(state => state.user)
-  console.log(global);
-  // console.log(Tenant);
-  // console.log(Profile);
   const sliderSettings = {
     dots: true,
     infinite: true,
@@ -291,10 +301,20 @@ function Home(props) {
     slidesToScroll: 1,
   };
 
+  const [highlighted, setHighlighted] = useState([])
+  const getHighlights = useCallback(async () => {
+    const url = `${process.env.REACT_APP_API_BASE_URL}/property/search`
+    const response = await axios.get(url)
+    setHighlighted(response.data.result.properties.slice(0, 3))
+  }, [setHighlighted])
+  useEffect(() => {
+    getHighlights()
+  }, [getHighlights])
+
   return (
     <Layout>
       <Box>
-        <TopBar />
+        <TopBar/>
 
         <Container maxW="container.lg">
           <Box my={4} py={8}>
@@ -323,9 +343,9 @@ function Home(props) {
             </Slider>
           </Box>
 
-          <Thumbnail />
-          <Thumbnail />
-          <Thumbnail />
+          {
+            highlighted.map(highlight => <Thumbnail properties={highlight}/>)
+          }
         </Container>
       </Box>
     </Layout>
