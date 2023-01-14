@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model, DataTypes
-} = require('sequelize');
+"use strict";
+const { Model, DataTypes } = require("sequelize");
 module.exports = (sequelize) => {
   class RoomUnavailability extends Model {
     /**
@@ -10,25 +8,31 @@ module.exports = (sequelize) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      this.belongsTo(models.Room)
+      this.belongsTo(models.Room);
     }
   }
-  RoomUnavailability.init({
-    startDate : {
-      type : DataTypes.DATE,
-      allowNull : false,
+  RoomUnavailability.init(
+    {
+      startDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      endDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      roomId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      type: {
+        type: DataTypes.INTEGER,
+      },
     },
-    endDate : {
-      type : DataTypes.DATE,
-      allowNull : false,
-    },
-    roomId : {
-      type : DataTypes.INTEGER,
-      allowNull : false,
-    },
-  }, {
-    sequelize,
-    modelName: 'RoomUnavailability',
-  });
+    {
+      sequelize,
+      modelName: "RoomUnavailability",
+    }
+  );
   return RoomUnavailability;
 };

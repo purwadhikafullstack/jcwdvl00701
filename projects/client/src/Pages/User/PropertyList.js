@@ -492,6 +492,48 @@ function PropertyList(props) {
     fetchLocations()
   }, [fetchLocations])
 
+    if (page > response.data.result.totalPage) {
+      setPage(response.data.result.page);
+      params.page = response.data.result.page;
+    }
+
+    const params2 = new URLSearchParams({
+      page,
+      priceOrder,
+      nameOrder,
+      visitor,
+      propName,
+    });
+    selectedLocations.forEach((locId) => params2.append("propLocation", locId));
+    history.replace({
+      pathname: location.pathname,
+      search: params2.toString(),
+    });
+  }, [
+    setProperties,
+    page,
+    priceOrder,
+    nameOrder,
+    visitor,
+    selectedLocations,
+    propName,
+  ]);
+
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
+
+  const [locations, setLocations] = useState([]);
+  const fetchLocations = useCallback(async () => {
+    const url = `${process.env.REACT_APP_API_BASE_URL}/property/seeders`;
+    const response = await axios.get(url);
+    setLocations(response.data.results);
+  }, [setLocations]);
+
+  useEffect(() => {
+    fetchLocations();
+  }, [fetchLocations]);
+
   return (
     <div>
       <SearchBox
