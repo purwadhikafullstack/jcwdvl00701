@@ -36,7 +36,7 @@ function Order() {
   const [keyword, setKeyword] = useState("");
   const [dropdown, setDropdown] = useState([]);
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(6);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [alfabet, setAlfabet] = useState("");
@@ -59,7 +59,7 @@ function Order() {
         setRows(res.data.totalRows);
         onClose();
 
-        console.log(res.data.totalRows);
+        console.log(res.data);
       })
       .catch((err) => {
         console.error(err.message);
@@ -68,7 +68,9 @@ function Order() {
 
   const fetchDataDropdown = () => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
+      .get(
+        `${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`
+      )
       .then((res) => {
         setDropdown(res.data.dropdown);
       })
@@ -79,7 +81,11 @@ function Order() {
 
   const optionDropdown = () => {
     return dropdown.map((val) => {
-      return <option value={val.id}>{val.name}</option>;
+      return (
+        <option key={val.id} value={val.id}>
+          {val.name}
+        </option>
+      );
     });
   };
 
@@ -101,10 +107,12 @@ function Order() {
             guest_count={val.guestCount}
             price={val.finalPrice}
             paymentProof={val.Transaction?.paymentProof}
-            address = {val.Room?.Property?.description}
-            rules = {val.Room?.Property?.rules}
-            email = {val.User?.email}
+            address={val.Room?.Property?.description}
+            rules={val.Room?.Property?.rules}
+            email={val.User?.email}
             randomNumber={setRandomNumber}
+            phoneNumber={val.room?.Property.Tenant.phoneNumber}
+            roomId={val.RoomId}
           />
         </Box>
       );
@@ -191,7 +199,7 @@ function Order() {
             fontWeight="bold"
             display={{ ss: "flex", sm: "none", sl: "none" }}
           >
-            12 Orders
+            {rows > 1 ? `${rows} Orders` : `${rows} Order`}
           </Text>
           <Flex
             pt="20px"
@@ -257,53 +265,59 @@ function Order() {
           </FormControl>
         </Container>
         <Container maxW="1140px" mt="20px">
-          <Box>
-            <SimpleGrid minChildWidth="320px" spacing="30px">
-              {renderOrder()}
-            </SimpleGrid>
-            <Box mt="20px">
-              <ReactPaginate
-                previousLabel={
-                  <i
-                    className="fa-solid fa-chevron-left"
-                    style={{
-                      fontSize: 18,
-                      height: 40,
-                      width: 40,
-                      position: "absolute",
-                      left: "11px",
-                      top: "11px",
-                    }}
-                  ></i>
-                }
-                nextLabel={
-                  <i
-                    className="fa-solid fa-chevron-right"
-                    style={{
-                      fontSize: 18,
-                      height: 40,
-                      width: 40,
-                      position: "absolute",
-                      left: "11px",
-                      top: "11px",
-                    }}
-                  ></i>
-                }
-                pageCount={pages}
-                onPageChange={changePage}
-                activeClassName={"item active "}
-                breakClassName={"item break-me "}
-                breakLabel={"..."}
-                containerClassName={"pagination"}
-                disabledClassName={"disabled-page"}
-                marginPagesDisplayed={2}
-                nextClassName={"item next "}
-                pageClassName={"item pagination-page "}
-                pageRangeDisplayed={2}
-                previousClassName={"item previous"}
-              />
+          {rows === 0 ? (
+            <Center minHeight="45vh">
+              <Text fontSize="20px">you do not have any orders</Text>
+            </Center>
+          ) : (
+            <Box>
+              <SimpleGrid minChildWidth="320px" spacing="30px">
+                {renderOrder()}
+              </SimpleGrid>
+              <Box mt="20px">
+                <ReactPaginate
+                  previousLabel={
+                    <i
+                      className="fa-solid fa-chevron-left"
+                      style={{
+                        fontSize: 18,
+                        height: 40,
+                        width: 40,
+                        position: "absolute",
+                        left: "11px",
+                        top: "11px",
+                      }}
+                    ></i>
+                  }
+                  nextLabel={
+                    <i
+                      className="fa-solid fa-chevron-right"
+                      style={{
+                        fontSize: 18,
+                        height: 40,
+                        width: 40,
+                        position: "absolute",
+                        left: "11px",
+                        top: "11px",
+                      }}
+                    ></i>
+                  }
+                  pageCount={pages}
+                  onPageChange={changePage}
+                  activeClassName={"item active "}
+                  breakClassName={"item break-me "}
+                  breakLabel={"..."}
+                  containerClassName={"pagination"}
+                  disabledClassName={"disabled-page"}
+                  marginPagesDisplayed={2}
+                  nextClassName={"item next "}
+                  pageClassName={"item pagination-page "}
+                  pageRangeDisplayed={2}
+                  previousClassName={"item previous"}
+                />
+              </Box>
             </Box>
-          </Box>
+          )}
 
           <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />

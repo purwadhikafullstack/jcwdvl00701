@@ -25,7 +25,7 @@ module.exports = {
         include: [
           {
             model: Category,
-            required: true,
+            requred: true,
             attributes: ["location"],
           },
           {
