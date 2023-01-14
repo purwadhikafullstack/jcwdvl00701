@@ -79,7 +79,7 @@ function RegisterTenant() {
       alert(`masuk dari ${provider}`)
     }
 
-    history.push("/tenant/login");
+    // history.push("/tenant/dashboard");
   };
 
   YupPassword(Yup);

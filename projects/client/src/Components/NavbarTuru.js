@@ -25,13 +25,15 @@ import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { authFirebase } from "../Config/firebase";
 import { onAuthStateChanged, signOut, getAuth } from "firebase/auth";
-import { useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 
 import { useDisclosure } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import auth_types from "../Redux/Reducers/Types/userTypes";
 
 function NavbarMobileTenant() {
+  const dispatch = useDispatch();
   const location = useLocation().pathname;
   const pathLocation = location.split("/");
   const history = useHistory();
@@ -46,11 +48,13 @@ function NavbarMobileTenant() {
     onOpen: onDestopOpen,
     onClose: onDestopClose,
   } = useDisclosure();
+
   const {
     isOpen: isMobileOpen,
     onOpen: onMobileOpen,
     onClose: onMobileClose,
   } = useDisclosure();
+
   const { id, ProfilePic, ProfileName, firebaseProviderId, emailVerified } = useSelector(
     (state) => state.user
   );
@@ -66,13 +70,25 @@ function NavbarMobileTenant() {
         }
       }
     })
-
   }, [verifikasi , verifikasi2])
-  const logout = () => {
-    signOut(auth)
-      .then(() => console.log("signed out"))
-      .catch((error) => alert(error));
-    history.push("/login");
+
+  const logout = async () => {
+    await signOut(auth).catch((error) => alert(error));
+    dispatch({
+      type: auth_types.Redux,
+      payload: {
+        id: "",
+        email: "",
+        emailVerified: "",
+        firebaseProviderId: "",
+        UserRoles: [],
+        TenantId: 0,
+        TenantName: "",
+        ProfileName: "",
+        ProfilePic: "",
+      },
+    });
+    history.push("/login")
   };
 
   const switchToTenant = () => {
@@ -199,11 +215,23 @@ function NavbarMobileTenant() {
                     my="10px"
                     key={`tenant-menu-signout`}
                     _hover={{ bg: "white" }}
-                    onClick={() => {
-                      signOut(auth)
-                        .then(() => console.log("signed out"))
-                        .catch((error) => alert(error));
-                      history.push("/tenant/login");
+                    onClick={async () => {
+                      await signOut(auth).catch((error) => alert(error));
+                      dispatch({
+                        type: auth_types.Redux,
+                        payload: {
+                          id: "",
+                          email: "",
+                          emailVerified: "",
+                          firebaseProviderId: "",
+                          UserRoles: [],
+                          TenantId: 0,
+                          TenantName: "",
+                          ProfileName: "",
+                          ProfilePic: "",
+                        },
+                      });
+                      history.push("/login");
                     }}
                   >
                     <Flex
@@ -359,7 +387,7 @@ function NavbarMobileTenant() {
                         Profile
                       </MenuItem>
                       <MenuDivider />
-                      {firebaseProviderId === "password" ? (
+                      {firebaseProviderId === "password" && verifikasi2 ? (
                         <MenuItem onClick={switchToTenant}>
                           Switch To Tenant
                         </MenuItem>

@@ -36,8 +36,11 @@ import {getAuth} from "firebase/auth";
 
 function LoginTenant() {
   const global = useSelector(state => state.user)
-  if (global.id) history.push('/tenant/dashboard')
   let history = useHistory()
+
+  if (global.id) {
+    history.push('/tenant/dashboard')
+  }
 
   const [wrongPass, setWrongPass] = useState("")
   // for toggling password visibility
@@ -59,7 +62,6 @@ function LoginTenant() {
     }),
     validateOnChange: false,
     onSubmit: async (values) => {
-      debugger
       const {email, password} = values
 
       const auth = getAuth()

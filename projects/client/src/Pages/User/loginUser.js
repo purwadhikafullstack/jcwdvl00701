@@ -42,7 +42,9 @@ function LoginUser() {
     const global = useSelector(state => state.user)
     const history = useHistory()
 
-    if(global.id) history.push('/')
+    if(global.id) {
+        history.push('/')
+    }
 
     const dispatch = useDispatch()
     const [wrongPass , setWrongPass] = useState("")

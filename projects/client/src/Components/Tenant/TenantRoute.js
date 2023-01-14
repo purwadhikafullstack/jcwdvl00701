@@ -15,7 +15,7 @@ function TenantRoute(props) {
 
     onAuthStateChanged(authFirebase, (user) => {
       if (!user) {
-        history.push("/");
+        history.push("/tenant/login");
       }
     });
     return <Loading />;
