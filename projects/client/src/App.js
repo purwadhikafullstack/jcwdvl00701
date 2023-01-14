@@ -38,7 +38,6 @@ import {
   sendEmailVerification,
   signOut,
 } from "firebase/auth";
-import { useHistory, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import auth_types from "./Redux/Reducers/Types/userTypes";
@@ -56,7 +55,6 @@ function App() {
 
   const { id, email, UserRoles, Tenant } = useSelector((state) => state.user);
 
-  let history = useHistory();
   const dispatch = useDispatch();
 
   useEffect(() => {

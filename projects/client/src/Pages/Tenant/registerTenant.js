@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import {useRef, useState} from "react";
 import {
   Flex,
   Spacer,
@@ -21,26 +21,31 @@ import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import registerTenant from "../../Assets/image/registerTenant.png";
 import Layout from "../../Components/Layout";
-import { Link, useHistory } from "react-router-dom";
-import { authFirebase } from "../../Config/firebase";
+import {Link, useHistory} from "react-router-dom";
+import {authFirebase} from "../../Config/firebase";
 import axios from "axios";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
 } from "firebase/auth";
-import { useFormik } from "formik";
+import {useFormik} from "formik";
 import * as Yup from "yup";
 import YupPassword from "yup-password";
 import "yup-phone";
 import Footer from "../../Components/Footer";
+import {useSelector} from "react-redux";
 
 function RegisterTenant() {
+  const global = useSelector(state => state.user)
+  let history = useHistory();
+
+  if(global.id) history.push('/tenant/dashboard')
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const inputFileRef = useRef(null);
   const [fileSizeMsg, setFileSizeMsg] = useState("");
-  let history = useHistory();
 
   const handleFile = (event) => {
     if (event.target.files[0].size / 1024 > 1024) {
@@ -56,9 +61,8 @@ function RegisterTenant() {
     const provider = credential.providerId ? credential.providerId : "password";
 
     const registerUrl = `${process.env.REACT_APP_API_BASE_URL}/tenant/register-tenant`;
-    console.log("_handleregister", payload);
 
-    let { name, email, phoneNumber, idCardPic } = payload;
+    let {name, email, phoneNumber, idCardPic} = payload;
     const formData = new FormData();
 
     formData.append("id", user.uid);
@@ -69,13 +73,13 @@ function RegisterTenant() {
     formData.append("name", name);
 
     const response = await axios.post(registerUrl, formData);
-    console.log(response.data);
-    if (!provider.toLowerCase().includes('google')) {
-          await sendEmailVerification(user)
-          alert(`masuk dari ${provider}`)
-      }
 
-    history.go("/tenant/dashboard");
+    if (!provider.toLowerCase().includes('google')) {
+      await sendEmailVerification(user)
+      alert(`masuk dari ${provider}`)
+    }
+
+    history.push("/tenant/login");
   };
 
   YupPassword(Yup);
@@ -106,15 +110,11 @@ function RegisterTenant() {
     }),
     validateOnChange: false,
     onSubmit: async (values) => {
-      console.log(values);
+      debugger
 
-      const { name, email, phoneNumber, password, idCardPic } = values;
+      const {name, email, phoneNumber, password, idCardPic} = values;
 
-      const credential = await createUserWithEmailAndPassword(
-        authFirebase,
-        email,
-        password
-      );
+      const credential = await createUserWithEmailAndPassword(authFirebase, email, password);
       const user = credential.user;
 
       await _handleRegister(credential, {
@@ -135,7 +135,7 @@ function RegisterTenant() {
             {/* utk image dekstop */}
             <Box
               width="900px"
-              display={{ ss: "none", sm: "none", md: "block" }}
+              display={{ss: "none", sm: "none", md: "block"}}
             >
               <Flex>
                 <Image
@@ -382,13 +382,13 @@ function RegisterTenant() {
                           fontSize="12px"
                           fontWeight="300"
                           cursor="pointer"
-                          _hover={{ textDecoration: "underline" }}
+                          _hover={{textDecoration: "underline"}}
                           color="white"
                         >
                           <Link to="/register"> Sign Up as User</Link>
                         </Text>
                       </Flex>
-                      <hr />
+                      <hr/>
                     </Box>
                   </Flex>
                 </Box>
