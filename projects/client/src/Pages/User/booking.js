@@ -29,9 +29,9 @@ function Booking() {
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [dataProfile, setDataProfile] = useState({});
-  const [birthdate, setBirthdate] = useState("");
+  // const [birthdate, setBirthdate] = useState("");
   const [err, setErr] = useState("")
-  console.log(birthdate);
+  // console.log(birthdate);
   let history = useHistory();
 
   useEffect(() => {
@@ -53,7 +53,7 @@ function Booking() {
         setStartDate((await response)?.data.result.startDate);
         setEndDate((await response)?.data.result.endDate);
         setDataProfile((await response)?.data.result.User.Profile);
-        setBirthdate((await response)?.data.result.User?.Profile?.birthdate);
+        // setBirthdate((await response)?.data.result.User?.Profile?.birthdate);
       } catch (err) {
         console.error(err.data.message);
       }
@@ -106,15 +106,15 @@ function Booking() {
     console.log(resultBulan);
 
       // var birthDate2 = birthdate.split("T")
-    if(birthdate !== null){
-      var birthDate2 = birthdate.split("T")
-    } else {
-      alert("You must enter your date of birth ")
-      // setErr("You must enter your date of birth ")
-      setTimeout(() => {
-        history.push("/profile")
-      }, 3000)
-    }
+    // if(birthdate !== null){
+    //   var birthDate2 = birthdate.split("T")
+    // } else {
+    //   alert("You must enter your date of birth ")
+    //   // setErr("You must enter your date of birth ")
+    //   setTimeout(() => {
+    //     history.push("/profile")
+    //   }, 3000)
+    // }
 
   const btnHandlerPayment = (id) => {
     console.log(id);
@@ -295,7 +295,7 @@ function Booking() {
                       color="rgba(175, 175, 175, 1)"
                     >
                       {/* ulang tahun user */}
-                      {birthDate2[0]}
+                      {/* {birthDate2[0]} */}
                     </Text>
                   </Box>
                 </Flex>

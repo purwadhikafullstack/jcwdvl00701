@@ -25,7 +25,7 @@ function NavbarMobile() {
 
   const logout = () => {
     signOut(auth)
-      .then(() => alert("signed out"))
+      .then(() => console.log("signed out"))
       .catch((error) => alert(error));
     history.push("/login")
   } 

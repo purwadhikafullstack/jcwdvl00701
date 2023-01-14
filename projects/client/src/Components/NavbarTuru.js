@@ -121,7 +121,7 @@ function NavbarMobileTenant() {
     },
     {
       url: "/complete-user",
-      icon: <i class="fa-solid fa-door-open"></i>,
+      icon: <i className="fa-solid fa-door-open"></i>,
       text: "Switch to User",
     },
   ];

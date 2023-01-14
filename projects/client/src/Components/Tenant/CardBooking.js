@@ -55,7 +55,10 @@ function CardBooking(props) {
   async function updateOrder(status) {
     await axios
       .patch(
-        `${process.env.REACT_APP_API_BASE_URL}/report/update/${props.id}?status=${status}`
+        `${process.env.REACT_APP_API_BASE_URL}/report/update/${props.id}?status=${status}`,
+        {
+          paymentProof: props.paymentProof,
+        }
       )
       .then((res) => {
         onCancleClose();
@@ -63,25 +66,27 @@ function CardBooking(props) {
         onRejectClose();
         props.randomNumber(Math.random());
         // akan menyimpan endpoint utk kirim email (data yg dikirim akan di buat fleksibel )
-        if(status == 3){
-          axios.post(`${process.env.REACT_APP_API_BASE_URL}/report/email-order`, {
-            property : props.name,
-            
-            room : props.roomName,
-            checkIn : start[0],
-            checkOut : end[0],
-            guest : props.guest_count,
-            name: props.user,
-            totalPrice : props.price,
-            email : props.email,
-            address : props.address,
-            rules : props.rules
-          })
-          .catch((err) => {
-            console.error(err)
-          })
+
+        if (status === 3 || status === 5) {
+          axios.post(
+            `${process.env.REACT_APP_API_BASE_URL}/report/email-order`,
+            {
+              property: props.name,
+              room: props.roomName,
+              checkIn: start[0],
+              checkOut: end[0],
+              guest: props.guest_count,
+              name: props.user,
+              totalPrice: props.price,
+              email: props.email,
+              address: props.address,
+              rules: props.rules,
+              status,
+              phoneNumber: props.phoneNumber,
+              roomId: props.roomId,
+            }
+          );
         }
-        
       })
       .catch((err) => {
         console.error(err.message);
@@ -187,7 +192,7 @@ function CardBooking(props) {
           </Box>
         </Flex>
       </Box>
-      {props.status === 1 ? (
+      {props.status === 3 ? (
         <>
           <Button
             bg="white"
@@ -351,12 +356,13 @@ function CardBooking(props) {
       >
         <ModalOverlay />
         <ModalContent borderRadius={0}>
+          <ModalHeader>Payment proof</ModalHeader>
           <ModalBody>
             <Image
               src={process.env.REACT_APP_API_BASE_URL + props.paymentProof}
               alt="paymentProof"
               width="100%"
-              height="60px"
+              height="100%"
               overflow="hiden"
               objectFit="cover"
             />

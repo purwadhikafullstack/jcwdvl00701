@@ -131,7 +131,7 @@ function CardBooking (props) {
                             fontSize="14px"
                             color="rgba(175, 175, 175, 1)"
                         >
-                            {User?.Profile?.birthdate.split("T")[0]}
+                            {/* {User?.Profile?.birthdate.split("T")[0]} */}
                         </Text>
                     </Box>
                 </Flex>
@@ -198,7 +198,7 @@ function CardBooking (props) {
                         color="rgba(175, 175, 175, 1)"
                     >
                         {/* 28 November 1820 */}
-                        {User?.Profile?.birthdate.split("T")[0]}
+                        {/* {User?.Profile?.birthdate.split("T")[0]} */}
                     </Text>
                     </Box>
                 </Flex>

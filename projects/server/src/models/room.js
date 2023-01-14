@@ -40,6 +40,13 @@ module.exports = (sequelize) => {
       },
       deletedAt : {
         type : DataTypes.DATE
+      },
+      activePrice: {
+        type: DataTypes.VIRTUAL,
+        get: function () {
+          const activeSpecialPrices = this.SpecialPrices?.filter(specialPrice => specialPrice.isActive === true)
+          return activeSpecialPrices?.length ? activeSpecialPrices[0].price : this.defaultPrice
+        }
       }
     },
     {

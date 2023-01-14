@@ -317,124 +317,133 @@ function Report() {
             ) : null}
           </FormControl>
 
-          <Flex
-            maxW="1140px"
-            borderBottom="1px"
-            borderColor="gray.200"
-            pt="20px"
-            pb="10px"
-          >
-            <Text
-              mx="20px"
-              fontSize="16px"
-              fontWeight="bold"
-              w={filter === "User" ? "130px" : "210px"}
-            >
-              {filter === "User" ? "user" : "property"}
-            </Text>
-            <Text
-              display={{ ss: "none", sl: "flex" }}
-              me="20px"
-              fontSize="16px"
-              fontWeight="bold"
-              w={filter === "User" ? "210px" : "130px"}
-            >
-              {filter === "User" ? "property" : "user"}
-            </Text>
-            <Text
-              display={{ ss: "none", sl: "flex" }}
-              me="20px"
-              fontSize="16px"
-              fontWeight="bold"
-              w="150px"
-            >
-              Room
-            </Text>
-            <Text
-              display={{ ss: "none", sl: "flex" }}
-              me="20px"
-              fontSize="16px"
-              fontWeight="bold"
-              w="120px"
-            >
-              Start Date
-            </Text>
-            <Text
-              display={{ ss: "none", sl: "flex" }}
-              me="20px"
-              fontSize="16px"
-              fontWeight="bold"
-              w="120px"
-            >
-              End Date
-            </Text>
-            <Text me="20px" fontSize="16px" fontWeight="bold" w="180px">
-              Income
-            </Text>
-            <Text
-              display={{ ss: "flex", sl: "none" }}
-              me="10px"
-              fontSize="16px"
-              fontWeight="bold"
-              w="120px"
-            >
-              Detail
-            </Text>
-          </Flex>
-          {renderTable()}
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              padding: 20,
-              boxSizing: "border-box",
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <ReactPaginate
-              previousLabel={
-                <i
-                  className=" fa-solid fa-chevron-left"
-                  style={{
-                    fontSize: 18,
-                    height: 40,
-                    width: 40,
-                    position: "absolute",
-                    left: "11px",
-                    top: "11px",
-                  }}
-                ></i>
-              }
-              nextLabel={
-                <i
-                  className=" fa-solid fa-chevron-right"
-                  style={{
-                    fontSize: 18,
-                    height: 40,
-                    width: 40,
-                    position: "absolute",
-                    left: "11px",
-                    top: "11px",
-                  }}
-                ></i>
-              }
-              pageCount={pages}
-              onPageChange={changePage}
-              activeClassName={"item active "}
-              breakClassName={"item break-me "}
-              breakLabel={"..."}
-              containerClassName={"pagination"}
-              disabledClassName={"disabled-page"}
-              marginPagesDisplayed={2}
-              nextClassName={"item next "}
-              pageClassName={"item pagination-page "}
-              pageRangeDisplayed={2}
-              previousClassName={"item previous"}
-            />
-          </div>
+          {rows === 0 ? (
+            <Center flexDirection="column" minHeight="45vh">
+              <Text textAlign="center" fontSize="20px" mb="20px">
+                Report not found
+              </Text>
+            </Center>
+          ) : (
+            <>
+              <Flex
+                maxW="1140px"
+                borderBottom="1px"
+                borderColor="gray.200"
+                pt="20px"
+                pb="10px"
+              >
+                <Text
+                  mx="20px"
+                  fontSize="16px"
+                  fontWeight="bold"
+                  w={filter === "User" ? "130px" : "210px"}
+                >
+                  {filter === "User" ? "user" : "property"}
+                </Text>
+                <Text
+                  display={{ ss: "none", sl: "flex" }}
+                  me="20px"
+                  fontSize="16px"
+                  fontWeight="bold"
+                  w={filter === "User" ? "210px" : "130px"}
+                >
+                  {filter === "User" ? "property" : "user"}
+                </Text>
+                <Text
+                  display={{ ss: "none", sl: "flex" }}
+                  me="20px"
+                  fontSize="16px"
+                  fontWeight="bold"
+                  w="150px"
+                >
+                  Room
+                </Text>
+                <Text
+                  display={{ ss: "none", sl: "flex" }}
+                  me="20px"
+                  fontSize="16px"
+                  fontWeight="bold"
+                  w="120px"
+                >
+                  Start Date
+                </Text>
+                <Text
+                  display={{ ss: "none", sl: "flex" }}
+                  me="20px"
+                  fontSize="16px"
+                  fontWeight="bold"
+                  w="120px"
+                >
+                  End Date
+                </Text>
+                <Text me="20px" fontSize="16px" fontWeight="bold" w="180px">
+                  Income
+                </Text>
+                <Text
+                  display={{ ss: "flex", sl: "none" }}
+                  me="10px"
+                  fontSize="16px"
+                  fontWeight="bold"
+                  w="120px"
+                >
+                  Detail
+                </Text>
+              </Flex>
+              {renderTable()}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  padding: 20,
+                  boxSizing: "border-box",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <ReactPaginate
+                  previousLabel={
+                    <i
+                      className=" fa-solid fa-chevron-left"
+                      style={{
+                        fontSize: 18,
+                        height: 40,
+                        width: 40,
+                        position: "absolute",
+                        left: "11px",
+                        top: "11px",
+                      }}
+                    ></i>
+                  }
+                  nextLabel={
+                    <i
+                      className=" fa-solid fa-chevron-right"
+                      style={{
+                        fontSize: 18,
+                        height: 40,
+                        width: 40,
+                        position: "absolute",
+                        left: "11px",
+                        top: "11px",
+                      }}
+                    ></i>
+                  }
+                  pageCount={pages}
+                  onPageChange={changePage}
+                  activeClassName={"item active "}
+                  breakClassName={"item break-me "}
+                  breakLabel={"..."}
+                  containerClassName={"pagination"}
+                  disabledClassName={"disabled-page"}
+                  marginPagesDisplayed={2}
+                  nextClassName={"item next "}
+                  pageClassName={"item pagination-page "}
+                  pageRangeDisplayed={2}
+                  previousClassName={"item previous"}
+                />
+              </div>
+            </>
+          )}
         </Container>
         <Modal
           closeOnOverlayClick={false}

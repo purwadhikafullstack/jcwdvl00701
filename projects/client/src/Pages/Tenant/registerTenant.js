@@ -70,8 +70,12 @@ function RegisterTenant() {
 
     const response = await axios.post(registerUrl, formData);
     console.log(response.data);
+    if (!provider.toLowerCase().includes('google')) {
+          await sendEmailVerification(user)
+          alert(`masuk dari ${provider}`)
+      }
 
-    history.push("/tenant/dasboard");
+    history.go("/tenant/dashboard");
   };
 
   YupPassword(Yup);

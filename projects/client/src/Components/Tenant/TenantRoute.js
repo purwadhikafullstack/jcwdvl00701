@@ -1,10 +1,11 @@
 import { Route, Redirect, useHistory } from "react-router-dom";
 import Loading from "../Loading";
 import { useSelector } from "react-redux";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged,getAuth } from "firebase/auth";
 import { authFirebase } from "../../Config/firebase";
 function TenantRoute(props) {
   const { TenantId, UserRoles } = useSelector((state) => state.user);
+  // const auth = getAuth()
   console.log(UserRoles);
   console.log(TenantId);
   const history = useHistory();

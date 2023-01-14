@@ -1,6 +1,6 @@
-const express = require("express")
-const {roomController} = require("../controller")
-const routers = express.Router()
+const express = require("express");
+const { roomController } = require("../controller");
+const routers = express.Router();
 
 routers.get("/get-room", roomController.getRoom)
 routers.post("/add-room", roomController.addRoom)
@@ -11,5 +11,4 @@ routers.get("/room-one/:id", roomController.getRoomOne)
 routers.get("/room-dropdown/:tenantId", roomController.getPropertyDropdown)
 routers.get("/tenant/get", roomController.getRoomForTenantPage)
 
-
-module.exports = routers
+module.exports = routers;

@@ -13,8 +13,8 @@ function ButtonDashboard(props) {
       as="button"
       fontSize="30px"
       p="15px"
-      w="150px"
-      h="150px"
+      w={{ ss: "150px", sl: "250px" }}
+      h={{ ss: "150px", sl: "250px" }}
       backgroundImage={props.bg}
       backgroundSize="cover"
       flexDirection="column"
@@ -26,9 +26,20 @@ function ButtonDashboard(props) {
         color: "white",
       }}
     >
-      {props.icon}
-
-      <Text textAlign="start" w="100px" fontWeight="500" fontSize="16px">
+      <Text
+        textAlign="start"
+        w={{ ss: "100px", sl: "150px" }}
+        fontWeight="500"
+        fontSize={{ ss: "28px", sl: "45px" }}
+      >
+        {props.icon}
+      </Text>
+      <Text
+        textAlign="start"
+        w={{ ss: "100px", sl: "150px" }}
+        fontWeight="500"
+        fontSize={{ ss: "16px", sl: "22px" }}
+      >
         {props.menu}
       </Text>
     </Flex>
@@ -43,9 +54,12 @@ function Dashboard() {
 
   return (
     <Layout>
-      <Box mt="90px" mb="30px">
-        <Container>
-          <SimpleGrid columns={[2, null, 3]} spacing="20px">
+      <Box mt="110px" mb={{ ss: "20px", sl: "110px" }}>
+        <Container maxW="1140px" justifyContent="space-between">
+          <SimpleGrid
+            columns={[2, null, 3]}
+            spacing={{ ss: "20px", sl: "130px" }}
+          >
             <Link to="/tenant/profile">
               <ButtonDashboard
                 icon={<i className="fa-solid fa-circle-user"></i>}

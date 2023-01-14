@@ -25,7 +25,7 @@ import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import registerImage from "../../Assets/image/registerImage.png";
 import Footer from "../../Components/Footer";
-import {Link, useHistory} from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import YupPassword from "yup-password";
@@ -44,7 +44,7 @@ import {useDispatch} from "react-redux";
 
 function RegisterUser() {
     const dispatch = useDispatch();
-    let history = useHistory();
+    let history = useHistory()
 
     const [showPassword, setShowPassword] = React.useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
@@ -55,6 +55,7 @@ function RegisterUser() {
         const providerId = credential.providerId ? credential.providerId : 'password'
         if (!providerId.toLowerCase().includes('google')) {
             await sendEmailVerification(user)
+            alert(`masuk dari ${providerId}`)
         }
         
         const registerUrl = `${process.env.REACT_APP_API_BASE_URL}/user/register`
@@ -71,9 +72,11 @@ function RegisterUser() {
             ...payload
         }
         console.log(payload);
+
         const response = await axios.post(registerUrl, payload)
-        history.push("/")
-        console.log(await response.data);
+        console.log(response.data);
+        history.go("/")
+        
     }
 
     const handleWithGoogle = async () => {
