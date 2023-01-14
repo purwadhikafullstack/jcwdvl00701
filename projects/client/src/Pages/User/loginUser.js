@@ -39,7 +39,13 @@ import Layout from "../../Components/Layout";
 import Footer from "../../Components/Footer";
 
 function LoginUser() {
+    const global = useSelector(state => state.user)
     const history = useHistory()
+
+    if(global.id) {
+        history.push('/')
+    }
+
     const dispatch = useDispatch()
     const [wrongPass , setWrongPass] = useState("")
     // for toggling password visibility
@@ -58,11 +64,6 @@ function LoginUser() {
             params: {id: user.uid}
         })
             .then((res) => {
-                console.log(res.data.result)
-                dispatch({
-                    type: auth_types.Login,
-                    payload: res.data.result
-                })
                 history.push("/")
             })
             .catch((err) => {
@@ -86,10 +87,6 @@ function LoginUser() {
             }
         })
             .then((res) => {
-                dispatch({
-                    type: auth_types.Login,
-                    payload: res.data.result
-                })
                 history.push("/")
             })
             .catch((err) => {
@@ -134,7 +131,7 @@ function LoginUser() {
             })
 
             console.log((await response).data);
-    
+
             if ((await response).data.code !== 200) {
                 alert("please register for your account")
             } else {
@@ -240,7 +237,7 @@ function LoginUser() {
                                                     }
 
                                                     {
-                                                        wrongPass ? 
+                                                        wrongPass ?
                                                         <Alert status="error" color="red" text="center">
                                                             <i className="fa-solid fa-circle-exclamation"></i>
                                                             <Text ms="10px">{wrongPass}</Text>

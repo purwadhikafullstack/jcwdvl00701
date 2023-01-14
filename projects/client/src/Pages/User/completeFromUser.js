@@ -64,7 +64,7 @@ function CompleteFormUser() {
             .then((res) => {
                 console.log(res.data);
                 alert(res.data.message)
-                history.push("/")
+                history.go("/")
             })
             .catch((err) => {
                 console.error(err)

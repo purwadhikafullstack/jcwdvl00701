@@ -1,4 +1,4 @@
-const { sequelize, User, Profile, UserRole, Tenant } = require("../models");
+const { sequelize, User, Profile, UserRole, Tenant, Bank } = require("../models");
 
 module.exports = {
   addTenantComplete: async (req, res) => {
@@ -129,4 +129,19 @@ module.exports = {
       });
     }
   },
+  getBankDropdown : async (req,res) => {
+    try {
+      // const tenantId = req.params.tenantId
+      const dropdownBank = await Bank.findAll()
+
+      return res.status(200).json({
+        dropdownBank,
+        code : 200
+      })
+    } catch(err) {
+      return res.status(500).json({
+        message : err.toString()
+      })
+    }
+  }
 };

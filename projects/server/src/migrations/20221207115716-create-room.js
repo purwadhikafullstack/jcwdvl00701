@@ -32,6 +32,9 @@ module.exports = {
         type : DataTypes.INTEGER,
         allowNull : false,
       },
+        deletedAt : {
+        type : DataTypes.DATE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -40,7 +43,12 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    },
+    {
+      paranoid : true,
+      deletedAt : "soft_delete"
+    }
+    );
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Rooms');

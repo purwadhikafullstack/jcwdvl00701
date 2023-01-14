@@ -25,38 +25,70 @@ import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { authFirebase } from "../Config/firebase";
 import { onAuthStateChanged, signOut, getAuth } from "firebase/auth";
-import { useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 
 import { useDisclosure } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import auth_types from "../Redux/Reducers/Types/userTypes";
 
 function NavbarMobileTenant() {
+  const dispatch = useDispatch();
   const location = useLocation().pathname;
   const pathLocation = location.split("/");
   const history = useHistory();
   const auth = authFirebase;
-
+  const auth2 = getAuth()
+  const [verifikasi , setVerifikasi] = useState(false)
+  const [verifikasi2 , setVerifikasi2] = useState(true)
+  console.log(verifikasi2);
   const btnRef = React.useRef();
   const {
     isOpen: isDestopOpen,
     onOpen: onDestopOpen,
     onClose: onDestopClose,
   } = useDisclosure();
+
   const {
     isOpen: isMobileOpen,
     onOpen: onMobileOpen,
     onClose: onMobileClose,
   } = useDisclosure();
-  const { id, ProfilePic, ProfileName, firebaseProviderId } = useSelector(
+
+  const { id, ProfilePic, ProfileName, firebaseProviderId, emailVerified } = useSelector(
     (state) => state.user
   );
 
-  const logout = () => {
-    signOut(auth)
-      .then(() => alert("signed out"))
-      .catch((error) => alert(error));
-    history.push("/login");
+  useEffect(() => {
+    onAuthStateChanged(auth2 , (user) => {
+      if(user) {
+        setVerifikasi(user.emailVerified)
+        if(!verifikasi){
+          setVerifikasi2(false)
+        } else {
+          setVerifikasi2(true)
+        }
+      }
+    })
+  }, [verifikasi , verifikasi2])
+
+  const logout = async () => {
+    await signOut(auth).catch((error) => alert(error));
+    dispatch({
+      type: auth_types.Redux,
+      payload: {
+        id: "",
+        email: "",
+        emailVerified: "",
+        firebaseProviderId: "",
+        UserRoles: [],
+        TenantId: 0,
+        TenantName: "",
+        ProfileName: "",
+        ProfilePic: "",
+      },
+    });
+    history.push("/login")
   };
 
   const switchToTenant = () => {
@@ -183,11 +215,23 @@ function NavbarMobileTenant() {
                     my="10px"
                     key={`tenant-menu-signout`}
                     _hover={{ bg: "white" }}
-                    onClick={() => {
-                      signOut(auth)
-                        .then(() => alert("signed out"))
-                        .catch((error) => alert(error));
-                      history.push("/tenant/login");
+                    onClick={async () => {
+                      await signOut(auth).catch((error) => alert(error));
+                      dispatch({
+                        type: auth_types.Redux,
+                        payload: {
+                          id: "",
+                          email: "",
+                          emailVerified: "",
+                          firebaseProviderId: "",
+                          UserRoles: [],
+                          TenantId: 0,
+                          TenantName: "",
+                          ProfileName: "",
+                          ProfilePic: "",
+                        },
+                      });
+                      history.push("/login");
                     }}
                   >
                     <Flex
@@ -299,6 +343,19 @@ function NavbarMobileTenant() {
               width="58px"
               height="58px"
             />
+            {
+              verifikasi ?
+              null
+              :
+              <Flex justifyContent={"flex-start"} my="auto" ms={"10px"}>
+                {
+                  verifikasi2 ?
+                  null
+                  :
+                  <Text>Your Email not verified, please check your Email </Text>
+                }
+              </Flex>
+            }
             {id ? (
               <Flex w="100%" mx="auto" justifyContent="space-between">
                 <Spacer />
@@ -311,20 +368,26 @@ function NavbarMobileTenant() {
                   </Text>
                   <Menu>
                     {id ? (
-                      <MenuButton fontWeight="bold" fontSize="18px" my="auto">
+                      <Box>
+                      <i class="fa-solid fa-caret-down"></i>
+                      <MenuButton fontWeight="bold" fontSize="18px" my="auto" ms={"8px"}>
                         {ProfileName}
                       </MenuButton>
+                      </Box>
                     ) : (
-                      <MenuButton fontWeight="bold" fontSize="18px" my="auto">
+                      <Box>
+                      <i class="fa-solid fa-caret-down"></i>
+                      <MenuButton fontWeight="bold" fontSize="18px" my="auto" ms={"3px"}>
                         Account
                       </MenuButton>
+                      </Box>
                     )}
                     <MenuList>
                       <MenuItem onClick={() => history.push("/profile")}>
                         Profile
                       </MenuItem>
                       <MenuDivider />
-                      {firebaseProviderId === "password" ? (
+                      {firebaseProviderId === "password" && verifikasi2 ? (
                         <MenuItem onClick={switchToTenant}>
                           Switch To Tenant
                         </MenuItem>

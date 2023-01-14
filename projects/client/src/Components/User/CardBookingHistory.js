@@ -138,7 +138,7 @@ function CardBookingHistory(props) {
       });
   };
   return (
-    <Box border="1px" borderColor="gray.200">
+    <Box border="1px" borderColor="gray.200" maxWidth="500px">
       <Flex>
         <Box w="50%">
           <Image

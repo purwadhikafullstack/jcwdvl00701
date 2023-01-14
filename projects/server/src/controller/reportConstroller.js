@@ -53,14 +53,8 @@ module.exports = {
             include: [
               {
                 model: Property,
-                attributes: ["id", "name", "pic", "description", "rules"],
-                required: false,
-                include: [
-                  {
-                    model: Tenant,
-                    required: false,
-                  },
-                ],
+                attributes: ["id", "name", "pic", "description" , "rules"],
+                required: true,
                 where: {
                   tenantId,
                 },
@@ -198,11 +192,12 @@ module.exports = {
           {
             model: Room,
             required: true,
-
+            paranoid : false,
             include: [
               {
                 model: Property,
                 required: true,
+                paranoid : false,
                 where: {
                   tenantId,
                   name: { [Op.like]: "%" + propertyFilter + "%" },
@@ -233,6 +228,7 @@ module.exports = {
         offset,
         limit,
         where: whereCondition,
+        paranoid : false
       });
       const totalRows = salsesReport.count;
       const totalPage = Math.ceil(totalRows / limit);
@@ -244,11 +240,12 @@ module.exports = {
           {
             model: Room,
             required: true,
-
+            paranoid : false,
             include: [
               {
                 model: Property,
                 required: true,
+                paranoid : false,
                 where: {
                   tenantId,
                   name: { [Op.like]: "%" + propertyFilter + "%" },

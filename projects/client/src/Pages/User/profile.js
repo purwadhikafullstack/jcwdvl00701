@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -19,12 +19,12 @@ import {
 } from '@chakra-ui/react'
 import {Link, useHistory} from "react-router-dom"
 
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import {useFormik} from 'formik'
+import * as Yup from 'yup';
 
 import DatePicker from "react-datepicker";
 
-import NavbarMobile from "../../Components/NavbarMobile";
+import NavbarMobile from '../../Components/NavbarMobile';
 import axios from "axios";
 import {authFirebase} from "../../Config/firebase";
 import {onAuthStateChanged} from "firebase/auth";
@@ -79,7 +79,7 @@ function UpdateInput({formState, formik, errorMsg, onOpen, inputDisplayName, nee
         </Button>
       </Flex>
 
-      {renderInput(isEditActive, rest)}
+            {renderInput(isEditActive, rest)}
 
       {errorMsg ? <Text color={'red'}>*{errorMsg}</Text> : null}
     </Box>
@@ -205,11 +205,11 @@ function Profile() {
     onClose()
   }
 
-  const datepickerRef = useRef(null);
+    const datepickerRef = useRef(null);
 
-  function handleClickDatepickerIcon() {
-    datepickerRef.current.setFocus(true);
-  }
+    function handleClickDatepickerIcon() {
+        datepickerRef.current.setFocus(true);
+    }
 
 
   const updateProfilePic = async (e) => {

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, {useRef, useState} from "react";
 import {
   Flex,
   Spacer,
@@ -19,23 +19,29 @@ import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import registerTenant from "../../Assets/image/registerTenant.png";
 import Layout from "../../Components/Layout";
-import { Link, useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useFormik } from "formik";
+import {Link, useHistory} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {useFormik} from "formik";
 import * as Yup from "yup";
 import YupPassword from "yup-password";
 import "yup-phone";
 import axios from "axios";
 import Footer from "../../Components/Footer";
+import auth_types from "../../Redux/Reducers/Types/userTypes";
 
 function CompleteFormTenant() {
-  const { id, UserRoles } = useSelector((state) => state.user);
+  const dispatch = useDispatch()
+  const {id, UserRoles, emailVerified} = useSelector((state) => state.user);
   const [selectedFile, setSelectedFile] = useState(null);
   const inputFileRef = useRef(null);
   const [fileSizeMsg, setFileSizeMsg] = useState("");
   let history = useHistory();
 
-  // console.log(UserRoles);
+  // if(!emailVerified){
+  //   alert("verified your account before to be Tenant")
+  //   history.push("/")
+  // }
+
   if (UserRoles.includes(2)) {
     history.push("/tenant/dashboard");
   }
@@ -68,7 +74,7 @@ function CompleteFormTenant() {
     validateOnChange: false,
     onSubmit: async (values) => {
       console.log(values);
-      const { nameLapak, phoneNumber, idCardPic } = values;
+      const {nameLapak, phoneNumber, idCardPic} = values;
 
       const formData = new FormData();
 
@@ -77,19 +83,15 @@ function CompleteFormTenant() {
       formData.append("idCardPic", idCardPic);
       formData.append("userId", id);
 
-      await axios
-        .post(
-          `${process.env.REACT_APP_API_BASE_URL}/tenant/complete-register`,
-          formData
-        )
-        .then((res) => {
-          console.log(res.data);
-          alert(res.data.message);
-          history.push("/tenant/dashboard");
-        })
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/complete-register`, formData)
         .catch((err) => {
           console.error(err.data.message);
         });
+
+      console.log(response.data);
+      alert(response.data.message);
+
+      history.go("/tenant/dashboard");
     },
   });
   return (
@@ -101,7 +103,7 @@ function CompleteFormTenant() {
             {/* utk image dekstop */}
             <Box
               width="900px"
-              display={{ ss: "none", sm: "none", md: "block" }}
+              display={{ss: "none", sm: "none", md: "block"}}
             >
               <Flex>
                 <Image
@@ -254,9 +256,9 @@ function CompleteFormTenant() {
         </Flex>
       </Container>
       <Footer
-      // ss={"13em"}
-      // sm={"14em"}
-      // sl={"15em"}
+        // ss={"13em"}
+        // sm={"14em"}
+        // sl={"15em"}
       />
     </>
   );

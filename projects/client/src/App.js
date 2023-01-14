@@ -38,7 +38,6 @@ import {
   sendEmailVerification,
   signOut,
 } from "firebase/auth";
-import { useHistory, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import auth_types from "./Redux/Reducers/Types/userTypes";
@@ -56,7 +55,6 @@ function App() {
 
   const { id, email, UserRoles, Tenant } = useSelector((state) => state.user);
 
-  let history = useHistory();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -73,26 +71,25 @@ function App() {
         setFirebaseProvider(user.providerData[0].providerId);
         setEmailVerified(user.emailVerified);
         console.log("ada yg login");
-        history.push("/");
         // kondisi jika sudah terverifikasi
         if (user.emailVerified) {
           console.log("your account has been verified");
-        } else {
-          // kirim email jika belum terverfikasi
-          sendEmailVerification(user)
-            .then(() => {
-              alert("check your email verification");
-            })
-            .catch((err) => {
-              console.error(err);
-            });
+        } 
+        else {
+          // // kirim email jika belum terverfikasi
+          // sendEmailVerification(user)
+          //   .then(() => {
+          //     console.log("check your email verification");
+          //   })
+          //   .catch((err) => {
+          //     console.error(err);
+          //   });
           console.log("Your account has not been verified");
         }
       } else {
         console.log("tidak ada yg login");
         // jika tidak ada akan di logout
         auth.signOut();
-        history.push("/login");
       }
     });
     //get data dan dimasukan ke redux
@@ -158,12 +155,8 @@ function App() {
       <BrowserRouter>
         <Switch>
           {/* page tenant */}
-          <TenantRoute
-            component={RegisterTenant}
-            path="/tenant/register"
-            exact
-          />
-          <TenantRoute component={LoginTenant} path="/tenant/login" exact />
+          <Route component={RegisterTenant} path="/tenant/register" exact />
+          <Route component={LoginTenant} path="/tenant/login" exact />
           <TenantRoute
             component={PropertyListTenant}
             path="/tenant/property"
@@ -213,8 +206,8 @@ function App() {
           <Route component={PropertyList} path="/list" exact />
           <Route component={PropertyDetail} path="/detail/:id" exact />
           <Route component={CompleteFormUser} path="/complete-user" exact />
-          <Route component={Home} path="/" exact />
-          <Route component={NotFound} path="*" />
+          <Route component={Home} path="/" exact/>
+          <Route component={NotFound} path="*"/>
         </Switch>
       </BrowserRouter>
     </>

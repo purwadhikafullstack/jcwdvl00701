@@ -19,88 +19,95 @@ import turuIcon from "../../Assets/image/turuIcon.png";
 import google from "../../Assets/image/google.png";
 import facebook from "../../Assets/image/facebook.png";
 import loginTenant from "../../Assets/image/loginTenant.png";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import Layout from "../../Components/Layout";
 import axios from "axios"
 import {signInWithEmailAndPassword} from "firebase/auth"
-import { authFirebase } from "../../Config/firebase";
-import { useFormik} from "formik"
+import {authFirebase} from "../../Config/firebase";
+import {useFormik} from "formik"
 import * as Yup from "yup";
 import YupPassword from "yup-password"
 import auth_types from "../../Redux/Reducers/Types/userTypes";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useHistory} from "react-router-dom";
 import Footer from "../../Components/Footer";
+import {getAuth} from "firebase/auth";
 
 function LoginTenant() {
-    const [wrongPass , setWrongPass] = useState("")
-      // for toggling password visibility
-    const [showPassword, setShowPassword] = useState(false)
-    const handleClick = () => {
-        setShowPassword(!showPassword)
-    }
-    const dispatch = useDispatch()
-    let history = useHistory()
+  const global = useSelector(state => state.user)
+  let history = useHistory()
 
-    YupPassword(Yup)
-    const formik = useFormik({
-      initialValues: {
-        email: "",
-        password: ""
-      },
-      validationSchema : Yup.object().shape({
-        email : Yup.string().required("your email is invalid").email("input your email"),
-        password: Yup.string().required("please fill in the password")
-      }),
-      validateOnChange: false,
-      onSubmit: async(values) => {
-        console.log(values);
-        const {email, password} = values
+  if (global.id) {
+    history.push('/tenant/dashboard')
+  }
 
-        const userCredential = await signInWithEmailAndPassword(authFirebase, email, password)
-          .catch(function(error){
-            //handle error
-            var errorCode = error.code
-            var errorMessage = error.errorMessage
-            if (errorCode === "auth/wrong-password") {
-                setWrongPass("Wrong Password")
-            } else {
-                alert(errorMessage)
-            }
-            console.log(error);
-          })
-            const user = userCredential.user
+  const [wrongPass, setWrongPass] = useState("")
+  // for toggling password visibility
+  const [showPassword, setShowPassword] = useState(false)
+  const handleClick = () => {
+    setShowPassword(!showPassword)
+  }
+  const dispatch = useDispatch()
 
-            // utk get data ke back-end dan di simpan di redux
-            const response = axios.get(`${process.env.REACT_APP_API_BASE_URL}/tenant/get-tenant`, {
-                params: {id: user.uid}
-            })
+  YupPassword(Yup)
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: ""
+    },
+    validationSchema: Yup.object().shape({
+      email: Yup.string().required("your email is invalid").email("input your email"),
+      password: Yup.string().required("please fill in the password")
+    }),
+    validateOnChange: false,
+    onSubmit: async (values) => {
+      const {email, password} = values
 
-            if ((await response).data.code !== 200) {
-                alert("please register for your account")
-            } else {
-              if((await response).data.result !== null){
-                    history.push("/tenant/dashboard")
-                } else {
-                  alert("your account is not Tenant")
-                  authFirebase.signOut()
-                  history.push("/login")
-                }                
-            }
+      const auth = getAuth()
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+        .catch(function (error) {
+          //handle error
+          var errorCode = error.code
+          var errorMessage = error.errorMessage
+          if (errorCode === "auth/wrong-password") {
+            setWrongPass("Wrong Password")
+          } else {
+            alert(errorMessage)
+          }
+          console.log(error);
+        })
+      const user = userCredential.user
+
+      // utk get data ke back-end dan di simpan di redux
+      const response = axios.get(`${process.env.REACT_APP_API_BASE_URL}/tenant/get-tenant`, {
+        params: {id: user.uid}
+      })
+
+      if ((await response).data.code !== 200) {
+        alert("please register for your account")
+      } else {
+        if ((await response).data.result !== null) {
+          history.push("/tenant/dashboard")
+        } else {
+          alert("your account is not Tenant")
+          authFirebase.signOut()
+          history.push("/login")
+        }
       }
-    })
+    }
+  })
   return (
     // <Layout>
     <>
       <Container maxW="2x1" px="0px">
-        <Flex flexDirection="column" bg="black"  >
+        <Flex flexDirection="column" bg="black">
           {/* flex container utk dekstop */}
           <Flex>
             {/* utk image dekstop */}
             <Box
               width="900px"
-              display={{ ss: "none", sm: "none", md: "block" }}
+              display={{ss: "none", sm: "none", md: "block"}}
             >
               <Flex>
                 <Image
@@ -153,46 +160,46 @@ function LoginTenant() {
                             onChange={(e) => formik.setFieldValue("email", e.target.value)}
                           />
                           {formik.errors.email ?
-                              <Alert status="error" color="red" text="center">
-                                  <i className="fa-solid fa-circle-exclamation"></i>
-                                  <Text ms="10px">{formik.errors.email}</Text>
-                              </Alert>
-                              :
-                              null
+                            <Alert status="error" color="red" text="center">
+                              <i className="fa-solid fa-circle-exclamation"></i>
+                              <Text ms="10px">{formik.errors.email}</Text>
+                            </Alert>
+                            :
+                            null
                           }
                         </FormControl>
                         <FormControl id="password" pb="15px">
                           <InputGroup>
                             <Input
-                                type={showPassword ? "text" : "password"}
-                                placeholder="Password"
-                                borderRadius="0"
-                                bg="white"
-                                onChange={(e) => formik.setFieldValue("password", e.target.value)}
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Password"
+                              borderRadius="0"
+                              bg="white"
+                              onChange={(e) => formik.setFieldValue("password", e.target.value)}
                             />
                             <InputRightElement>
-                                <Button onClick={handleClick}>
-                                    <i className={showPassword ?"fa-sharp fa-solid fa-eye":"fa-solid fa-eye-slash"}/>
-                                </Button>
+                              <Button onClick={handleClick}>
+                                <i className={showPassword ? "fa-sharp fa-solid fa-eye" : "fa-solid fa-eye-slash"}/>
+                              </Button>
                             </InputRightElement>
 
                           </InputGroup>
-                          {formik.errors.password? (
+                          {formik.errors.password ? (
                             <Alert status="error" color="red" text="center">
-                                <i className="fa-solid fa-circle-exclamation"></i>
-                                <Text ms="10px">{formik.errors.password}</Text>
+                              <i className="fa-solid fa-circle-exclamation"></i>
+                              <Text ms="10px">{formik.errors.password}</Text>
                             </Alert>
                           ) : null}
 
                           {
-                            wrongPass ? 
-                            <Alert status="error" color="red" text="center">
+                            wrongPass ?
+                              <Alert status="error" color="red" text="center">
                                 <i className="fa-solid fa-circle-exclamation"></i>
                                 <Text ms="10px">{wrongPass}</Text>
-                            </Alert>
-                            :
-                            null
-                            }
+                              </Alert>
+                              :
+                              null
+                          }
                         </FormControl>
                         <Button variant="primary" mb="12px" onClick={formik.handleSubmit}>
                           Login
@@ -203,13 +210,13 @@ function LoginTenant() {
                           fontSize="12px"
                           fontWeight="300"
                           cursor="pointer"
-                          _hover={{ textDecoration: "underline" }}
+                          _hover={{textDecoration: "underline"}}
                           color="white"
                         >
                           <Link to="/login"> Login as User</Link>
                         </Text>
                       </Flex>
-                      <hr />
+                      <hr/>
                       <Flex
                         justifyContent="center"
                         border="1px"
@@ -247,11 +254,11 @@ function LoginTenant() {
           </Flex>
         </Flex>
       </Container>
-      <Footer 
+      <Footer
         // ss={"13em"}
         // sm={"14em"}
         // sl={"15em"}
-        />
+      />
     </>
     // </Layout>
   );

@@ -32,7 +32,7 @@ function BookingHistory() {
   const { id } = useSelector((state) => state.user);
   const [dataBooking, setDataBooking] = useState([]);
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(6);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [randomNumber, setRandomNumber] = useState(0);
@@ -200,21 +200,6 @@ function BookingHistory() {
         return (
           <CardBooking
             key={val.id}
-            id={val.id}
-            startDate={val?.startDate}
-            endDate={val?.endDate}
-            status={val?.status}
-            guestCount={val?.guestCount}
-            userId={val?.userId}
-            roomId={val?.roomId}
-            Room={val?.Room}
-            User={val?.User}
-            randomNumber={setRandomNumber}
-          />
-        );
-      } else if (val.status === 2) {
-        return (
-          <CardBooking
             id={val.id}
             startDate={val?.startDate}
             endDate={val?.endDate}

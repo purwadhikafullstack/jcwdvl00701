@@ -26,62 +26,63 @@ import Footer from "../../Components/Footer";
 import NavbarMobile from "../../Components/NavbarMobile";
 import { getValue } from "@testing-library/user-event/dist/utils";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
-function renderInput(isEditActive, props) {
-  return React.Children.map(props.children, (child) => {
-    return React.cloneElement(child, {
-      disabled: !isEditActive,
-    });
-  });
-}
+// function renderInput(isEditActive, props) {
+//   return React.Children.map(props.children, (child) => {
+//     return React.cloneElement(child, {
+//       disabled: !isEditActive,
+//     });
+//   });
+// }
 
-function UpdateInput(props) {
-  const [isEditActive, setIsEditActive] = useState(false);
-  const [isEditingForm, setIsEditingForm] = props.formState;
-  const [isLoading, setIsLoading] = useState(false);
+// function UpdateInput(props) {
+//   const [isEditActive, setIsEditActive] = useState(false);
+//   const [isEditingForm, setIsEditingForm] = props.formState;
+//   const [isLoading, setIsLoading] = useState(false);
 
-  const handleEdit = async () => {
-    if (props.errorMsg) return; // if there's error prevent submission
+//   const handleEdit = async () => {
+//     if (props.errorMsg) return; // if there's error prevent submission
 
-    if (isEditActive) {
-      setIsLoading(true);
-      props.formik.submitForm();
-    }
-    setIsEditActive((current) => !current);
-    setIsEditingForm((current) => !current);
-    setIsLoading(false);
-  };
+//     if (isEditActive) {
+//       setIsLoading(true);
+//       props.formik.submitForm();
+//     }
+//     setIsEditActive((current) => !current);
+//     setIsEditingForm((current) => !current);
+//     setIsLoading(false);
+//   };
 
-  return (
-    <Box h="max-content" mt={5}>
-      <Flex justifyContent="space-between" align="center">
-        <Text>{props.inputDisplayName}</Text>
-        <Button
-          onClick={handleEdit}
-          variant="link"
-          disabled={isEditingForm && !isEditActive}
-          isLoading={isLoading}
-        >
-          {!isEditActive ? "Edit" : "Save"}
-        </Button>
-      </Flex>
+//   return (
+//     <Box h="max-content" mt={5}>
+//       <Flex justifyContent="space-between" align="center">
+//         <Text>{props.inputDisplayName}</Text>
+//         <Button
+//           onClick={handleEdit}
+//           variant="link"
+//           disabled={isEditingForm && !isEditActive}
+//           isLoading={isLoading}
+//         >
+//           {!isEditActive ? "Edit" : "Save"}
+//         </Button>
+//       </Flex>
 
-      {renderInput(isEditActive, props)}
+//       {renderInput(isEditActive, props)}
 
-      {props.errorMsg ? <Text color={"red"}>*{props.errorMsg}</Text> : null}
-    </Box>
-  );
-}
+//       {props.errorMsg ? <Text color={"red"}>*{props.errorMsg}</Text> : null}
+//     </Box>
+//   );
+// }
 
-const UpdateSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(2, "Too Short!")
-    .max(255, "Too Long!")
-    .required("Required"),
-  email: Yup.string().email("Invalid email").required("Required"),
-  bank: Yup.string().required("Required"),
-  account: Yup.number().required().positive(),
-});
+// const UpdateSchema = Yup.object().shape({
+//   name: Yup.string()
+//     .min(2, "Too Short!")
+//     .max(255, "Too Long!")
+//     .required("Required"),
+//   email: Yup.string().email("Invalid email").required("Required"),
+//   bank: Yup.string().required("Required"),
+//   account: Yup.number().required("cant be "),
+// });
 
 function Profile() {
   const userId = "test";
@@ -89,10 +90,44 @@ function Profile() {
   const [email, setEmail] = useState("");
   const [bank, setBank] = useState("");
   const [account, setAccount] = useState("");
-
   const [firebaseProviderId, setfirebaseProviderId] = useState("password");
+  const [dropBank , serDropBank]= useState([])
+  const {id} = useSelector(state => state.user)
+  console.log(id);
+  
+  const fetchDropdown = () => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/tenant/dropdown-bank`)
+    .then((res) => {
+      console.log(res.data.dropdownBank);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }
 
-  const [isEditingForm, setIsEditingForm] = useState(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/tenant/get-tenant`,
+        { params: { id: id } }
+      );
+      // console.log(response.data.result);
+      // console.log(response.data.result?.User?.email);
+      // console.log(response.data.result?.BankId);
+      // console.log(response.data.result?.bankAccountNumber);
+
+      setName(response.data.result?.name);
+      setEmail(response.data.result?.User?.email);
+      setBank(response.data.result?.BankId);
+      setAccount(response.data.result?.bankAccountNumber);
+      formik.values.name = response.data?.result?.name;
+      formik.values.email = response.data?.result?.User?.email;
+      formik.values.bank = response.data?.result?.BankId;
+      formik.values.account = response.data?.result?.bankAccountNumber;
+    };
+    fetchData();
+    fetchDropdown()
+  }, [name, email, bank, account]);
 
   const formik = useFormik({
     initialValues: {
@@ -101,22 +136,14 @@ function Profile() {
       bank: bank,
       account: account,
     },
-    validationSchema: UpdateSchema,
-    onSubmit: async (values, { props }) => {
-      // if values unchanged then prevent submission
-      if (
-        values.name === name &&
-        values.email === email &&
-        values.bank === bank &&
-        values.account === account
-      )
-        return;
-
-      // values.id = userId; // dummy id
-      // await axios.post(
-      //   `${process.env.REACT_APP_API_BASE_URL}/`,
-      //   values
-      // );
+    validationSchema: Yup.object().shape({
+      name : Yup.string().required("can't be empty"),
+      email : Yup.string().email("must format email").required("can't be empty"),
+      bank : Yup.string().required("cant be empty"),
+      account : Yup.number("must number").required("can't be empty")
+    }),
+    onSubmit: async (values) => {
+     console.log(values);
 
       setName(values.name);
       setEmail(values.email);
@@ -124,24 +151,6 @@ function Profile() {
       setAccount(values.account);
     },
   });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      // const response = await axios.get(
-      //   `${process.env.REACT_APP_API_BASE_URL}/user/getById`,
-      //   { params: { id: userId } }
-      // );
-      // setName(response.data.result.name);
-      // setEmail(response.data.result.email);
-      // setBank(response.data.response.bank);
-      // setAccount(response.data.response.account);
-      // formik.values.name = response.data.result.name;
-      // formik.values.email = response.data.result.email;
-      // formik.values.bank = response.date.result.bank;
-      // formik.values.account = response.date.result.account;
-    };
-    fetchData();
-  }, []);
 
   return (
     <Layout>
@@ -189,12 +198,8 @@ function Profile() {
                   Tenant Info
                 </Heading>
 
-                <UpdateInput
-                  inputDisplayName={"Name"}
-                  formik={formik}
-                  errorMsg={formik.errors.name}
-                  formState={[isEditingForm, setIsEditingForm]}
-                >
+               <FormControl mt={"10px"}>
+                <Text>Name</Text>
                   <Input
                     style={{ borderBottom: "1px solid" }}
                     id="name"
@@ -204,25 +209,22 @@ function Profile() {
                     value={formik.values.name}
                     onChange={formik.handleChange}
                   />
-                </UpdateInput>
+               </FormControl>
+                
 
                 {firebaseProviderId === "password" ? (
-                  <UpdateInput
-                    inputDisplayName={"Email"}
-                    formik={formik}
-                    errorMsg={formik.errors.email}
-                    formState={[isEditingForm, setIsEditingForm]}
-                  >
-                    <Input
-                      style={{ borderBottom: "1px solid" }}
-                      id="email"
-                      type="text"
-                      variant="flushed"
-                      placeholder="insert your email"
-                      value={formik.values.email}
-                      onChange={formik.handleChange}
-                    />
-                  </UpdateInput>
+                <FormControl mt={"10px"}>
+                  <Text>Email</Text>
+                  <Input
+                    style={{ borderBottom: "1px solid" }}
+                    id="email"
+                    type="text"
+                    variant="flushed"
+                    placeholder="insert your Email"
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                  />
+               </FormControl>
                 ) : null}
               </Box>
               {/*Profile form ends*/}
@@ -233,11 +235,11 @@ function Profile() {
                   Bank Account
                 </Heading>
 
-                <UpdateInput
+                {/* <UpdateInput
                   inputDisplayName={"Bank"}
                   formik={formik}
                   errorMsg={formik.errors.bank}
-                  formState={[isEditingForm, setIsEditingForm]}
+                  // formState={[isEditingForm, setIsEditingForm]}
                 >
                   <Input
                     style={{ borderBottom: "1px solid" }}
@@ -248,28 +250,24 @@ function Profile() {
                     value={formik.values.bank}
                     onChange={formik.handleChange}
                   />
-                </UpdateInput>
+                </UpdateInput> */}
 
-                <UpdateInput
-                  inputDisplayName={"Account"}
-                  formik={formik}
-                  errorMsg={formik.errors.account}
-                  formState={[isEditingForm, setIsEditingForm]}
-                >
+                <FormControl mt={"10px"}>
+                  <Text>Account</Text>
                   <Input
                     style={{ borderBottom: "1px solid" }}
-                    id="account"
+                    id="Account"
                     type="text"
                     variant="flushed"
                     placeholder="insert your Account Bank"
                     value={formik.values.account}
                     onChange={formik.handleChange}
                   />
-                </UpdateInput>
+                </FormControl>
               </Box>
               {/*bank form ends*/}
 
-              <Box h="max-content" pt="16px" pb="30px">
+              <Box h="max-content" pt="16px" pb="30px" border={"1px"}>
                 <Text
                   textDecoration="underline"
                   _hover={{ textDecoration: "underline", fontWeight: "bold" }}

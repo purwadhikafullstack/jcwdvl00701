@@ -25,5 +25,6 @@ routers.post(
 );
 
 routers.get("/get-tenant", tenantController.getTenantById);
+routers.get("/dropdown-bank", tenantController.getBankDropdown)
 
 module.exports = routers;

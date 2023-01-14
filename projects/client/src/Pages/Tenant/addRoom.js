@@ -29,31 +29,29 @@ import YupPassword from "yup-password";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+
 function AddRoom() {
   // state
-  const [dropdown, setDropdown] = useState([]);
-  const history = useHistory();
-  const [information, setInformation] = useState("");
-
-  const { TenantId } = useSelector((state) => state.user);
+  const [dropdown, setDropdown] = useState([])
+  const history = useHistory()
+  const [information, setInformation] = useState("")
+  const {TenantId} = useSelector(state => state.user)
 
   useEffect(() => {
     const fetchDataDropdown = () => {
-      axios
-        .get(
-          `${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`
-        )
-        .then((res) => {
-          // console.log(res.data.dropdown);
-          setDropdown(res.data.dropdown);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    };
-    fetchDataDropdown();
-    optionDropdown();
-  }, []);
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`)
+    .then((res) => {
+      // console.log(res.data.dropdown);
+      setDropdown(res.data.dropdown)
+
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+  }
+  fetchDataDropdown()
+  optionDropdown()
+  }, [])
 
   // loop utk dropdown
   const optionDropdown = () => {
@@ -75,8 +73,8 @@ function AddRoom() {
       caption: "",
     },
     validationSchema: Yup.object().shape({
-      property: Yup.string().required("required"),
-      nameRoom: Yup.string().required("required"),
+      property: Yup.string().required("can't be empty"),
+      nameRoom: Yup.string().required("can't be empty"),
       price: Yup.number("input number").required(
         "required please input type number"
       ),
