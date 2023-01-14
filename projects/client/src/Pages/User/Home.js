@@ -104,14 +104,30 @@ function TopBar(props) {
   return (
     <Box
       w="100%"
+      // p={4}
+      // pb={12}
+      // boxShadow="lg"
+      // backgroundColor="blackAlpha.900"
+      // backgroundImage="/Assets/topbar_background.png"
+      mt={{ ss: "0px", sl: "80px" }}
       p={4}
       pb={12}
+      height={'100vh'}
+      width="100%"
       boxShadow="lg"
+      overflow="hiden"
+      objectFit="cover"
+      backgroundPosition="center"
+      backgroundRepeat="no-repeat"
       backgroundColor="blackAlpha.900"
-      backgroundImage="/Assets/topbar_background.png"
+      backgroundImage="/Assets/home.jpg"
+
     >
-      <Flex justify="space-between" align="left">
+      <Flex justify="space-between" align="left" display={{ss: 'flex', sm: 'none'}}>
         <Image src="/Assets/logoTuru.png" alt="turu"/>
+        <Button m={2} leftIcon={<i className="fa-regular fa-circle-user" />}>
+          Login
+        </Button>
       </Flex>
 
       <Heading
