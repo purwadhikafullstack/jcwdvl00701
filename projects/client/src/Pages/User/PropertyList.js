@@ -112,28 +112,26 @@ function SearchBox(props) {
   };
 
   const [isGuestInputOpen, setIsGuestInputOpen] = useState(false);
+  const [isLocationInputOpen, setIsLocationInputOpen] = useState(false);
+  const [isPropNameInputOpen, setIsPropNameInputOpen] = useState(false);
+
   const toggleTsGuestInputOpen = () => {
     setIsGuestInputOpen((current) => !current);
     setIsLocationInputOpen(false);
     setIsPropNameInputOpen(false);
   };
 
-  const [isLocationInputOpen, setIsLocationInputOpen] = useState(false);
   const toggleTsLocationInputOpen = () => {
     setIsGuestInputOpen(false);
     setIsLocationInputOpen((current) => !current);
     setIsPropNameInputOpen(false);
   };
 
-  const [isPropNameInputOpen, setIsPropNameInputOpen] = useState(false);
   const toggleTsPropNameInputOpen = () => {
     setIsGuestInputOpen(false);
     setIsLocationInputOpen(false);
     setIsPropNameInputOpen((current) => !current);
   };
-
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
 
   const ref = useRef();
   useOnClickOutside(ref, () => {
