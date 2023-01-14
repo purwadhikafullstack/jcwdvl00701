@@ -126,13 +126,6 @@ function CardBooking (props) {
                         <Text fontWeight="semibold" fontSize="22px" color={"black"}>
                             {User?.Profile?.name}
                         </Text>
-                        <Text
-                            fontWeight="regular"
-                            fontSize="14px"
-                            color="rgba(175, 175, 175, 1)"
-                        >
-                            {/* {User?.Profile?.birthdate.split("T")[0]} */}
-                        </Text>
                     </Box>
                 </Flex>
 
@@ -189,16 +182,9 @@ function CardBooking (props) {
                         fontWeight="semibold"
                         fontSize="22px"
                         color="black"
+                        mt={"10px"}
                     >
                         {User?.Profile?.name}
-                    </Text>
-                    <Text
-                        fontWeight="regular"
-                        fontSize="14px"
-                        color="rgba(175, 175, 175, 1)"
-                    >
-                        {/* 28 November 1820 */}
-                        {/* {User?.Profile?.birthdate.split("T")[0]} */}
                     </Text>
                     </Box>
                 </Flex>

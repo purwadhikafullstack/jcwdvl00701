@@ -89,7 +89,9 @@ module.exports = {
           endDate,
           roomId,
           type: 2,
-        });
+        },
+        { transaction: t }
+        );
 
         return {
           id: reservation.id,
@@ -97,7 +99,6 @@ module.exports = {
       });
       return res.status(200).json({
         result: result,
-        disableDay,
         code: 200,
       });
     } catch (err) {

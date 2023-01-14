@@ -240,7 +240,7 @@ module.exports = {
           {
             model: Room,
             required: true,
-
+            paranoid : false,
             include: [
               {
                 model: Property,

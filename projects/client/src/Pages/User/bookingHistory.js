@@ -32,7 +32,7 @@ function BookingHistory() {
   const { id } = useSelector((state) => state.user);
   const [dataBooking, setDataBooking] = useState([]);
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(6);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [randomNumber, setRandomNumber] = useState(0);

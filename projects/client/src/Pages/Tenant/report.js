@@ -390,58 +390,46 @@ function Report() {
                 </Text>
               </Flex>
               {renderTable()}
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  padding: 20,
-                  boxSizing: "border-box",
-                  width: "100%",
-                  height: "100%",
-                }}
-              >
-                <ReactPaginate
-                  previousLabel={
-                    <i
-                      className=" fa-solid fa-chevron-left"
-                      style={{
-                        fontSize: 18,
-                        height: 40,
-                        width: 40,
-                        position: "absolute",
-                        left: "11px",
-                        top: "11px",
-                      }}
-                    ></i>
-                  }
-                  nextLabel={
-                    <i
-                      className=" fa-solid fa-chevron-right"
-                      style={{
-                        fontSize: 18,
-                        height: 40,
-                        width: 40,
-                        position: "absolute",
-                        left: "11px",
-                        top: "11px",
-                      }}
-                    ></i>
-                  }
-                  pageCount={pages}
-                  onPageChange={changePage}
-                  activeClassName={"item active "}
-                  breakClassName={"item break-me "}
-                  breakLabel={"..."}
-                  containerClassName={"pagination"}
-                  disabledClassName={"disabled-page"}
-                  marginPagesDisplayed={2}
-                  nextClassName={"item next "}
-                  pageClassName={"item pagination-page "}
-                  pageRangeDisplayed={2}
-                  previousClassName={"item previous"}
-                />
-              </div>
+               <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              padding: 20,
+              boxSizing: "border-box",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <ReactPaginate
+              previousLabel={
+                <i
+                  className=" fa-solid fa-chevron-left"
+                  style={{ fontSize: 18 }}
+                ></i>
+              }
+              nextLabel={
+                <i
+                  className=" fa-solid fa-chevron-right"
+                  style={{
+                    fontSize: 18,
+                  }}
+                ></i>
+              }
+              pageCount={pages}
+              onPageChange={changePage}
+              activeClassName={"item active "}
+              breakClassName={"item break-me "}
+              breakLabel={"..."}
+              containerClassName={"pagination"}
+              disabledClassName={"disabled-page"}
+              marginPagesDisplayed={2}
+              nextClassName={"item next "}
+              pageClassName={"item pagination-page "}
+              pageRangeDisplayed={2}
+              previousClassName={"item previous"}
+            />
+          </div>
             </>
           )}
         </Container>

@@ -29,7 +29,6 @@ function Booking() {
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [dataProfile, setDataProfile] = useState({});
-  // const [birthdate, setBirthdate] = useState("");
   const [err, setErr] = useState("")
   // console.log(birthdate);
   let history = useHistory();
@@ -53,7 +52,6 @@ function Booking() {
         setStartDate((await response)?.data.result.startDate);
         setEndDate((await response)?.data.result.endDate);
         setDataProfile((await response)?.data.result.User.Profile);
-        // setBirthdate((await response)?.data.result.User?.Profile?.birthdate);
       } catch (err) {
         console.error(err.data.message);
       }
@@ -104,17 +102,6 @@ function Booking() {
   }
     let resultBulan = searchBulan(bulan)
     console.log(resultBulan);
-
-      // var birthDate2 = birthdate.split("T")
-    // if(birthdate !== null){
-    //   var birthDate2 = birthdate.split("T")
-    // } else {
-    //   alert("You must enter your date of birth ")
-    //   // setErr("You must enter your date of birth ")
-    //   setTimeout(() => {
-    //     history.push("/profile")
-    //   }, 3000)
-    // }
 
   const btnHandlerPayment = (id) => {
     console.log(id);
@@ -285,17 +272,9 @@ function Booking() {
                     />
                   </Box>
                   <Box ms="10px">
-                    <Text fontWeight="bold" fontSize="16px">
+                    <Text fontWeight="bold" fontSize="16px" mt={"15px"}>
                       {/* name user */}
                       {dataProfile?.name}
-                    </Text>
-                    <Text
-                      fontWeight="regular"
-                      fontSize="16px"
-                      color="rgba(175, 175, 175, 1)"
-                    >
-                      {/* ulang tahun user */}
-                      {/* {birthDate2[0]} */}
                     </Text>
                   </Box>
                 </Flex>
