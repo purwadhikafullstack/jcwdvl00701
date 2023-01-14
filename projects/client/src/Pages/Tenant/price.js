@@ -1210,12 +1210,7 @@ function Price() {
 
   return (
     <Layout>
-      <Box bg={{
-        ss: "white",
-
-        sl: "rgba(240, 239, 239, 1)",
-      }}
-           mt="70px">
+      <Box bg={{ss: "white", sl: "rgba(240, 239, 239, 1)"}} mt="70px">
         <Container
           px="20px"
           maxW="1140px"
