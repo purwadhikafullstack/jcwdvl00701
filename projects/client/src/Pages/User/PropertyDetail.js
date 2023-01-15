@@ -1,6 +1,6 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import {useHistory, useParams} from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -19,15 +19,15 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter, Avatar,
+  ModalFooter,
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
-import {addDays, subDays} from "date-fns";
-import {useDisclosure} from "@chakra-ui/react";
+import { addDays, subDays } from "date-fns";
+import { useDisclosure } from "@chakra-ui/react";
 
 import Layout from "../../Components/Layout";
 import axios from "axios";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import Loading from "../../Components/Loading";
 
 function PropertyDetail(props) {
@@ -43,12 +43,11 @@ function PropertyDetail(props) {
   const [endDate, setEndDate] = useState(null);
   const [idRoom, setIdRoom] = useState(roomButton[0]?.id); // untuk menyimpan roomId
   const [finalCountPrice, setFinalCountPrice] = useState(0);
-  const {id, UserRoles, emailVerified} = useSelector((state) => state.user);
+  const { id, UserRoles } = useSelector((state) => state.user);
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   let history = useHistory();
-  const {isOpen, onOpen, onClose} = useDisclosure();
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   // const [totalHarga, setTotalHarga] = useState(0)
   // console.log("start", start);
   // console.log("end ",end);
@@ -109,7 +108,7 @@ function PropertyDetail(props) {
             let finalPrice = 0;
             if (SpecialPric.type === "nominal") {
               finalPrice = SpecialPric.discount;
-            } else if (SpecialPric.type === "persen") {
+            } else if (SpecialPric.type === "percentage") {
               finalPrice =
                 roomData.defaultPrice +
                 roomData.defaultPrice * (SpecialPric.discount / 100);
@@ -144,33 +143,24 @@ function PropertyDetail(props) {
       <Box mb="20px">
         <Box border="1px solid lightgrey" p={5}>
           <Flex mb={2}>
-            <Avatar
+            <Image
               src={
+                process.env.REACT_APP_API_BASE_URL +
                 props.data.User.Profile.profilePic
-                  ? process.env.REACT_APP_API_BASE_URL + props.data.User.Profile.profilePic
-                  : ''
               }
-              mr={5}
-              borderRadius={0}
+              alt="profile picture"
+              width="50px"
+              height="50px"
+              overflow="hiden"
               objectFit="cover"
+              mr={5}
             />
-            {/*<Image*/}
-            {/*  src={*/}
-            {/*    process.env.REACT_APP_API_BASE_URL + props.data.User.Profile.profilePic*/}
-            {/*  }*/}
-            {/*  alt="profile picture"*/}
-            {/*  width="50px"*/}
-            {/*  height="50px"*/}
-            {/*  overflow="hidden"*/}
-            {/*  objectFit="cover"*/}
-            {/*  mr={5}*/}
-            {/*/>*/}
             <Box>
               <Text fontWeight="bold" fontSize="md">
                 {props.data.User.Profile.name}
               </Text>
               <Text fontSize="md" color="grey">
-                {new Date(props.data.Review.createdAt).toLocaleDateString('id').replaceAll('/', '-')}
+                {props.data.Review.createdAt}
               </Text>
             </Box>
           </Flex>
@@ -183,11 +173,10 @@ function PropertyDetail(props) {
   function renderReview() {
     return reviewData.map((room) => {
       return room.Reservations.map((val) => {
-        return <Reviews data={val}/>;
+        return <Reviews data={val} />;
       });
     });
   }
-
   function renderCalendar() {
     if (roomData?.defaultPrice) {
       const price = roomData?.defaultPrice;
@@ -221,7 +210,7 @@ function PropertyDetail(props) {
           <Box>
             {date.getDate()}
 
-            <br/>
+            <br />
             <Text fontSize={12}>{Math.ceil(finalPrice / 1000) + "k"}</Text>
           </Box>
         );
@@ -252,22 +241,24 @@ function PropertyDetail(props) {
             excludeDateIntervals={disabledDateRanges}
             calendarClassName="rasta-stripes"
           />
-          <Box my={3}>
-            <Text fontWeight="bold" fontSize="xl" mb={1}>
-              Details
-            </Text>
-          </Box>
+          <Box>
+            <Box my={3}>
+              <Text fontWeight="bold" fontSize="xl" mb={1}>
+                Details
+              </Text>
+            </Box>
 
-          <Box backgroundColor="gray.200" p={3} mb={8}>
-            <Text fontWeight="bold" fontSize="lg">
-              {roomData?.capacity} Guest
-              {/* guest count ddapatnya dari state roomData*/}
-            </Text>
+            <Box backgroundColor="gray.200" p={3} mb={8}>
+              <Text fontWeight="bold" fontSize="lg">
+                {roomData?.capacity} Guest
+                {/* guest count ddapatnya dari state roomData*/}
+              </Text>
+            </Box>
           </Box>
         </Box>
       );
     } else {
-      <Skeleton height="280px"/>;
+      <Skeleton height="280px" />;
     }
   }
 
@@ -285,7 +276,7 @@ function PropertyDetail(props) {
               height={"40px"}
               variant={"primary"}
               borderRadius={0}
-              icon={<i className="fa-solid fa-bed"/>}
+              icon={<i className="fa-solid fa-bed" />}
               onClick={() => setIdRoom(room.id)}
             />
             <Center>
@@ -311,7 +302,6 @@ function PropertyDetail(props) {
         console.error(err.message);
       });
   }
-
   async function fetchReview(e) {
     await axios(
       `${process.env.REACT_APP_API_BASE_URL}/product/get/review/${idProperty}?show=${e}`
@@ -376,8 +366,8 @@ function PropertyDetail(props) {
 
   return (
     <Layout>
-      <div>
-        <Container maxW="container.lg" mt={{ss: "0px", sl: "100px"}}>
+      <Box>
+        <Container maxW="container.lg" mt={{ ss: "0px", sl: "100px" }}>
           {/* ////////////////////////////// */}
           <Box>
             <Box my={3}>
@@ -394,9 +384,8 @@ function PropertyDetail(props) {
               overflow="hiden"
               objectFit="cover"
               width="100%"
+              height={{ ss: "210px", sl: "600px" }}
               src={process.env.REACT_APP_API_BASE_URL + pic}
-              height={{ss: "210px", sl: "600px"}}
-
             />
           </Box>
           <Box my={8}>
@@ -416,54 +405,37 @@ function PropertyDetail(props) {
                 currency: "IDR",
               }).format(finalCountPrice)}
             </Text>
-
-            {UserRoles.includes(1) ?
-              (
-                <Button
-                  w="100%"
-                  variant="primary"
-                  my={2}
-                  onClick={onOpen}
-                  disabled={finalCountPrice && emailVerified ? false : true}
-                  display={id === tenantData?.User?.id ? "none" : "inline-block"}
-                >
-                  Reserve
-                </Button>
-              )
-              : null
-            }
-
+            {UserRoles.includes(1) ? (
+              <Button
+                w="100%"
+                variant="primary"
+                my={2}
+                onClick={onOpen}
+                disabled={finalCountPrice ? false : true}
+                display={id === tenantData?.User?.id ? "none" : "inline-block"}
+              >
+                Reserve
+              </Button>
+            ) : null}
           </Box>
           <Flex border="3px solid lightgrey" p={5}>
-            <Avatar
-              src={
-                tenantData.User?.Profile?.profilePic
-                  ? process.env.REACT_APP_API_BASE_URL + tenantData.User?.Profile?.profilePic
-                  : ''
-              }
+            <Image
+              src={"tenantData.User.Profile.profilePic"}
               width="50px"
               height="50px"
               me="10px"
-              overflow="hidden"
+              overflow="hiden"
               objectFit="cover"
-              borderRadius={0}
             />
             <Box>
               <Text fontWeight="bold" fontSize="md">
                 {tenantData.name}
               </Text>
-              <Text fontSize="md" color="grey">
-                Joined since {
-                tenantData.createdAt
-                  ? new Date(tenantData.createdAt).toLocaleDateString('id').replaceAll('/', '-')
-                  : null
-              }
-              </Text>
             </Box>
           </Flex>
           <Box my={3}>
             <Text fontWeight="bold" fontSize="xl" mb={1}>
-              <i className="fa-solid fa-star"/> Review
+              <i className="fa-solid fa-star" /> Review
             </Text>
           </Box>
           {renderReview()}
@@ -476,13 +448,13 @@ function PropertyDetail(props) {
             Show All
           </Button>
         </Container>
-      </div>
+      </Box>
       {/* utk modal sebelum reserve */}
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay/>
+        <ModalOverlay />
         <ModalContent borderRadius={0}>
           <ModalHeader>Are you sure to reserved ?</ModalHeader>
-          <ModalCloseButton/>
+          <ModalCloseButton />
           <ModalBody pb={6}></ModalBody>
 
           <ModalFooter>

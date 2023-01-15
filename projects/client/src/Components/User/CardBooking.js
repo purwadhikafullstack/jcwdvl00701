@@ -98,18 +98,21 @@ function CardBooking(props) {
 
   const btnCanceled = () => {
     console.log(id);
-    axios.patch(`${process.env.REACT_APP_API_BASE_URL}/history/cancel-history`, {
-      id: id
-    })
+    axios
+      .patch(`${process.env.REACT_APP_API_BASE_URL}/history/cancel-history`, {
+        id: id,
+        startDate,
+        roomId,
+      })
       .then((res) => {
-        alert(res.data.message)
-        randomNumber(Math.random())
-        onCancelClose()
+        alert(res.data.message);
+        randomNumber(Math.random());
+        onCancelClose();
       })
       .catch((err) => {
-        console.error(err.message)
-      })
-  }
+        console.error(err.message);
+      });
+  };
   return (
     <Box bg="primary" w="100%" p="20px" color="white">
       <Box bg={"white"} mb="5px" display={{sl: "none"}} h="70px">
