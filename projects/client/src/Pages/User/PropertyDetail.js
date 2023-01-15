@@ -43,11 +43,12 @@ function PropertyDetail(props) {
   const [endDate, setEndDate] = useState(null);
   const [idRoom, setIdRoom] = useState(roomButton[0]?.id); // untuk menyimpan roomId
   const [finalCountPrice, setFinalCountPrice] = useState(0);
-  const {id, UserRoles} = useSelector((state) => state.user);
+  const {id, UserRoles, emailVerified} = useSelector((state) => state.user);
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   let history = useHistory();
   const {isOpen, onOpen, onClose} = useDisclosure();
+
   // const [totalHarga, setTotalHarga] = useState(0)
   // console.log("start", start);
   // console.log("end ",end);
@@ -412,18 +413,23 @@ function PropertyDetail(props) {
                 currency: "IDR",
               }).format(finalCountPrice)}
             </Text>
-            {UserRoles.includes(1) ? (
+            
+            {UserRoles.includes(1) ? 
+              (
               <Button
                 w="100%"
                 variant="primary"
                 my={2}
                 onClick={onOpen}
-                disabled={finalCountPrice ? false : true}
+                disabled={finalCountPrice && emailVerified ? false : true}
                 display={id === tenantData?.User?.id ? "none" : "inline-block"}
               >
                 Reserve
               </Button>
-            ) : null}
+              ) 
+              : null 
+            }
+
           </Box>
           <Flex border="3px solid lightgrey" p={5}>
             <Image

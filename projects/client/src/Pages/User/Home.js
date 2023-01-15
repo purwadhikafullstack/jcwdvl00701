@@ -259,6 +259,7 @@ function TopBar(props) {
 function Thumbnail(props) {
   const history = useHistory()
   const property = props.properties
+  const {emailVerified} = useSelector(state => state.user)
 
   const isDiscount = property.defaultPrice > property.price
   return (
@@ -297,10 +298,22 @@ function Thumbnail(props) {
             }
           </Flex>
         </Box>
-
-        <Button variant="primary" w="70%" onClick={() => history.push(`/detail/${property.id}`)}>
-          Reserve
-        </Button>
+          {/* {
+            emailVerified ?
+              <Button variant="primary" w="70%" onClick={() => history.push(`/detail/${property.id}`)}>
+                Reserve
+              </Button>
+            :
+              null
+          } */}
+            <Button 
+            variant="primary" 
+            w="70%" 
+            onClick={() => history.push(`/detail/${property.id}`)}
+            disabled={emailVerified ? false : true}
+            >
+              Reserve
+            </Button>
       </Flex>
     </Box>
   );

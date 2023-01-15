@@ -268,7 +268,7 @@ function Booking() {
                         process.env.REACT_APP_API_BASE_URL +
                         dataProfile?.profilePic
                       }
-                      alt="Picture profile"
+                      alt="Picture"
                     />
                   </Box>
                   <Box ms="10px">

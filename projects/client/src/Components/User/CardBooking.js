@@ -37,7 +37,7 @@ function CardBooking (props) {
     const { isOpen : isCancelOpen, onOpen : onCancelOpen, onClose : onCancelClose } = useDisclosure();
     let history = useHistory()
     const inputFileRef = useRef(null)
-
+    console.log(Room);
     const handleFile = (event) => {
         if (event.target.files[0].size / 1024 > 1024) {
             setFileSizeMsg("File size is greater than maximum limit");
@@ -167,20 +167,20 @@ function CardBooking (props) {
                 <Box
                 bg="white"
                 w="100%"
-                p="20px"
+                p="14px"
                 display={{ ss: "none", sm: "none", sl: "flex" }}
                 >
                 <Flex>
                     <Box boxSize="50px">
                     <Image
                         src={process.env.REACT_APP_API_BASE_URL + User?.Profile?.profilePic}
-                        alt="foto profile"
+                        alt="picture"
                     />
                     </Box>
                     <Box ms="10px">
                     <Text
                         fontWeight="semibold"
-                        fontSize="22px"
+                        fontSize="20px"
                         color="black"
                         mt={"10px"}
                     >
@@ -243,9 +243,20 @@ function CardBooking (props) {
                 bg="white"
                 color="rgba(175, 175, 175, 1)"
                 px="10px"
-                pb="20px"
+                pb="10px"
                 >
                 {guestCount} Guests
+                </Text>
+                <Text
+                fontWeight="regular"
+                fontSize="12px"
+                bg="white"
+                color="black"
+                px="10px"
+                // pt="10px"
+                pb="12px"
+                >
+                {Room?.Property?.Tenant?.Bank?.name} : {Room?.Property?.Tenant?.bankAccountNumber}
                 </Text>
                 <Flex direction={"column"}>
                     <Flex justifyContent={"space-between"}>

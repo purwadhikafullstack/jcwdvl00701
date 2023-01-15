@@ -24,7 +24,7 @@ import {
 import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { authFirebase } from "../Config/firebase";
-import { onAuthStateChanged, signOut, getAuth } from "firebase/auth";
+import { onAuthStateChanged, signOut, getAuth, sendEmailVerification } from "firebase/auth";
 import {useDispatch, useSelector} from "react-redux";
 
 import { useDisclosure } from "@chakra-ui/react";
@@ -41,6 +41,7 @@ function NavbarMobileTenant() {
   const auth2 = getAuth()
   const [verifikasi , setVerifikasi] = useState(false)
   const [verifikasi2 , setVerifikasi2] = useState(true)
+  const [dis , setDis] = useState(true)
   console.log(verifikasi2);
   const btnRef = React.useRef();
   const {
@@ -98,6 +99,19 @@ function NavbarMobileTenant() {
   const bookingHistory = () => {
     history.push("/booking-history");
   };
+
+  const btnHandlerVerifikastion = () => {
+      onAuthStateChanged(auth2 , (user) => {
+        sendEmailVerification(user)
+        .then(() => {
+          console.log("berhasil");
+          setDis(false)
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      })
+  }
 
   const menuItemContents = [
     {
@@ -352,7 +366,28 @@ function NavbarMobileTenant() {
                   verifikasi2 ?
                   null
                   :
-                  <Text>Your Email not verified, please check your Email </Text>
+                  <Flex direction={"column"} w="20vw">
+                    <Text >Your Email not verified </Text>
+                    <Text 
+                    cursor={"pointer"} 
+                    _hover={{
+                      fontWeight : "bold",
+                      textDecoration : "underline"
+                    }}
+                    onClick={btnHandlerVerifikastion}
+                    >
+                      {
+                        dis ?
+                        <Text> 
+                          Resend email verification
+                        </Text>
+                        :
+                        null
+                      }
+                    </Text>
+
+                    {/* <Button variant={"primary"} h="2px" w={"40px"}> </Button> */}
+                  </Flex>
                 }
               </Flex>
             }

@@ -62,8 +62,6 @@ function App() {
     const auth = getAuth();
     //pengecekan user ada yg login atau tidak
     onAuthStateChanged(auth, (user) => {
-      // console.log("onAuthStateChanged :", user);
-
       if (user) {
         // console.log(user);
         setUserLogin(user);
@@ -76,14 +74,6 @@ function App() {
           console.log("your account has been verified");
         } 
         else {
-          // // kirim email jika belum terverfikasi
-          // sendEmailVerification(user)
-          //   .then(() => {
-          //     console.log("check your email verification");
-          //   })
-          //   .catch((err) => {
-          //     console.error(err);
-          //   });
           console.log("Your account has not been verified");
         }
       } else {
@@ -103,9 +93,6 @@ function App() {
           },
         })
         .then((res) => {
-          // console.log("data get1 :", res.data.globalState);
-          // console.log("data get2 :", res.data.results.UserRoles);
-          // console.log("data get3 :", res.data.results.Tenant.id);
           if (res.data.globalState === null) {
             console.log("loading...");
           } else {
@@ -140,7 +127,6 @@ function App() {
           setIsLoading(false);
         })
         .catch((err) => {
-          // alert("please registered your account in form register")
           console.error(err.message);
           setIsLoading(false);
         });

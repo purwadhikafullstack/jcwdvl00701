@@ -6,7 +6,9 @@ const {
     Room,
     Transaction,
     Review,
-    sequelize
+    sequelize,
+    Tenant,
+    Bank
 } = require("../models");
 const { Op } = require("sequelize");
 
@@ -62,7 +64,18 @@ module.exports = {
                         include : [
                             {
                                 model : Property,
-                                attributes : ["id", "name", "description", "pic", ]
+                                attributes : ["id", "name", "description", "pic", ],
+                                include : [
+                                    {
+                                    model : Tenant,
+                                    attributes : ["bankAccountNumber"],
+                                    include : [
+                                        {
+                                            model : Bank
+                                        }
+                                    ]
+                                }
+                                ]
                             }
                         ]
                     },
