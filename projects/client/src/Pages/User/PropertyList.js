@@ -164,9 +164,9 @@ function SearchBox(props) {
             cursor="pointer"
           >
             <Text fontSize="sm" fontWeight="bold">
-              Jakarta
+              {selectedLocations.map(loc => loc.label).join(', ') || 'No Locations Selected'}
             </Text>
-            <Text fontSize="xs">12-16 Nov | 1 Tamu</Text>
+            <Text fontSize="xs">{visitor} Visitors</Text>
           </Box>
           <IconButton
             aria-label="toggle filters"
@@ -372,12 +372,16 @@ function PropertyCard(props) {
       variant="outline"
       mb={4}
     >
-      <Image
-        objectFit="cover"
-        maxW={{base: "100%", sm: "50%"}}
-        src={props.data.pic}
-        alt={props.data.name}
-      />
+      <Box height={'250px'} overflow={'hidden'}>
+        <Image
+          objectFit="cover"
+          w={'100%'}
+          // maxW={{base: "100%", sm: "50%"}}
+          src={props.data.pic}
+          alt={props.data.name}
+        />
+      </Box>
+
 
       <Stack w={'100%'}>
         <CardBody style={{color: "grey"}}>

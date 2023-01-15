@@ -145,8 +145,11 @@ function PropertyDetail(props) {
         <Box border="1px solid lightgrey" p={5}>
           <Flex mb={2}>
             <Avatar
-              name='Dan Abrahmov'
-              src={process.env.REACT_APP_API_BASE_URL + props.data.User.Profile.profilePic}
+              src={
+                props.data.User.Profile.profilePic
+                  ? process.env.REACT_APP_API_BASE_URL + props.data.User.Profile.profilePic
+                  : ''
+              }
               mr={5}
               borderRadius={0}
               objectFit="cover"
@@ -374,7 +377,7 @@ function PropertyDetail(props) {
   return (
     <Layout>
       <div>
-        <Container maxW="container.lg" mt={{ ss: "0px", sl: "100px" }}>
+        <Container maxW="container.lg" mt={{ss: "0px", sl: "100px"}}>
           {/* ////////////////////////////// */}
           <Box>
             <Box my={3}>
@@ -392,7 +395,7 @@ function PropertyDetail(props) {
               objectFit="cover"
               width="100%"
               src={process.env.REACT_APP_API_BASE_URL + pic}
-              height={{ ss: "210px", sl: "600px" }}
+              height={{ss: "210px", sl: "600px"}}
 
             />
           </Box>
@@ -413,31 +416,35 @@ function PropertyDetail(props) {
                 currency: "IDR",
               }).format(finalCountPrice)}
             </Text>
-            
-            {UserRoles.includes(1) ? 
+
+            {UserRoles.includes(1) ?
               (
-              <Button
-                w="100%"
-                variant="primary"
-                my={2}
-                onClick={onOpen}
-                disabled={finalCountPrice && emailVerified ? false : true}
-                display={id === tenantData?.User?.id ? "none" : "inline-block"}
-              >
-                Reserve
-              </Button>
-              ) 
-              : null 
+                <Button
+                  w="100%"
+                  variant="primary"
+                  my={2}
+                  onClick={onOpen}
+                  disabled={finalCountPrice && emailVerified ? false : true}
+                  display={id === tenantData?.User?.id ? "none" : "inline-block"}
+                >
+                  Reserve
+                </Button>
+              )
+              : null
             }
 
           </Box>
           <Flex border="3px solid lightgrey" p={5}>
             <Avatar
-              src={tenantData.User?.Profile?.profilePic}
+              src={
+                tenantData.User?.Profile?.profilePic
+                  ? process.env.REACT_APP_API_BASE_URL + tenantData.User?.Profile?.profilePic
+                  : ''
+              }
               width="50px"
               height="50px"
               me="10px"
-              overflow="hiden"
+              overflow="hidden"
               objectFit="cover"
               borderRadius={0}
             />
