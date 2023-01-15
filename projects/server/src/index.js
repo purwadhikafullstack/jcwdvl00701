@@ -31,7 +31,7 @@ app.use(
 );
 
 app.use(express.json());
-// app.use("/api", express.static(`${__dirname}/public`));
+app.use("/api", express.static(`${__dirname}/public`));
 app.use("/profile_pic", express.static(`${__dirname}/public/profile_pic`));
 app.use("/payment", express.static(`${__dirname}/public/payment`));
 app.use("/tenant", express.static(`${__dirname}/public/tenant`));
