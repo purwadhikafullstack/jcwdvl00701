@@ -150,7 +150,7 @@ function PropertyListTenant() {
             >
               {rows > 1 ? `${rows} Properties` : `${rows} property`}
             </Text>
-            {bank ? (
+            {bank && emailVerified ? (
               <Link to="/tenant/add-property">
                 <Center
                   mt="20px"
@@ -194,7 +194,7 @@ function PropertyListTenant() {
                   color: "white",
                 }}
               />
-              {bank ? (
+              {bank && emailVerified ? (
                 <Link to="/tenant/add-property">
                   <Button
                     display={{ ss: "none", sl: "flex" }}
@@ -216,17 +216,19 @@ function PropertyListTenant() {
             </HStack>
           </FormControl>
         </Container>
+        {emailVerified}
         <Container bg="white" maxW="1140px" mt={{ ss: "0px", sl: "20px" }}>
           {rows === 0 ? (
             <Center flexDirection="column" minHeight="50vh">
               <Text textAlign="center" fontSize="20px" mb="20px">
-                {bank
+                {bank && emailVerified
                   ? "you do not have any properties"
-                  : "Please add your bank account number first"}
+                  : emailVerified
+                    ? "Please add your bank account number first"
+                    : "Your Email not verified, please check your Email"}
               </Text>
               {!bank ? (
                 <>
-                  {" "}
                   <Link to="/tenant/profile">
                     <Button variant="primary"> profile</Button>
                   </Link>
@@ -262,46 +264,58 @@ function PropertyListTenant() {
               </Flex>
               {/* card property */}
               {renderPropertyList()}
-             <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              padding: 20,
-              boxSizing: "border-box",
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <ReactPaginate
-              previousLabel={
-                <i
-                  className=" fa-solid fa-chevron-left"
-                  style={{ fontSize: 18 }}
-                ></i>
-              }
-              nextLabel={
-                <i
-                  className=" fa-solid fa-chevron-right"
-                  style={{
-                    fontSize: 18,
-                  }}
-                ></i>
-              }
-              pageCount={pages}
-              onPageChange={changePage}
-              activeClassName={"item active "}
-              breakClassName={"item break-me "}
-              breakLabel={"..."}
-              containerClassName={"pagination"}
-              disabledClassName={"disabled-page"}
-              marginPagesDisplayed={2}
-              nextClassName={"item next "}
-              pageClassName={"item pagination-page "}
-              pageRangeDisplayed={2}
-              previousClassName={"item previous"}
-            />
-          </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  padding: 20,
+                  boxSizing: "border-box",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <ReactPaginate
+                  previousLabel={
+                    <i
+                      className=" fa-solid fa-chevron-left"
+                      style={{
+                        fontSize: 18,
+                        height: 40,
+                        width: 40,
+                        position: "absolute",
+                        left: "11px",
+                        top: "11px",
+                      }}
+                    ></i>
+                  }
+                  nextLabel={
+                    <i
+                      className=" fa-solid fa-chevron-right"
+                      style={{
+                        fontSize: 18,
+                        height: 40,
+                        width: 40,
+                        position: "absolute",
+                        left: "11px",
+                        top: "11px",
+                      }}
+                    ></i>
+                  }
+                  pageCount={pages}
+                  onPageChange={changePage}
+                  activeClassName={"item active "}
+                  breakClassName={"item break-me "}
+                  breakLabel={"..."}
+                  containerClassName={"pagination"}
+                  disabledClassName={"disabled-page"}
+                  marginPagesDisplayed={2}
+                  nextClassName={"item next "}
+                  pageClassName={"item pagination-page "}
+                  pageRangeDisplayed={2}
+                  previousClassName={"item previous"}
+                />
+              </div>
             </>
           )}
         </Container>
