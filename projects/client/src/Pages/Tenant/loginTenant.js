@@ -75,7 +75,7 @@ function LoginTenant() {
           } else {
             alert(errorMessage)
           }
-          console.log(error);
+          //console.log(error);
         })
       const user = userCredential.user
 

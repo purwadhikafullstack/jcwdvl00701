@@ -15,7 +15,7 @@ db.getConnection((err) => {
   if (err) {
     return console.error(`error : ${err.message}`);
   }
-  console.log(`Connected to mySql server`);
+  //console.log(`Connected to mySql server`);
 });
 
 const dbQuery = util.promisify(db.query).bind(db);

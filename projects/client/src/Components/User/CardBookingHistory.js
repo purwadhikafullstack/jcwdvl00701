@@ -114,21 +114,21 @@ function CardBookingHistory(props) {
 
   const inputHandlerReview = (e, field) => {
     const { value } = e.target;
-    console.log(value);
+    //console.log(value);
     if (field === "review") {
       setInputReview(value);
     }
   };
 
   const btnHandlerReview = () => {
-    console.log("btn reservation :", id);
+    //console.log("btn reservation :", id);
     axios
       .post(`${process.env.REACT_APP_API_BASE_URL}/history/add-review`, {
         comment: inputReview,
         reservationId: id,
       })
       .then((res) => {
-        console.log(res.data.result);
+        //console.log(res.data.result);
         setMsg(res.data.message);
         randomNumber(Math.random());
         onClose();

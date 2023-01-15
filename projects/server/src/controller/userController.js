@@ -147,7 +147,7 @@ module.exports = {
 
   verificationUser: async (req, res) => {
     try {
-      console.log(req.body);
+      //console.log(req.body);
       const UpdateVerified = await User.update({
         isVerified: "true",
       });
@@ -248,7 +248,7 @@ module.exports = {
 
   userRedux: async (req, res) => {
     try {
-      console.log(req.query.id);
+      //console.log(req.query.id);
       // const email = req.query.email
       const id = req.query.id // userId
       const globalState = await User.findOne({
@@ -275,7 +275,7 @@ module.exports = {
         globalState
       })
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(500).json({
         message: "your email not registered"
       })
@@ -284,7 +284,7 @@ module.exports = {
   // add user jika dari tenant mau jadi user
   completeDataUser: async (req, res) => {
     try {
-      console.log(req.body);
+      //console.log(req.body);
       const {name, phoneNumber, userId} = req.body
       // tambahakan data ke profile
       const result = await sequelize.transaction(async (t) => {

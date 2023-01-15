@@ -14,8 +14,8 @@ const { Op } = require("sequelize");
 module.exports = {
     getHistory: async (req, res) => {
         try {
-            console.log("masuk ke history");
-            console.log(req.query);
+            //console.log("masuk ke history");
+            //console.log(req.query);
             const id = req.query.userId;
             const startDate = req.query.startDate;
             const endDate = req.query.endDate;
@@ -98,9 +98,9 @@ module.exports = {
         }
     },
     cancelReservation: async (req, res) => {
-        console.log(req.body);
+        //console.log(req.body);
         const { id, startDate, roomId } = req.body;
-        console.log(id);
+        //console.log(id);
         try {
             const cancelReservation = await Reservation.update(
               {
@@ -129,7 +129,7 @@ module.exports = {
         }
     },
     addReview: async (req, res) => {
-        console.log(req.body);
+        //console.log(req.body);
         const { reservationId, comment } = req.body;
         try {
             const result = await sequelize.transaction(async (t) => {

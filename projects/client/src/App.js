@@ -68,16 +68,16 @@ function App() {
         setUserId(user.uid);
         setFirebaseProvider(user.providerData[0].providerId);
         setEmailVerified(user.emailVerified);
-        console.log("ada yg login");
+        //console.log("ada yg login");
         // kondisi jika sudah terverifikasi
         if (user.emailVerified) {
-          console.log("your account has been verified");
+          //console.log("your account has been verified");
         } 
         else {
-          console.log("Your account has not been verified");
+          //console.log("Your account has not been verified");
         }
       } else {
-        console.log("tidak ada yg login");
+        //console.log("tidak ada yg login");
         // jika tidak ada akan di logout
         auth.signOut();
       }
@@ -94,7 +94,7 @@ function App() {
         })
         .then((res) => {
           if (res.data.globalState === null) {
-            console.log("loading...");
+            //console.log("loading...");
           } else {
             res.data.globalState.UserRoles = res.data.globalState.UserRoles.map(
               (val) => {

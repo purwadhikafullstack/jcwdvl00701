@@ -83,7 +83,7 @@ module.exports = {
       const propertyId = req.query.propertyId;
       let wherePropertyCondition = {};
       if (propertyId) wherePropertyCondition.id = propertyId;
-      console.log(propertyId);
+      //console.log(propertyId);
 
       const roomUnavailabilities = await RoomUnavailability.findAll({
         include: [

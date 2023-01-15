@@ -44,7 +44,7 @@ function Payment() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   let history = useHistory();
   const [loading, setLoading] = useState(true);
-  console.log(dataTenant);
+  //console.log(dataTenant);
 
   const handleFile = (event) => {
     if (event.target.files[0].size / 1024 > 1024) {
@@ -76,7 +76,7 @@ function Payment() {
     }
   }
   let resultBulan = searchBulan(bulan)
-  console.log(resultBulan);
+  //console.log(resultBulan);
 
   let price = dataPayment?.finalPrice;
   const priceRupiah = new Intl.NumberFormat("id-ID", {
@@ -137,7 +137,7 @@ function Payment() {
         `${process.env.REACT_APP_API_BASE_URL}/payment/add-payment`,
         formData
       );
-      console.log(response.data);
+      //console.log(response.data);
       onClose();
       history.push("/booking-history");
     } catch (err) {

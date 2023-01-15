@@ -51,12 +51,12 @@ function NavbarMobile() {
     onAuthStateChanged(auth2, (user) => {
       if (user) {
         setVerifikasi(user.emailVerified)
-        console.log('is logged in')
+        //console.log('is logged in')
         if (!verifikasi) {
-          console.log('is not verified')
+          //console.log('is not verified')
           setVerifikasi2(false)
         } else {
-          console.log('is verified')
+          //console.log('is verified')
           setVerifikasi2(true)
         }
       }
@@ -67,11 +67,11 @@ function NavbarMobile() {
     onAuthStateChanged(auth2, (user) => {
       sendEmailVerification(user)
         .then(() => {
-          console.log("berhasil");
+          //console.log("berhasil");
           setDis(false)
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
         })
     })
   }

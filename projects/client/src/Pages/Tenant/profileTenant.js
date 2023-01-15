@@ -110,7 +110,7 @@ function Profile() {
         setDropBank(res.data.dropdownBank)
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       })
   }, [setDropBank])
 

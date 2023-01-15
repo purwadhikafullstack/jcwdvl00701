@@ -13,7 +13,7 @@ module.exports = {
       //         id : tenantId
       //     }
       // })
-      console.log(room);
+      //console.log(room);
       return res.status(200).send({
         room,
       });
@@ -25,7 +25,7 @@ module.exports = {
   },
   addRoom: async (req, res) => {
     try {
-      console.log(req.body);
+      //console.log(req.body);
       const {
         id,
         name,
@@ -49,7 +49,7 @@ module.exports = {
         result: newRoom,
       });
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       return res.status(500).json({
         message: error.toString(),
       });
@@ -121,7 +121,7 @@ module.exports = {
   updateRoom: async (req, res) => {
     try {
       // get body data
-      console.log(req.body);
+      //console.log(req.body);
       const {
         name,
         defaultPrice,
@@ -163,7 +163,7 @@ module.exports = {
   deleteRoom: async (req, res) => {
     try {
       const id = req.body.id;
-      console.log(id);
+      //console.log(id);
       const deleteRoom = await Room.destroy({
         // berdasarkan id room
         where: {
@@ -183,7 +183,7 @@ module.exports = {
   getRoomOne: async (req, res) => {
     try {
       const id = req.params.id;
-      console.log(id);
+      //console.log(id);
       const roomOne = await Room.findOne({
         include: [
           {

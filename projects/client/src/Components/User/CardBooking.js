@@ -37,7 +37,7 @@ function CardBooking(props) {
   const {isOpen: isCancelOpen, onOpen: onCancelOpen, onClose: onCancelClose} = useDisclosure();
   let history = useHistory()
   const inputFileRef = useRef(null)
-  console.log(Room);
+  //console.log(Room);
   const handleFile = (event) => {
     if (event.target.files[0].size / 1024 > 1024) {
       setFileSizeMsg("File size is greater than maximum limit");
@@ -87,7 +87,7 @@ function CardBooking(props) {
       formData.append("image", selectedFile)
       formData.append("reservationId", id)
       const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/payment/add-payment`, formData)
-      console.log(response.data);
+      //console.log(response.data);
       randomNumber(Math.random())
       onPaymentClose()
       history.push("/booking-history")
@@ -97,7 +97,7 @@ function CardBooking(props) {
   }
 
   const btnCanceled = () => {
-    console.log(id);
+    //console.log(id);
     axios
       .patch(`${process.env.REACT_APP_API_BASE_URL}/history/cancel-history`, {
         id: id,

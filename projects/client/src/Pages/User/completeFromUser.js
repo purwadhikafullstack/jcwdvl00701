@@ -33,8 +33,8 @@ function CompleteFormUser() {
     const {UserRoles, id} = useSelector(state => state.user)
     const history = useHistory()
     // const dispatch = useDispatch()
-    console.log(UserRoles[0]);
-    console.log(id);
+    //console.log(UserRoles[0]);
+    //console.log(id);
 
     if(UserRoles.includes(1)){
         history.push("/")
@@ -52,7 +52,7 @@ function CompleteFormUser() {
         }),
         validateOnChange : false,
         onSubmit : async (values) => {
-            console.log(values);
+            //console.log(values);
             const {name, phoneNumber} = values
             // data yg akan di post ada 3, name, phoneNumber dan userId(dari redux), 
 
@@ -62,7 +62,7 @@ function CompleteFormUser() {
                 userId : id
             })
             .then((res) => {
-                console.log(res.data);
+                //console.log(res.data);
                 alert(res.data.message)
                 history.go("/")
             })

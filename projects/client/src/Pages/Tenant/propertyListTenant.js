@@ -45,7 +45,7 @@ function PropertyListTenant() {
   const { TenantId, firebaseProviderId, emailVerified } = useSelector(
     (state) => state.user
   );
-  console.log(TenantId);
+  //console.log(TenantId);
 
   // reender data property
   function renderPropertyList() {
@@ -62,7 +62,7 @@ function PropertyListTenant() {
 
   function inputHandler(event) {
     const tes = setTimeout(() => {
-      console.log(event.target.value);
+      //console.log(event.target.value);
       const { value } = event.target;
 
       setKeyword(value);
@@ -92,7 +92,7 @@ function PropertyListTenant() {
         setRows(res.data.totalRows);
         setPropertyData(res.data.result.rows);
         setBank(res.data.tenantBank.bankAccountNumber);
-        console.log(res.data);
+        //console.log(res.data);
         onClose();
       })
       .catch((err) => {
@@ -102,7 +102,7 @@ function PropertyListTenant() {
 
   useEffect(() => {
     fetchProperty();
-    console.log(bank);
+    //console.log(bank);
   }, [randomNumber, keyword, page, TenantId]);
   return (
     <Layout>

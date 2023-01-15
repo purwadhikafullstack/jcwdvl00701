@@ -6,12 +6,12 @@ import { authFirebase } from "../../Config/firebase";
 function TenantRoute(props) {
   const { TenantId, UserRoles } = useSelector((state) => state.user);
   // const auth = getAuth()
-  console.log(UserRoles);
-  console.log(TenantId);
+  //console.log(UserRoles);
+  //console.log(TenantId);
   const history = useHistory();
 
   if (UserRoles[0] === undefined) {
-    console.log("kosong");
+    //console.log("kosong");
 
     onAuthStateChanged(authFirebase, (user) => {
       if (!user) {

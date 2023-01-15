@@ -37,12 +37,12 @@ function BookingHistory() {
   const [rows, setRows] = useState(0);
   const [randomNumber, setRandomNumber] = useState(0);
   const [loading, setLoading] = useState(true);
-  console.log(dataBooking);
-  console.log(rows);
+  //console.log(dataBooking);
+  //console.log(rows);
 
   // console.log(id);
-  console.log(inputStartDate);
-  console.log(inputEndDate);
+  //console.log(inputStartDate);
+  //console.log(inputEndDate);
   // console.log(status);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ function BookingHistory() {
 
   function renderHistory() {
     return dataBooking.map((val) => {
-      console.log(val);
+      //console.log(val);
       if (val.status === 6) {
         return (
           <CardBookingHistory
@@ -194,7 +194,7 @@ function BookingHistory() {
 
   function renderBooking() {
     return dataBooking.map((val) => {
-      console.log(val);
+      //console.log(val);
       // console.log(val.status);
       if (val.status === 1) {
         return (
