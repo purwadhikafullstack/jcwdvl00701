@@ -23,12 +23,8 @@ import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 
 function CardBooking(props) {
-  console.log(props);
-  // console.log(props.name);
   const start = props.start_date.split("T");
   const end = props.end_date.split("T");
-  // console.log(start[0]);
-  // console.log(end[0]);
   let history = useHistory();
   const [status, setStatus] = useState(null);
   const {

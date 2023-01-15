@@ -37,7 +37,6 @@ function CardBooking(props) {
   const {isOpen: isCancelOpen, onOpen: onCancelOpen, onClose: onCancelClose} = useDisclosure();
   let history = useHistory()
   const inputFileRef = useRef(null)
-  console.log(Room);
   const handleFile = (event) => {
     if (event.target.files[0].size / 1024 > 1024) {
       setFileSizeMsg("File size is greater than maximum limit");
@@ -63,7 +62,6 @@ function CardBooking(props) {
   }
 
   let startDate2 = startDate.split("T")[0].split("-")
-  // console.log(startDate2);
   let endDate2 = endDate.split("T")[0].split("-")
 
   const bulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agus", "Sept", "Okt", "Nov", "Des"]
@@ -71,14 +69,13 @@ function CardBooking(props) {
     const angka = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
     let bulanNow = ""
     for (let i = 0; i < bln.length; i++) {
-      // console.log(angka[i]);
+
       if (startDate2[1] == angka[i]) {
         return bulanNow += bln[i]
       }
     }
   }
   let resultBulan = searchBulan(bulan)
-  // console.log(resultBulan);
 
   const btnHandlerUpload = async () => {
     try {
@@ -87,7 +84,6 @@ function CardBooking(props) {
       formData.append("image", selectedFile)
       formData.append("reservationId", id)
       const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/payment/add-payment`, formData)
-      console.log(response.data);
       randomNumber(Math.random())
       onPaymentClose()
       history.push("/booking-history")
@@ -96,8 +92,7 @@ function CardBooking(props) {
     }
   }
 
-  const btnCanceled = () => {
-    console.log(id);
+const btnCanceled = () => {
     axios
       .patch(`${process.env.REACT_APP_API_BASE_URL}/history/cancel-history`, {
         id: id,
@@ -105,7 +100,6 @@ function CardBooking(props) {
         roomId,
       })
       .then((res) => {
-        alert(res.data.message);
         randomNumber(Math.random());
         onCancelClose();
       })

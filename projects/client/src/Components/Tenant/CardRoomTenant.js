@@ -55,7 +55,6 @@ function CardRoomTenant(props) {
         id,
       })
       .then((res) => {
-        // alert(res.data.message);
         props.setRandomNumber(Math.random());
         onClose();
       })

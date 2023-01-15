@@ -64,7 +64,6 @@ function CardBookingHistory(props) {
   }
 
   let startDate2 = startDate.split("T")[0].split("-");
-  // console.log(startDate2);
   let endDate2 = endDate.split("T")[0].split("-");
 
   const finalPriceRupiah = new Intl.NumberFormat("id-ID", {
@@ -103,32 +102,27 @@ function CardBookingHistory(props) {
     ];
     let bulanNow = "";
     for (let i = 0; i < bln.length; i++) {
-      // console.log(angka[i]);
       if (startDate2[1] == angka[i]) {
         return (bulanNow += bln[i]);
       }
     }
   };
   let resultBulan = searchBulan(bulan);
-  // console.log(resultBulan);
 
   const inputHandlerReview = (e, field) => {
     const { value } = e.target;
-    console.log(value);
     if (field === "review") {
       setInputReview(value);
     }
   };
 
   const btnHandlerReview = () => {
-    console.log("btn reservation :", id);
     axios
       .post(`${process.env.REACT_APP_API_BASE_URL}/history/add-review`, {
         comment: inputReview,
         reservationId: id,
       })
       .then((res) => {
-        console.log(res.data.result);
         setMsg(res.data.message);
         randomNumber(Math.random());
         onClose();
