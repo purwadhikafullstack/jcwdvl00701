@@ -916,7 +916,10 @@ function AddRoomUnavailabilityForm(props) {
       console.log(values);
       const url = `${process.env.REACT_APP_API_BASE_URL}/roomunavailalbility/add`;
       try {
-        const response = await axios.post(url, values);
+        const params = {...values}
+        params.startDate = params.startDate.toLocaleDateString('en-ca')
+        params.endDate = params.endDate.toLocaleDateString('en-ca')
+        const response = await axios.post(url, params);
         alert("success add room unavailalbility");
         props.fetchRoomUnavailability();
         props.disclosure.onClose();
