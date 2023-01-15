@@ -8,7 +8,7 @@ import {
   Spinner,
   HStack,
   VStack,
-  Alert
+  Alert, Avatar
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
@@ -263,12 +263,17 @@ function Booking() {
               >
                 <Flex>
                   <Box boxSize="45px">
-                    <Image
+                    <Avatar
                       src={
                         process.env.REACT_APP_API_BASE_URL +
                         dataProfile?.profilePic
                       }
-                      alt="Picture profile"
+                      width="50px"
+                      height="50px"
+                      me="10px"
+                      overflow="hiden"
+                      objectFit="cover"
+                      borderRadius={0}
                     />
                   </Box>
                   <Box ms="10px">

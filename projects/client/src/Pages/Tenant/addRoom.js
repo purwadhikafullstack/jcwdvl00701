@@ -149,9 +149,8 @@ function AddRoom() {
           </Flex>
         </Container>
         <Container maxW="1140px">
-          <FormControl>
+          <FormControl pb="20px">
             <Select
-              mb="20px"
               placeholder="Select Property"
               borderRadius={0}
               borderColor="rgba(175, 175, 175, 1)"
@@ -169,6 +168,7 @@ function AddRoom() {
               </Alert>
             ) : null}
           </FormControl>
+
           <FormControl pb="20px">
             <Input
               type="text"
@@ -185,6 +185,7 @@ function AddRoom() {
               </Alert>
             ) : null}
           </FormControl>
+
           <FormControl pb="20px">
             <InputGroup>
               <InputLeftElement>
@@ -206,6 +207,7 @@ function AddRoom() {
               </Alert>
             ) : null}
           </FormControl>
+
           <FormControl pb="20px">
             <Input
               type="number"
@@ -222,10 +224,10 @@ function AddRoom() {
               </Alert>
             ) : null}
           </FormControl>
-          <FormControl>
+
+          <FormControl pb="20px">
             <Textarea
               height="180px"
-              mb="20px"
               borderRadius="0px"
               placeholder="Edit caption"
               onChange={(e) => {

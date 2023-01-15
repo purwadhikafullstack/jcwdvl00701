@@ -1,4 +1,5 @@
 const {sequelize, User, Profile, UserRole, Tenant} = require("../models");
+const fs = require("fs");
 
 module.exports = {
   addUser: async (req, res) => {
@@ -209,13 +210,28 @@ module.exports = {
     const {filename} = req.file;
     const fileUrl = `/profile_pic/${filename}`;
 
+    let oldPic = null
     try {
       await sequelize.transaction(async (t) => {
+        const profile = await Profile.findOne(
+          {where: {userId: id}},
+          {transaction: t}
+        );
+
+        oldPic = profile.profilePic
+        const path = `${__dirname}/../public/${oldPic}`;
+
         await Profile.update(
           {profilePic: fileUrl},
           {where: {userId: id}},
           {transaction: t}
         );
+
+        fs.unlink(path, (err) => {
+          if (err) {
+            console.error(err);
+          }
+        });
       })
       return res.status(200).send({
         result: {profilePic: fileUrl},

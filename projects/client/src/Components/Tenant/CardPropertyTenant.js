@@ -36,6 +36,7 @@ function CardPropertyTenant(props) {
         history.push("/tenant/property");
 
         props.randomNumber(Math.random());
+        onClose()
       })
       .catch((err) => {
         console.error(err.message);
