@@ -109,7 +109,7 @@ function TopBar(props) {
       // boxShadow="lg"
       // backgroundColor="blackAlpha.900"
       // backgroundImage="/Assets/topbar_background.png"
-      mt={{ ss: "0px", sl: "80px" }}
+      mt={{ss: "0px", sl: "80px"}}
       p={4}
       pb={12}
       height={'100vh'}
@@ -125,9 +125,13 @@ function TopBar(props) {
     >
       <Flex justify="space-between" align="left" display={{ss: 'flex', sm: 'none'}}>
         <Image src="/Assets/logoTuru.png" alt="turu"/>
-        <Button m={2} leftIcon={<i className="fa-regular fa-circle-user" />}>
-          Login
-        </Button>
+        {
+          !props.global?.id
+            ? <Button m={2} leftIcon={<i className="fa-regular fa-circle-user"/>} onClick={() => history.push('/login')}>
+              Login
+            </Button>
+            : null
+        }
       </Flex>
 
       <Heading
@@ -271,7 +275,7 @@ function Thumbnail(props) {
             px={4} py={2}
             color={"white"} position={"absolute"}
           >
-            Save {Math.round((1 - property.price/property.defaultPrice) * 100)} %
+            Save {Math.round((1 - property.price / property.defaultPrice) * 100)} %
           </Box>
           : <></>
       }
@@ -298,7 +302,7 @@ function Thumbnail(props) {
             }
           </Flex>
         </Box>
-          {/* {
+        {/* {
             emailVerified ?
               <Button variant="primary" w="70%" onClick={() => history.push(`/detail/${property.id}`)}>
                 Reserve
@@ -306,14 +310,14 @@ function Thumbnail(props) {
             :
               null
           } */}
-            <Button 
-            variant="primary" 
-            w="70%" 
-            onClick={() => history.push(`/detail/${property.id}`)}
-            disabled={emailVerified ? false : true}
-            >
-              Reserve
-            </Button>
+        <Button
+          variant="primary"
+          w="70%"
+          onClick={() => history.push(`/detail/${property.id}`)}
+          disabled={emailVerified ? false : true}
+        >
+          Reserve
+        </Button>
       </Flex>
     </Box>
   );
@@ -343,7 +347,7 @@ function Home(props) {
   return (
     <Layout>
       <Box>
-        <TopBar/>
+        <TopBar global={global}/>
 
         <Container maxW="container.lg">
           <Box my={4} py={8}>

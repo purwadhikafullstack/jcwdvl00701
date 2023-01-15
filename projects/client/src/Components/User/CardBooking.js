@@ -113,20 +113,34 @@ function CardBooking(props) {
   return (
     <Box bg="primary" w="100%" p="20px" color="white">
       <Box bg={"white"} mb="5px" display={{sl: "none"}} h="70px">
-        <Flex>
-          <Box boxSize="50px" mt="2px" ms="1px">
-            <Image
-              src={process.env.REACT_APP_API_BASE_URL + User?.Profile?.profilePic}
-              alt="foto profile"
-              overflow="hidden"
+        <Flex py={'auto'} ps={2} h={'100%'}>
+          {/*<Box boxSize="50px" mt="2px" ms="1px">*/}
+          {/*  <Image*/}
+          {/*    src={process.env.REACT_APP_API_BASE_URL + User?.Profile?.profilePic}*/}
+          {/*    alt="foto profile"*/}
+          {/*    overflow="hidden"*/}
+          {/*    objectFit="cover"*/}
+          {/*  />*/}
+          {/*</Box>*/}
+          <Box boxSize="50px" my={'auto'}>
+            <Avatar
+              src={
+                User?.Profile?.profilePic
+                  ? process.env.REACT_APP_API_BASE_URL + User?.Profile?.profilePic
+                  : ''
+              }
+              width="50px"
+              height="50px"
+              me="10px"
               objectFit="cover"
+              borderRadius={0}
             />
           </Box>
-          <Box ms="15px" mt="5px">
+          <Center ms="15px" mt="5px">
             <Text fontWeight="semibold" fontSize="22px" color={"black"}>
               {User?.Profile?.name}
             </Text>
-          </Box>
+          </Center>
         </Flex>
 
       </Box>
