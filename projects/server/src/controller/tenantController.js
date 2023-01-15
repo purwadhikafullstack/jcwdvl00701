@@ -114,6 +114,11 @@ module.exports = {
           {
             model: User,
             required: true,
+            include: [
+              {
+                model: Profile,
+              },
+            ],
           },
         ],
       });

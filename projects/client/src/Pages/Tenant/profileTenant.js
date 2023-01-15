@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {
   Flex,
   Spacer,
@@ -101,6 +101,7 @@ function Profile() {
   const [firebaseProviderId, setfirebaseProviderId] = useState("password");
   const [dropBank, setDropBank] = useState([])
   const [selectedBank, setSelectedBank] = useState([])
+  const [profilePic, setProfilePic] = useState('')
   const {id} = useSelector(state => state.user)
 
   const fetchDropdown = useCallback(async () => {
@@ -130,6 +131,7 @@ function Profile() {
       setEmail(response.data.result.User.email);
       setBank(response.data.result.BankId);
       setAccount(response.data.result.bankAccountNumber);
+      setProfilePic(`${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.User.Profile?.profilePic}`)
 
       formik.values.name = response.data.result.name;
       formik.values.phoneNumber = response.data.result.phoneNumber;
@@ -169,6 +171,25 @@ function Profile() {
     },
   });
 
+  const updateProfilePic = async (e) => {
+    let file = e.target.files[0]
+
+    if (!file.type.match('image.*')) return
+    if (file.size > 1048576) return
+
+    let formData = new FormData()
+    formData.append("image", e.target.files[0])
+    formData.append('id', id)
+
+    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/profilePic`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    setProfilePic(`${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.profilePic}`)
+  };
+  const proflePicInputRef = useRef(null)
+
   return (
     <Layout>
       <Container maxW="container.sm" p={0} mt={20}>
@@ -189,7 +210,7 @@ function Profile() {
               {/*Profile header*/}
               <Flex pt="10">
                 <Box mr="20px" w="80px" h="80px">
-                  <Avatar w="80px" h="80px"/>
+                  <Avatar w="80px" h="80px" src={profilePic}/>
                 </Box>
                 <Box>
                   <Text fontSize="xl" fontWeight="600">
@@ -197,14 +218,13 @@ function Profile() {
                   </Text>
 
                   <Text
-                    textDecoration="underline"
-                    fontSize="16px"
-                    fontWeight="400"
-                    cursor="pointer"
+                    textDecoration="underline" fontSize="16px" fontWeight="400" cursor="pointer"
                     _hover={{textDecoration: "underline", fontWeight: "bold"}}
+                    onClick={() => proflePicInputRef.current.click()}
                   >
                     Update Photo
                   </Text>
+                  <Input type={'file'} accept={'image/*'} onChange={updateProfilePic} hidden ref={proflePicInputRef}/>
                 </Box>
               </Flex>
               {/*Profile header ends*/}
