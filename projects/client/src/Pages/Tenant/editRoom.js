@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import YupPassword from "yup-password";
+import { useSelector } from "react-redux";
 
 function EditRoom() {
   // const [editRoom, setEditRoom] = useState({})
@@ -36,6 +37,7 @@ function EditRoom() {
   const [propertyId, setPropertyId] = useState("");
   const [dropdown, setDropdown] = useState([]);
   const history = useHistory();
+  const {TenantId} = useSelector(state => state.user)
   console.log(id);
   console.log(property);
 
@@ -70,7 +72,7 @@ function EditRoom() {
 
   const fetchDataDropdown = () => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
+      .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`)
       .then((res) => {
         // console.log(res.data.dropdown);
         setDropdown(res.data.dropdown);
