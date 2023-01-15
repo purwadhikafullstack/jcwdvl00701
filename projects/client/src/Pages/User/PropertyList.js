@@ -42,6 +42,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import axios, * as others from "axios";
 import {useSelector} from "react-redux";
 import ReactPaginate from "react-paginate";
+import Layout from "../../Components/Layout";
 
 function useOnClickOutside(ref, handler) {
   useEffect(
@@ -153,7 +154,7 @@ function SearchBox(props) {
   }, [props.locations])
 
   return (
-    <Box backgroundColor="white">
+    <Box backgroundColor="white" mt={{ss:'0', sm:'90px'}}>
       <Box w="100%" p={4} boxShadow="lg">
         <Flex justify="space-between" backgroundColor="gray.100" align="center">
           <Box
@@ -494,7 +495,7 @@ function PropertyList(props) {
   }, [fetchLocations])
 
   return (
-    <div>
+    <Layout>
       <SearchBox
         fetchProperties={fetchProperties} locations={locations}
         nameOrder={nameOrder} setNameOrder={setNameOrder}
@@ -540,8 +541,7 @@ function PropertyList(props) {
           previousClassName={"item previous"}
         />
       </Container>
-      <Footer/>
-    </div>
+    </Layout>
   );
 }
 
