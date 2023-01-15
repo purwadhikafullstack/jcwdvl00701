@@ -29,15 +29,13 @@ module.exports = {
   add: async (req, res) => {
     return await wrapper(req, res, async () => {
       const { startDate, endDate, selectedRooms } = req.body;
-      const normalizedStartDate = new Date(new Date(startDate).toDateString());
-      const normalizedEndDate = new Date(new Date(endDate).toDateString());
 
       const result = await sequelize.transaction(async (t) => {
         for (roomId of selectedRooms) {
           await RoomUnavailability.create(
             {
-              startDate: normalizedStartDate,
-              endDate: normalizedEndDate,
+              startDate: startDate,
+              endDate: endDate,
               roomId: roomId,
               type: 1,
             },
@@ -85,7 +83,7 @@ module.exports = {
       const propertyId = req.query.propertyId;
       let wherePropertyCondition = {};
       if (propertyId) wherePropertyCondition.id = propertyId;
-      console.log(propertyId);
+      //console.log(propertyId);
 
       const roomUnavailabilities = await RoomUnavailability.findAll({
         include: [

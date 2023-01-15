@@ -24,39 +24,72 @@ import {
 import turuIcon from "../Assets/image/turuIcon.png";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { authFirebase } from "../Config/firebase";
-import { onAuthStateChanged, signOut, getAuth } from "firebase/auth";
-import { useSelector } from "react-redux";
+import { onAuthStateChanged, signOut, getAuth, sendEmailVerification } from "firebase/auth";
+import {useDispatch, useSelector} from "react-redux";
 
 import { useDisclosure } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import auth_types from "../Redux/Reducers/Types/userTypes";
 
 function NavbarMobileTenant() {
+  const dispatch = useDispatch();
   const location = useLocation().pathname;
   const pathLocation = location.split("/");
   const history = useHistory();
   const auth = authFirebase;
-
+  const auth2 = getAuth()
+  const [verifikasi , setVerifikasi] = useState(false)
+  const [verifikasi2 , setVerifikasi2] = useState(true)
+  const [dis , setDis] = useState(true)
+  //console.log(verifikasi2);
   const btnRef = React.useRef();
   const {
     isOpen: isDestopOpen,
     onOpen: onDestopOpen,
     onClose: onDestopClose,
   } = useDisclosure();
+
   const {
     isOpen: isMobileOpen,
     onOpen: onMobileOpen,
     onClose: onMobileClose,
   } = useDisclosure();
-  const { id, ProfilePic, ProfileName, firebaseProviderId } = useSelector(
+
+  const { id, ProfilePic, ProfileName, firebaseProviderId, UserRoles } = useSelector(
     (state) => state.user
   );
+  //console.log(UserRoles);
+  useEffect(() => {
+    onAuthStateChanged(auth2 , (user) => {
+      if(user) {
+        setVerifikasi(user.emailVerified)
+        if(!verifikasi){
+          setVerifikasi2(false)
+        } else {
+          setVerifikasi2(true)
+        }
+      }
+    })
+  }, [verifikasi , verifikasi2])
 
-  const logout = () => {
-    signOut(auth)
-      .then(() => alert("signed out"))
-      .catch((error) => alert(error));
-    history.push("/login");
+  const logout = async () => {
+    await signOut(auth).catch((error) => alert(error));
+    dispatch({
+      type: auth_types.Redux,
+      payload: {
+        id: "",
+        email: "",
+        emailVerified: "",
+        firebaseProviderId: "",
+        UserRoles: [],
+        TenantId: 0,
+        TenantName: "",
+        ProfileName: "",
+        ProfilePic: "",
+      },
+    });
+    history.push("/login")
   };
 
   const switchToTenant = () => {
@@ -66,6 +99,19 @@ function NavbarMobileTenant() {
   const bookingHistory = () => {
     history.push("/booking-history");
   };
+
+  const btnHandlerVerifikastion = () => {
+      onAuthStateChanged(auth2 , (user) => {
+        sendEmailVerification(user)
+        .then(() => {
+          //console.log("berhasil");
+          setDis(false)
+        })
+        .catch((err) => {
+          //console.log(err);
+        })
+      })
+  }
 
   const menuItemContents = [
     {
@@ -183,11 +229,23 @@ function NavbarMobileTenant() {
                     my="10px"
                     key={`tenant-menu-signout`}
                     _hover={{ bg: "white" }}
-                    onClick={() => {
-                      signOut(auth)
-                        .then(() => alert("signed out"))
-                        .catch((error) => alert(error));
-                      history.push("/tenant/login");
+                    onClick={async () => {
+                      await signOut(auth).catch((error) => alert(error));
+                      dispatch({
+                        type: auth_types.Redux,
+                        payload: {
+                          id: "",
+                          email: "",
+                          emailVerified: "",
+                          firebaseProviderId: "",
+                          UserRoles: [],
+                          TenantId: 0,
+                          TenantName: "",
+                          ProfileName: "",
+                          ProfilePic: "",
+                        },
+                      });
+                      history.push("/login");
                     }}
                   >
                     <Flex
@@ -208,72 +266,6 @@ function NavbarMobileTenant() {
                 </DrawerBody>
               </DrawerContent>
             </Drawer>
-
-            {/* <Menu>
-              <MenuButton
-                _hover={{ bg: "white" }}
-                _active={{
-                  bg: "white",
-                }}
-                fontSize="20px"
-                icon={<i className="fa-solid fa-bars"></i>}
-                as={IconButton}
-                aria-label="Options"
-                border="none"
-                variant="outline"
-                bg="white"
-                my="auto"
-              />
-
-              <MenuList borderRadius="0px" width="100vw" border="none">
-                {menuItemContents.map((content) => {
-                  return (
-                    <MenuItem
-                      key={`tenant-menu-${content.text.toLowerCase()}`}
-                      _hover={{ bg: "white" }}
-                      onClick={() => history.push(content.url)}
-                    >
-                      <Flex
-                        bg={"#fbe946"}
-                        w="100%"
-                        h={"44px"}
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                        _hover={{
-                          bg: "black",
-                          color: "white",
-                          transition: "0.3s",
-                        }}
-                      >
-                        {content.icon}&nbsp;<strong>{content.text}</strong>
-                      </Flex>
-                    </MenuItem>
-                  );
-                })}
-
-                <MenuItem
-                  key={`tenant-menu-signout`}
-                  _hover={{ bg: "white" }}
-                  onClick={() => {
-                    signOut(auth)
-                      .then(() => alert("signed out"))
-                      .catch((error) => alert(error));
-                    history.push("/tenant/login")
-                  }}
-                >
-                  <Flex
-                    bg={"#fbe946"}
-                    w="100%"
-                    h={"44px"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    _hover={{ bg: "black", color: "white", transition: "0.3s" }}
-                  >
-                    <strong>Sign Out</strong>
-                  </Flex>
-                </MenuItem>
-              </MenuList>
-            </Menu> */}
           </Flex>
         </Container>
       </Box>
@@ -299,7 +291,39 @@ function NavbarMobileTenant() {
               width="58px"
               height="58px"
             />
-            {id ? (
+            {
+              !verifikasi && UserRoles.includes(1)  ?
+               <Flex justifyContent={"flex-start"} my="auto" ms={"10px"}>
+                {
+                  verifikasi2 ?
+                  null
+                  :
+                  <Flex direction={"column"} w="20vw">
+                    <Text >Your Email not verified </Text>
+                    <Text 
+                    cursor={"pointer"} 
+                    _hover={{
+                      fontWeight : "bold",
+                      textDecoration : "underline"
+                    }}
+                    onClick={btnHandlerVerifikastion}
+                    >
+                      {
+                        dis ?
+                        <Text> 
+                          Resend email verification
+                        </Text>
+                        :
+                        null
+                      }
+                    </Text>
+                  </Flex>
+                }
+              </Flex>
+              :
+              null
+            }
+            {id && UserRoles.includes(1)? (
               <Flex w="100%" mx="auto" justifyContent="space-between">
                 <Spacer />
                 <Flex fontWeight="bold" fontSize="18px" my="auto" mr="20px">
@@ -310,21 +334,27 @@ function NavbarMobileTenant() {
                     Room
                   </Text>
                   <Menu>
-                    {id ? (
-                      <MenuButton fontWeight="bold" fontSize="18px" my="auto">
+                    {id && UserRoles.includes(1)? (
+                      <Box>
+                      <i class="fa-solid fa-caret-down"></i>
+                      <MenuButton fontWeight="bold" fontSize="18px" my="auto" ms={"8px"}>
                         {ProfileName}
                       </MenuButton>
+                      </Box>
                     ) : (
-                      <MenuButton fontWeight="bold" fontSize="18px" my="auto">
+                      <Box>
+                      <i class="fa-solid fa-caret-down"></i>
+                      <MenuButton fontWeight="bold" fontSize="18px" my="auto" ms={"3px"}>
                         Account
                       </MenuButton>
-                    )}
+                      </Box>
+                    )}                    
                     <MenuList>
                       <MenuItem onClick={() => history.push("/profile")}>
                         Profile
                       </MenuItem>
                       <MenuDivider />
-                      {firebaseProviderId === "password" ? (
+                      {firebaseProviderId === "password" && verifikasi2 ? (
                         <MenuItem onClick={switchToTenant}>
                           Switch To Tenant
                         </MenuItem>

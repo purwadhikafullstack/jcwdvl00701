@@ -8,7 +8,7 @@ import {
   Spinner,
   HStack,
   VStack,
-  Alert
+  Alert, Avatar
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
@@ -22,14 +22,13 @@ import Loading from "../../Components/Loading";
 function Booking() {
   // akan menerima 1 id params utk get data, dari page detail/id
   const { id } = useParams();
-  console.log(id);
+  //console.log(id);
   const [dataBooking, setDataBooking] = useState({});
   const [dataRoom, setDataRoom] = useState({});
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [dataProfile, setDataProfile] = useState({});
-  const [birthdate, setBirthdate] = useState("");
   const [err, setErr] = useState("")
   // console.log(birthdate);
   let history = useHistory();
@@ -47,13 +46,12 @@ function Booking() {
             },
           }
         );
-        console.log((await response)?.data.result);
+        //console.log((await response)?.data.result);
         setDataBooking((await response)?.data.result);
         setDataRoom((await response)?.data.result.Room);
         setStartDate((await response)?.data.result.startDate);
         setEndDate((await response)?.data.result.endDate);
         setDataProfile((await response)?.data.result.User.Profile);
-        setBirthdate((await response)?.data.result.User?.Profile?.birthdate);
       } catch (err) {
         console.error(err.data.message);
       }
@@ -101,20 +99,12 @@ function Booking() {
         return (bulanNow += bln[i]);
       }
     }
+  }
     let resultBulan = searchBulan(bulan)
-    console.log(resultBulan);
-
-    if(birthdate){
-      var birthDate2 = birthdate.split("T")
-    } else {
-      alert("You must enter your date of birth ")
-      // setErr("You must enter your date of birth ")
-        history.push("/profile")
-
-    }
+    //console.log(resultBulan);
 
   const btnHandlerPayment = (id) => {
-    console.log(id);
+    //console.log(id);
     history.push(`/payment/${id}`);
   };
 
@@ -144,6 +134,17 @@ function Booking() {
         mb={{ ss: "60px", sm: "60px", sl: "0px" }}
         mt={{ ss: "0px", sm: "0px", sl: "80px" }}
       >
+        {
+          err ?
+          (
+            <Alert status="error" color="red" text="center">
+                <i className="fa-solid fa-circle-exclamation"></i>
+                <Text ms="10px">{err}</Text>
+            </Alert>
+          )
+          :
+          null
+        }
         <Flex
           display={{ ss: "flex", sm: "flex", sl: "none" }}
           px="20px"
@@ -262,26 +263,24 @@ function Booking() {
               >
                 <Flex>
                   <Box boxSize="45px">
-                    <Image
+                    <Avatar
                       src={
                         process.env.REACT_APP_API_BASE_URL +
                         dataProfile?.profilePic
                       }
-                      alt="Picture profile"
+                      alt="Picture"
+                      width="50px"
+                      height="50px"
+                      me="10px"
+                      overflow="hiden"
+                      objectFit="cover"
+                      borderRadius={0}
                     />
                   </Box>
                   <Box ms="10px">
-                    <Text fontWeight="bold" fontSize="16px">
+                    <Text fontWeight="bold" fontSize="16px" mt={"15px"}>
                       {/* name user */}
                       {dataProfile?.name}
-                    </Text>
-                    <Text
-                      fontWeight="regular"
-                      fontSize="16px"
-                      color="rgba(175, 175, 175, 1)"
-                    >
-                      {/* ulang tahun user */}
-                      {birthDate2[0]}
                     </Text>
                   </Box>
                 </Flex>
@@ -365,6 +364,6 @@ function Booking() {
     </Layout>
   );
 }
-}
+
 
 export default Booking;

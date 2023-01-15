@@ -1,14 +1,14 @@
-const { sequelize, User, Profile, UserRole, Tenant } = require("../models");
+const { sequelize, User, Profile, UserRole, Tenant, Bank } = require("../models");
 
 module.exports = {
   addTenantComplete: async (req, res) => {
     try {
-      console.log(req.body);
+      //console.log(req.body);
       const { name, phoneNumber, userId } = req.body;
       const { filename } = req.file;
-      console.log(filename);
+      //console.log(filename);
       const fileUrl = `/tenant/${filename}`;
-      console.log();
+      //console.log();
 
       const result = await sequelize.transaction(async (t) => {
         const addCompleteTenant = await Tenant.create(
@@ -50,12 +50,12 @@ module.exports = {
   },
   addTenantRegister: async (req, res) => {
     try {
-      console.log(req.body);
+      //console.log(req.body);
       // id cardPic nya harus bentuk foto
       const { id, firebaseProviderId, email, phoneNumber, name } = req.body;
 
       const { filename } = req.file;
-      console.log(filename);
+      //console.log(filename);
       const fileUrl = `/tenant/${filename}`;
 
       const result = await sequelize.transaction(async (t) => {
@@ -114,6 +114,11 @@ module.exports = {
           {
             model: User,
             required: true,
+            include: [
+              {
+                model: Profile,
+              },
+            ],
           },
         ],
       });
@@ -129,4 +134,48 @@ module.exports = {
       });
     }
   },
+  getBankDropdown : async (req,res) => {
+    try {
+      // const tenantId = req.params.tenantId
+      const dropdownBank = await Bank.findAll()
+
+      return res.status(200).json({
+        dropdownBank,
+        code : 200
+      })
+    } catch(err) {
+      return res.status(500).json({
+        message : err.toString()
+      })
+    }
+  },
+  patchTenant: async (req, res) => {
+    const {id, name, email, phoneNumber, bank, account} = req.body;
+    //console.log(req.body)
+
+    try {
+      await sequelize.transaction(async (t) => {
+        await Tenant.update(
+          {name, email, phoneNumber, bankId: bank, bankAccountNumber: account},
+          {where: {id: id}},
+          {transaction: t}
+        );
+      })
+
+      const tenant = await Tenant.findOne({
+        where: {id: id},
+      });
+
+      return res.status(200).send({
+        result: tenant,
+        message: "success update user",
+        code: 200,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        message: err.toString(),
+        code: 500,
+      });
+    }
+  }
 };

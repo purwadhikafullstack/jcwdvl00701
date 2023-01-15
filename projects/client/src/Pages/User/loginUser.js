@@ -39,7 +39,13 @@ import Layout from "../../Components/Layout";
 import Footer from "../../Components/Footer";
 
 function LoginUser() {
+    const global = useSelector(state => state.user)
     const history = useHistory()
+
+    if(global.id) {
+        history.push('/')
+    }
+
     const dispatch = useDispatch()
     const [wrongPass , setWrongPass] = useState("")
     // for toggling password visibility
@@ -58,15 +64,10 @@ function LoginUser() {
             params: {id: user.uid}
         })
             .then((res) => {
-                console.log(res.data.result)
-                dispatch({
-                    type: auth_types.Login,
-                    payload: res.data.result
-                })
                 history.push("/")
             })
             .catch((err) => {
-                console.log(err)
+                //console.log(err)
                 alert("please registered your account in form register")
                 history.push("/register")
             })
@@ -86,10 +87,6 @@ function LoginUser() {
             }
         })
             .then((res) => {
-                dispatch({
-                    type: auth_types.Login,
-                    payload: res.data.result
-                })
                 history.push("/")
             })
             .catch((err) => {
@@ -110,7 +107,7 @@ function LoginUser() {
         }),
         validateOnChange: false,
         onSubmit: async (values) => {
-            console.log(values);
+            //console.log(values);
             const {email, password} = values
 
             const userCredential = await signInWithEmailAndPassword(authFirebase, email, password)
@@ -123,9 +120,9 @@ function LoginUser() {
                     } else {
                         alert(errorMessage)
                     }
-                    console.log(error);
+                    //console.log(error);
                 })
-            console.log(userCredential);
+            //console.log(userCredential);
             const user = userCredential.user
 
             // utk get data ke back-end dan di simpan di redux
@@ -133,8 +130,8 @@ function LoginUser() {
                 params: {id: user.uid}
             })
 
-            console.log((await response).data);
-    
+            //console.log((await response).data);
+
             if ((await response).data.code !== 200) {
                 alert("please register for your account")
             } else {
@@ -240,7 +237,7 @@ function LoginUser() {
                                                     }
 
                                                     {
-                                                        wrongPass ? 
+                                                        wrongPass ?
                                                         <Alert status="error" color="red" text="center">
                                                             <i className="fa-solid fa-circle-exclamation"></i>
                                                             <Text ms="10px">{wrongPass}</Text>

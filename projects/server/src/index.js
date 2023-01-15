@@ -21,7 +21,7 @@ const {
 const PORT = process.env.PORT || 8000;
 const app = express();
 
-console.log("dari .env =", process.env.WHITELISTED_DOMAIN);
+//console.log("dari .env =", process.env.WHITELISTED_DOMAIN);
 
 app.use(
   cors({
@@ -103,8 +103,8 @@ app.get("*", (req, res) => {
 
 app.listen(PORT, (err) => {
   if (err) {
-    console.log(`ERROR: ${err}`);
+    //console.log(`ERROR: ${err}`);
   } else {
-    console.log(`APP RUNNING at ${PORT} ✅`);
+    //console.log(`APP RUNNING at ${PORT} ✅`);
   }
 });

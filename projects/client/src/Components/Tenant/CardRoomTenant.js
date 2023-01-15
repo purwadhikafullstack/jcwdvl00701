@@ -22,7 +22,6 @@ import axios from "axios";
 import { useEffect } from "react";
 
 function CardRoomTenant(props) {
-  console.log(props);
   let {
     id,
     name,
@@ -47,7 +46,6 @@ function CardRoomTenant(props) {
 
   //kirim ke halaman edit-room
   const handleBtnEdit = (id) => {
-    // console.log(id);
     history.push(`/tenant/edit-room/${id}`);
   };
 
@@ -57,13 +55,11 @@ function CardRoomTenant(props) {
         id,
       })
       .then((res) => {
-        // alert(res.data.message);
         props.setRandomNumber(Math.random());
-
         onClose();
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   };
 

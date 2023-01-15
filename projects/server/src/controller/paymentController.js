@@ -3,7 +3,7 @@ const { sequelize, User, Profile, UserRole , Tenant, Reservation, Room, Property
 module.exports = {
     getPayment : async(req,res) => {
         const id = req.query.id
-        console.log(id);
+        //console.log(id);
 
         try{
             const payment = await Reservation.findOne({
@@ -13,26 +13,26 @@ module.exports = {
                 include : [
                     {
                         model : User, 
-                        attributes : ["id"],
-                        include : [
-                            {
-                                model : Tenant,
-                                attributes : ["id" , "name" , "bankAccountNumber", "bankId"],
-                                include : [
-                                    {
-                                        model : Bank,
-                                        attributes : ["name"]
-                                    }
-                                ]
-                            }
-                        ]
+                        attributes : ["id"]
                     },
                     {
                         model : Room,
                         include : [
                             {
                                 model : Property,
-                                attributes : ["name", "pic"]
+                                attributes : ["name", "pic"],
+                                include : [
+                                    {
+                                        model : Tenant,
+                                        attributes : ["id" , "name" , "bankAccountNumber", "bankId"],
+                                        include : [
+                                            {
+                                                model : Bank,
+                                                attributes : ["name"]
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         ]
                     }
@@ -51,10 +51,10 @@ module.exports = {
         }
     },
     addPayment : async(req,res) => {
-        console.log(req.body)
+        //console.log(req.body)
         const {reservationId} = req.body
         const {filename} = req.file
-        console.log(filename);
+        //console.log(filename);
         const fileUrl = `/payment/${filename}`
 
         try{
