@@ -212,7 +212,7 @@ function PropertyDetail(props) {
         if (found) {
           if (found.type === "nominal") {
             finalPrice = found.discount;
-          } else if (found.type === "persen") {
+          } else if (found.type === "percentage") {
             finalPrice = finalPrice + (finalPrice * found.discount) / 100;
           }
         }

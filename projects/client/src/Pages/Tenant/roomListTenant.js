@@ -18,6 +18,7 @@ import {
   Button,
   useDisclosure,
   Center,
+  Spinner,
 } from "@chakra-ui/react";
 import Layout from "../../Components/Layout";
 import CardRoomTenant from "../../Components/Tenant/CardRoomTenant";
@@ -32,7 +33,7 @@ function RoomListTenant() {
   const [room, setRoom] = useState([]);
   const [dropdown, setDropdown] = useState([]);
   const [keyWord, setKeyWord] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
   const [pages, setPages] = useState(0);
@@ -43,23 +44,23 @@ function RoomListTenant() {
   const [propertyId, setPropertyId] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [randomNumber, setRandomNumber] = useState(0);
-  console.log(rows);
-  const {TenantId, firebaseProviderId} = useSelector(state => state.user)
+
+  const { TenantId, firebaseProviderId } = useSelector((state) => state.user);
   // console.log(TenantId);
 
   const inputHandlerKeyword = (e) => {
-    const {value} = e.target
+    const { value } = e.target;
     const getData = setTimeout(() => {
-        setKeyWord(value)
-        setPage(0);
-      return clearTimeout(getData)
-    }, 2000)
-  }
+      setKeyWord(value);
+      setPage(0);
+      return clearTimeout(getData);
+    }, 2000);
+  };
 
   const inputHandler = (e, field) => {
-    const {value} = e.target
-    if (field == "alfabet"){
-      setAlfabet(value)
+    const { value } = e.target;
+    if (field == "alfabet") {
+      setAlfabet(value);
       setPage(0);
     } else if (field == "time") {
       setTime(value);
@@ -74,23 +75,27 @@ function RoomListTenant() {
   };
 
   //get property berdasarkan tenant id ==> yg di simpan di dropdown
-    //buat id nya dari global store ==> tenant 
-    const fetchProperty = () => {
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-property/${TenantId}?searchQuery=${keyWord}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`)
-        .then((res) => {
-          console.log(res.data);
-          setRoom(res.data.roomProperty.rows);
-          setPage(res.data.page);
-          setRows(res.data.totalRows);
-          setPages(res.data.totalPage);
+  //buat id nya dari global store ==> tenant
+  const fetchProperty = () => {
+    setIsLoading(true);
+    axios
+      .get(
+        `${process.env.REACT_APP_API_BASE_URL}/room/room-property/${TenantId}?searchQuery=${keyWord}&limit=${limit}&page=${page}&alfabet=${alfabet}&time=${time}&price=${price}&propertyId=${propertyId}`
+      )
+      .then((res) => {
+        setRoom(res.data.roomProperty.rows);
+        setPage(res.data.page);
+        setRows(res.data.totalRows);
+        setPages(res.data.totalPage);
 
-          onClose();
-        })
-        .catch((err) => {
-          console.error(err)
-        })
-  }
-  
+        onClose();
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   useEffect(() => {
     fetchProperty();
     roomData();
@@ -114,9 +119,11 @@ function RoomListTenant() {
 
   const fetchDataDropdown = () => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`)
+      .get(
+        `${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`
+      )
       .then((res) => {
-        // console.log(res.data.dropdown);
+        console.log(res.data.dropdown);
         setDropdown(res.data.dropdown);
       })
       .catch((err) => {
@@ -172,7 +179,7 @@ function RoomListTenant() {
               fontWeight="bold"
               display={{ ss: "none", sl: "flex" }}
             >
-              {rows > 1 ? `${rows} Rooms` : `${rows} Room`}
+              {room.length > 1 ? `${room.length} Rooms` : `${room.length} Room`}
             </Text>
           </Center>
         </Container>
@@ -183,25 +190,27 @@ function RoomListTenant() {
               fontWeight="bold"
               display={{ ss: "flex", sl: "none" }}
             >
-              {rows > 1 ? `${rows} Rooms` : `${rows} Room`}
+              {room.length > 1 ? `${room.length} Rooms` : `${room.length} Room`}
             </Text>
-            <Link to="/tenant/add-room">
-              <Box
-                display={{ ss: "flex", sl: "none" }}
-                as="button"
-                h="40px"
-                w="40px"
-                fontSize="20px"
-                transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
-                _hover={{
-                  bg: "black",
-                  color: "white",
-                }}
-                bg="primary"
-              >
-                <i className=" fa-solid fa-plus"></i>
-              </Box>
-            </Link>
+            {dropdown.length === 0 ? null : (
+              <Link to="/tenant/add-room">
+                <Center
+                  display={{ ss: "flex", sl: "none" }}
+                  as="button"
+                  h="40px"
+                  w="40px"
+                  fontSize="20px"
+                  transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
+                  _hover={{
+                    bg: "black",
+                    color: "white",
+                  }}
+                  bg="primary"
+                >
+                  <i className=" fa-solid fa-plus"></i>
+                </Center>
+              </Link>
+            )}
           </Flex>
           <Select
             mb="20px"
@@ -236,97 +245,124 @@ function RoomListTenant() {
                   color: "white",
                 }}
               />
-              <Link to="/tenant/add-room">
-                <Button
-                  display={{ ss: "none", sl: "flex" }}
-                  h="40px"
-                  w="150px"
-                  borderRadius={0}
-                  fontSize="16px"
-                  transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
-                  _hover={{
-                    bg: "black",
-                    color: "white",
-                  }}
-                  bg="primary"
-                >
-                  Add Room
-                </Button>
-              </Link>
+              {dropdown.length === 0 ? null : (
+                <>
+                  <Link to="/tenant/add-room">
+                    <Button
+                      display={{ ss: "none", sl: "flex" }}
+                      h="40px"
+                      w="150px"
+                      borderRadius={0}
+                      fontSize="16px"
+                      transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
+                      _hover={{
+                        bg: "black",
+                        color: "white",
+                      }}
+                      bg="primary"
+                    >
+                      Add Room
+                    </Button>
+                  </Link>
+                </>
+              )}
             </HStack>
           </FormControl>
           {/* render data room  */}
         </Container>
 
         <Container bg="white" maxW="1140px" mt={{ ss: "0px", sl: "20px" }}>
-          <Flex
-            maxW="1140px"
-            borderBottom="1px"
-            borderColor="gray.200"
-            pt="20px"
-            pb="10px"
-            display={{ ss: "none", sl: "flex" }}
-          >
-            <Text me="20px" fontSize="16px" fontWeight="bold" w="90px">
-              Photo
-            </Text>
-            <Text me="20px" fontSize="16px" fontWeight="bold" w="300px">
-              Property Name
-            </Text>
-            <Text me="20px" fontSize="16px" fontWeight="bold" w="150px">
-              Room Name
-            </Text>
-            <Text me="20px" fontSize="16px" fontWeight="bold" w="210px">
-              Price
-            </Text>
-            <Text me="20px" fontSize="16px" fontWeight="bold" w="150px">
-              Modified
-            </Text>
-            <Text me="10px" fontSize="16px" fontWeight="bold" w="80px">
-              Action
-            </Text>
-          </Flex>
-          {roomData()}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              padding: 20,
-              boxSizing: "border-box",
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <ReactPaginate
-              previousLabel={
-                <i
-                  className=" fa-solid fa-chevron-left"
-                  style={{ fontSize: 18 }}
-                ></i>
-              }
-              nextLabel={
-                <i
-                  className=" fa-solid fa-chevron-right"
-                  style={{
-                    fontSize: 18,
-                  }}
-                ></i>
-              }
-              pageCount={pages}
-              onPageChange={changePage}
-              activeClassName={"item active "}
-              breakClassName={"item break-me "}
-              breakLabel={"..."}
-              containerClassName={"pagination"}
-              disabledClassName={"disabled-page"}
-              marginPagesDisplayed={2}
-              nextClassName={"item next "}
-              pageClassName={"item pagination-page "}
-              pageRangeDisplayed={2}
-              previousClassName={"item previous"}
-            />
-          </div>
+          {dropdown.length === 0 ? (
+            <Center flexDirection="column" minHeight="45vh">
+              <Text textAlign="center" fontSize="20px" mb="20px">
+                You must own a property before adding a room
+              </Text>
+              <Link to="/tenant/property">
+                <Button variant="primary"> Add property</Button>
+              </Link>
+            </Center>
+          ) : (
+            <>
+              {rows === 0 ? (
+                <Center flexDirection="column" minHeight="45vh">
+                  <Text textAlign="center" fontSize="20px" mb="20px">
+                    Room not found
+                  </Text>
+                </Center>
+              ) : (
+                <>
+                  <Flex
+                    maxW="1140px"
+                    borderBottom="1px"
+                    borderColor="gray.200"
+                    pt="20px"
+                    pb="10px"
+                    display={{ ss: "none", sl: "flex" }}
+                  >
+                    <Text me="20px" fontSize="16px" fontWeight="bold" w="90px">
+                      Photo
+                    </Text>
+                    <Text me="20px" fontSize="16px" fontWeight="bold" w="300px">
+                      Property Name
+                    </Text>
+                    <Text me="20px" fontSize="16px" fontWeight="bold" w="150px">
+                      Room Name
+                    </Text>
+                    <Text me="20px" fontSize="16px" fontWeight="bold" w="210px">
+                      Price
+                    </Text>
+                    <Text me="20px" fontSize="16px" fontWeight="bold" w="150px">
+                      Modified
+                    </Text>
+                    <Text me="10px" fontSize="16px" fontWeight="bold" w="80px">
+                      Action
+                    </Text>
+                  </Flex>
+                  {roomData()}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      padding: 20,
+                      boxSizing: "border-box",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <ReactPaginate
+                      previousLabel={
+                        <i
+                          className=" fa-solid fa-chevron-left"
+                          style={{ fontSize: 18 }}
+                        ></i>
+                      }
+                      nextLabel={
+                        <i
+                          className=" fa-solid fa-chevron-right"
+                          style={{
+                            fontSize: 18,
+                          }}
+                        ></i>
+                      }
+                      pageCount={pages}
+                      onPageChange={changePage}
+                      activeClassName={"item active "}
+                      breakClassName={"item break-me "}
+                      breakLabel={"..."}
+                      containerClassName={"pagination"}
+                      disabledClassName={"disabled-page"}
+                      marginPagesDisplayed={2}
+                      nextClassName={"item next "}
+                      pageClassName={"item pagination-page "}
+                      pageRangeDisplayed={2}
+                      previousClassName={"item previous"}
+                    />
+                  </div>
+                </>
+              )}
+            </>
+          )}
         </Container>
       </Box>
       {/* moddal */}

@@ -56,10 +56,10 @@ function NavbarMobileTenant() {
     onClose: onMobileClose,
   } = useDisclosure();
 
-  const { id, ProfilePic, ProfileName, firebaseProviderId, emailVerified } = useSelector(
+  const { id, ProfilePic, ProfileName, firebaseProviderId, UserRoles } = useSelector(
     (state) => state.user
   );
-
+  console.log(UserRoles);
   useEffect(() => {
     onAuthStateChanged(auth2 , (user) => {
       if(user) {
@@ -266,72 +266,6 @@ function NavbarMobileTenant() {
                 </DrawerBody>
               </DrawerContent>
             </Drawer>
-
-            {/* <Menu>
-              <MenuButton
-                _hover={{ bg: "white" }}
-                _active={{
-                  bg: "white",
-                }}
-                fontSize="20px"
-                icon={<i className="fa-solid fa-bars"></i>}
-                as={IconButton}
-                aria-label="Options"
-                border="none"
-                variant="outline"
-                bg="white"
-                my="auto"
-              />
-
-              <MenuList borderRadius="0px" width="100vw" border="none">
-                {menuItemContents.map((content) => {
-                  return (
-                    <MenuItem
-                      key={`tenant-menu-${content.text.toLowerCase()}`}
-                      _hover={{ bg: "white" }}
-                      onClick={() => history.push(content.url)}
-                    >
-                      <Flex
-                        bg={"#fbe946"}
-                        w="100%"
-                        h={"44px"}
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                        _hover={{
-                          bg: "black",
-                          color: "white",
-                          transition: "0.3s",
-                        }}
-                      >
-                        {content.icon}&nbsp;<strong>{content.text}</strong>
-                      </Flex>
-                    </MenuItem>
-                  );
-                })}
-
-                <MenuItem
-                  key={`tenant-menu-signout`}
-                  _hover={{ bg: "white" }}
-                  onClick={() => {
-                    signOut(auth)
-                      .then(() => alert("signed out"))
-                      .catch((error) => alert(error));
-                    history.push("/tenant/login")
-                  }}
-                >
-                  <Flex
-                    bg={"#fbe946"}
-                    w="100%"
-                    h={"44px"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    _hover={{ bg: "black", color: "white", transition: "0.3s" }}
-                  >
-                    <strong>Sign Out</strong>
-                  </Flex>
-                </MenuItem>
-              </MenuList>
-            </Menu> */}
           </Flex>
         </Container>
       </Box>
@@ -358,10 +292,8 @@ function NavbarMobileTenant() {
               height="58px"
             />
             {
-              verifikasi ?
-              null
-              :
-              <Flex justifyContent={"flex-start"} my="auto" ms={"10px"}>
+              !verifikasi && UserRoles.includes(1)  ?
+               <Flex justifyContent={"flex-start"} my="auto" ms={"10px"}>
                 {
                   verifikasi2 ?
                   null
@@ -385,13 +317,13 @@ function NavbarMobileTenant() {
                         null
                       }
                     </Text>
-
-                    {/* <Button variant={"primary"} h="2px" w={"40px"}> </Button> */}
                   </Flex>
                 }
               </Flex>
+              :
+              null
             }
-            {id ? (
+            {id && UserRoles.includes(1)? (
               <Flex w="100%" mx="auto" justifyContent="space-between">
                 <Spacer />
                 <Flex fontWeight="bold" fontSize="18px" my="auto" mr="20px">
@@ -402,7 +334,7 @@ function NavbarMobileTenant() {
                     Room
                   </Text>
                   <Menu>
-                    {id ? (
+                    {id && UserRoles.includes(1)? (
                       <Box>
                       <i class="fa-solid fa-caret-down"></i>
                       <MenuButton fontWeight="bold" fontSize="18px" my="auto" ms={"8px"}>
@@ -416,7 +348,7 @@ function NavbarMobileTenant() {
                         Account
                       </MenuButton>
                       </Box>
-                    )}
+                    )}                    
                     <MenuList>
                       <MenuItem onClick={() => history.push("/profile")}>
                         Profile

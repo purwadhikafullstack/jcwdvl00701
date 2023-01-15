@@ -110,8 +110,6 @@ function RegisterTenant() {
     }),
     validateOnChange: false,
     onSubmit: async (values) => {
-      debugger
-
       const {name, email, phoneNumber, password, idCardPic} = values;
 
       const credential = await createUserWithEmailAndPassword(authFirebase, email, password);

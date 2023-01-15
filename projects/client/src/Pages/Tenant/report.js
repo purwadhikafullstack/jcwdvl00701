@@ -26,6 +26,7 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  Spacer,
 } from "@chakra-ui/react";
 import ReactPaginate from "react-paginate";
 import "../../Style/pagination.css";
@@ -227,9 +228,42 @@ function Report() {
   }, [inputStartDate, inputEndDate, keyword, page]);
   return (
     <Layout>
-      <Box mt="80px">
+      <Box mt="70px">
+        <Container
+          maxW="1140px"
+          display={{ ss: "none", sm: "none", sl: "flex" }}
+        >
+          <Center
+            w="1140px"
+            backgroundSize="cover"
+            backgroundImage="/Assets/tenant-branda.png"
+            h="133px"
+            px="20px"
+          >
+            <Text
+              me="10px"
+              fontSize="42px"
+              fontWeight="bold"
+              display={{ ss: "none", sm: "flex", sl: "flex" }}
+            >
+              <i className="fa-solid fa-chart-simple"></i>
+            </Text>
+            <Text
+              fontSize="32px"
+              fontWeight="bold"
+              display={{ ss: "none", sm: "flex", sl: "flex" }}
+            >
+              Report
+            </Text>
+            <Spacer />
+          </Center>
+        </Container>
         <Container maxW="1140px">
-          <Text fontSize="20px" fontWeight="bold">
+          <Text
+            fontSize="20px"
+            fontWeight="bold"
+            display={{ ss: "flex", sm: "none", sl: "none" }}
+          >
             Report
           </Text>
           <Box bg="primary" p="10px" my="20px">
@@ -390,46 +424,58 @@ function Report() {
                 </Text>
               </Flex>
               {renderTable()}
-               <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              padding: 20,
-              boxSizing: "border-box",
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <ReactPaginate
-              previousLabel={
-                <i
-                  className=" fa-solid fa-chevron-left"
-                  style={{ fontSize: 18 }}
-                ></i>
-              }
-              nextLabel={
-                <i
-                  className=" fa-solid fa-chevron-right"
-                  style={{
-                    fontSize: 18,
-                  }}
-                ></i>
-              }
-              pageCount={pages}
-              onPageChange={changePage}
-              activeClassName={"item active "}
-              breakClassName={"item break-me "}
-              breakLabel={"..."}
-              containerClassName={"pagination"}
-              disabledClassName={"disabled-page"}
-              marginPagesDisplayed={2}
-              nextClassName={"item next "}
-              pageClassName={"item pagination-page "}
-              pageRangeDisplayed={2}
-              previousClassName={"item previous"}
-            />
-          </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  padding: 20,
+                  boxSizing: "border-box",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <ReactPaginate
+                  previousLabel={
+                    <i
+                      className=" fa-solid fa-chevron-left"
+                      style={{
+                        fontSize: 18,
+                        height: 40,
+                        width: 40,
+                        position: "absolute",
+                        left: "11px",
+                        top: "11px",
+                      }}
+                    ></i>
+                  }
+                  nextLabel={
+                    <i
+                      className=" fa-solid fa-chevron-right"
+                      style={{
+                        fontSize: 18,
+                        height: 40,
+                        width: 40,
+                        position: "absolute",
+                        left: "11px",
+                        top: "11px",
+                      }}
+                    ></i>
+                  }
+                  pageCount={pages}
+                  onPageChange={changePage}
+                  activeClassName={"item active "}
+                  breakClassName={"item break-me "}
+                  breakLabel={"..."}
+                  containerClassName={"pagination"}
+                  disabledClassName={"disabled-page"}
+                  marginPagesDisplayed={2}
+                  nextClassName={"item next "}
+                  pageClassName={"item pagination-page "}
+                  pageRangeDisplayed={2}
+                  previousClassName={"item previous"}
+                />
+              </div>
             </>
           )}
         </Container>
