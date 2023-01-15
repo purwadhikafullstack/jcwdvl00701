@@ -12,6 +12,8 @@ routers.post(
   }).single("pic"),
   propertyController.addProperty
 );
+routers.post("/delete", propertyController.deleteProperty);
+
 routers.patch(
   "/edit",
   fileUploader({
@@ -21,11 +23,11 @@ routers.patch(
   }).single("pic"),
   propertyController.editProperty
 );
-routers.get("/get/:tenantId", propertyController.getPropertyFilter);
-routers.get("/get/edit/:propertyId", propertyController.getOneProperty);
-routers.get('/search', propertyController.getSearchResult)
-routers.get('/all', propertyController.getAll)
-routers.post("/delete", propertyController.deleteProperty);
+
+routers.get("/all", propertyController.getAll);
+routers.get("/search", propertyController.getSearchResult);
 routers.get("/seeders", propertyController.getSeeders);
+routers.get("/get/edit/:propertyId", propertyController.getOneProperty);
+routers.get("/get/:tenantId", propertyController.getPropertyFilter);
 
 module.exports = routers;
