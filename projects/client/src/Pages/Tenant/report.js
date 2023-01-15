@@ -52,7 +52,7 @@ function Report() {
   const [totalSales, setTotalSales] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { TenantId } = useSelector((state) => state.user);
-  console.log(TenantId);
+  //console.log(TenantId);
   let date = new Date();
   // console.log(date.toISOString().split("T")[0]);
   const {
@@ -68,7 +68,7 @@ function Report() {
 
   date = date.toISOString().split("T")[0];
   const handleChange = (e, field) => {
-    console.log(field);
+    //console.log(field);
     const { value } = e.target;
     if (field === "startDate") {
       setInputStartDate(value);
@@ -81,7 +81,7 @@ function Report() {
 
   function inputHandler(event) {
     const tes = setTimeout(() => {
-      console.log(event.target.value);
+      //console.log(event.target.value);
       const { value } = event.target;
 
       setKeyword(value);
@@ -209,7 +209,7 @@ function Report() {
         `${process.env.REACT_APP_API_BASE_URL}/report/get/sales-report/${TenantId}?startDate=${inputStartDate}&endDate=${inputEndDate}&filter=${filter}&search_query=${keyword}&page=${page}&limit=${limit}&time=${time}&final_price=${finalPrice}`
       )
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         setPage(res.data.page);
         setPages(res.data.totalPage);
         setRows(res.data.totalRows);
@@ -224,7 +224,7 @@ function Report() {
   useEffect(() => {
     fetchReport();
 
-    console.log(dataReport);
+    //console.log(dataReport);
   }, [inputStartDate, inputEndDate, keyword, page]);
   return (
     <Layout>

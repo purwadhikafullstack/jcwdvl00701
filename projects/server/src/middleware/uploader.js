@@ -7,7 +7,7 @@ const fileUploader = ({
   prefix = "POST",
   fileType = "image",
 }) => {
-  console.log("Test di uploaderr");
+  //console.log("Test di uploaderr");
 
   //storage config mengatur tujuan folder disimpan
   // dan nama filenya
@@ -31,7 +31,7 @@ const fileUploader = ({
     storage: storageConfig,
 
     fileFilter: (req, file, cb) => {
-      console.log(file);
+      //console.log(file);
       if (file.mimetype.split("/")[0] != fileType) {
         return cb(null, false);
       }

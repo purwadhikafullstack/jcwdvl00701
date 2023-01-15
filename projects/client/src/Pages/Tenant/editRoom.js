@@ -38,8 +38,8 @@ function EditRoom() {
   const [dropdown, setDropdown] = useState([]);
   const history = useHistory();
   const {TenantId} = useSelector(state => state.user)
-  console.log(id);
-  console.log(property);
+  //console.log(id);
+  //console.log(property);
 
   // utk get data berdasarkan id yg dikirm dari cardRoomTenant
   useEffect(() => {
@@ -124,7 +124,7 @@ function EditRoom() {
         .max(255, "To Long"),
     }),
     onSubmit: async (values) => {
-      console.log(values);
+      //console.log(values);
       const { nameRoom, price, capacity, caption } = values;
 
       axios

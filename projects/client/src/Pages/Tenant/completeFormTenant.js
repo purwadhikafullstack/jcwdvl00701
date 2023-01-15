@@ -73,7 +73,7 @@ function CompleteFormTenant() {
     }),
     validateOnChange: false,
     onSubmit: async (values) => {
-      console.log(values);
+      //console.log(values);
       const {nameLapak, phoneNumber, idCardPic} = values;
 
       const formData = new FormData();
@@ -88,7 +88,7 @@ function CompleteFormTenant() {
           console.error(err.data.message);
         });
 
-      console.log(response.data);
+      //console.log(response.data);
       alert(response.data.message);
 
       history.go("/tenant/dashboard");

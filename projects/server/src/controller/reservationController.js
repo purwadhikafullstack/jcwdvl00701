@@ -16,7 +16,7 @@ module.exports = {
     // dpt dari id use params sesuai room yg di klik nya ==> utk di code front-end
     const id = req.query.id;
     // const startDate = req.query.startDate
-    console.log(id);
+    //console.log(id);
     // console.log(startDate);
     try {
       const reservation = await Reservation.findOne({
@@ -60,7 +60,7 @@ module.exports = {
   },
   addReservation: async (req, res) => {
     try {
-      console.log(req.body);
+      //console.log(req.body);
       const {
         startDate,
         endDate,

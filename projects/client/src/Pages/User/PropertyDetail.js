@@ -51,7 +51,7 @@ function PropertyDetail(props) {
   // const [totalHarga, setTotalHarga] = useState(0)
   // console.log("start", start);
   // console.log("end ",end);
-  console.log(typeof id);
+  //console.log(typeof id);
   // menyimpan tanggal-tanggal yang di pilih
 
   let datesRanges = [];
@@ -88,7 +88,7 @@ function PropertyDetail(props) {
     countFinalPrice(datesRanges);
     setStart(datesRanges[0]);
     setEnd(datesRanges[datesRanges.length - 1]);
-    console.log(datesRanges);
+    //console.log(datesRanges);
     return datesRanges;
   };
 
@@ -104,7 +104,7 @@ function PropertyDetail(props) {
             datesRange <=
             new Date(SpecialPric.endDate).toISOString().split("T")[0]
           ) {
-            console.log("tess111");
+            //console.log("tess111");
             let finalPrice = 0;
             if (SpecialPric.type === "nominal") {
               finalPrice = SpecialPric.discount;
@@ -119,8 +119,8 @@ function PropertyDetail(props) {
           }
         });
         totalPrice = totalPrice + roomData.defaultPrice;
-        console.log("tes222  ");
-        console.log(totalPrice);
+        //console.log("tes222  ");
+        //console.log(totalPrice);
         return totalPrice;
       } else {
         totalPrice = totalPrice + roomData.defaultPrice;
@@ -128,8 +128,8 @@ function PropertyDetail(props) {
       }
     });
 
-    console.log(found);
-    console.log(totalPrice);
+    //console.log(found);
+    //console.log(totalPrice);
 
     setFinalCountPrice(totalPrice);
     return totalPrice;
@@ -310,7 +310,7 @@ function PropertyDetail(props) {
         setReviewData(res.data.results.Rooms);
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }
 
@@ -328,7 +328,7 @@ function PropertyDetail(props) {
           finalPrice: finalCountPrice,
         }
       );
-      console.log(response.data);
+      //console.log(response.data);
       history.push(`/booking/${response.data.result.id}`);
       onClose();
     } catch (err) {
@@ -350,7 +350,7 @@ function PropertyDetail(props) {
           setTenantData(res.data.results.Tenant);
 
           setPic(res.data.results.pic);
-          console.log(res.data.results.Tenant.User.id);
+          //console.log(res.data.results.Tenant.User.id);
         })
         .catch((err) => {
           console.error(err.message);

@@ -89,7 +89,7 @@ function AddRoom() {
     }),
     validateOnChange: false,
     onSubmit: async (values) => {
-      console.log(values);
+      //console.log(values);
       const { nameRoom, property, price, caption, capacity } = values;
 
       // kirim data ke back-end

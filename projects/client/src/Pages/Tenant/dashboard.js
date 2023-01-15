@@ -50,7 +50,7 @@ function Dashboard() {
   const history = useHistory();
   const [userId, setUserId] = useState("");
   const { TenantId, UserRoles } = useSelector((state) => state.user);
-  console.log(UserRoles);
+  //console.log(UserRoles);
 
   return (
     <Layout>

@@ -46,7 +46,7 @@ function Order() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { TenantId } = useSelector((state) => state.user);
-  console.log(TenantId);
+  //console.log(TenantId);
   async function fetchOrder() {
     await axios
       .get(
@@ -59,7 +59,7 @@ function Order() {
         setRows(res.data.totalRows);
         onClose();
 
-        console.log(res.data);
+        //console.log(res.data);
       })
       .catch((err) => {
         console.error(err.message);

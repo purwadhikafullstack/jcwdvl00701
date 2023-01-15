@@ -28,7 +28,7 @@ function AddProperty() {
   const [fileSizeMsg, setFileSizeMsg] = useState("");
   let history = useHistory();
   const { TenantId, firebaseProviderId } = useSelector((state) => state.user);
-  console.log(TenantId);
+  //console.log(TenantId);
 
   const handleFile = (event) => {
     if (event.target.files[0].size / 1024 > 1024) {
@@ -46,7 +46,7 @@ function AddProperty() {
     await axios
       .get(`${process.env.REACT_APP_API_BASE_URL}/property/seeders`)
       .then((res) => {
-        console.log(res.data.results);
+        //console.log(res.data.results);
         setCategory(res.data.results);
       })
       .catch((err) => {
@@ -82,7 +82,7 @@ function AddProperty() {
 
     validateOnChange: false,
     onSubmit: async (value) => {
-      console.log("tess", value);
+      //console.log("tess", value);
       const { name, description, pic, categoryId, rules, tenantId } = value;
 
       const formData = new FormData();
@@ -94,12 +94,12 @@ function AddProperty() {
       formData.append("rules", rules);
       formData.append("tenantId", TenantId);
 
-      console.log("berhasil masuk formik");
+      //console.log("berhasil masuk formik");
 
       await axios
         .post(`${process.env.REACT_APP_API_BASE_URL}/property/post`, formData)
         .then(async (res) => {
-          console.log(res.data);
+          //console.log(res.data);
           history.push("/tenant/property");
         })
         .catch((err) => {

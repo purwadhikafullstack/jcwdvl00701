@@ -42,7 +42,7 @@ function NavbarMobileTenant() {
   const [verifikasi , setVerifikasi] = useState(false)
   const [verifikasi2 , setVerifikasi2] = useState(true)
   const [dis , setDis] = useState(true)
-  console.log(verifikasi2);
+  //console.log(verifikasi2);
   const btnRef = React.useRef();
   const {
     isOpen: isDestopOpen,
@@ -59,7 +59,7 @@ function NavbarMobileTenant() {
   const { id, ProfilePic, ProfileName, firebaseProviderId, UserRoles } = useSelector(
     (state) => state.user
   );
-  console.log(UserRoles);
+  //console.log(UserRoles);
   useEffect(() => {
     onAuthStateChanged(auth2 , (user) => {
       if(user) {
@@ -104,11 +104,11 @@ function NavbarMobileTenant() {
       onAuthStateChanged(auth2 , (user) => {
         sendEmailVerification(user)
         .then(() => {
-          console.log("berhasil");
+          //console.log("berhasil");
           setDis(false)
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
         })
       })
   }

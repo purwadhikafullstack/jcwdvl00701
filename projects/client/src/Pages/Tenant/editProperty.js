@@ -92,7 +92,7 @@ function EditProperty(props) {
         formik.values.id = res.data.id;
       })
       .catch((err) => {
-        console.log(err.message);
+        //console.log(err.message);
       });
   }
 
@@ -133,7 +133,7 @@ function EditProperty(props) {
       await axios
         .patch(`${process.env.REACT_APP_API_BASE_URL}/property/edit`, formData)
         .then(async (res) => {
-          console.log(res.data);
+          //console.log(res.data);
           history.push("/tenant/property");
         })
         .catch((err) => {

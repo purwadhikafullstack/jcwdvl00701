@@ -67,7 +67,7 @@ function LoginUser() {
                 history.push("/")
             })
             .catch((err) => {
-                console.log(err)
+                //console.log(err)
                 alert("please registered your account in form register")
                 history.push("/register")
             })
@@ -107,7 +107,7 @@ function LoginUser() {
         }),
         validateOnChange: false,
         onSubmit: async (values) => {
-            console.log(values);
+            //console.log(values);
             const {email, password} = values
 
             const userCredential = await signInWithEmailAndPassword(authFirebase, email, password)
@@ -120,9 +120,9 @@ function LoginUser() {
                     } else {
                         alert(errorMessage)
                     }
-                    console.log(error);
+                    //console.log(error);
                 })
-            console.log(userCredential);
+            //console.log(userCredential);
             const user = userCredential.user
 
             // utk get data ke back-end dan di simpan di redux
@@ -130,7 +130,7 @@ function LoginUser() {
                 params: {id: user.uid}
             })
 
-            console.log((await response).data);
+            //console.log((await response).data);
 
             if ((await response).data.code !== 200) {
                 alert("please register for your account")

@@ -22,7 +22,7 @@ import Loading from "../../Components/Loading";
 function Booking() {
   // akan menerima 1 id params utk get data, dari page detail/id
   const { id } = useParams();
-  console.log(id);
+  //console.log(id);
   const [dataBooking, setDataBooking] = useState({});
   const [dataRoom, setDataRoom] = useState({});
   const [startDate, setStartDate] = useState("");
@@ -46,7 +46,7 @@ function Booking() {
             },
           }
         );
-        console.log((await response)?.data.result);
+        //console.log((await response)?.data.result);
         setDataBooking((await response)?.data.result);
         setDataRoom((await response)?.data.result.Room);
         setStartDate((await response)?.data.result.startDate);
@@ -101,10 +101,10 @@ function Booking() {
     }
   }
     let resultBulan = searchBulan(bulan)
-    console.log(resultBulan);
+    //console.log(resultBulan);
 
   const btnHandlerPayment = (id) => {
-    console.log(id);
+    //console.log(id);
     history.push(`/payment/${id}`);
   };
 
