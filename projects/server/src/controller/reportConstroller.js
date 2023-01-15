@@ -59,6 +59,12 @@ module.exports = {
                 where: {
                   tenantId,
                 },
+                include: [
+                  {
+                    model: Tenant,
+                    attributes: ["phoneNumber"],
+                  }
+                ]
               },
             ],
           },

@@ -111,7 +111,7 @@ function Order() {
             rules={val.Room?.Property?.rules}
             email={val.User?.email}
             randomNumber={setRandomNumber}
-            phoneNumber={val.room?.Property.Tenant.phoneNumber}
+            phoneNumber={val.Room.Property.Tenant.phoneNumber}
             roomId={val.RoomId}
           />
         </Box>
