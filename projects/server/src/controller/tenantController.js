@@ -143,5 +143,34 @@ module.exports = {
         message : err.toString()
       })
     }
+  },
+  patchTenant: async (req, res) => {
+    const {id, name, email, phoneNumber, bank, account} = req.body;
+    console.log(req.body)
+
+    try {
+      await sequelize.transaction(async (t) => {
+        await Tenant.update(
+          {name, email, phoneNumber, bankId: bank, bankAccountNumber: account},
+          {where: {id: id}},
+          {transaction: t}
+        );
+      })
+
+      const tenant = await Tenant.findOne({
+        where: {id: id},
+      });
+
+      return res.status(200).send({
+        result: tenant,
+        message: "success update user",
+        code: 200,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        message: err.toString(),
+        code: 500,
+      });
+    }
   }
 };

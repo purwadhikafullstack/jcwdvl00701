@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {
   Flex,
   Spacer,
@@ -14,19 +14,25 @@ import {
   Container,
   Select,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import {
+  AsyncCreatableSelect,
+  AsyncSelect,
+  CreatableSelect,
+  Select as Select2,
+} from "chakra-react-select";
+import {Link} from "react-router-dom";
 import Layout from "../../Components/Layout";
 
-import { useFormik } from "formik";
+import {useFormik} from "formik";
 import * as Yup from "yup";
 
 import DatePicker from "react-datepicker";
 
 import Footer from "../../Components/Footer";
 import NavbarMobile from "../../Components/NavbarMobile";
-import { getValue } from "@testing-library/user-event/dist/utils";
+import {getValue} from "@testing-library/user-event/dist/utils";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 
 // function renderInput(isEditActive, props) {
 //   return React.Children.map(props.children, (child) => {
@@ -86,66 +92,77 @@ import { useSelector } from "react-redux";
 
 function Profile() {
   const userId = "test";
+  const [tenantId, setTenantId] = useState('')
   const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [bank, setBank] = useState("");
   const [account, setAccount] = useState("");
   const [firebaseProviderId, setfirebaseProviderId] = useState("password");
-  const [dropBank , serDropBank]= useState([])
+  const [dropBank, setDropBank] = useState([])
+  const [selectedBank, setSelectedBank] = useState([])
   const {id} = useSelector(state => state.user)
-  console.log(id);
-  
-  const fetchDropdown = () => {
-    axios.get(`${process.env.REACT_APP_API_BASE_URL}/tenant/dropdown-bank`)
-    .then((res) => {
-      console.log(res.data.dropdownBank);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-  }
+
+  const fetchDropdown = useCallback(async () => {
+    await axios.get(`${process.env.REACT_APP_API_BASE_URL}/tenant/dropdown-bank`)
+      .then((res) => {
+        setDropBank(res.data.dropdownBank)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }, [setDropBank])
+
+  useEffect(() => {
+    fetchDropdown()
+  }, [fetchDropdown])
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/tenant/get-tenant`,
-        { params: { id: id } }
+        {params: {id: id}}
       );
-      // console.log(response.data.result);
-      // console.log(response.data.result?.User?.email);
-      // console.log(response.data.result?.BankId);
-      // console.log(response.data.result?.bankAccountNumber);
 
-      setName(response.data.result?.name);
-      setEmail(response.data.result?.User?.email);
-      setBank(response.data.result?.BankId);
-      setAccount(response.data.result?.bankAccountNumber);
-      formik.values.name = response.data?.result?.name;
-      formik.values.email = response.data?.result?.User?.email;
-      formik.values.bank = response.data?.result?.BankId;
-      formik.values.account = response.data?.result?.bankAccountNumber;
+      setTenantId(response.data.result.id)
+      setName(response.data.result.name);
+      setPhoneNumber(response.data.result.phoneNumber);
+      setEmail(response.data.result.User.email);
+      setBank(response.data.result.BankId);
+      setAccount(response.data.result.bankAccountNumber);
+
+      formik.values.name = response.data.result.name;
+      formik.values.phoneNumber = response.data.result.phoneNumber;
+      formik.values.email = response.data.result.User.email;
+      formik.values.bank = response.data.result.BankId;
+      formik.values.account = response.data.result.bankAccountNumber;
+
+      setSelectedBank([{value: 1, label: 'test'}])
     };
     fetchData();
-    fetchDropdown()
-  }, [name, email, bank, account]);
+  }, [id]);
 
   const formik = useFormik({
     initialValues: {
       name: name,
+      phoneNumber: phoneNumber,
       email: email,
       bank: bank,
       account: account,
     },
     validationSchema: Yup.object().shape({
-      name : Yup.string().required("can't be empty"),
-      email : Yup.string().email("must format email").required("can't be empty"),
-      bank : Yup.string().required("cant be empty"),
-      account : Yup.number("must number").required("can't be empty")
+      name: Yup.string().required("can't be empty"),
+      phoneNumber: Yup.string().phone('id').required("can't be empty"),
+      email: Yup.string().email("must format email").required("can't be empty"),
+      bank: Yup.string().required("cant be empty"),
+      account: Yup.string().required("can't be empty")
     }),
     onSubmit: async (values) => {
-     console.log(values);
+      values.id = tenantId
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/update`, values)
 
       setName(values.name);
+      setPhoneNumber(values.phoneNumber)
       setEmail(values.email);
       setBank(values.bank);
       setAccount(values.account);
@@ -167,12 +184,12 @@ function Profile() {
               pb="20px"
               pl="20px"
               pr="20px"
-              mb={{ sm: "0", md: "4em" }}
+              mb={{sm: "0", md: "4em"}}
             >
               {/*Profile header*/}
               <Flex pt="10">
                 <Box mr="20px" w="80px" h="80px">
-                  <Avatar w="80px" h="80px" />
+                  <Avatar w="80px" h="80px"/>
                 </Box>
                 <Box>
                   <Text fontSize="xl" fontWeight="600">
@@ -184,7 +201,7 @@ function Profile() {
                     fontSize="16px"
                     fontWeight="400"
                     cursor="pointer"
-                    _hover={{ textDecoration: "underline", fontWeight: "bold" }}
+                    _hover={{textDecoration: "underline", fontWeight: "bold"}}
                   >
                     Update Photo
                   </Text>
@@ -198,10 +215,10 @@ function Profile() {
                   Tenant Info
                 </Heading>
 
-               <FormControl mt={"10px"}>
-                <Text>Name</Text>
+                <FormControl mt={"10px"}>
+                  <Text>Name</Text>
                   <Input
-                    style={{ borderBottom: "1px solid" }}
+                    style={{borderBottom: "1px solid"}}
                     id="name"
                     type="text"
                     variant="flushed"
@@ -209,14 +226,27 @@ function Profile() {
                     value={formik.values.name}
                     onChange={formik.handleChange}
                   />
-               </FormControl>
-                
+                  <Text color={'red'}>{formik.errors.name}</Text>
+                </FormControl>
 
-                {firebaseProviderId === "password" ? (
+                <FormControl mt={"10px"}>
+                  <Text>Phone Number</Text>
+                  <Input
+                    style={{borderBottom: "1px solid"}}
+                    id="phoneNumber"
+                    type="text"
+                    variant="flushed"
+                    placeholder="insert your phone number"
+                    value={formik.values.phoneNumber}
+                    onChange={formik.handleChange}
+                  />
+                  <Text color={'red'}>{formik.errors.phoneNumber}</Text>
+                </FormControl>
+
                 <FormControl mt={"10px"}>
                   <Text>Email</Text>
                   <Input
-                    style={{ borderBottom: "1px solid" }}
+                    style={{borderBottom: "1px solid"}}
                     id="email"
                     type="text"
                     variant="flushed"
@@ -224,8 +254,8 @@ function Profile() {
                     value={formik.values.email}
                     onChange={formik.handleChange}
                   />
-               </FormControl>
-                ) : null}
+                </FormControl>
+                <Text color={'red'}>{formik.errors.email}</Text>
               </Box>
               {/*Profile form ends*/}
 
@@ -235,44 +265,48 @@ function Profile() {
                   Bank Account
                 </Heading>
 
-                {/* <UpdateInput
-                  inputDisplayName={"Bank"}
-                  formik={formik}
-                  errorMsg={formik.errors.bank}
-                  // formState={[isEditingForm, setIsEditingForm]}
-                >
-                  <Input
-                    style={{ borderBottom: "1px solid" }}
-                    id="bank"
-                    type="text"
-                    variant="flushed"
-                    placeholder="Bank name"
-                    value={formik.values.bank}
-                    onChange={formik.handleChange}
-                  />
-                </UpdateInput> */}
+                <FormControl mt={"10px"}>
+                  <Text>Bank Name</Text>
+                  <Select value={formik.values.bank} onChange={(e) => {
+                    formik.setFieldValue('bank', e.target.value)
+                  }}>
+                    {
+                      dropBank.map(bank => <option key={`bank-option-${bank.id}`} value={bank.id}>{bank.name}</option>)
+                    }
+                  </Select>
+                  <Text color={'red'}>{formik.errors.bank}</Text>
+                </FormControl>
 
                 <FormControl mt={"10px"}>
-                  <Text>Account</Text>
+                  <Text>Account Number</Text>
                   <Input
-                    style={{ borderBottom: "1px solid" }}
-                    id="Account"
+                    style={{borderBottom: "1px solid"}}
+                    id="account"
                     type="text"
                     variant="flushed"
                     placeholder="insert your Account Bank"
                     value={formik.values.account}
                     onChange={formik.handleChange}
                   />
+                  <Text color={'red'}>{formik.errors.account}</Text>
                 </FormControl>
               </Box>
               {/*bank form ends*/}
 
-              <Box h="max-content" pt="16px" pb="30px" border={"1px"}>
+              <Box pt="10">
+                <FormControl mt={"10px"}>
+                  <Button variant={'primary'} onClick={() => {
+                    formik.submitForm()
+                  }}>Save Changes</Button>
+                </FormControl>
+              </Box>
+
+              <Box h="max-content" pt="16px" pb="30px">
                 <Text
                   textDecoration="underline"
-                  _hover={{ textDecoration: "underline", fontWeight: "bold" }}
+                  _hover={{textDecoration: "underline", fontWeight: "bold"}}
                 >
-                  <Link to="/reset-password">Change Password</Link>
+                  <Link to="/settings/password">Change Password</Link>
                 </Text>
               </Box>
             </Box>
