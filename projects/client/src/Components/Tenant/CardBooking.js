@@ -53,9 +53,10 @@ function CardBooking(props) {
   } = useDisclosure();
 
   async function updateOrder(status) {
+    const sentStatus = status === 3 && new Date(props.start_date).toDateString().split('T')[0] === new Date().toDateString().split('T')[0] ? 4 : status
     await axios
       .patch(
-        `${process.env.REACT_APP_API_BASE_URL}/report/update/${props.id}?status=${status}`,
+        `${process.env.REACT_APP_API_BASE_URL}/report/update/${props.id}?status=${sentStatus}`,
         {
           paymentProof: props.paymentProof,
         }
@@ -67,7 +68,7 @@ function CardBooking(props) {
         props.randomNumber(Math.random());
         // akan menyimpan endpoint utk kirim email (data yg dikirim akan di buat fleksibel )
 
-        if (status === 3 || status === 5) {
+        if (sentStatus === 3 || sentStatus === 5) {
           axios.post(
             `${process.env.REACT_APP_API_BASE_URL}/report/email-order`,
             {
@@ -81,7 +82,7 @@ function CardBooking(props) {
               email: props.email,
               address: props.address,
               rules: props.rules,
-              status,
+              status: sentStatus,
               phoneNumber: props.phoneNumber,
               roomId: props.roomId,
             }
