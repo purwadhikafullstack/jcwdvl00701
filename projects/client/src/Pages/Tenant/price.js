@@ -155,7 +155,10 @@ function AddSpecialPriceForm(props) {
     onSubmit: async (values) => {
       const url = `${process.env.REACT_APP_API_BASE_URL}/specialprice/add`;
       try {
-        const response = await axios.post(url, values);
+        const params = {...values}
+        params.startDate = params.startDate.toLocaleDateString('en-ca')
+        params.endDate = params.endDate.toLocaleDateString('en-ca')
+        const response = await axios.post(url, params);
         alert("success add special prices");
         props.fetchSpecialPrices();
         props.disclosure.onClose();
@@ -910,10 +913,13 @@ function AddRoomUnavailabilityForm(props) {
       selectedRooms: Yup.array().min(1),
     }),
     onSubmit: async (values) => {
-      console.log(values);
+      //console.log(values);
       const url = `${process.env.REACT_APP_API_BASE_URL}/roomunavailalbility/add`;
       try {
-        const response = await axios.post(url, values);
+        const params = {...values}
+        params.startDate = params.startDate.toLocaleDateString('en-ca')
+        params.endDate = params.endDate.toLocaleDateString('en-ca')
+        const response = await axios.post(url, params);
         alert("success add room unavailalbility");
         props.fetchRoomUnavailability();
         props.disclosure.onClose();
@@ -1517,14 +1523,7 @@ function Price() {
 
   return (
     <Layout>
-      <Box
-        bg={{
-          ss: "white",
-
-          sl: "rgba(240, 239, 239, 1)",
-        }}
-        mt="70px"
-      >
+      <Box bg={{ss: "white", sl: "rgba(240, 239, 239, 1)"}} mt="70px">
         <Container
           px="20px"
           maxW="1140px"

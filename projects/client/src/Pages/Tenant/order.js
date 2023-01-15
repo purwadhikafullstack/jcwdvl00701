@@ -46,7 +46,7 @@ function Order() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { TenantId } = useSelector((state) => state.user);
-  console.log(TenantId);
+  //console.log(TenantId);
   async function fetchOrder() {
     await axios
       .get(
@@ -59,7 +59,7 @@ function Order() {
         setRows(res.data.totalRows);
         onClose();
 
-        console.log(res.data);
+        //console.log(res.data);
       })
       .catch((err) => {
         console.error(err.message);
@@ -111,7 +111,7 @@ function Order() {
             rules={val.Room?.Property?.rules}
             email={val.User?.email}
             randomNumber={setRandomNumber}
-            phoneNumber={val.room?.Property.Tenant.phoneNumber}
+            phoneNumber={val.Room.Property.Tenant.phoneNumber}
             roomId={val.RoomId}
           />
         </Box>
@@ -275,46 +275,46 @@ function Order() {
                 {renderOrder()}
               </SimpleGrid>
               <Box mt="20px">
-                <ReactPaginate
-                  previousLabel={
-                    <i
-                      className="fa-solid fa-chevron-left"
-                      style={{
-                        fontSize: 18,
-                        height: 40,
-                        width: 40,
-                        position: "absolute",
-                        left: "11px",
-                        top: "11px",
-                      }}
-                    ></i>
-                  }
-                  nextLabel={
-                    <i
-                      className="fa-solid fa-chevron-right"
-                      style={{
-                        fontSize: 18,
-                        height: 40,
-                        width: 40,
-                        position: "absolute",
-                        left: "11px",
-                        top: "11px",
-                      }}
-                    ></i>
-                  }
-                  pageCount={pages}
-                  onPageChange={changePage}
-                  activeClassName={"item active "}
-                  breakClassName={"item break-me "}
-                  breakLabel={"..."}
-                  containerClassName={"pagination"}
-                  disabledClassName={"disabled-page"}
-                  marginPagesDisplayed={2}
-                  nextClassName={"item next "}
-                  pageClassName={"item pagination-page "}
-                  pageRangeDisplayed={2}
-                  previousClassName={"item previous"}
-                />
+                 <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              padding: 20,
+              boxSizing: "border-box",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <ReactPaginate
+              previousLabel={
+                <i
+                  className=" fa-solid fa-chevron-left"
+                  style={{ fontSize: 18 }}
+                ></i>
+              }
+              nextLabel={
+                <i
+                  className=" fa-solid fa-chevron-right"
+                  style={{
+                    fontSize: 18,
+                  }}
+                ></i>
+              }
+              pageCount={pages}
+              onPageChange={changePage}
+              activeClassName={"item active "}
+              breakClassName={"item break-me "}
+              breakLabel={"..."}
+              containerClassName={"pagination"}
+              disabledClassName={"disabled-page"}
+              marginPagesDisplayed={2}
+              nextClassName={"item next "}
+              pageClassName={"item pagination-page "}
+              pageRangeDisplayed={2}
+              previousClassName={"item previous"}
+            />
+          </div>
               </Box>
             </Box>
           )}

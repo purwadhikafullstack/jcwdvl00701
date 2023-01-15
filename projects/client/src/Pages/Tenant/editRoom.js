@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import YupPassword from "yup-password";
+import { useSelector } from "react-redux";
 
 function EditRoom() {
   // const [editRoom, setEditRoom] = useState({})
@@ -36,8 +37,9 @@ function EditRoom() {
   const [propertyId, setPropertyId] = useState("");
   const [dropdown, setDropdown] = useState([]);
   const history = useHistory();
-  console.log(id);
-  console.log(property);
+  const {TenantId} = useSelector(state => state.user)
+  //console.log(id);
+  //console.log(property);
 
   // utk get data berdasarkan id yg dikirm dari cardRoomTenant
   useEffect(() => {
@@ -70,7 +72,7 @@ function EditRoom() {
 
   const fetchDataDropdown = () => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown`)
+      .get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`)
       .then((res) => {
         // console.log(res.data.dropdown);
         setDropdown(res.data.dropdown);
@@ -122,7 +124,7 @@ function EditRoom() {
         .max(255, "To Long"),
     }),
     onSubmit: async (values) => {
-      console.log(values);
+      //console.log(values);
       const { nameRoom, price, capacity, caption } = values;
 
       axios
@@ -271,9 +273,6 @@ function EditRoom() {
               </Alert>
             ) : null}
           </FormControl>
-          <Button variant="secondary" w="100%" mb="20px">
-            Edit Photo
-          </Button>
           <Button
             variant="primary"
             w="100%"

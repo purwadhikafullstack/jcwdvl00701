@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -15,112 +15,98 @@ import {
   Input,
   Select,
   Text,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { Link, useHistory } from "react-router-dom";
+  useDisclosure
+} from '@chakra-ui/react'
+import {Link, useHistory} from "react-router-dom"
 
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import {useFormik} from 'formik'
+import * as Yup from 'yup';
 
 import DatePicker from "react-datepicker";
 
-import NavbarMobile from "../../Components/NavbarMobile";
+import NavbarMobile from '../../Components/NavbarMobile';
+import Layout from "../../Components/Layout";
 import axios from "axios";
-import { authFirebase } from "../../Config/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import {authFirebase} from "../../Config/firebase";
+import {onAuthStateChanged} from "firebase/auth";
+import {useSelector} from "react-redux";
 
 function renderInput(isEditActive, props) {
-  return React.Children.map(props.children, (child) => {
+  return React.Children.map(props.children, child => {
     return React.cloneElement(child, {
-      disabled: !isEditActive,
-    });
-  });
+      disabled: !isEditActive
+    })
+  })
 }
 
-function UpdateInput({
-  formState,
-  formik,
-  errorMsg,
-  onOpen,
-  inputDisplayName,
-  needConfirm = false,
-  ...rest
-}) {
-  const [isEditActive, setIsEditActive] = useState(false);
-  const [isEditingForm, setIsEditingForm] = formState;
-  const [isLoading, setIsLoading] = useState(false);
+function UpdateInput({formState, formik, errorMsg, onOpen, inputDisplayName, needConfirm = false, ...rest}) {
+  const [isEditActive, setIsEditActive] = useState(false)
+  const [isEditingForm, setIsEditingForm] = formState
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleEdit = async () => {
-    setIsLoading(true);
-    if (errorMsg && isEditActive) return; // if there's error prevent submission
+    setIsLoading(true)
+    if (errorMsg && isEditActive) return  // if there's error prevent submission
 
     // check value changes
-    if (
-      JSON.stringify(formik.initialValues) === JSON.stringify(formik.values)
-    ) {
-      setIsEditActive((current) => !current);
-      setIsEditingForm((current) => !current);
-      setIsLoading(false);
-      return; // immediate return if not value changes
+    if (JSON.stringify(formik.initialValues) === JSON.stringify(formik.values)) {
+      setIsEditActive(current => !current)
+      setIsEditingForm(current => !current)
+      setIsLoading(false)
+      return // immediate return if not value changes
     }
 
     if (isEditActive) {
-      if (needConfirm) onOpen();
-      else await formik.submitForm();
+      if (needConfirm) onOpen()
+      else {
+        await formik.submitForm()
+      }
     }
 
-    setIsEditActive((current) => !current);
-    setIsEditingForm((current) => !current);
-    setIsLoading(false);
-  };
+    setIsEditActive(current => !current)
+    setIsEditingForm(current => !current)
+    setIsLoading(false)
+  }
+
 
   return (
     <Box h="max-content" mt={5}>
-      <Flex justifyContent="space-between" align="center">
+      <Flex justifyContent="space-between" align='center'>
         <Text>{inputDisplayName}</Text>
-        <Button
-          onClick={handleEdit}
-          variant="link"
-          disabled={(isEditingForm && !isEditActive) || errorMsg}
-          isLoading={isLoading}
-        >
+        <Button onClick={handleEdit} variant='link'
+                disabled={(isEditingForm && !isEditActive) || errorMsg}
+                isLoading={isLoading}>
           {!isEditActive ? "Edit" : "Save"}
         </Button>
       </Flex>
 
       {renderInput(isEditActive, rest)}
 
-      {errorMsg ? <Text color={"red"}>*{errorMsg}</Text> : null}
+      {errorMsg ? <Text color={'red'}>*{errorMsg}</Text> : null}
     </Box>
-  );
+  )
 }
 
 const UpdateSchema = Yup.object().shape({
   name: Yup.string()
-    .min(2, "Too Short!")
-    .max(255, "Too Long!")
-    .required("Required"),
-  email: Yup.string().email("Invalid email").required("Required"),
-  phoneNumber: Yup.string().phone("id").nullable().required(),
-  gender: Yup.string().nullable().required("Required"),
-  birthdate: Yup.date().required("Required"),
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  email: Yup.string()
+    .email('Invalid email')
+    .required('Required'),
+  phoneNumber: Yup.string().phone('id').nullable().required(),
+  gender: Yup.string().nullable().required('Required'),
+  birthdate: Yup.date()
+    .required('Required')
 });
 
-function ConfirmationModal({
-  open,
-  leastDestructiveRef,
-  onClose,
-  onClick,
-  ...rest
-}) {
+function ConfirmationModal({open, leastDestructiveRef, onClose, onClick, ...rest}) {
   return (
-    <AlertDialog
-      isOpen={open}
-      leastDestructiveRef={leastDestructiveRef}
-      onClose={onClose}
-    >
+    <AlertDialog isOpen={open} leastDestructiveRef={leastDestructiveRef} onClose={onClose}>
       <AlertDialogOverlay>
         <AlertDialogContent>
+
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             Changing Sensitive Information
           </AlertDialogHeader>
@@ -130,21 +116,20 @@ function ConfirmationModal({
               Changing email address or phone number will cause you to
               <strong> not be able to login using the old credentials</strong>.
             </Text>
-            <Text pt={5}>Are you willing to proceed?</Text>
+            <Text pt={5}>
+              Are you willing to proceed?
+            </Text>
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button
-              colorScheme="red"
-              ref={leastDestructiveRef}
-              onClick={onClose}
-            >
+            <Button colorScheme="red" ref={leastDestructiveRef} onClick={onClose}>
               Cancel
             </Button>
             <Button variant={"link"} onClick={onClick} ml={3}>
               Yes, I wanted to change it
             </Button>
           </AlertDialogFooter>
+
         </AlertDialogContent>
       </AlertDialogOverlay>
     </AlertDialog>
@@ -152,32 +137,18 @@ function ConfirmationModal({
 }
 
 function Profile() {
+  const user = useSelector(state => state.user)
   const history = useHistory();
 
-  const [userId, setUserId] = useState("");
-  const getUser = useCallback(() => {
-    onAuthStateChanged(authFirebase, (user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        history.push("/");
-      }
-    });
-  }, [setUserId, history]);
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [gender, setGender] = useState('')
+  const [birthdate, setBirthdate] = useState(new Date())
+  const [profilePic, setProfilePic] = useState('')
 
-  useEffect(() => {
-    getUser();
-  }, [getUser]);
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [gender, setGender] = useState("");
-  const [birthdate, setBirthdate] = useState(new Date());
-  const [profilePic, setProfilePic] = useState("");
-
-  const [firebaseProviderId, setfirebaseProviderId] = useState("password");
-  const [isEditingForm, setIsEditingForm] = useState(false);
+  const [firebaseProviderId, setfirebaseProviderId] = useState('password')
+  const [isEditingForm, setIsEditingForm] = useState(false)
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -186,59 +157,54 @@ function Profile() {
       email: email,
       phoneNumber: phoneNumber,
       gender: gender,
-      birthdate: birthdate,
+      birthdate: birthdate
     },
     validationSchema: UpdateSchema,
     onSubmit: async (values) => {
-      values.id = userId; // dummy id
-      await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/user/update`,
-        values
-      );
+      values.id = user.id  // dummy id
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/update`, values)
 
-      setName(values.name);
-      setEmail(values.email);
-      setPhoneNumber(values.phoneNumber);
-      setGender(values.gender);
-      setBirthdate(values.birthdate);
+      setName(values.name)
+      setEmail(values.email)
+      setPhoneNumber(values.phoneNumber)
+      setGender(values.gender)
+      setBirthdate(values.birthdate)
     },
-  });
+  })
 
   const fetchData = useCallback(async () => {
     const response = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/user/get-By-Id`,
-      { params: { id: userId } }
-    );
+      `${process.env.REACT_APP_API_BASE_URL}/user/get-by-id`,
+      {params: {id: user.id}}
+    )
 
-    setName(response.data.result.name);
-    setEmail(response.data.result.email);
-    setPhoneNumber(response.data.result.phoneNumber);
-    setGender(response.data.result.gender);
-    setBirthdate(new Date(response.data.result.birthdate));
-    setProfilePic(
-      `${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.profilePic}`
-    );
+    setName(response.data.result.name)
+    setEmail(response.data.result.User.email)
+    setPhoneNumber(response.data.result.phoneNumber)
+    setGender(response.data.result.gender)
+    setBirthdate(new Date(response.data.result.birthdate))
+    setProfilePic(`${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.profilePic}`)
 
-    setfirebaseProviderId(response.data.result.firebaseProviderId);
+    setfirebaseProviderId(response.data.result.User.firebaseProviderId)
 
-    formik.values.name = response.data.result.name;
-    formik.values.email = response.data.result.email;
-    formik.values.phoneNumber = response.data.result.phoneNumber;
-    formik.values.gender = response.data.result.gender;
-    formik.values.birthdate = new Date(response.data.result.birthdate);
-  }, [userId]);
+    formik.values.name = response.data.result.name
+    formik.values.email = response.data.result.User.email
+    formik.values.phoneNumber = response.data.result.phoneNumber
+    formik.values.gender = response.data.result.gender
+    formik.values.birthdate = new Date(response.data.result.birthdate)
+  }, [user])
 
   useEffect(() => {
-    if (userId) fetchData();
-  }, [fetchData, userId]);
+    if (user) fetchData()
+  }, [fetchData, user])
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const updateConfirmRef = React.useRef();
+  const {isOpen, onOpen, onClose} = useDisclosure()
+  const updateConfirmRef = React.useRef()
 
   const handlePostModal = async () => {
-    await formik.submitForm();
-    onClose();
-  };
+    await formik.submitForm()
+    onClose()
+  }
 
   const datepickerRef = useRef(null);
 
@@ -246,240 +212,153 @@ function Profile() {
     datepickerRef.current.setFocus(true);
   }
 
+
   const updateProfilePic = async (e) => {
-    let file = e.target.files[0];
+    let file = e.target.files[0]
 
-    if (!file.type.match("image.*")) return;
-    if (file.size > 1048576) return;
+    if (!file.type.match('image.*')) return
+    if (file.size > 1048576) return
 
-    let formData = new FormData();
-    formData.append("image", e.target.files[0]);
-    formData.append("id", userId);
+    let formData = new FormData()
+    formData.append("image", e.target.files[0])
+    formData.append('id', user.id)
 
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/user/profilePic`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/profilePic`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
       }
-    );
-    console.log(response);
-    setProfilePic(
-      `${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.profilePic}`
-    );
+    })
+    setProfilePic(`${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.profilePic}`)
   };
-  const proflePicInputRef = useRef(null);
+  const proflePicInputRef = useRef(null)
 
-  if (!userId) return;
+  if (!user) return
 
   return (
-    <Container maxW="container.sm" p={0}>
-      <Container maxW="1140px">
-        <Flex
-          justifyContent="center"
-          alignItems="center"
-          direction={["column"]}
-        >
-          <Box
-            width="360px"
-            height="max-content"
-            pb="20px"
-            pl="20px"
-            pr="20px"
-            mb={{ sm: "0", md: "4em" }}
-          >
-            {/*Profile header*/}
-            <Flex pt="10">
-              <Box mr="20px" w="80px" h="80px">
-                <Avatar w="80px" h="80px" src={profilePic} />
-              </Box>
-              <Box>
-                <Text fontSize="xl" fontWeight="600">
-                  {name}
-                </Text>
-                <Text color="gray.400">
-                  {birthdate.toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </Text>
-                <Text
-                  textDecoration="underline"
-                  fontSize="16px"
-                  fontWeight="400"
-                  cursor="pointer"
-                  _hover={{ textDecoration: "underline", fontWeight: "bold" }}
-                  onClick={() => proflePicInputRef.current.click()}
-                >
-                  Update Photo
-                </Text>
-                <Input
-                  type={"file"}
-                  accept={"image/*"}
-                  onChange={updateProfilePic}
-                  hidden
-                  ref={proflePicInputRef}
-                />
-              </Box>
-            </Flex>
-            {/*Profile header ends*/}
+    <Layout>
+      <Container maxW='container.sm' p={0} mt={{ss: '0px', sm: '90px'}}>
+        <Container maxW='1140px'>
+          <Flex justifyContent="center" alignItems="center" direction={["column"]}>
+            <Box width="360px" height="max-content" pb="20px" pl="20px" pr="20px" mb={{sm: "0", md: "4em"}}>
 
-            {/*Profile form*/}
-            <Box pt="10">
-              <Heading as="h1" size="md">
-                Personal Info
-              </Heading>
+              {/*Profile header*/}
+              <Flex pt="10">
+                <Box mr="20px" w="80px" h="80px">
+                  <Avatar w="80px" h="80px" src={profilePic}/>
+                </Box>
+                <Box>
+                  <Text fontSize="xl" fontWeight="600">{name}</Text>
+                  <Text color="gray.400">{
+                    birthdate.toLocaleDateString(
+                      'en-GB', {day: 'numeric', month: 'long', year: 'numeric'}
+                    )
+                  }</Text>
+                  <Text textDecoration="underline" fontSize="16px" fontWeight="400" cursor="pointer"
+                        _hover={{textDecoration: "underline", fontWeight: "bold"}}
+                        onClick={() => proflePicInputRef.current.click()}>Update Photo</Text>
+                  <Input type={'file'} accept={'image/*'} onChange={updateProfilePic} hidden ref={proflePicInputRef}/>
 
-              <UpdateInput
-                inputDisplayName={"Name"}
-                formik={formik}
-                errorMsg={formik.errors.name}
-                formState={[isEditingForm, setIsEditingForm]}
-              >
-                <Input
-                  style={{ borderBottom: "1px solid" }}
-                  id="name"
-                  type="text"
-                  variant="flushed"
-                  placeholder="insert your name"
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                />
-              </UpdateInput>
+                </Box>
+              </Flex>
+              {/*Profile header ends*/}
 
-              {firebaseProviderId === "password" ? (
-                <UpdateInput
-                  inputDisplayName={"Email"}
-                  formik={formik}
-                  errorMsg={formik.errors.email}
-                  formState={[isEditingForm, setIsEditingForm]}
-                  needConfirm={true}
-                  onOpen={onOpen}
-                >
-                  <Input
-                    style={{ borderBottom: "1px solid" }}
-                    id="email"
-                    type="text"
-                    variant="flushed"
-                    placeholder="insert your email"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                  />
+              {/*Profile form*/}
+              <Box pt="10">
+                <Heading as='h1' size="md">Personal Info</Heading>
+
+                <UpdateInput inputDisplayName={'Name'} formik={formik} errorMsg={formik.errors.name}
+                             formState={[isEditingForm, setIsEditingForm]}>
+                  <Input style={{borderBottom: "1px solid"}} id='name' type="text" variant='flushed'
+                         placeholder='insert your name'
+                         value={formik.values.name} onChange={formik.handleChange}/>
                 </UpdateInput>
-              ) : null}
 
-              <UpdateInput
-                inputDisplayName={"Phone Number"}
-                formik={formik}
-                errorMsg={formik.errors.phoneNumber}
-                formState={[isEditingForm, setIsEditingForm]}
-                needConfirm={true}
-                onOpen={onOpen}
-              >
-                <Input
-                  style={{ borderBottom: "1px solid" }}
-                  id="phoneNumber"
-                  type="text"
-                  variant="flushed"
-                  placeholder="insert your phone number"
-                  value={formik.values.phoneNumber}
-                  onChange={formik.handleChange}
-                />
-              </UpdateInput>
+                {
+                  firebaseProviderId === 'password' ?
+                    <UpdateInput inputDisplayName={'Email'} formik={formik}
+                                 errorMsg={formik.errors.email}
+                                 formState={[isEditingForm, setIsEditingForm]} needConfirm={true}
+                                 onOpen={onOpen}>
+                      <Input style={{borderBottom: "1px solid"}} id='email' type="text"
+                             variant='flushed'
+                             placeholder='insert your email'
+                             value={formik.values.email} onChange={formik.handleChange}/>
+                    </UpdateInput> : null
+                }
 
-              <UpdateInput
-                inputDisplayName={"Gender"}
-                formik={formik}
-                errorMsg={formik.errors.gender}
-                formState={[isEditingForm, setIsEditingForm]}
-              >
-                <Select
-                  style={{ borderBottom: "1px solid" }}
-                  id="gender"
-                  variant="flushed"
-                  icon=""
-                  value={formik.values.gender}
-                  onChange={formik.handleChange}
-                  placeholder="select your gender"
-                >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </Select>
-              </UpdateInput>
+                <UpdateInput inputDisplayName={'Phone Number'} formik={formik}
+                             errorMsg={formik.errors.phoneNumber}
+                             formState={[isEditingForm, setIsEditingForm]} needConfirm={true}
+                             onOpen={onOpen}>
+                  <Input style={{borderBottom: "1px solid"}} id='phoneNumber' type="text"
+                         variant='flushed'
+                         placeholder='insert your phone number'
+                         value={formik.values.phoneNumber} onChange={formik.handleChange}/>
+                </UpdateInput>
 
-              <UpdateInput
-                inputDisplayName={"Birthdate"}
-                formik={formik}
-                errorMsg={formik.errors.birthdate}
-                formState={[isEditingForm, setIsEditingForm]}
-              >
-                <Input
-                  style={{ borderBottom: "1px solid" }}
-                  id="phoneNumber"
-                  type="text"
-                  variant="flushed"
-                  placeholder="insert your phone number"
-                  value={formik.values.birthdate.toLocaleString("en-US", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                  onClick={() => handleClickDatepickerIcon()}
-                />
-              </UpdateInput>
+                <UpdateInput inputDisplayName={'Gender'} formik={formik} errorMsg={formik.errors.gender}
+                             formState={[isEditingForm, setIsEditingForm]}>
+                  <Select style={{borderBottom: "1px solid"}} id='gender' variant='flushed' icon=''
+                          value={formik.values.gender} onChange={formik.handleChange}
+                          placeholder='select your gender'>
+                    <option value='Male'>Male</option>
+                    <option value='Female'>Female</option>
+                  </Select>
+                </UpdateInput>
 
-              <Box position={"absolute"} top={"-2rem"}>
-                <DatePicker
-                  selected={formik.values.birthdate}
-                  onChange={(date) => formik.setFieldValue("birthdate", date)}
-                  showMonthDropdown
-                  showYearDropdown
-                  dropdownMode="select"
-                  ref={datepickerRef}
-                  withPortal
-                />
-                <Box
-                  background={"white"}
-                  h={"100%"}
-                  w={"100%"}
-                  position={"absolute"}
-                  top={0}
-                ></Box>
+
+                <UpdateInput inputDisplayName={'Birthdate'} formik={formik}
+                             errorMsg={formik.errors.birthdate}
+                             formState={[isEditingForm, setIsEditingForm]}>
+
+                  <Input style={{borderBottom: "1px solid"}} id='phoneNumber' type="text"
+                         variant='flushed'
+                         placeholder='insert your phone number'
+                         value={formik.values.birthdate.toLocaleString('en-US', {
+                           day: "2-digit",
+                           month: "long",
+                           year: "numeric"
+                         })}
+                         onClick={() => handleClickDatepickerIcon()}/>
+                </UpdateInput>
+
+                <Box position={'absolute'} top={"-2rem"}>
+                  <DatePicker selected={formik.values.birthdate}
+                              onChange={(date) => formik.setFieldValue('birthdate', date)}
+                              showMonthDropdown showYearDropdown dropdownMode="select"
+                              ref={datepickerRef} withPortal/>
+                  <Box background={"white"} h={"100%"} w={"100%"} position={"absolute"} top={0}></Box>
+                </Box>
+
               </Box>
+              {/*Profile form ends*/}
+
+              {
+                firebaseProviderId === 'password' ?
+                  <Box h="max-content" pt="16px" pb="30px">
+                    <Text textDecoration="underline"
+                          _hover={{textDecoration: "underline", fontWeight: "bold"}}>
+                      <Link to="/settings/password">Change Password</Link>
+                    </Text>
+                  </Box>
+                  : null
+              }
             </Box>
-            {/*Profile form ends*/}
+          </Flex>
 
-            {firebaseProviderId === "password" ? (
-              <Box h="max-content" pt="16px" pb="30px">
-                <Text
-                  textDecoration="underline"
-                  _hover={{ textDecoration: "underline", fontWeight: "bold" }}
-                >
-                  <Link to="/reset-password">Change Password</Link>
-                </Text>
-              </Box>
-            ) : null}
-          </Box>
-        </Flex>
+          <Flex justifyContent="center">
+            <NavbarMobile/>
+          </Flex>
 
-        <Flex justifyContent="center">
-          <NavbarMobile />
-        </Flex>
+          {/*confirmation modal*/}
+          <ConfirmationModal open={isOpen} leastDestructiveRef={updateConfirmRef} onClose={onClose}
+                             onClick={handlePostModal}/>
+          {/*confirmation modal end*/}
 
-        {/*confirmation modal*/}
-        <ConfirmationModal
-          open={isOpen}
-          leastDestructiveRef={updateConfirmRef}
-          onClose={onClose}
-          onClick={handlePostModal}
-        />
-        {/*confirmation modal end*/}
+        </Container>
       </Container>
-    </Container>
-  );
+    </Layout>
+  )
 }
 
-export default Profile;
+export default Profile

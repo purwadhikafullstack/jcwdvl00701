@@ -60,7 +60,7 @@ module.exports = {
         results: getProperty,
       });
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(500).json({
         message: err,
       });
@@ -112,7 +112,7 @@ module.exports = {
         // price,
       });
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(500).json({
         message: err,
       });
@@ -121,7 +121,7 @@ module.exports = {
 
   getReview: async (req, res) => {
     try {
-      console.log(req.query);
+      //console.log(req.query);
       const { id } = req.params;
       let show = req.query.show || "close";
 
@@ -180,7 +180,7 @@ module.exports = {
         results: getReview,
       });
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(500).json({
         message: err,
       });

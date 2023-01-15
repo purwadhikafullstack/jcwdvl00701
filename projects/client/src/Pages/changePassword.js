@@ -22,8 +22,11 @@ import {useFormik} from "formik";
 import axios from "axios";
 import * as Yup from "yup";
 import YupPassword from "yup-password";
+import {useSelector} from "react-redux";
 
 function ChangePassword() {
+    const user2 = useSelector(state => state.user)
+
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false)
 
@@ -68,7 +71,6 @@ function ChangePassword() {
                 .oneOf([Yup.ref('newPassword'), null], 'Didn\'t match with new password')
         }),
         onSubmit: async (values, {setErrors, resetForm}) => {
-            setIsLoading(true)
             values.id = userId  // dummy id
             const credential = EmailAuthProvider.credential(email, values.oldPassword)
 
@@ -94,7 +96,6 @@ function ChangePassword() {
                 setNonFieldError('Failed to change password. Please refresh the page and try again')
                 setIsLoading(false)
             }
-            setIsLoading(false)
         },
     })
 
@@ -105,16 +106,18 @@ function ChangePassword() {
 
     const fetchData = useCallback(async () => {
         const response = await axios.get(
-            `${process.env.REACT_APP_API_BASE_URL}/user/getById`,
-            {params: {id: userId}}
+            `${process.env.REACT_APP_API_BASE_URL}/user/get-by-id`,
+            {params: {id: user2.id}}
         )
 
-        setfirebaseProviderId(response.data.result.firebaseProviderId)
-        if (response.data.result.firebaseProviderId !== 'password') history.push('/')
+        setfirebaseProviderId(response.data.result.User.firebaseProviderId)
+        if (response.data.result.User.firebaseProviderId !== 'password') {
+            history.push('/')
+        }
         setName(response.data.result.name)
         setBirthdate(new Date(response.data.result.birthdate))
         setProfilePic(`${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.profilePic}`)
-    }, [userId])
+    }, [user2])
 
     useEffect(() => {
         if (userId) fetchData()

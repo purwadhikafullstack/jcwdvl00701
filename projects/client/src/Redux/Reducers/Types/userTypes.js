@@ -1,6 +1,4 @@
 const auth_types = {
-  Login: "LOGIN",
-  Register : "REGISTER",
   Redux : "REDUX"
 };
 

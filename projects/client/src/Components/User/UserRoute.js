@@ -5,13 +5,9 @@ import { onAuthStateChanged } from "firebase/auth";
 import { authFirebase } from "../../Config/firebase";
 function UserRoute(props) {
   const { TenantId, UserRoles } = useSelector((state) => state.user);
-  console.log(UserRoles);
-  console.log(TenantId);
   const history = useHistory();
 
   if (UserRoles[0] === undefined) {
-    console.log("kosong");
-
     onAuthStateChanged(authFirebase, (user) => {
       if (!user) {
         history.push("/");

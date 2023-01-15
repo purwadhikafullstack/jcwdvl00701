@@ -47,23 +47,24 @@ module.exports = {
           {
             model: Room,
             required: true,
+            paranoid: false,
             attributes: ["id", "name"],
             where: whereCondition,
-
             include: [
               {
                 model: Property,
-                attributes: ["id", "name", "pic", "description", "rules"],
-                required: false,
-                include: [
-                  {
-                    model: Tenant,
-                    required: false,
-                  },
-                ],
+                attributes: ["id", "name", "pic", "description" , "rules"],
+                required: true,
+                paranoid: false,
                 where: {
                   tenantId,
                 },
+                include: [
+                  {
+                    model: Tenant,
+                    attributes: ["phoneNumber"],
+                  }
+                ]
               },
             ],
           },
@@ -105,7 +106,7 @@ module.exports = {
         limit,
       });
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(500).json({
         message: err,
       });
@@ -116,7 +117,7 @@ module.exports = {
       const id = req.params.id;
       const status = parseInt(req.query.status);
       const { paymentProof } = req.body;
-      console.log(paymentProof);
+      //console.log(paymentProof);
       const result = await Reservation.update(
         {
           status,
@@ -198,11 +199,12 @@ module.exports = {
           {
             model: Room,
             required: true,
-
+            paranoid : false,
             include: [
               {
                 model: Property,
                 required: true,
+                paranoid : false,
                 where: {
                   tenantId,
                   name: { [Op.like]: "%" + propertyFilter + "%" },
@@ -233,6 +235,7 @@ module.exports = {
         offset,
         limit,
         where: whereCondition,
+        paranoid : false
       });
       const totalRows = salsesReport.count;
       const totalPage = Math.ceil(totalRows / limit);
@@ -244,11 +247,12 @@ module.exports = {
           {
             model: Room,
             required: true,
-
+            paranoid : false,
             include: [
               {
                 model: Property,
                 required: true,
+                paranoid : false,
                 where: {
                   tenantId,
                   name: { [Op.like]: "%" + propertyFilter + "%" },
@@ -284,7 +288,7 @@ module.exports = {
         code: 200,
       });
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(500).json({
         message: err,
       });
@@ -293,7 +297,7 @@ module.exports = {
   // endpoint utk kirim email, bentuk post
   emailOrder: async (req, res) => {
     try {
-      console.log(req.body);
+      //console.log(req.body);
 
       const {
         property,
@@ -310,7 +314,7 @@ module.exports = {
         phoneNumber,
         roomId,
       } = req.body;
-      console.log(status);
+      //console.log(status);
       let mail;
       if (status === 3) {
         mail = {
@@ -367,7 +371,7 @@ module.exports = {
 
       transporter.sendMail(mail, (errMail, resMail) => {
         if (errMail) {
-          console.log(errMail);
+          //console.log(errMail);
           return res.status(500).send({
             message: "email failed",
             success: false,
@@ -382,7 +386,7 @@ module.exports = {
         });
       });
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(500).json({
         message: "email failed",
         code: 500,
