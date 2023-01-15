@@ -67,7 +67,7 @@ function AddProperty() {
       name: "",
       description: "",
       pic: selectedFile,
-      categoryId: 0,
+      categoryId: null,
       rules: "",
       tenantId: TenantId,
     },
@@ -76,7 +76,7 @@ function AddProperty() {
       name: Yup.string().required("name cannot be empty"),
       description: Yup.string().required("description cannot be empty"),
       pic: Yup.string().required("picture cannot be empty"),
-      categoryId: Yup.number().required("category cannot be empty"),
+      categoryId: Yup.number().required("category cannot be empty").typeError("category cannot be empty"),
       rules: Yup.string().required("rules cannot be empty"),
     }),
 

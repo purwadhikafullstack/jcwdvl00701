@@ -432,13 +432,14 @@ function PropertyDetail(props) {
 
           </Box>
           <Flex border="3px solid lightgrey" p={5}>
-            <Image
-              src={"tenantData.User.Profile.profilePic"}
+            <Avatar
+              src={tenantData.User?.Profile?.profilePic}
               width="50px"
               height="50px"
               me="10px"
               overflow="hiden"
               objectFit="cover"
+              borderRadius={0}
             />
             <Box>
               <Text fontWeight="bold" fontSize="md">

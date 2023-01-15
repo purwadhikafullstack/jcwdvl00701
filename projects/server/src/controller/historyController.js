@@ -61,6 +61,7 @@ module.exports = {
                     {
                         model : Room,
                         attributes: ["id", "name","defaultPrice", "description"],
+                        paranoid: false,
                         include : [
                             {
                                 model : Property,
@@ -75,7 +76,8 @@ module.exports = {
                                         }
                                     ]
                                 }
-                                ]
+                                ],
+                                paranoid: false,
                             }
                         ]
                     },

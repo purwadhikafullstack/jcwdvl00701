@@ -240,7 +240,7 @@ function Payment() {
                     onClick={() => inputFileRef.current.click()}
                   >
                     <Text fontWeight="regular" fontSize="14px">
-                      upload image
+                      upload Payment Proof
                     </Text>
                   </Button>
                   {err ? (
@@ -267,7 +267,7 @@ function Payment() {
                     onClick={onOpen}
                   >
                     <Text fontWeight="regular" fontSize="14px">
-                      upload payment proof
+                      Send Payment Proof
                     </Text>
                   </Button>
                 ) : (
@@ -279,7 +279,7 @@ function Payment() {
                     disabled="true"
                   >
                     <Text fontWeight="regular" fontSize="14px">
-                      upload payment proof
+                      Send Payment Proof
                     </Text>
                   </Button>
                 )}
