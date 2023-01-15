@@ -24,7 +24,7 @@ module.exports = {
         const profile = await Profile.create(
           {
             name: name,
-            phoneNumber: phoneNumber || "0",
+            phoneNumber: phoneNumber || "089989999999",
             gender: "Male",
             userId: id,
           },
@@ -92,7 +92,7 @@ module.exports = {
 
     try {
       const user = await Profile.findOne({
-        where: { userId : id },
+        where: {userId: id},
         include: [
           {
             model: User,
@@ -161,16 +161,35 @@ module.exports = {
   },
 
   patchUser: async (req, res) => {
-    const id = req.body.id;
+    const {id, name, email, phoneNumber, gender, birthdate} = req.body;
 
     try {
-      await User.update(req.body, {
-        where: {id},
-        returning: true,
-        plain: true,
-      });
+      await sequelize.transaction(async (t) => {
+        await User.update(
+          {email: email},
+          {where: {id: id}},
+          {transaction: t}
+        );
 
-      const user = await User.findByPk(id);
+        await Profile.update(
+          {name, phoneNumber, gender, birthdate},
+          {where: {UserId: id}},
+          {transaction: t}
+        )
+      })
+
+      const user = await User.findOne({
+        where: {id: id},
+        include: [
+          {
+            model: Profile,
+            required: true,
+            attributes: {
+              exclude: ["id", "userId", "UserId"],
+            },
+          },
+        ],
+      });
 
       return res.status(200).send({
         result: user,
@@ -191,10 +210,13 @@ module.exports = {
     const fileUrl = `/profile_pic/${filename}`;
 
     try {
-      await User.update(
-        {profilePic: fileUrl},
-        {where: {id}, returning: true, plain: true}
-      );
+      await sequelize.transaction(async (t) => {
+        await Profile.update(
+          {profilePic: fileUrl},
+          {where: {userId: id}},
+          {transaction: t}
+        );
+      })
       return res.status(200).send({
         result: {profilePic: fileUrl},
         message: "success update profile picture",
@@ -208,62 +230,62 @@ module.exports = {
     }
   },
 
-  userRedux : async (req, res) => {
-        try {
-            console.log(req.query.id);
-            // const email = req.query.email
-            const id = req.query.id // userId
-            const globalState= await User.findOne({
-                include : [
-                {
-                  model : Profile,
-                  attributes : ["name" , "profilePic"]
-                },
-                {
-                    model: UserRole,
-                    attributes : ["roleId"],
-                },
-                {
-                    model : Tenant,
-                    attributes : ["id", "name"],
-                }           
-            ],
-                where : {
-                    id
-                }
-            })
-            // console.log(globalState);
-            return res.status(200).json({
-                globalState
-            })
-        } catch (err) {
-            console.log(err);
-            return res.status(500).json({
-                message : "your email not registered"
-            })
+  userRedux: async (req, res) => {
+    try {
+      console.log(req.query.id);
+      // const email = req.query.email
+      const id = req.query.id // userId
+      const globalState = await User.findOne({
+        include: [
+          {
+            model: Profile,
+            attributes: ["name", "profilePic"]
+          },
+          {
+            model: UserRole,
+            attributes: ["roleId"],
+          },
+          {
+            model: Tenant,
+            attributes: ["id", "name"],
+          }
+        ],
+        where: {
+          id
         }
+      })
+      // console.log(globalState);
+      return res.status(200).json({
+        globalState
+      })
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "your email not registered"
+      })
+    }
   },
   // add user jika dari tenant mau jadi user
-  completeDataUser : async(req,res) => {
+  completeDataUser: async (req, res) => {
     try {
       console.log(req.body);
-      const {name, phoneNumber , userId} = req.body
+      const {name, phoneNumber, userId} = req.body
       // tambahakan data ke profile
-      const result = await sequelize.transaction(async(t) => {
+      const result = await sequelize.transaction(async (t) => {
         const completeDataUser = await Profile.create(
           {
             name,
             phoneNumber,
-            gender : "Male",
+            gender: "Male",
             userId
           },
-          {transaction : t}
+          {transaction: t}
         )
-          // tambhakan UserRole yg user [1]
+        // tambhakan UserRole yg user [1]
         const addRoleUser = await UserRole.create(
           {
             userId,
-            roleId : 1
+            roleId: 1
           },
           {transaction: t}
         );
@@ -271,19 +293,19 @@ module.exports = {
         return {
           name,
           userId,
-          roleId : addRoleUser.roleId
+          roleId: addRoleUser.roleId
         }
       })
 
       return res.status(200).json({
-        result : result,
+        result: result,
         message: "now your account can be accsess to be user",
         code: 200
       })
-    } catch(err) {
+    } catch (err) {
       return res.status(500).json({
-        message : err.toString(),
-        code : 500
+        message: err.toString(),
+        code: 500
       })
     }
   }
