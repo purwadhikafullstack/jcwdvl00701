@@ -47,14 +47,15 @@ module.exports = {
           {
             model: Room,
             required: true,
+            paranoid: false,
             attributes: ["id", "name"],
             where: whereCondition,
-
             include: [
               {
                 model: Property,
                 attributes: ["id", "name", "pic", "description" , "rules"],
                 required: true,
+                paranoid: false,
                 where: {
                   tenantId,
                 },
