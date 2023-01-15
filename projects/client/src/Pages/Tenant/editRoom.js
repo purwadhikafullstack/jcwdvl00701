@@ -273,9 +273,6 @@ function EditRoom() {
               </Alert>
             ) : null}
           </FormControl>
-          <Button variant="secondary" w="100%" mb="20px">
-            Edit Photo
-          </Button>
           <Button
             variant="primary"
             w="100%"
