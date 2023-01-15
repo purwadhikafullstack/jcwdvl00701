@@ -1,13 +1,5 @@
-const { db, dbquery } = require("../database");
-const {
-  sequelize,
-  Property,
-  Room,
-  Tenant,
-  User,
-  Category,
-  SpecialPrice,
-} = require("../models");
+const {db, dbquery} = require("../database");
+const {sequelize, Property, Room, Tenant, User, Category, SpecialPrice} = require('../models')
 const fs = require("fs");
 const { Op } = require("sequelize");
 
@@ -32,7 +24,7 @@ module.exports = {
     try {
       // console.log(req.body);
       // console.log("uploader foto " + req.file);
-      const { name, description, pic, tenantId, categoryId, rules } = req.body;
+      const {name, description, pic, tenantId, categoryId, rules} = req.body;
 
       const filePath = "property";
       const { filename } = req.file;
@@ -60,12 +52,12 @@ module.exports = {
 
   editProperty: async (req, res) => {
     // console.log(req.body);
-    const { id, old_img, description, rules, categoryId, name, pic } = req.body;
+    const {id, old_img, description, rules, categoryId, name, pic} = req.body;
     const filePath = "property";
     // console.log(req.body);
     let editData = {};
     if (req.file?.filename) {
-      const { filename } = req.file;
+      const {filename} = req.file;
       // console.log(filename);
 
       if (old_img != undefined) {
@@ -118,15 +110,14 @@ module.exports = {
 
   getSearchResult: async (req, res) => {
     return await wrapper(req, res, async () => {
-      const ITEM_PER_PAGE = 5;
+      const ITEM_PER_PAGE = 5
 
-      const { priceOrder, nameOrder, propLocation, propName } = req.query;
-      const propCapacity = req.query.visitor || 1;
+      const {priceOrder, nameOrder, propLocation, propName} = req.query
+      const propCapacity = req.query.visitor || 1
 
-      const whereConditions = [];
-      if (propLocation) whereConditions.push({ categoryId: propLocation });
-      if (propName)
-        whereConditions.push({ name: { [Op.like]: `%${propName}%` } });
+      const whereConditions = []
+      if (propLocation) whereConditions.push({categoryId: propLocation})
+      if (propName) whereConditions.push({name: {[Op.like]: `%${propName}%`}})
 
       let result = await Property.findAll({
         include: [
@@ -137,52 +128,43 @@ module.exports = {
           {
             model: Room,
             required: true,
-            include: [
-              {
-                model: SpecialPrice,
-                include: [
-                  {
-                    model: Room,
-                  },
-                ],
-              },
-            ],
-          },
+            include: [{
+              model: SpecialPrice,
+              include: [{
+                model: Room
+              }]
+            }]
+          }
         ],
-        where: whereConditions,
-      });
+        where: whereConditions
+      })
 
-      result = result.filter(
-        (property) => property.maxCapacity >= parseInt(propCapacity)
-      );
+      result = result.filter(property => property.maxCapacity >= parseInt(propCapacity))
 
-      const priceSortMultiplier = priceOrder === "DESC" ? -1 : 1;
-      const nameSortMultiplier = nameOrder === "DESC" ? -1 : 1;
+      const priceSortMultiplier = priceOrder === 'DESC' ? -1 : 1
+      const nameSortMultiplier = nameOrder === 'DESC' ? -1 : 1
 
       result.sort((a, b) => {
-        if (a.price < b.price) return -1 * priceSortMultiplier;
-        if (b.price < a.price) return 1 * priceSortMultiplier;
+        if (a.price < b.price) return -1 * priceSortMultiplier
+        if (b.price < a.price) return 1 * priceSortMultiplier
 
-        if (a.name < b.name) return -1 * nameSortMultiplier;
-        if (b.name < a.name) return 1 * nameSortMultiplier;
-      });
+        if (a.name < b.name) return -1 * nameSortMultiplier
+        if (b.name < a.name) return 1 * nameSortMultiplier
+      })
 
-      const totalRows = result.length;
-      const totalPage = Math.ceil(result.length / ITEM_PER_PAGE);
+      const totalRows = result.length
+      const totalPage = Math.ceil(result.length / ITEM_PER_PAGE)
 
-      const page =
-        parseInt(req.query.page) < totalPage
-          ? parseInt(req.query.page) || 0
-          : totalPage - 1;
+      const page = parseInt(req.query.page) < totalPage ? parseInt(req.query.page) || 0 : totalPage - 1;
       const limit = (page + 1) * ITEM_PER_PAGE;
       const offset = page * ITEM_PER_PAGE;
-      result = result.slice(offset, limit);
+      result = result.slice(offset, limit)
 
       return {
-        result: { properties: result, page, limit, totalRows, totalPage },
-        message: "success get properties",
-      };
-    });
+        result: {properties: result, page, limit, totalRows, totalPage},
+        message: 'success get properties'
+      }
+    })
   },
 
   getAll: async (req, res) => {

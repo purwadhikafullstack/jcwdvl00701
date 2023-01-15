@@ -38,6 +38,9 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      deletedAt : {
+        type : DataTypes.DATE
+      },
       activePrice: {
         type: DataTypes.VIRTUAL,
         get: function () {
@@ -47,9 +50,10 @@ module.exports = (sequelize) => {
       }
     },
     {
+      paranoid : true,
       sequelize,
       modelName: "Room",
-    }
+    },
   );
   return Room;
 };

@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react'
 
 function ModalAlert(props){
-    console.log(props);
+    //console.log(props);
     const { isOpen, onOpen, onClose } = useDisclosure()
     if(props === "true"){
         alert("ada")

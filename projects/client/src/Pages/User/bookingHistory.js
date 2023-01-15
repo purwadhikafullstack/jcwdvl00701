@@ -32,17 +32,17 @@ function BookingHistory() {
   const { id } = useSelector((state) => state.user);
   const [dataBooking, setDataBooking] = useState([]);
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(6);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [randomNumber, setRandomNumber] = useState(0);
   const [loading, setLoading] = useState(true);
-  console.log(dataBooking);
-  console.log(rows);
+  //console.log(dataBooking);
+  //console.log(rows);
 
   // console.log(id);
-  console.log(inputStartDate);
-  console.log(inputEndDate);
+  //console.log(inputStartDate);
+  //console.log(inputEndDate);
   // console.log(status);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ function BookingHistory() {
 
   function renderHistory() {
     return dataBooking.map((val) => {
-      console.log(val);
+      //console.log(val);
       if (val.status === 6) {
         return (
           <CardBookingHistory
@@ -194,27 +194,12 @@ function BookingHistory() {
 
   function renderBooking() {
     return dataBooking.map((val) => {
-      console.log(val);
+      //console.log(val);
       // console.log(val.status);
       if (val.status === 1) {
         return (
           <CardBooking
             key={val.id}
-            id={val.id}
-            startDate={val?.startDate}
-            endDate={val?.endDate}
-            status={val?.status}
-            guestCount={val?.guestCount}
-            userId={val?.userId}
-            roomId={val?.roomId}
-            Room={val?.Room}
-            User={val?.User}
-            randomNumber={setRandomNumber}
-          />
-        );
-      } else if (val.status === 2) {
-        return (
-          <CardBooking
             id={val.id}
             startDate={val?.startDate}
             endDate={val?.endDate}

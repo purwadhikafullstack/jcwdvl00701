@@ -29,31 +29,29 @@ import YupPassword from "yup-password";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+
 function AddRoom() {
   // state
-  const [dropdown, setDropdown] = useState([]);
-  const history = useHistory();
-  const [information, setInformation] = useState("");
-
-  const { TenantId } = useSelector((state) => state.user);
+  const [dropdown, setDropdown] = useState([])
+  const history = useHistory()
+  const [information, setInformation] = useState("")
+  const {TenantId} = useSelector(state => state.user)
 
   useEffect(() => {
     const fetchDataDropdown = () => {
-      axios
-        .get(
-          `${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`
-        )
-        .then((res) => {
-          // console.log(res.data.dropdown);
-          setDropdown(res.data.dropdown);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    };
-    fetchDataDropdown();
-    optionDropdown();
-  }, []);
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`)
+    .then((res) => {
+      // console.log(res.data.dropdown);
+      setDropdown(res.data.dropdown)
+
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+  }
+  fetchDataDropdown()
+  optionDropdown()
+  }, [])
 
   // loop utk dropdown
   const optionDropdown = () => {
@@ -75,8 +73,8 @@ function AddRoom() {
       caption: "",
     },
     validationSchema: Yup.object().shape({
-      property: Yup.string().required("required"),
-      nameRoom: Yup.string().required("required"),
+      property: Yup.string().required("can't be empty"),
+      nameRoom: Yup.string().required("can't be empty"),
       price: Yup.number("input number").required(
         "required please input type number"
       ),
@@ -91,7 +89,7 @@ function AddRoom() {
     }),
     validateOnChange: false,
     onSubmit: async (values) => {
-      console.log(values);
+      //console.log(values);
       const { nameRoom, property, price, caption, capacity } = values;
 
       // kirim data ke back-end
@@ -151,9 +149,8 @@ function AddRoom() {
           </Flex>
         </Container>
         <Container maxW="1140px">
-          <FormControl>
+          <FormControl pb="20px">
             <Select
-              mb="20px"
               placeholder="Select Property"
               borderRadius={0}
               borderColor="rgba(175, 175, 175, 1)"
@@ -171,6 +168,7 @@ function AddRoom() {
               </Alert>
             ) : null}
           </FormControl>
+
           <FormControl pb="20px">
             <Input
               type="text"
@@ -187,6 +185,7 @@ function AddRoom() {
               </Alert>
             ) : null}
           </FormControl>
+
           <FormControl pb="20px">
             <InputGroup>
               <InputLeftElement>
@@ -208,6 +207,7 @@ function AddRoom() {
               </Alert>
             ) : null}
           </FormControl>
+
           <FormControl pb="20px">
             <Input
               type="number"
@@ -224,10 +224,10 @@ function AddRoom() {
               </Alert>
             ) : null}
           </FormControl>
-          <FormControl>
+
+          <FormControl pb="20px">
             <Textarea
               height="180px"
-              mb="20px"
               borderRadius="0px"
               placeholder="Edit caption"
               onChange={(e) => {

@@ -44,5 +44,5 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd ${{ secrets.SSH_FOLDER }}
-            npm ci
+            npm i
             pm2 start deploy.config.js

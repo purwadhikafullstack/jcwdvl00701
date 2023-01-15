@@ -36,6 +36,9 @@ module.exports = (sequelize) => {
       categoryId: {
         type: DataTypes.INTEGER,
       },
+      deletedAt : {
+        type : DataTypes.DATE
+      },
       price: {
         type: DataTypes.VIRTUAL,
         get: function () {
@@ -56,9 +59,10 @@ module.exports = (sequelize) => {
       }
     },
     {
+      paranoid : true,
       sequelize,
       modelName: "Property",
-    }
+    },
   );
   return Property;
 };

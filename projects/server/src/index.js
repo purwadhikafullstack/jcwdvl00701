@@ -15,23 +15,23 @@ const {
   paymentRouters,
   historyRouters,
   roomUnavailabilityRouters,
-  specialPriceRouters
+  specialPriceRouters,
 } = require("./routes");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
 
-console.log("dari .env =", process.env.WHITELISTED_DOMAIN);
-
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      process.env.WHITELISTED_DOMAIN &&
+        process.env.WHITELISTED_DOMAIN.split(","),
+    ],
   })
 );
 
 app.use(express.json());
-app.use("/api", express.static(`${__dirname}/public`));
-
+// app.use("/api", express.static(`${__dirname}/public`));
 app.use("/profile_pic", express.static(`${__dirname}/public/profile_pic`));
 app.use("/payment", express.static(`${__dirname}/public/payment`));
 app.use("/tenant", express.static(`${__dirname}/public/tenant`));
@@ -43,19 +43,18 @@ app.use("/tenant", express.static(`${__dirname}/public/tenant`));
 // sequelize.sync({ alter: true });
 
 app.use("/api/user", userRouters);
-app.use("/api/specialprice", specialPriceRouters)
-app.use("/api/property", propertyRouters)
+app.use("/api/specialprice", specialPriceRouters);
+app.use("/api/property", propertyRouters);
 app.use("/api/room", roomRouters);
 app.use("/api/property", propertyRouters);
 app.use("/api/tenant", tenantRouters);
 app.use("/api/product", productRoutrs);
 app.use("/api/report", reportRouters);
-app.use("/api/tenant" , tenantRouters)
-app.use("/api/reservation", reservationRouters)
-app.use("/api/payment", paymentRouters)
-app.use("/api/history" , historyRouters)
-app.use("/api/roomunavailalbility", roomUnavailabilityRouters)
-
+app.use("/api/tenant", tenantRouters);
+app.use("/api/reservation", reservationRouters);
+app.use("/api/payment", paymentRouters);
+app.use("/api/history", historyRouters);
+app.use("/api/roomunavailalbility", roomUnavailabilityRouters);
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);
@@ -103,8 +102,8 @@ app.get("*", (req, res) => {
 
 app.listen(PORT, (err) => {
   if (err) {
-    console.log(`ERROR: ${err}`);
+    //console.log(`ERROR: ${err}`);
   } else {
-    console.log(`APP RUNNING at ${PORT} ✅`);
+    //console.log(`APP RUNNING at ${PORT} ✅`);
   }
 });

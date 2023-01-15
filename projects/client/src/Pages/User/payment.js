@@ -44,6 +44,7 @@ function Payment() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   let history = useHistory();
   const [loading, setLoading] = useState(true);
+  //console.log(dataTenant);
 
   const handleFile = (event) => {
     if (event.target.files[0].size / 1024 > 1024) {
@@ -75,7 +76,7 @@ function Payment() {
     }
   }
   let resultBulan = searchBulan(bulan)
-  console.log(resultBulan);
+  //console.log(resultBulan);
 
   let price = dataPayment?.finalPrice;
   const priceRupiah = new Intl.NumberFormat("id-ID", {
@@ -113,7 +114,7 @@ function Payment() {
 
         // console.log(response?.data?.result)
         setDataPayment(response?.data?.result);
-        setDataTenant(response?.data?.result.User.Tenant);
+        setDataTenant(response?.data?.result.Room?.Property?.Tenant);
         setDataProperty(response?.data?.result.Room.Property);
         setStartDate(response?.data?.result.startDate);
         setEndDate(response?.data?.result.endDate);
@@ -136,7 +137,7 @@ function Payment() {
         `${process.env.REACT_APP_API_BASE_URL}/payment/add-payment`,
         formData
       );
-      console.log(response.data);
+      //console.log(response.data);
       onClose();
       history.push("/booking-history");
     } catch (err) {
@@ -239,7 +240,7 @@ function Payment() {
                     onClick={() => inputFileRef.current.click()}
                   >
                     <Text fontWeight="regular" fontSize="14px">
-                      upload image
+                      upload Payment Proof
                     </Text>
                   </Button>
                   {err ? (
@@ -266,7 +267,7 @@ function Payment() {
                     onClick={onOpen}
                   >
                     <Text fontWeight="regular" fontSize="14px">
-                      upload payment proof
+                      Send Payment Proof
                     </Text>
                   </Button>
                 ) : (
@@ -278,7 +279,7 @@ function Payment() {
                     disabled="true"
                   >
                     <Text fontWeight="regular" fontSize="14px">
-                      upload payment proof
+                      Send Payment Proof
                     </Text>
                   </Button>
                 )}
@@ -359,7 +360,7 @@ function Payment() {
             <Button
               onClick={btnHandlerUpload}
               borderRadius={0}
-              colorScheme="red"
+              colorScheme="green"
               mr={3}
             >
               pay

@@ -123,7 +123,7 @@ function RoomListTenant() {
         `${process.env.REACT_APP_API_BASE_URL}/room/room-dropdown/${TenantId}`
       )
       .then((res) => {
-        console.log(res.data.dropdown);
+        //console.log(res.data.dropdown);
         setDropdown(res.data.dropdown);
       })
       .catch((err) => {

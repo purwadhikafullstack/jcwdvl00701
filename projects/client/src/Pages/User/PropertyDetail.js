@@ -51,7 +51,7 @@ function PropertyDetail(props) {
   // const [totalHarga, setTotalHarga] = useState(0)
   // console.log("start", start);
   // console.log("end ",end);
-  console.log(typeof id);
+  //console.log(typeof id);
   // menyimpan tanggal-tanggal yang di pilih
 
   let datesRanges = [];
@@ -69,9 +69,9 @@ function PropertyDetail(props) {
       const found = roomData.RoomUnavailabilities.find((element, idx) => {
         if (
           new Date(date.toDateString()) >
-            new Date(new Date(element.startDate).toDateString()) &&
+          new Date(new Date(element.startDate).toDateString()) &&
           new Date(date.toDateString()) <=
-            new Date(new Date(element.endDate).toDateString())
+          new Date(new Date(element.endDate).toDateString())
         ) {
           return true;
         }
@@ -88,7 +88,7 @@ function PropertyDetail(props) {
     countFinalPrice(datesRanges);
     setStart(datesRanges[0]);
     setEnd(datesRanges[datesRanges.length - 1]);
-    console.log(datesRanges);
+    //console.log(datesRanges);
     return datesRanges;
   };
 
@@ -100,15 +100,15 @@ function PropertyDetail(props) {
         roomData.SpecialPrices.map((SpecialPric, i2) => {
           if (
             datesRange >=
-              new Date(SpecialPric.startDate).toISOString().split("T")[0] &&
+            new Date(SpecialPric.startDate).toISOString().split("T")[0] &&
             datesRange <=
-              new Date(SpecialPric.endDate).toISOString().split("T")[0]
+            new Date(SpecialPric.endDate).toISOString().split("T")[0]
           ) {
-            console.log("tess111");
+            //console.log("tess111");
             let finalPrice = 0;
             if (SpecialPric.type === "nominal") {
               finalPrice = SpecialPric.discount;
-            } else if (SpecialPric.type === "persen") {
+            } else if (SpecialPric.type === "percentage") {
               finalPrice =
                 roomData.defaultPrice +
                 roomData.defaultPrice * (SpecialPric.discount / 100);
@@ -119,8 +119,8 @@ function PropertyDetail(props) {
           }
         });
         totalPrice = totalPrice + roomData.defaultPrice;
-        console.log("tes222  ");
-        console.log(totalPrice);
+        //console.log("tes222  ");
+        //console.log(totalPrice);
         return totalPrice;
       } else {
         totalPrice = totalPrice + roomData.defaultPrice;
@@ -128,8 +128,8 @@ function PropertyDetail(props) {
       }
     });
 
-    console.log(found);
-    console.log(totalPrice);
+    //console.log(found);
+    //console.log(totalPrice);
 
     setFinalCountPrice(totalPrice);
     return totalPrice;
@@ -188,9 +188,9 @@ function PropertyDetail(props) {
         const found = roomData?.SpecialPrices.find((element) => {
           if (
             addDays(new Date(date), 1).toISOString().split("T")[0] >=
-              new Date(element.startDate).toISOString().split("T")[0] &&
+            new Date(element.startDate).toISOString().split("T")[0] &&
             new Date(date).toISOString().split("T")[0] <
-              new Date(element.endDate).toISOString().split("T")[0]
+            new Date(element.endDate).toISOString().split("T")[0]
           ) {
             return true;
           }
@@ -201,7 +201,7 @@ function PropertyDetail(props) {
         if (found) {
           if (found.type === "nominal") {
             finalPrice = found.discount;
-          } else if (found.type === "persen") {
+          } else if (found.type === "percentage") {
             finalPrice = finalPrice + (finalPrice * found.discount) / 100;
           }
         }
@@ -241,17 +241,19 @@ function PropertyDetail(props) {
             excludeDateIntervals={disabledDateRanges}
             calendarClassName="rasta-stripes"
           />
-          <Box my={3}>
-            <Text fontWeight="bold" fontSize="xl" mb={1}>
-              Details
-            </Text>
-          </Box>
+          <Box>
+            <Box my={3}>
+              <Text fontWeight="bold" fontSize="xl" mb={1}>
+                Details
+              </Text>
+            </Box>
 
-          <Box backgroundColor="gray.200" p={3} mb={8}>
-            <Text fontWeight="bold" fontSize="lg">
-              {roomData?.capacity} Guest
-              {/* guest count ddapatnya dari state roomData*/}
-            </Text>
+            <Box backgroundColor="gray.200" p={3} mb={8}>
+              <Text fontWeight="bold" fontSize="lg">
+                {roomData?.capacity} Guest
+                {/* guest count ddapatnya dari state roomData*/}
+              </Text>
+            </Box>
           </Box>
         </Box>
       );
@@ -308,7 +310,7 @@ function PropertyDetail(props) {
         setReviewData(res.data.results.Rooms);
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }
 
@@ -326,7 +328,7 @@ function PropertyDetail(props) {
           finalPrice: finalCountPrice,
         }
       );
-      console.log(response.data);
+      //console.log(response.data);
       history.push(`/booking/${response.data.result.id}`);
       onClose();
     } catch (err) {
@@ -348,7 +350,7 @@ function PropertyDetail(props) {
           setTenantData(res.data.results.Tenant);
 
           setPic(res.data.results.pic);
-          console.log(res.data.results.Tenant.User.id);
+          //console.log(res.data.results.Tenant.User.id);
         })
         .catch((err) => {
           console.error(err.message);
@@ -364,8 +366,8 @@ function PropertyDetail(props) {
 
   return (
     <Layout>
-      <div>
-        <Container maxW="container.lg">
+      <Box>
+        <Container maxW="container.lg" mt={{ ss: "0px", sl: "100px" }}>
           {/* ////////////////////////////// */}
           <Box>
             <Box my={3}>
@@ -382,7 +384,7 @@ function PropertyDetail(props) {
               overflow="hiden"
               objectFit="cover"
               width="100%"
-              height="210px"
+              height={{ ss: "210px", sl: "600px" }}
               src={process.env.REACT_APP_API_BASE_URL + pic}
             />
           </Box>
@@ -429,9 +431,6 @@ function PropertyDetail(props) {
               <Text fontWeight="bold" fontSize="md">
                 {tenantData.name}
               </Text>
-              <Text fontSize="md" color="grey">
-                Joined since {tenantData.createdAt}
-              </Text>
             </Box>
           </Flex>
           <Box my={3}>
@@ -449,7 +448,7 @@ function PropertyDetail(props) {
             Show All
           </Button>
         </Container>
-      </div>
+      </Box>
       {/* utk modal sebelum reserve */}
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
