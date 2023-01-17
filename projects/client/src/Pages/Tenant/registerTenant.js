@@ -76,7 +76,6 @@ function RegisterTenant() {
 
     if (!provider.toLowerCase().includes('google')) {
       await sendEmailVerification(user)
-      alert(`masuk dari ${provider}`)
     }
   };
 
