@@ -40,7 +40,7 @@ function BookingHistory() {
   //console.log(dataBooking);
   //console.log(rows);
 
-  // console.log(id);
+  console.log(id);
   //console.log(inputStartDate);
   //console.log(inputEndDate);
   // console.log(status);
@@ -53,7 +53,7 @@ function BookingHistory() {
           `${process.env.REACT_APP_API_BASE_URL}/history/get-history?userId=${id}&limit=${limit}&page=${page}&startDate=${inputStartDate}&endDate=${inputEndDate}&status=${status}`
         );
 
-        // console.log((await response)?.data);
+        console.log((await response)?.data);
         // console.log((await response)?.data.bookingHistory.rows);
         // console.log((await response)?.data.result.rows);
         setDataBooking((await response)?.data?.bookingHistory?.rows);

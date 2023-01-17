@@ -20,6 +20,7 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  Avatar,
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
 import { addDays, subDays } from "date-fns";
@@ -143,7 +144,7 @@ function PropertyDetail(props) {
       <Box mb="20px">
         <Box border="1px solid lightgrey" p={5}>
           <Flex mb={2}>
-            <Image
+            <Avatar
               src={
                 process.env.REACT_APP_API_BASE_URL +
                 props.data.User.Profile.profilePic
@@ -154,13 +155,11 @@ function PropertyDetail(props) {
               overflow="hiden"
               objectFit="cover"
               mr={5}
+              borderRadius={"0"}
             />
             <Box>
               <Text fontWeight="bold" fontSize="md">
                 {props.data.User.Profile.name}
-              </Text>
-              <Text fontSize="md" color="grey">
-                {props.data.Review.createdAt}
               </Text>
             </Box>
           </Flex>
@@ -419,13 +418,17 @@ function PropertyDetail(props) {
             ) : null}
           </Box>
           <Flex border="3px solid lightgrey" p={5}>
-            <Image
-              src={"tenantData.User.Profile.profilePic"}
+            <Avatar
+              src={
+                  process.env.REACT_APP_API_BASE_URL +
+                  tenantData?.User?.Profile?.profilePic
+                }
               width="50px"
               height="50px"
               me="10px"
               overflow="hiden"
               objectFit="cover"
+              borderRadius={"0"}
             />
             <Box>
               <Text fontWeight="bold" fontSize="md">
