@@ -64,7 +64,7 @@ function CardBooking(props) {
         props.randomNumber(Math.random());
         // akan menyimpan endpoint utk kirim email (data yg dikirim akan di buat fleksibel )
 
-        if (sentStatus === 3 || sentStatus === 5) {
+        if (status === 3 || status === 5) {
           axios.post(
             `${process.env.REACT_APP_API_BASE_URL}/report/email-order`,
             {
@@ -78,7 +78,7 @@ function CardBooking(props) {
               email: props.email,
               address: props.address,
               rules: props.rules,
-              status: sentStatus,
+              status: status,
               phoneNumber: props.phoneNumber,
               roomId: props.roomId,
             }
