@@ -25,6 +25,9 @@ module.exports = {
         type: DataTypes.STRING,
         unique: true
       },
+      profilePic: {
+        type: DataTypes.STRING,
+      },
       userId: {
         type: DataTypes.STRING,
         allowNull: false,

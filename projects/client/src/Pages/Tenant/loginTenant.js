@@ -88,7 +88,7 @@ function LoginTenant() {
         alert("please register for your account")
       } else {
         if ((await response).data.result !== null) {
-          history.push("/tenant/dashboard")
+          history.go("/tenant/dashboard")
         } else {
           alert("your account is not Tenant")
           authFirebase.signOut()
