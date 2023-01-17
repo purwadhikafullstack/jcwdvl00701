@@ -6,7 +6,11 @@ This is monorepo contain frontend project using ReactJS and backend project usin
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm ci`
+
+Install all dependencies based on package-lock.json
+
+### `npm run start`
 
 Runs the app in the development mode.
 

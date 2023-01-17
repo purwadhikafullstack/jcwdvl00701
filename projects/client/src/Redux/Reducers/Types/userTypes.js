@@ -1,5 +1,5 @@
 const auth_types = {
-  Login: "LOGIN",
+  Redux : "REDUX"
 };
 
 export default auth_types;
