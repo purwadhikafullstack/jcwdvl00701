@@ -16,11 +16,11 @@ import {useHistory} from "react-router-dom";
 import {authFirebase} from "../Config/firebase";
 import {getAuth, onAuthStateChanged, sendEmailVerification, signOut} from "firebase/auth";
 import {useSelector} from "react-redux";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 function NavbarMobile() {
   const [isLargerThan576] = useMediaQuery("(min-width: 576px)");
-  const {id, ProfilePic, ProfileName, firebaseProviderId} = useSelector(state => state.user)
+  const {id, ProfilePic, ProfileName, firebaseProviderId, UserRoles} = useSelector(state => state.user)
   const auth = authFirebase
   const auth2 = getAuth()
   const history = useHistory()
@@ -67,11 +67,11 @@ function NavbarMobile() {
     onAuthStateChanged(auth2, (user) => {
       sendEmailVerification(user)
         .then(() => {
-          //console.log("berhasil");
+          // console.log("berhasil");
           setDis(false)
         })
         .catch((err) => {
-          //console.log(err);
+          console.error(err);
         })
     })
   }
@@ -87,22 +87,27 @@ function NavbarMobile() {
       display={{ss: "inline", sm: "inline", sl: "none"}}
     >
       {
-        verifikasi && !verifikasi2 && dis ?
-          <Center height={'30px'}>
-            <Text
-              cursor={"pointer"}
-              _hover={{
-                fontWeight: "bold",
-                textDecoration: "underline"
-              }}
-              onClick={btnHandlerVerification}
-            >
-              Resend email verification
-            </Text>
-          </Center>
-          :
-          null
-      }
+        !verifikasi && UserRoles.includes(1)
+          ? <>
+            {
+              verifikasi2
+                ? null
+                :<Center height={'30px'}>
+                  <Text
+                    cursor={"pointer"}
+                    _hover={{
+                      fontWeight: "bold",
+                      textDecoration: "underline"
+                    }}
+                    onClick={btnHandlerVerification}
+                  >
+                    Resend email verification
+                  </Text>
+                </Center>
+            }
+            </>
+          : null
+              }
       <Flex justifyContent="space-around" py="5px">
         <Box fontSize="22px" textAlign="center" color="black" onClick={search} cursor="pointer">
           <i className="fa-solid fa-magnifying-glass-location"></i>
@@ -122,14 +127,14 @@ function NavbarMobile() {
           <Menu>
             <MenuButton fontWeight="regular">
               {
-                id ?
+                id && UserRoles.includes(1) ?
                   <Avatar size="sm" my="auto" objectFit={"cover"}
                           src={process.env.REACT_APP_API_BASE_URL + ProfilePic}/>
                   :
                   <i className="fa-solid fa-circle-user"></i>
               }
               {
-                id ?
+                id && UserRoles.includes(1) ?
                   <Text fontWeight="regular" fontSize="12px">
                     {ProfileName}
                   </Text>
@@ -143,7 +148,7 @@ function NavbarMobile() {
               <MenuItem fontSize="14px" onClick={() => history.push("/profile")}>Profile</MenuItem>
               <MenuDivider/>
               {
-                firebaseProviderId === "password" ?
+                firebaseProviderId === "password" && verifikasi?
                   <MenuItem onClick={switchToTenant} fontSize="14px">Switch To Tenant</MenuItem>
                   :
                   null
@@ -156,8 +161,8 @@ function NavbarMobile() {
         </Box>
       </Flex>
     </Box>
-    :
-    null
+:
+null
 }
 
 export default NavbarMobile;
