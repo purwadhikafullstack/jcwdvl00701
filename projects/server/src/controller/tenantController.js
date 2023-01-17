@@ -1,4 +1,5 @@
 const { sequelize, User, Profile, UserRole, Tenant, Bank } = require("../models");
+const fs = require("fs");
 
 module.exports = {
   addTenantComplete: async (req, res) => {
@@ -177,5 +178,45 @@ module.exports = {
         code: 500,
       });
     }
-  }
+  },
+  updateTenantProfilePic: async (req, res) => {
+    const id = req.body.id;
+    const {filename} = req.file;
+    const fileUrl = `/tenant_profile_pic/${filename}`;
+
+    let oldPic = null
+    try {
+      await sequelize.transaction(async (t) => {
+        const profile = await Tenant.findOne(
+          {where: {userId: id}},
+          {transaction: t}
+        );
+
+        oldPic = profile.profilePic
+        const path = `${__dirname}/../public/${oldPic}`;
+
+        await Tenant.update(
+          {profilePic: fileUrl},
+          {where: {userId: id}},
+          {transaction: t}
+        );
+
+        fs.unlink(path, (err) => {
+          if (err) {
+            console.error(err);
+          }
+        });
+      })
+      return res.status(200).send({
+        result: {profilePic: fileUrl},
+        message: "success update tenant profile picture",
+        code: 200,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        message: err.toString(),
+        code: 500,
+      });
+    }
+  },
 };

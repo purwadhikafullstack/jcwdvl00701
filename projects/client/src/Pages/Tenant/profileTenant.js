@@ -131,7 +131,7 @@ function Profile() {
       setEmail(response.data.result.User.email);
       setBank(response.data.result.BankId);
       setAccount(response.data.result.bankAccountNumber);
-      setProfilePic(`${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.User.Profile?.profilePic}`)
+      setProfilePic(`${process.env.REACT_APP_BACKEND_BASE_URL}${response.data.result.profilePic}`)
 
       formik.values.name = response.data.result.name;
       formik.values.phoneNumber = response.data.result.phoneNumber;
@@ -181,7 +181,7 @@ function Profile() {
     formData.append("image", e.target.files[0])
     formData.append('id', id)
 
-    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/profilePic`, formData, {
+    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/profilePic`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

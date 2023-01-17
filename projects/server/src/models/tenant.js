@@ -38,6 +38,9 @@ module.exports = (sequelize) => {
     bankId: {
       type: DataTypes.INTEGER,
     },
+    profilePic: {
+      type: DataTypes.STRING,
+    },
   }, {
     sequelize,
     modelName: 'Tenant',
