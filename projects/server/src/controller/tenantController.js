@@ -201,11 +201,14 @@ module.exports = {
           {transaction: t}
         );
 
-        fs.unlink(path, (err) => {
-          if (err) {
-            console.error(err);
-          }
-        });
+        if (fs.existsSync(path)) {
+          fs.unlink(path, (err) => {
+            if (err) {
+              console.error(err);
+            }
+          });
+        }
+
       })
       return res.status(200).send({
         result: {profilePic: fileUrl},

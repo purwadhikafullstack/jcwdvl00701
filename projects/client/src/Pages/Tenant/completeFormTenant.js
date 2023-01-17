@@ -225,7 +225,7 @@ function CompleteFormTenant() {
                           ) : null}
                           {selectedFile ? (
                             <Alert status="info" color="green" text="center">
-                              <i class="fa-solid fa-check"></i>
+                              <i className="fa-solid fa-check"></i>
                               <Text ms="10px">Id Card uploaded</Text>
                             </Alert>
                           ) : null}

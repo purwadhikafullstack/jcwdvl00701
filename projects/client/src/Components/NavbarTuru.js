@@ -336,14 +336,14 @@ function NavbarMobileTenant() {
                   <Menu>
                     {id && UserRoles.includes(1)? (
                       <Box>
-                      <i class="fa-solid fa-caret-down"></i>
+                      <i className="fa-solid fa-caret-down"></i>
                       <MenuButton fontWeight="bold" fontSize="18px" my="auto" ms={"8px"}>
                         {ProfileName}
                       </MenuButton>
                       </Box>
                     ) : (
                       <Box>
-                      <i class="fa-solid fa-caret-down"></i>
+                      <i className="fa-solid fa-caret-down"></i>
                       <MenuButton fontWeight="bold" fontSize="18px" my="auto" ms={"3px"}>
                         Account
                       </MenuButton>
