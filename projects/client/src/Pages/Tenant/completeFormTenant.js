@@ -37,11 +37,6 @@ function CompleteFormTenant() {
   const [fileSizeMsg, setFileSizeMsg] = useState("");
   let history = useHistory();
 
-  // if(!emailVerified){
-  //   alert("verified your account before to be Tenant")
-  //   history.push("/")
-  // }
-
   if (UserRoles.includes(2)) {
     history.push("/tenant/dashboard");
   }
@@ -87,10 +82,6 @@ function CompleteFormTenant() {
         .catch((err) => {
           console.error(err.data.message);
         });
-
-      //console.log(response.data);
-      alert(response.data.message);
-
       history.go("/tenant/dashboard");
     },
   });
