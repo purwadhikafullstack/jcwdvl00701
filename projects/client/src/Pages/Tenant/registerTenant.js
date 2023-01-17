@@ -78,8 +78,6 @@ function RegisterTenant() {
       await sendEmailVerification(user)
       alert(`masuk dari ${provider}`)
     }
-
-    // history.push("/tenant/dashboard");
   };
 
   YupPassword(Yup);

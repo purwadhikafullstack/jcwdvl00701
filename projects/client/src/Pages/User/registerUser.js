@@ -56,7 +56,6 @@ function RegisterUser() {
     const providerId = credential.providerId ? credential.providerId : 'password'
     if (!providerId.toLowerCase().includes('google')) {
       await sendEmailVerification(user)
-      alert(`masuk dari ${providerId}`)
     }
 
     const registerUrl = `${process.env.REACT_APP_API_BASE_URL}/user/register`

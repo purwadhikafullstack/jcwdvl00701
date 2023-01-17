@@ -8,6 +8,8 @@ Transaction,
 RoomUnavailability,
 Review,
 sequelize,
+Tenant,
+Bank
 } = require("../models");
 const { Op } = require("sequelize");
 
@@ -59,10 +61,22 @@ getHistory: async (req, res) => {
             model: Room,
             attributes: ["id", "name", "defaultPrice", "description"],
             include: [
-            {
-                model: Property,
-                attributes: ["id", "name", "description", "pic"],
-            },
+                {
+                    model: Property,
+                    attributes: ["id", "name", "description", "pic"],
+                    include : [
+                        {
+                            model : Tenant,
+                            attributes : ["bankAccountNumber", "bankId"],
+                            include : [
+                                {
+                                    model : Bank,
+                                    attributes : ["name"]
+                                }
+                            ]
+                        }
+                    ]
+                },
             ],
         },
         {
