@@ -217,8 +217,6 @@ function CardRoomTenant(props) {
           <ModalCloseButton />
           <ModalBody>Are you sure you want to delete this room?</ModalBody>
           <ModalCloseButton />
-          <ModalCloseButton />
-          <ModalBody pb={6}>are you sure want delete this room?</ModalBody>
 
           <ModalFooter>
             <Button
